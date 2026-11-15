@@ -135,6 +135,10 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.empresa_modulos_eventos': ['select', 'insert'],
     'core.solicitudes_modulo': ['select'],
     'core.plataforma_admins': ['select', 'insert', 'delete'],
+    'core.confirmaciones_usadas': ['delete'],
+    'core.idempotencia': ['delete'],
+    'core.eventos_salida': ['delete'],
+    'core.eventos_procesados': ['delete'],
   };
 
   it('ninguna otra tabla es accesible, y las permitidas tienen justo esos permisos', async () => {
@@ -149,8 +153,45 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     expect(ordenar(reales)).toEqual(ordenar(PERMITIDO));
   });
 
+  // Permisos SOLO por columna (no se ven con has_table_privilege): tabla -> privilegio -> columnas.
+  const PERMITIDO_POR_COLUMNA: Record<string, Record<string, string[]>> = {
+    'core.solicitudes_modulo': { update: ['atendido_en', 'estado'] },
+    'core.confirmaciones_usadas': { select: ['tenant_id', 'usado_en'] },
+    'core.idempotencia': { select: ['creado_en', 'tenant_id'] },
+    'core.eventos_salida': {
+      select: ['creado_en', 'disponible_en', 'fallido_en', 'id', 'intentos', 'procesado_en', 'tenant_id', 'tipo'],
+      update: ['disponible_en', 'fallido_en', 'intentos', 'procesado_en', 'ultimo_error'],
+    },
+    'core.eventos_procesados': { select: ['procesado_en', 'tenant_id'] },
+  };
+
+  it('los permisos por columna de capaz_sistema son exactamente los previstos', async () => {
+    const { rows } = await owner.query<{ tabla: string; priv: string; columna: string }>(`
+      select cp.table_schema || '.' || cp.table_name as tabla, lower(cp.privilege_type) as priv, cp.column_name as columna
+      from information_schema.column_privileges cp
+      join pg_class c on c.relname = cp.table_name and c.relnamespace = cp.table_schema::regnamespace
+      where cp.grantee = 'capaz_sistema' and cp.table_schema in ('core', 'registro', 'cotizador', 'auth')
+        and lower(cp.privilege_type) in ('select', 'insert', 'update', 'delete')
+        and not has_table_privilege('capaz_sistema', c.oid, cp.privilege_type)`);
+    const reales: Record<string, Record<string, string[]>> = {};
+    for (const r of rows) ((reales[r.tabla] ??= {})[r.priv] ??= []).push(r.columna);
+    const ordenar = (o: Record<string, Record<string, string[]>>) =>
+      Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)).map(([t, p]) => [t, Object.fromEntries(Object.entries(p).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]))]));
+    expect(ordenar(reales)).toEqual(ordenar(PERMITIDO_POR_COLUMNA));
+  });
+
+  it('capaz_sistema no puede leer la carga de eventos_salida, pero sí sus columnas permitidas', async () => {
+    await expect(sistema.query('select carga from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select * from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select ultimo_error from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await sistema.query('select id, tenant_id, tipo, creado_en, disponible_en, procesado_en, intentos, fallido_en from core.eventos_salida');
+  });
+
   it('no puede leer datos de negocio ni la nota de una solicitud para modificarla', async () => {
     await expect(sistema.query('select * from core.empresa_config')).rejects.toThrow(/permission denied/);
     await expect(sistema.query('select * from core.usuario_modulos')).rejects.toThrow(/permission denied/);
+    for (const t of ['clientes', 'productos', 'sucursales', 'auditoria', 'contadores']) {
+      await expect(sistema.query(`select * from core.${t}`)).rejects.toThrow(/permission denied/);
+    }
   });
 });

@@ -20,6 +20,21 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into core.solicitudes_modulo (tenant_id, modulo, usuario_id) values ($1, 'ejemplo', 'u1')`,
     modo: 'insercion',
   },
+  'core.auditoria': {
+    sql: `insert into core.auditoria (tenant_id, usuario_id, modulo, herramienta, canal, resultado, hash_args, request_id) values ($1, 'u1', 'core', 'ejemplo', 'ui', 'ok', 'h', 'r1')`,
+    modo: 'insercion',
+  },
+  'core.confirmaciones_usadas': { sql: `insert into core.confirmaciones_usadas (tenant_id, jti) values ($1, 'jti-1')`, modo: 'insercion' },
+  'core.idempotencia': { sql: `insert into core.idempotencia (tenant_id, clave, herramienta, hash_args) values ($1, 'c1', 'h', 'x')`, modo: 'completo' },
+  'core.eventos_salida': { sql: `insert into core.eventos_salida (tenant_id, tipo, carga) values ($1, 'ejemplo.creado', '{"x":1}')`, modo: 'insercion' },
+  'core.eventos_procesados': {
+    sql: `insert into core.eventos_procesados (tenant_id, evento_id, consumidor) values ($1, '00000000-0000-7000-8000-000000000001', 'c1')`,
+    modo: 'insercion',
+  },
+  'core.contadores': { sql: `insert into core.contadores (tenant_id, clave, serie, anio) values ($1, 'ejemplo', '', 2026)`, modo: 'completo' },
+  'core.clientes': { sql: `insert into core.clientes (tenant_id, clase, nombre, nombre_normalizado, creado_por) values ($1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
+  'core.productos': { sql: `insert into core.productos (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
+  'core.sucursales': { sql: `insert into core.sucursales (tenant_id, codigo, nombre) values ($1, 'LIM', 'Lima')`, modo: 'completo' },
 };
 
 let app: pg.Pool;
