@@ -50,6 +50,13 @@
       "when": 1794780566215,
       "tag": "0006_herramientas",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794780600593,
+      "tag": "0007_eventos_y_contadores",
+      "breakpoints": true
     }
   ]
 }

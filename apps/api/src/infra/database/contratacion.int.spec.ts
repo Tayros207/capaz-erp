@@ -137,6 +137,8 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.plataforma_admins': ['select', 'insert', 'delete'],
     'core.confirmaciones_usadas': ['delete'],
     'core.idempotencia': ['delete'],
+    'core.eventos_salida': ['delete'],
+    'core.eventos_procesados': ['delete'],
   };
 
   it('ninguna otra tabla es accesible, y las permitidas tienen justo esos permisos', async () => {
@@ -156,6 +158,11 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.solicitudes_modulo': { update: ['atendido_en', 'estado'] },
     'core.confirmaciones_usadas': { select: ['tenant_id', 'usado_en'] },
     'core.idempotencia': { select: ['creado_en', 'tenant_id'] },
+    'core.eventos_salida': {
+      select: ['creado_en', 'disponible_en', 'fallido_en', 'id', 'intentos', 'procesado_en', 'tenant_id', 'tipo'],
+      update: ['disponible_en', 'fallido_en', 'intentos', 'procesado_en', 'ultimo_error'],
+    },
+    'core.eventos_procesados': { select: ['procesado_en', 'tenant_id'] },
   };
 
   it('los permisos por columna de capaz_sistema son exactamente los previstos', async () => {
@@ -171,6 +178,13 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     const ordenar = (o: Record<string, Record<string, string[]>>) =>
       Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)).map(([t, p]) => [t, Object.fromEntries(Object.entries(p).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]))]));
     expect(ordenar(reales)).toEqual(ordenar(PERMITIDO_POR_COLUMNA));
+  });
+
+  it('capaz_sistema no puede leer la carga de eventos_salida, pero sí sus columnas permitidas', async () => {
+    await expect(sistema.query('select carga from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select * from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select ultimo_error from core.eventos_salida')).rejects.toThrow(/permission denied/);
+    await sistema.query('select id, tenant_id, tipo, creado_en, disponible_en, procesado_en, intentos, fallido_en from core.eventos_salida');
   });
 
   it('no puede leer datos de negocio ni la nota de una solicitud para modificarla', async () => {
