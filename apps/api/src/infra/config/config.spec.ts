@@ -19,6 +19,41 @@ describe('leerConfig', () => {
     expect(c.ORIGENES_PERMITIDOS).toEqual(['http://localhost:5173']);
   });
 
+  it('trae los valores por defecto de las variables del relevo y las conexiones', () => {
+    const c = leerConfig(base);
+    expect(c.RELEVO_ACTIVO).toBe(true);
+    expect(c.RELEVO_BARRIDO_SEGUNDOS).toBe(60);
+    expect(c.CONEXIONES_CLAVE).toBeUndefined();
+    expect(c.CONEXIONES_CLAVE_VERSION).toBe(1);
+    expect(c.PERMITIR_DESTINOS_LOCALES).toBe(false);
+  });
+
+  it('lee los booleanos escritos como texto', () => {
+    const c = leerConfig({ ...base, RELEVO_ACTIVO: 'false', PERMITIR_DESTINOS_LOCALES: 'true' });
+    expect(c.RELEVO_ACTIVO).toBe(false);
+    expect(c.PERMITIR_DESTINOS_LOCALES).toBe(true);
+    expect(() => leerConfig({ ...base, RELEVO_ACTIVO: 'quizá' })).toThrow(/RELEVO_ACTIVO/);
+  });
+
+  it('valida el barrido y la versión de la clave', () => {
+    expect(leerConfig({ ...base, RELEVO_BARRIDO_SEGUNDOS: '15', CONEXIONES_CLAVE_VERSION: '2' })).toMatchObject({ RELEVO_BARRIDO_SEGUNDOS: 15, CONEXIONES_CLAVE_VERSION: 2 });
+    expect(() => leerConfig({ ...base, RELEVO_BARRIDO_SEGUNDOS: '0' })).toThrow(/RELEVO_BARRIDO_SEGUNDOS/);
+    expect(() => leerConfig({ ...base, CONEXIONES_CLAVE_VERSION: '0' })).toThrow(/CONEXIONES_CLAVE_VERSION/);
+  });
+
+  it('CONEXIONES_CLAVE exige 32 bytes en base64, sin filtrar el valor', () => {
+    const buena = Buffer.alloc(32, 7).toString('base64');
+    expect(leerConfig({ ...base, CONEXIONES_CLAVE: buena }).CONEXIONES_CLAVE).toBe(buena);
+    const corta = Buffer.alloc(16, 7).toString('base64');
+    expect(() => leerConfig({ ...base, CONEXIONES_CLAVE: corta })).toThrow(/CONEXIONES_CLAVE/);
+    expect(() => leerConfig({ ...base, CONEXIONES_CLAVE: 'no es base64!' })).toThrow(/CONEXIONES_CLAVE/);
+    try {
+      leerConfig({ ...base, CONEXIONES_CLAVE: corta });
+    } catch (e) {
+      expect(String(e)).not.toContain(corta);
+    }
+  });
+
   it('separa varios orígenes por coma', () => {
     const c = leerConfig({ ...base, ORIGENES_PERMITIDOS: 'https://a.pe, https://b.pe' });
     expect(c.ORIGENES_PERMITIDOS).toEqual(['https://a.pe', 'https://b.pe']);

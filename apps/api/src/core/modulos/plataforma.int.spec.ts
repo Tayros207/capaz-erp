@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import type pg from 'pg';
 import { leerArgumentos, plataforma, type Urls } from '../../../scripts/plataforma.ts';
-import { abrirPool } from '../../pruebas/base-de-pruebas.js';
+import { abrirPool, urlDePruebas } from '../../pruebas/base-de-pruebas.js';
 
-// El comando de plataforma contra la base local `capaz_test` (nunca Neon).
+// El comando de plataforma contra la base local de pruebas (nunca Neon).
 
 let auth: pg.Pool;
 let sistema: pg.Pool;
@@ -21,8 +21,7 @@ const crearUsuario = async (email: string) => {
 beforeAll(async () => {
   auth = abrirPool('auth');
   sistema = abrirPool('sistema');
-  const base = (n: string) => { const u = new URL(process.env[n]!); u.pathname = '/capaz_test'; return u.toString(); };
-  urls = { auth: base('DATABASE_URL_AUTH'), sistema: base('DATABASE_URL_SISTEMA'), app: base('DATABASE_URL_APP') };
+  urls = { auth: urlDePruebas('DATABASE_URL_AUTH'), sistema: urlDePruebas('DATABASE_URL_SISTEMA'), app: urlDePruebas('DATABASE_URL_APP') };
   await sistema.query(`insert into core.modulos (codigo, nombre, por_defecto, prueba_dias) values ($1, 'Módulo de plataforma', true, 14) on conflict do nothing`, [CODIGO]);
 });
 afterAll(async () => {

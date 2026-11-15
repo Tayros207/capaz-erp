@@ -8,12 +8,13 @@ export const manifiestoCore: ManifiestoDeEntrada = {
   descripcion: 'Empresa, usuarios, clientes y configuración compartidos por todos los módulos.',
   version: '0.1.0',
   dependeDe: [],
-  permisos: ['clientes:ver', 'clientes:editar', 'empresa:ver', 'empresa:configurar', 'miembros:ver', 'miembros:gestionar'],
+  permisos: ['clientes:ver', 'clientes:editar', 'empresa:ver', 'empresa:configurar', 'miembros:ver', 'miembros:gestionar', 'productos:ver', 'productos:editar', 'sucursales:ver', 'sucursales:gestionar', 'auditoria:ver', 'borradores:ver', 'conexiones:ver', 'conexiones:gestionar', 'automatizaciones:ver', 'automatizaciones:gestionar', 'datos:importar', 'datos:exportar'],
   permisosPorNivel: {
-    completo: ['clientes:ver', 'clientes:editar', 'empresa:ver', 'empresa:configurar', 'miembros:ver', 'miembros:gestionar'],
-    lectura: ['clientes:ver', 'empresa:ver'],
+    completo: ['clientes:ver', 'clientes:editar', 'empresa:ver', 'empresa:configurar', 'miembros:ver', 'miembros:gestionar', 'productos:ver', 'productos:editar', 'sucursales:ver', 'sucursales:gestionar', 'auditoria:ver', 'borradores:ver', 'conexiones:ver', 'conexiones:gestionar', 'automatizaciones:ver', 'automatizaciones:gestionar', 'datos:importar', 'datos:exportar'],
+    lectura: ['clientes:ver', 'empresa:ver', 'productos:ver', 'sucursales:ver', 'auditoria:ver', 'borradores:ver', 'conexiones:ver', 'automatizaciones:ver'],
   },
   secciones: [],
+  familia: null,
   acento: 'gris',
   icono: 'nucleo',
 };

@@ -1,14 +1,11 @@
 import { CanActivate, Inject, Injectable, type ExecutionContext } from '@nestjs/common';
-import { sql } from 'drizzle-orm';
 import { Reflector } from '@nestjs/core';
 import { fromNodeHeaders } from 'better-auth/node';
 import type { Request } from 'express';
-import { DatabaseService } from '../../infra/database/database.service.js';
 import { contextoActual } from '../../infra/http/contexto.js';
 import { ErrorDeNegocio } from '../../infra/http/error-de-negocio.js';
 import { EmpresasService } from '../empresas/empresas.service.js';
-import type { Asignacion, Contratacion } from '../modulos/acceso.js';
-import { CatalogoDeModulos } from '../modulos/catalogo.js';
+import { ServicioDeAcceso } from '../modulos/acceso.service.js';
 import { AUTH, type Auth } from './auth.js';
 import { ES_PUBLICA, EXIGE_EMPRESA, MODULO_REQUERIDO, PERMISO_REQUERIDO } from '../../infra/http/decoradores.js';
 
@@ -23,9 +20,8 @@ export class GuardiaDeIdentidad implements CanActivate {
   constructor(
     @Inject(Reflector) private readonly reflector: Reflector,
     @Inject(AUTH) private readonly auth: Auth,
-    @Inject(DatabaseService) private readonly db: DatabaseService,
     @Inject(EmpresasService) private readonly empresas: EmpresasService,
-    @Inject(CatalogoDeModulos) private readonly catalogo: CatalogoDeModulos,
+    @Inject(ServicioDeAcceso) private readonly acceso: ServicioDeAcceso,
   ) {}
 
   async canActivate(contexto: ExecutionContext): Promise<boolean> {
@@ -43,18 +39,16 @@ export class GuardiaDeIdentidad implements CanActivate {
 
     const activa = sesion.session.activeOrganizationId;
     if (activa) {
-      const { rows } = await this.db.auth.query<{ role: string }>(
-        'select role from auth.member where user_id = $1 and organization_id = $2',
-        [sesion.user.id, activa],
-      );
-      if (rows[0]) {
+      const rol = await this.acceso.rolDe(activa, sesion.user.id);
+      if (rol !== null) {
         ctx.empresaId = activa;
-        ctx.rol = rows[0].role;
+        ctx.rol = rol;
         await this.empresas.asegurar(activa, sesion.user.id);
-        await this.cargarAcceso(ctx, sesion.user.id, activa);
+        const { modulos, permisos } = await this.acceso.cargarAcceso(rol, activa, sesion.user.id);
+        ctx.modulos = modulos;
+        ctx.permisos = permisos;
       }
     }
-
     const modulo = this.reflector.getAllAndOverride<string | undefined>(MODULO_REQUERIDO, objetivos);
     const permiso = this.reflector.getAllAndOverride<string | undefined>(PERMISO_REQUERIDO, objetivos);
     const exige = this.reflector.getAllAndOverride<boolean>(EXIGE_EMPRESA, objetivos) || !!modulo || !!permiso;
@@ -62,24 +56,5 @@ export class GuardiaDeIdentidad implements CanActivate {
     if (modulo && !ctx.modulos.find((m) => m.codigo === modulo)?.puedeEntrar) throw new ErrorDeNegocio('modulo_no_disponible');
     if (permiso && !ctx.permisos.includes(permiso)) throw new ErrorDeNegocio('sin_permiso');
     return true;
-  }
-
-  /** Contratación de la empresa y asignaciones de la persona, en UNA transacción (una ida y vuelta a la base). */
-  private async cargarAcceso(ctx: NonNullable<ReturnType<typeof contextoActual>>, usuarioId: string, empresaId: string): Promise<void> {
-    const { contratos, asignaciones } = await this.db.conEmpresa({ empresaId, usuarioId }, async (tx) => {
-      // Drizzle devuelve las fechas de consultas crudas como texto: se convierten a Date.
-      const c = await tx.execute<{ modulo: string; estado: Contratacion['estado']; prueba_hasta: string | Date | null }>(
-        sql`select modulo, estado, prueba_hasta from core.empresa_modulos`,
-      );
-      const a = await tx.execute<{ modulo: string; nivel: Asignacion['nivel']; alcance: Asignacion['alcance'] }>(
-        sql`select modulo, nivel, alcance from core.usuario_modulos where usuario_id = ${usuarioId}`,
-      );
-      return {
-        contratos: c.rows.map((r): Contratacion => ({ modulo: r.modulo, estado: r.estado, pruebaHasta: r.prueba_hasta ? new Date(r.prueba_hasta) : null })),
-        asignaciones: a.rows.map((r): Asignacion => ({ modulo: r.modulo, nivel: r.nivel, alcance: r.alcance })),
-      };
-    });
-    ctx.modulos = this.catalogo.accesos({ rol: ctx.rol, contratos, asignaciones });
-    ctx.permisos = this.catalogo.permisos(ctx.modulos);
   }
 }
