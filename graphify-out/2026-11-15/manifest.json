@@ -324,10 +324,10 @@
     "semantic_hash": "029f4905006c1fffd96bc863e2d98d3e"
   },
   "apps/web/package.json": {
-    "mtime": 1794415518.7709198,
-    "seen": 1794676297.7681856,
-    "ast_hash": "cff6a40eea19ab7381c7415a4f701508",
-    "semantic_hash": "cff6a40eea19ab7381c7415a4f701508"
+    "mtime": 1794783145.832132,
+    "seen": 1794783156.7901063,
+    "ast_hash": "ab76b5eb469236a9eb3c3988114c8fa0",
+    "semantic_hash": ""
   },
   "apps/web/src/main.tsx": {
     "mtime": 1794780243.5835583,
@@ -768,9 +768,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/clientes/clientes.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.104314,
-    "ast_hash": "a8dc70c4e505c2922021c3601cdc7fdb",
+    "mtime": 1794783033.686918,
+    "seen": 1794783156.7897696,
+    "ast_hash": "762dc3c0c21f1821efca78fbc27e7055",
     "semantic_hash": ""
   },
   "apps/api/src/core/conectores/conectores.module.ts": {
@@ -984,15 +984,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/productos/productos.module.ts": {
-    "mtime": 1794780380.3081787,
-    "seen": 1794781771.1043797,
-    "ast_hash": "2ce2375bd150f5bebaff3d4426065b26",
+    "mtime": 1794783033.690918,
+    "seen": 1794783156.7899413,
+    "ast_hash": "874d92941bd0a16f9f6aded1be39b253",
     "semantic_hash": ""
   },
   "apps/api/src/core/sucursales/sucursales.module.ts": {
-    "mtime": 1794780380.3081787,
-    "seen": 1794781771.1043813,
-    "ast_hash": "79651ac965aeafc5e88400910a98961b",
+    "mtime": 1794783033.6922297,
+    "seen": 1794783156.7899597,
+    "ast_hash": "e7eb0d6ee4c68bd3984255c3ab9d4c2e",
     "semantic_hash": ""
   },
   "apps/api/src/db/esquema/auth.ts": {
@@ -1776,9 +1776,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/clientes.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1048937,
-    "ast_hash": "29a1733704945138779e0bf00cde47f9",
+    "mtime": 1794783033.6922297,
+    "seen": 1794783156.7911093,
+    "ast_hash": "69b96fd1df3ae08b93cb852cc72345d2",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/compras.ts": {
@@ -1866,9 +1866,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/productos.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049209,
-    "ast_hash": "bc18670e3c66817aa368fe5994958375",
+    "mtime": 1794783033.692918,
+    "seen": 1794783156.7911494,
+    "ast_hash": "92b90d748d6f42ecbfc01219dc1fa9a0",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/registro.ts": {
@@ -1884,9 +1884,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/sucursales.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049259,
-    "ast_hash": "05a709cdccf649daccc1109c852cc6d1",
+    "mtime": 1794783033.692918,
+    "seen": 1794783156.791157,
+    "ast_hash": "df04a4eba981d2b53068238d34bb98ff",
     "semantic_hash": ""
   },
   "packages/shared/src/herramientas.spec.ts": {
@@ -2421,6 +2421,78 @@
     "mtime": 1794782922.3382437,
     "seen": 1794783032.085683,
     "ast_hash": "763a256542ca1ab8a8b335fa2568c1e3",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/herramientas/cliente-mapeo.ts": {
+    "mtime": 1794783033.686918,
+    "seen": 1794783156.789786,
+    "ast_hash": "2ad4aba54d80a95c871aca3b2eaf0563",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/herramientas/clientes-escritura.ts": {
+    "mtime": 1794783033.68806,
+    "seen": 1794783156.7897885,
+    "ast_hash": "bd947faed2f57bd37ccfe6f809379aba",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/herramientas/clientes-lectura.ts": {
+    "mtime": 1794783033.68806,
+    "seen": 1794783156.7897906,
+    "ast_hash": "39756e3a59ec6edf7c204909029619a9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/herramientas/datos-maestros.int.spec.ts": {
+    "mtime": 1794783033.68806,
+    "seen": 1794783156.7897928,
+    "ast_hash": "2c460870d4762ddaab2a6d609c00dd3f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/herramientas/herramientas-de-clientes.ts": {
+    "mtime": 1794783033.68806,
+    "seen": 1794783156.7897952,
+    "ast_hash": "8a4deef0c3562a5a4c778cd5f6b621ba",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/herramientas/herramientas-de-productos.ts": {
+    "mtime": 1794783033.68806,
+    "seen": 1794783156.7899325,
+    "ast_hash": "c1a528d44162f4292d1ed3317b9fde10",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/herramientas/producto-mapeo.ts": {
+    "mtime": 1794783033.690918,
+    "seen": 1794783156.789935,
+    "ast_hash": "56fa2cc1bc34148cc6d34f27024ec59b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/herramientas/productos-escritura.ts": {
+    "mtime": 1794783033.690918,
+    "seen": 1794783156.7899368,
+    "ast_hash": "7566333985d244659384eea7bfceaabb",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/herramientas/productos-lectura.ts": {
+    "mtime": 1794783033.690918,
+    "seen": 1794783156.7899387,
+    "ast_hash": "ee52b23c36455b4aed06ff954cce1b87",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/herramientas/herramientas-de-sucursales.ts": {
+    "mtime": 1794783033.690918,
+    "seen": 1794783156.7899525,
+    "ast_hash": "db2e24a554bdca44cd0da0f94a2a5133",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/herramientas/sucursales-herramientas.ts": {
+    "mtime": 1794783033.6922297,
+    "seen": 1794783156.7899547,
+    "ast_hash": "ad0fe3d54855b684d13810953bb5d459",
+    "semantic_hash": ""
+  },
+  "docs/COMO-CREAR-UN-MODULO.md": {
+    "mtime": 1794783033.6922297,
+    "seen": 1794783156.7912273,
+    "ast_hash": "507587bb5d81265b601289c32a766007",
     "semantic_hash": ""
   }
 }

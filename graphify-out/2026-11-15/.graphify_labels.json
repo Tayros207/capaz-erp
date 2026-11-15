@@ -4,7 +4,7 @@
   "2": "src/index.ts",
   "3": "web/package.json",
   "4": "main.ts",
-  "5": "base-de-pruebas.ts",
+  "5": "vitest",
   "6": "preparar-base.ts",
   "7": "compilerOptions",
   "8": "scripts",

@@ -32,7 +32,7 @@
   "30": "nest-cli.json",
   "31": "web/.oxlintrc.json",
   "32": "pnpm-workspace.yaml",
-  "33": "barra-superior.tsx",
+  "33": "pantalla-registro.tsx",
   "34": "config.d.ts",
   "35": "web/tsconfig.json",
   "36": "@nestjs/schematics@^12.0.0",

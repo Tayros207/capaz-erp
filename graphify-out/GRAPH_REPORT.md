@@ -1,17 +1,17 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 412 files · ~203,822 words
+- 464 files · ~222,927 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 724 nodes · 1067 edges · 49 communities (34 shown, 15 thin omitted)
+- 759 nodes · 1136 edges · 49 communities (35 shown, 14 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 34 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c53eb289`
+- Built from commit: `18876295`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -49,7 +49,7 @@
 - nest-cli.json
 - web/.oxlintrc.json
 - pnpm-workspace.yaml
-- barra-superior.tsx
+- pantalla-registro.tsx
 - config.d.ts
 - web/tsconfig.json
 - @nestjs/schematics@^12.0.0
@@ -68,7 +68,7 @@
 2. `compilerOptions` - 18 edges
 3. `AGENTS.md (reglas del constructor)` - 18 edges
 4. `scripts` - 17 edges
-5. `vitest` - 16 edges
+5. `vitest` - 17 edges
 6. `compilerOptions` - 15 edges
 7. `@nestjs/common` - 14 edges
 8. `scripts` - 14 edges
@@ -98,7 +98,7 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (49 total, 15 thin omitted)
+## Communities (49 total, 14 thin omitted)
 
 ### Community 0 - "AGENTS.md (reglas del constructor)"
 Cohesion: 0.06
@@ -106,7 +106,7 @@ Nodes (48): ADR 001 a 012, Agente: instrucciones, conocimiento, herramientas, di
 
 ### Community 1 - "database.service.ts"
 Cohesion: 0.06
-Nodes (22): Config, CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), ConfigModule, secreto, base (+14 more)
+Nodes (25): Config, CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), leerConfigDelEntorno(), ConfigModule, secreto (+17 more)
 
 ### Community 2 - "src/index.ts"
 Cohesion: 0.09
@@ -114,11 +114,11 @@ Nodes (33): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, t
 
 ### Community 3 - "web/package.json"
 Cohesion: 0.05
-Nodes (42): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query, devDependencies, oxlint (+34 more)
+Nodes (39): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query, devDependencies, oxlint (+31 more)
 
 ### Community 4 - "main.ts"
-Cohesion: 0.09
-Nodes (18): AppModule, leerConfigDelEntorno(), almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto() (+10 more)
+Cohesion: 0.10
+Nodes (15): AppModule, almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto(), idDePeticion() (+7 more)
 
 ### Community 5 - "vitest"
 Cohesion: 0.09
@@ -232,29 +232,33 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
+### Community 33 - "pantalla-registro.tsx"
+Cohesion: 0.06
+Nodes (18): Props, PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), destinoSegunSesion(), esRuta(), normalizar() (+10 more)
+
 ### Community 37 - "Relevo: dónde quedó Capaz ERP y cómo seguir"
 Cohesion: 0.20
 Nodes (9): 1. En una frase, 2. Estado exacto, 3. Cómo arrancar el entorno, 4. Mapa del código, 5. Cosas que no son obvias (trampas ya pisadas), 6. Qué hacer ahora, en orden, 7. Documentación, 8. Decisiones del usuario que siguen abiertas (+1 more)
 
 ## Knowledge Gaps
-- **256 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+251 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 324 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **262 isolated node(s):** `base`, `conEmpresa`, `RUTA_INICIAR_SESION`, `RUTA_NUEVA_EMPRESA`, `RUTA_INICIO` (+257 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 331 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `vitest` connect `vitest` to `database.service.ts`, `src/index.ts`, `web/package.json`, `main.ts`, `reglas.ts`?**
-  _High betweenness centrality (0.120) - this node is a cross-community bridge._
-- **What connects `name`, `private`, `version` to the rest of the system?**
-  _256 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `vitest` connect `vitest` to `database.service.ts`, `src/index.ts`, `web/package.json`, `main.ts`, `pantalla-registro.tsx`, `reglas.ts`?**
+  _High betweenness centrality (0.149) - this node is a cross-community bridge._
+- **What connects `base`, `conEmpresa`, `RUTA_INICIAR_SESION` to the rest of the system?**
+  _262 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
 - **Why does `pg` connect `vitest` to `database.service.ts`, `preparar-base.ts`, `dependencies`, `config.js`, `api/package.json`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
 - **Should `database.service.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06458635703918723 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05902980713033314 - nodes in this community are weakly interconnected._
 - **Why does `@nestjs/common` connect `database.service.ts` to `api/package.json`, `src/index.ts`, `dependencies`, `main.ts`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.09142857142857143 - nodes in this community are weakly interconnected._

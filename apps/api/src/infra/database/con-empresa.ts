@@ -43,3 +43,14 @@ export type ConEmpresa = ReturnType<typeof crearConEmpresa>;
 
 /** La transacción en curso, si el llamador está dentro de `conEmpresa`. */
 export const transaccionEnCurso = (): Transaccion | undefined => transaccionActual.getStore()?.tx;
+
+/**
+ * Abre un punto de guardado (transacción anidada) y lo registra como la transacción en curso, para que
+ * `emitir()` y `siguienteNumero()` —que exigen la transacción en curso— funcionen dentro de él.
+ * Solo se usa dentro de `conEmpresa`.
+ */
+export async function conPuntoDeGuardado<T>(tx: Transaccion, fn: (punto: Transaccion) => Promise<T>): Promise<T> {
+  const actual = transaccionActual.getStore();
+  if (!actual) throw new Error('conPuntoDeGuardado solo se usa dentro de conEmpresa.');
+  return tx.transaction((punto) => transaccionActual.run({ empresaId: actual.empresaId, tx: punto }, () => fn(punto)));
+}

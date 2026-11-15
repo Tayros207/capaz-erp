@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ARGUMENTOS_DE_CONTEXTO, rechazo, type Codigo, type ErrorDeRespuesta, type Respuesta } from '@capaz/shared';
 import type { Logger } from 'pino';
 import { CONFIG, type Config } from '../../infra/config/config.js';
-import { transaccionEnCurso, type Transaccion } from '../../infra/database/con-empresa.js';
+import { conPuntoDeGuardado, transaccionEnCurso, type Transaccion } from '../../infra/database/con-empresa.js';
 import { DatabaseService } from '../../infra/database/database.service.js';
 import { MENSAJES } from '../../infra/http/error-de-negocio.js';
 import { LOGGER } from '../../infra/logger/logger.js';
@@ -132,7 +132,7 @@ export class EjecutorDeHerramientas {
       return previo.fallo.respuesta;
     }
     try {
-      return await tx.transaction((punto) => this.correr(punto, previo.h, previo.datos, previo.hash, opciones, inicio));
+      return await conPuntoDeGuardado(tx, (punto) => this.correr(punto, previo.h, previo.datos, previo.hash, opciones, inicio));
     } catch (e) {
       const fallo = this.comoFallo(e, nombre, ctx);
       await this.escritor.registrar(tx, this.eventoDeFallo(nombre, previo.h, previo.hash, fallo, ctx, inicio));

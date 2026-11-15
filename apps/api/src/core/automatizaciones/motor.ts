@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { Accion, EjecucionDeRegla, ModoDeRegla } from '@capaz/shared';
-import type { Transaccion } from '../../infra/database/con-empresa.js';
+import { conPuntoDeGuardado, type Transaccion } from '../../infra/database/con-empresa.js';
 import { proponerBorrador } from '../borradores/proponer.js';
 import { EjecutorDeHerramientas } from '../herramientas/ejecutor.js';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
@@ -139,7 +139,7 @@ export class MotorDeReglas {
     try {
       const salidas: unknown[] = [];
       // Un punto de guardado: si una acción falla, las anteriores de esta regla se deshacen.
-      await tx.transaction(async (sp) => {
+      await conPuntoDeGuardado(tx, async (sp) => {
         for (const a of acciones) {
           const r = await this.ejecutor.ejecutarDentro(sp, a.herramienta, a.args, { ctx });
           if (!r.ok) {
