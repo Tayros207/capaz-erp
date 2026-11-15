@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { ManifiestoDeEntrada } from '@capaz/shared';
+import { manifiestoCompras } from '../../modules/compras/compras.manifest.js';
+import { manifiestoCrm } from '../../modules/crm/crm.manifest.js';
+import { manifiestoInsumos } from '../../modules/insumos/insumos.manifest.js';
+import { manifiestoOrdenes } from '../../modules/ordenes/ordenes.manifest.js';
+import { manifiestoPersonal } from '../../modules/personal/personal.manifest.js';
+import { manifiestoReportes } from '../../modules/reportes/reportes.manifest.js';
+import { manifiestoWebhooks } from '../../modules/webhooks/webhooks.manifest.js';
 import { manifiestoCotizador } from '../../modules/cotizador/cotizador.manifest.js';
 import { manifiestoRegistro } from '../../modules/registro/registro.manifest.js';
 import { CatalogoDeModulos, CatalogoInvalido, validarCatalogo } from './catalogo.js';
@@ -17,6 +24,7 @@ const mod = (codigo: string, extra: Partial<ManifiestoDeEntrada> = {}): Manifies
   permisos: [`${codigo}:ver`],
   permisosPorNivel: { completo: [`${codigo}:ver`], lectura: [`${codigo}:ver`] },
   secciones: [],
+  familia: 'ventas',
   acento: 'cian',
   icono: codigo,
   ...extra,
@@ -28,6 +36,32 @@ describe('el catálogo real', () => {
     expect(c.manifiestos.map((m) => m.codigo)).toEqual(['core', 'registro', 'cotizador']);
     expect(c.contratables().map((m) => m.codigo)).toEqual(['registro', 'cotizador']);
     expect(c.porDefecto().map((m) => [m.codigo, m.porDefecto.pruebaDias])).toEqual([['registro', 30]]);
+  });
+});
+
+describe('los nueve manifiestos', () => {
+  const todos = [manifiestoCore, manifiestoRegistro, manifiestoCotizador, manifiestoCrm, manifiestoOrdenes, manifiestoCompras, manifiestoInsumos, manifiestoPersonal, manifiestoReportes, manifiestoWebhooks];
+  it('forman un catálogo válido: el núcleo y nueve módulos con su familia y orden', () => {
+    const c = new CatalogoDeModulos(todos);
+    expect(c.contratables()).toHaveLength(9);
+    const lista = c.contratables().map((m) => `${m.familia}:${m.orden}:${m.codigo}`).sort();
+    expect(lista).toEqual([
+      'analisis:1:reportes',
+      'compras:1:compras',
+      'conexiones:1:webhooks',
+      'finanzas:1:registro',
+      'inventario:1:insumos',
+      'personal:1:personal',
+      'ventas:1:crm',
+      'ventas:2:ordenes',
+      'ventas:3:cotizador',
+    ]);
+    expect(c.porCodigo('core')?.familia).toBeNull();
+  });
+  it('los siete nuevos están en construcción y solo «registro» es por defecto', () => {
+    const c = new CatalogoDeModulos(todos);
+    expect(c.contratables().filter((m) => m.enConstruccion)).toHaveLength(9);
+    expect(c.porDefecto().map((m) => m.codigo)).toEqual(['registro']);
   });
 });
 

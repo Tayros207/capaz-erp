@@ -25,3 +25,25 @@ export function formatearSoles(valor: Centimos | number): string {
   const decimales = (abs % 100).toString().padStart(2, '0');
   return `${c < 0 ? '-' : ''}S/ ${enteros}.${decimales}`;
 }
+
+export const milesimasSchema = z.number().int().safe().brand<'Milesimas'>();
+export type Milesimas = z.infer<typeof milesimasSchema>;
+
+/**
+ * cantidad (milésimas) × precio unitario (milésimas) → céntimos, al céntimo más cercano
+ * (mitad hacia arriba). Calcula con BigInt: no pierde precisión con montos grandes.
+ * 1 unidad = 1000 milésimas; 1 sol = 100 céntimos = 1000 milésimas de sol.
+ * Por eso: céntimos = cantidad × precio / 1000 / 1000 × 100 = cantidad × precio / 10 000.
+ */
+export function importe(cantidadMilesimas: number, precioUnitarioMilesimas: number): Centimos {
+  const cantidad = BigInt(milesimasSchema.parse(cantidadMilesimas));
+  const precio = BigInt(milesimasSchema.parse(precioUnitarioMilesimas));
+  const producto = cantidad * precio;
+  const divisor = 10_000n;
+  // Mitad hacia arriba (hacia +infinito): floor((2p + d) / 2d).
+  const doble = 2n * producto + divisor;
+  const cociente = doble / (2n * divisor);
+  const resto = doble % (2n * divisor);
+  const piso = resto < 0n ? cociente - 1n : cociente;
+  return centimosSchema.parse(Number(piso));
+}

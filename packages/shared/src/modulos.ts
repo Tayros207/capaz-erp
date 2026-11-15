@@ -3,6 +3,21 @@ import { z } from 'zod';
 // Manifiesto de módulo (ARQUITECTURA-DE-MODULOS) y el acceso calculado de una persona a un módulo.
 // Los permisos son cadenas `recurso:accion`; cada permiso pertenece a un solo módulo.
 
+export const FAMILIAS = ['ventas', 'compras', 'inventario', 'produccion', 'finanzas', 'personal', 'analisis', 'conexiones'] as const;
+export type Familia = (typeof FAMILIAS)[number];
+/** Las que el menú muestra siempre, tengan o no módulos contratados. */
+export const FAMILIAS_CLASICAS = ['ventas', 'compras', 'inventario', 'finanzas', 'personal'] as const;
+export const NOMBRE_DE_FAMILIA: Record<Familia, string> = {
+  ventas: 'Ventas',
+  compras: 'Compras',
+  inventario: 'Inventario',
+  produccion: 'Producción',
+  finanzas: 'Finanzas',
+  personal: 'Personal',
+  analisis: 'Análisis',
+  conexiones: 'Conexiones',
+};
+
 export const PERMISO = /^[a-z][a-z_]*:[a-z][a-z_]*$/;
 const permisoSchema = z.string().regex(PERMISO, 'Un permiso es «recurso:accion», en minúsculas.');
 
@@ -16,6 +31,10 @@ export const manifiestoDeModuloSchema = z
     permisos: z.array(permisoSchema),
     permisosPorNivel: z.strictObject({ completo: z.array(permisoSchema), lectura: z.array(permisoSchema) }),
     secciones: z.array(z.strictObject({ id: z.string(), nombre: z.string(), ruta: z.string(), construida: z.boolean() })),
+    /** Familia del menú. Nulo SOLO en `core`. */
+    familia: z.enum(FAMILIAS).nullable(),
+    /** Posición dentro de la familia. */
+    orden: z.number().int().min(0).default(0),
     acento: z.enum(['esmeralda', 'cian', 'ambar', 'rosa', 'gris']),
     icono: z.string(),
     /** Toda empresa nueva lo recibe. `pruebaDias` nulo = activo sin prueba. */
@@ -33,6 +52,9 @@ export const manifiestoDeModuloSchema = z
     const completo = new Set(m.permisosPorNivel.completo);
     for (const p of m.permisosPorNivel.lectura) {
       if (!completo.has(p)) ctx.addIssue({ code: 'custom', message: `«${p}» está en lectura pero no en completo.` });
+    }
+    if (m.codigo === 'core' ? m.familia !== null : m.familia === null) {
+      ctx.addIssue({ code: 'custom', message: m.codigo === 'core' ? 'El núcleo no tiene familia.' : 'Todo módulo, salvo el núcleo, declara su familia.' });
     }
     if (m.dependeDe.includes(m.codigo)) ctx.addIssue({ code: 'custom', message: 'Un módulo no depende de sí mismo.' });
   });

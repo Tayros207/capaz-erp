@@ -3,17 +3,34 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import { crearConEmpresa } from '../infra/database/con-empresa.js';
 
-// Utilidades para las pruebas de integración (`*.int.spec.ts`), contra la base LOCAL `capaz_test`.
+// Utilidades para las pruebas de integración (`*.int.spec.ts`), contra la base LOCAL de pruebas (`capaz_test` o `CAPAZ_TEST_DB`).
 // Nunca contra Neon ni producción: `global-setup.ts` lo comprueba. Las pruebas no vacían tablas:
 // cada una crea empresas con ids únicos (`empresaDePrueba()`).
 
-const BASE = 'capaz_test';
+const BASE_POR_DEFECTO = 'capaz_test';
+const NOMBRE_VALIDO = /^capaz_test(_[a-z0-9]+)?$/;
 
-function urlDePruebas(nombre: string): string {
+/**
+ * La base de pruebas: `CAPAZ_TEST_DB` (cada carril usa la suya, `capaz_test_<id>`) o `capaz_test`.
+ * Lee también el `.env` de la raíz. Falla si el nombre no cumple `^capaz_test(_[a-z0-9]+)?$`.
+ */
+export function baseDePruebas(): string {
+  try {
+    process.loadEnvFile(new URL('../../../../.env', import.meta.url));
+  } catch {
+    // sin .env
+  }
+  const nombre = process.env.CAPAZ_TEST_DB || BASE_POR_DEFECTO;
+  if (!NOMBRE_VALIDO.test(nombre)) throw new Error(`CAPAZ_TEST_DB «${nombre}» no cumple ${NOMBRE_VALIDO}.`);
+  return nombre;
+}
+
+/** La URL de una variable `DATABASE_URL_*` apuntando a la base de pruebas. */
+export function urlDePruebas(nombre: string): string {
   const valor = process.env[nombre];
   if (!valor) throw new Error(`Falta ${nombre} para las pruebas de integración.`);
   const u = new URL(valor);
-  u.pathname = `/${BASE}`;
+  u.pathname = `/${baseDePruebas()}`;
   return u.toString();
 }
 
@@ -22,7 +39,7 @@ export const esLocal = (url: string): boolean => ['localhost', '127.0.0.1'].incl
 export function abrirPool(rol: 'app' | 'owner' | 'auth' | 'sistema'): pg.Pool {
   const nombre = { app: 'DATABASE_URL_APP', owner: 'DATABASE_URL_OWNER', auth: 'DATABASE_URL_AUTH', sistema: 'DATABASE_URL_SISTEMA' }[rol];
   const url = urlDePruebas(nombre);
-  if (!esLocal(url)) throw new Error(`${nombre} no es local: las pruebas solo corren contra ${BASE} en localhost.`);
+  if (!esLocal(url)) throw new Error(`${nombre} no es local: las pruebas solo corren contra ${baseDePruebas()} en localhost.`);
   return new pg.Pool({ connectionString: url, max: 3 });
 }
 

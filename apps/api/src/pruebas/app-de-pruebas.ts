@@ -5,10 +5,10 @@ import type { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from '../app.module.js';
 import { configurarApp } from '../configurar-app.js';
 import { crearLogger } from '../infra/logger/logger.js';
-import { esLocal } from './base-de-pruebas.js';
+import { baseDePruebas, esLocal } from './base-de-pruebas.js';
 
 // Servidor real (Nest + Express + Better Auth) en un puerto libre y contra la base LOCAL
-// `capaz_test`, para pruebas de integración por HTTP real con cookies (no son e2e de navegador).
+// de pruebas (`CAPAZ_TEST_DB`, por defecto `capaz_test`), para pruebas de integración por HTTP real con cookies (no son e2e de navegador).
 
 async function puertoLibre(): Promise<number> {
   return new Promise((resolver, rechazar) => {
@@ -45,10 +45,11 @@ export async function levantarApp(opciones: { alta?: 'abierta' | 'plataforma'; i
     const v = process.env[nombre];
     if (!v) continue;
     const u = new URL(v);
-    if (!esLocal(v)) throw new Error(`${nombre} no es local: las pruebas solo corren contra capaz_test.`);
-    u.pathname = '/capaz_test';
+    if (!esLocal(v)) throw new Error(`${nombre} no es local: las pruebas solo corren contra ${baseDePruebas()}.`);
+    u.pathname = `/${baseDePruebas()}`;
     process.env[nombre] = u.toString();
   }
+  process.env.RELEVO_ACTIVO = 'false';
   process.env.NODE_ENV = process.env.DEBUG_PRUEBAS ? 'development' : 'test';
   process.env.BETTER_AUTH_URL = `http://127.0.0.1:${puerto}`;
   process.env.ORIGENES_PERMITIDOS = `http://127.0.0.1:${puerto}`;

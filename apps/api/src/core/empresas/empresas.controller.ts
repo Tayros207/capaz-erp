@@ -65,7 +65,7 @@ export class EmpresasController {
         modulos: this.catalogo.contratables().flatMap((m) => {
           const acceso = ctx.modulos.find((a) => a.codigo === m.codigo);
           return acceso
-            ? [{ codigo: m.codigo, nombre: m.nombre, descripcion: m.descripcion, acento: m.acento, icono: m.icono, enConstruccion: m.enConstruccion, secciones: m.secciones, acceso }]
+            ? [{ codigo: m.codigo, nombre: m.nombre, descripcion: m.descripcion, familia: m.familia, orden: m.orden, acento: m.acento, icono: m.icono, enConstruccion: m.enConstruccion, secciones: m.secciones, acceso }]
             : [];
         }),
         permisos: [...ctx.permisos],

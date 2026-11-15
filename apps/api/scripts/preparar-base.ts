@@ -1,13 +1,27 @@
 import pg from 'pg';
-import { ROLES, baseDe, credencialesDeRoles, urlDeAdmin, urlDelDueno, type Rol } from './config.ts';
+import { ROLES, baseDe, credencialesDeRoles, urlDeAdmin, urlDelDueno, variable, type Rol } from './config.ts';
 
-// `pnpm db:preparar`: deja las bases `capaz` y `capaz_test` con sus cuatro roles (ADR-011).
+// `pnpm db:preparar`: deja las bases `capaz` y `capaz_test` (y `CAPAZ_TEST_DB`, si existe) con sus cuatro roles (ADR-011).
 // Corre con el superusuario del contenedor LOCAL (DATABASE_URL_ADMIN) y es idempotente.
 // En Neon no hay superusuario: allí el dueño del proyecto crea los roles con `--solo-roles`
 // usando DATABASE_URL_ADMIN = URL de `neondb_owner` (fase 10a).
 //
 // Los roles se crean SIEMPRE por SQL y sin SUPERUSER, BYPASSRLS ni CREATEROLE: los que crea la
 // consola de algunos proveedores traen BYPASSRLS y la RLS no les aplicaría.
+
+const NOMBRE_DE_PRUEBAS = /^capaz_test(_[a-z0-9]+)?$/;
+
+/** La base de pruebas de este carril (`CAPAZ_TEST_DB`), si la hay. La lectura del entorno es de `config.ts`. */
+function baseDePruebasDelCarril(): string | null {
+  let nombre: string;
+  try {
+    nombre = variable('CAPAZ_TEST_DB');
+  } catch {
+    return null;
+  }
+  if (!NOMBRE_DE_PRUEBAS.test(nombre)) throw new Error(`CAPAZ_TEST_DB «${nombre}» no cumple ${NOMBRE_DE_PRUEBAS}.`);
+  return nombre;
+}
 
 const ident = (s: string) => `"${s.replace(/"/g, '""')}"`;
 const literal = (s: string) => `'${s.replace(/'/g, "''")}'`;
@@ -37,7 +51,7 @@ async function verificarSinPrivilegios(c: pg.Client): Promise<void> {
 
 export async function prepararBase(opciones: { soloRoles?: boolean } = {}): Promise<void> {
   const credenciales = credencialesDeRoles();
-  const bases = [baseDe(urlDelDueno()), 'capaz_test'];
+  const bases = [...new Set([baseDe(urlDelDueno()), 'capaz_test', baseDePruebasDelCarril()].filter((b): b is string => b !== null))];
   const c = new pg.Client({ connectionString: urlDeAdmin() });
   await c.connect();
   try {

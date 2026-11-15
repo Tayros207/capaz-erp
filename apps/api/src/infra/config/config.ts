@@ -6,6 +6,10 @@ import { z } from 'zod';
 
 const url = z.url();
 const secreto = z.string().min(32);
+/** 32 bytes en base64 (clave de cifrado de las conexiones). */
+const claveDe32Bytes = z.string().refine((v) => /^[A-Za-z0-9+/]+={0,2}$/.test(v) && Buffer.from(v, 'base64').length === 32, {
+  error: 'Debe ser 32 bytes en base64.',
+});
 
 export const esquemaDeConfig = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -32,6 +36,14 @@ export const esquemaDeConfig = z.object({
   ALTA_DE_EMPRESAS: z.enum(['plataforma', 'abierta']).default('plataforma'),
   /** Intentos de inicio de sesión o registro por minuto y por dirección (limitador de Better Auth). */
   INTENTOS_DE_ACCESO: z.coerce.number().int().min(1).max(1000).default(5),
+  /** Activa el relevo (barrido periódico de eventos y tareas). Las pruebas lo apagan. */
+  RELEVO_ACTIVO: z.stringbool().default(true),
+  RELEVO_BARRIDO_SEGUNDOS: z.coerce.number().int().min(1).max(86_400).default(60),
+  /** Clave de cifrado de las credenciales de conexiones. Opcional hasta la fase 11a; luego obligatoria en producción. */
+  CONEXIONES_CLAVE: claveDe32Bytes.optional(),
+  CONEXIONES_CLAVE_VERSION: z.coerce.number().int().min(1).default(1),
+  /** Solo las pruebas lo activan, para el servidor simulado de conexiones. */
+  PERMITIR_DESTINOS_LOCALES: z.stringbool().default(false),
 });
 
 export type Config = z.infer<typeof esquemaDeConfig>;

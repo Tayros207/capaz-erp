@@ -14,6 +14,8 @@ export const manifiestoRegistro: ManifiestoDeEntrada = {
     lectura: ['registro:ver', 'registro:reportes'],
   },
   secciones: [],
+  familia: 'finanzas',
+  orden: 1,
   acento: 'esmeralda',
   icono: 'registro',
   // Decisión comercial provisional, editable como dato: toda empresa nueva recibe 30 días de prueba.

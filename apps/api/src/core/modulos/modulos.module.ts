@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import type { ManifiestoDeEntrada } from '@capaz/shared';
+import { ServicioDeAcceso } from './acceso.service.js';
 import { CatalogoDeModulos, MANIFIESTOS } from './catalogo.js';
 import { manifiestoCore } from './manifiesto-core.js';
 import { ModulosService } from './modulos.service.js';
@@ -18,8 +19,9 @@ export class ModulosModule {
         { provide: MANIFIESTOS, useValue: [manifiestoCore, ...manifiestos] },
         { provide: CatalogoDeModulos, useFactory: (m: ManifiestoDeEntrada[]) => new CatalogoDeModulos(m), inject: [MANIFIESTOS] },
         ModulosService,
+        ServicioDeAcceso,
       ],
-      exports: [CatalogoDeModulos, ModulosService],
+      exports: [CatalogoDeModulos, ModulosService, ServicioDeAcceso],
     };
   }
 }

@@ -13,6 +13,8 @@ export const manifiestoCotizador: ManifiestoDeEntrada = {
     lectura: ['cotizador:ver'],
   },
   secciones: [],
+  familia: 'ventas',
+  orden: 3,
   acento: 'cian',
   icono: 'cotizador',
   enConstruccion: true,

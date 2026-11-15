@@ -63,7 +63,18 @@ describe('empresa nueva', () => {
     const yo = await c.get('/api/v1/yo');
     expect(modulo(yo, 'registro')).toMatchObject({ motivo: 'prueba', puedeEntrar: true, puedeEscribir: true, diasDePrueba: 30 });
     expect(modulo(yo, 'cotizador')).toMatchObject({ motivo: 'no_contratado', puedeEntrar: false, visible: true });
-    expect(yo.cuerpo.datos.modulos.map((m: any) => m.codigo)).toEqual(['registro', 'cotizador']);
+    expect(yo.cuerpo.datos.modulos.map((m: any) => m.codigo)).toEqual(['registro', 'cotizador', 'crm', 'ordenes', 'compras', 'insumos', 'personal', 'reportes', 'webhooks']);
+    expect(yo.cuerpo.datos.modulos.map((m: any) => `${m.codigo}:${m.familia}:${m.orden}`)).toEqual([
+      'registro:finanzas:1',
+      'cotizador:ventas:3',
+      'crm:ventas:1',
+      'ordenes:ventas:2',
+      'compras:compras:1',
+      'insumos:inventario:1',
+      'personal:personal:1',
+      'reportes:analisis:1',
+      'webhooks:conexiones:1',
+    ]);
   });
 
   it('el aprovisionamiento es idempotente: repetirlo no reinicia ni duplica la contratación', async () => {
