@@ -3,3 +3,4 @@
 export * from './core.js';
 export * from './core-modulos.js';
 export * from './auth.js';
+export * from './core-herramientas.js';

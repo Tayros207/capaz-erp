@@ -43,6 +43,13 @@
       "when": 1794678706519,
       "tag": "0005_auth_better_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794780566215,
+      "tag": "0006_herramientas",
+      "breakpoints": true
     }
   ]
 }

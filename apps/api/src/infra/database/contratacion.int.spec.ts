@@ -135,6 +135,8 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.empresa_modulos_eventos': ['select', 'insert'],
     'core.solicitudes_modulo': ['select'],
     'core.plataforma_admins': ['select', 'insert', 'delete'],
+    'core.confirmaciones_usadas': ['delete'],
+    'core.idempotencia': ['delete'],
   };
 
   it('ninguna otra tabla es accesible, y las permitidas tienen justo esos permisos', async () => {
@@ -147,6 +149,28 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     for (const r of rows) if (r.tiene) (reales[r.tabla] ??= []).push(r.priv);
     const ordenar = (o: Record<string, string[]>) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]));
     expect(ordenar(reales)).toEqual(ordenar(PERMITIDO));
+  });
+
+  // Permisos SOLO por columna (no se ven con has_table_privilege): tabla -> privilegio -> columnas.
+  const PERMITIDO_POR_COLUMNA: Record<string, Record<string, string[]>> = {
+    'core.solicitudes_modulo': { update: ['atendido_en', 'estado'] },
+    'core.confirmaciones_usadas': { select: ['tenant_id', 'usado_en'] },
+    'core.idempotencia': { select: ['creado_en', 'tenant_id'] },
+  };
+
+  it('los permisos por columna de capaz_sistema son exactamente los previstos', async () => {
+    const { rows } = await owner.query<{ tabla: string; priv: string; columna: string }>(`
+      select cp.table_schema || '.' || cp.table_name as tabla, lower(cp.privilege_type) as priv, cp.column_name as columna
+      from information_schema.column_privileges cp
+      join pg_class c on c.relname = cp.table_name and c.relnamespace = cp.table_schema::regnamespace
+      where cp.grantee = 'capaz_sistema' and cp.table_schema in ('core', 'registro', 'cotizador', 'auth')
+        and lower(cp.privilege_type) in ('select', 'insert', 'update', 'delete')
+        and not has_table_privilege('capaz_sistema', c.oid, cp.privilege_type)`);
+    const reales: Record<string, Record<string, string[]>> = {};
+    for (const r of rows) ((reales[r.tabla] ??= {})[r.priv] ??= []).push(r.columna);
+    const ordenar = (o: Record<string, Record<string, string[]>>) =>
+      Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)).map(([t, p]) => [t, Object.fromEntries(Object.entries(p).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]))]));
+    expect(ordenar(reales)).toEqual(ordenar(PERMITIDO_POR_COLUMNA));
   });
 
   it('no puede leer datos de negocio ni la nota de una solicitud para modificarla', async () => {
