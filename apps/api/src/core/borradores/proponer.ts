@@ -23,6 +23,21 @@ export class HerramientaDeBorradorDesconocida extends Error {
   }
 }
 
+export class HerramientaConSecretos extends Error {
+  constructor(nombre: string) {
+    super(`«${nombre}» maneja credenciales o secretos: no se puede proponer como borrador.`);
+    this.name = 'HerramientaConSecretos';
+  }
+}
+
+/** Herramientas cuyos argumentos o resultado llevan credenciales: un borrador las guardaría en claro. */
+export const HERRAMIENTAS_CON_SECRETOS: readonly string[] = [
+  'conexion_configurar',
+  'clave_api_crear',
+  'webhooks_salientes_crear',
+  'webhooks_salientes_editar',
+];
+
 /**
  * Guarda una llamada a herramienta pendiente de aprobación. Solo comprueba que la herramienta existe:
  * los argumentos se validan al aprobar (un dictado puede venir incompleto). La empresa sale de la
@@ -31,6 +46,7 @@ export class HerramientaDeBorradorDesconocida extends Error {
 export async function proponerBorrador(tx: Transaccion, b: PropuestaDeBorrador): Promise<{ id: string }> {
   const h = datosDeHerramienta(b.herramienta);
   if (!h) throw new HerramientaDeBorradorDesconocida(b.herramienta);
+  if (HERRAMIENTAS_CON_SECRETOS.includes(b.herramienta)) throw new HerramientaConSecretos(b.herramienta);
   const [fila] = await tx
     .insert(borradores)
     .values({

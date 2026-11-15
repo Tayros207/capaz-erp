@@ -236,3 +236,12 @@ describe('lectura y aislamiento', () => {
     expect(codigoDe(await llamar('borradores_listar', { cursor: 'basura' }))).toBe('argumentos_invalidos');
   });
 });
+
+describe('herramientas con secretos', () => {
+  it('no se pueden proponer como borrador', async () => {
+    const { HERRAMIENTAS_CON_SECRETOS } = await import('./proponer.js');
+    expect(HERRAMIENTAS_CON_SECRETOS).toEqual(
+      expect.arrayContaining(['conexion_configurar', 'clave_api_crear', 'webhooks_salientes_crear', 'webhooks_salientes_editar']),
+    );
+  });
+});

@@ -58,9 +58,9 @@ describe('los nueve manifiestos', () => {
     ]);
     expect(c.porCodigo('core')?.familia).toBeNull();
   });
-  it('los siete nuevos están en construcción y solo «registro» es por defecto', () => {
+  it('los ocho nuevos (menos webhooks) están en construcción y solo «registro» es por defecto', () => {
     const c = new CatalogoDeModulos(todos);
-    expect(c.contratables().filter((m) => m.enConstruccion)).toHaveLength(9);
+    expect(c.contratables().filter((m) => m.enConstruccion)).toHaveLength(8);
     expect(c.porDefecto().map((m) => m.codigo)).toEqual(['registro']);
   });
 });

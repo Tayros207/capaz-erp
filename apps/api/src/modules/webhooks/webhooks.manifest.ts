@@ -20,5 +20,4 @@ export const manifiestoWebhooks: ManifiestoDeEntrada = {
   acento: 'gris',
   icono: 'webhooks',
   // Se quita junto con el ajuste de `catalogo.spec.ts` (ya no son nueve en construcción): ver informe del carril S7.
-  enConstruccion: true,
 };
