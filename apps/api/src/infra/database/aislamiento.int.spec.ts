@@ -35,6 +35,41 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   'core.clientes': { sql: `insert into core.clientes (tenant_id, clase, nombre, nombre_normalizado, creado_por) values ($1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
   'core.productos': { sql: `insert into core.productos (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
   'core.sucursales': { sql: `insert into core.sucursales (tenant_id, codigo, nombre) values ($1, 'LIM', 'Lima')`, modo: 'completo' },
+  'core.conexiones': { sql: `insert into core.conexiones (id, tenant_id, conector, creado_por) values (md5($1::text || 'c1')::uuid, $1, 'ejemplo', 'u1')`, modo: 'completo' },
+  'core.referencias_externas': { sql: `insert into core.referencias_externas (tenant_id, conector, entidad, id_interno, id_externo) values ($1, 'ejemplo', 'cliente', 'i1', 'x1')`, modo: 'completo' },
+  'core.sincronizaciones': {
+    sql: `insert into core.sincronizaciones (tenant_id, conector, conexion_id, tipo, entidad, iniciado_por) values ($1, 'ejemplo', md5($1::text || 'c1')::uuid, 'importar', 'cliente', 'u1')`,
+    modo: 'completo',
+  },
+  'core.claves_api': {
+    sql: `insert into core.claves_api (hash, id, tenant_id, nombre, prefijo, creado_por) values ('hash-' || $1::text, md5($1::text || 'a1')::uuid, $1, 'Clave', 'cpz_', 'u1')`,
+    modo: 'completo',
+  },
+  'core.webhooks_entrantes': {
+    sql: `insert into core.webhooks_entrantes (tenant_id, clave_api_id, evento, clave_idempotencia, carga) values ($1, md5($1::text || 'a1')::uuid, 'ejemplo.recibido', 'k1', '{}')`,
+    modo: 'completo',
+  },
+  'core.webhooks_salientes': {
+    sql: `insert into core.webhooks_salientes (id, tenant_id, nombre, url, eventos, secreto_cifrado, clave_version, creado_por) values (md5($1::text || 'b1')::uuid, $1, 'Hook', 'https://ejemplo.test/h', array['x'], 'cifrado', 1, 'u1')`,
+    modo: 'completo',
+  },
+  'core.webhooks_envios': {
+    sql: `insert into core.webhooks_envios (tenant_id, webhook_id, evento_id, tipo) values ($1, md5($1::text || 'b1')::uuid, '00000000-0000-7000-8000-000000000002', 'ejemplo.creado')`,
+    modo: 'completo',
+  },
+  'core.borradores': {
+    sql: `insert into core.borradores (tenant_id, herramienta, modulo, args, args_originales, resumen, origen, propuesto_por) values ($1, 'ejemplo', 'core', '{}', '{}', 'Resumen', 'texto', 'u1')`,
+    modo: 'completo',
+  },
+  'core.reglas_automaticas': {
+    sql: `insert into core.reglas_automaticas (id, tenant_id, nombre, disparador_tipo, disparador, acciones, creado_por) values (md5($1::text || 'd1')::uuid, $1, 'Regla', 'manual', '{}', '[]', 'u1')`,
+    modo: 'completo',
+  },
+  'core.reglas_ejecuciones': {
+    sql: `insert into core.reglas_ejecuciones (tenant_id, regla_id, disparado_por, resultado) values ($1, md5($1::text || 'd1')::uuid, '{}', 'ok')`,
+    modo: 'insercion',
+  },
+  'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
 };
 
 let app: pg.Pool;
@@ -46,6 +81,7 @@ beforeAll(async () => {
   app = abrirPool('app');
   owner = abrirPool('owner');
   await owner.query(`insert into core.modulos (codigo, nombre) values ('ejemplo', 'Ejemplo') on conflict do nothing`);
+  await owner.query(`insert into core.conectores (codigo, nombre, autenticacion) values ('ejemplo', 'Ejemplo', 'ninguna') on conflict do nothing`);
   // empresa_modulos va antes que usuario_modulos (llave compuesta).
   const orden = Object.keys(EJEMPLOS).sort((a, b) => (a === 'core.empresa_modulos' ? -1 : b === 'core.empresa_modulos' ? 1 : 0));
   for (const tabla of orden) {
