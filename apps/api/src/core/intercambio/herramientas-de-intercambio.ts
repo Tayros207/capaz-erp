@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { Inject, Injectable, type OnModuleInit } from '@nestjs/common';
 import { exito, MAX_DETALLES_DE_FILA, rechazo, type EntidadDeIntercambio, type FilaConMotivo } from '@capaz/shared';
 import type { Transaccion } from '../../infra/database/con-empresa.js';
-import { EscritorDeAuditoria } from '../auditoria/escritor.js';
+import { EjecutorDeHerramientas } from '../herramientas/ejecutor.js';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import { definirHerramienta, type ContextoDeHerramienta } from '../herramientas/tipos.js';
 import { AYUDAS } from './ayudas.js';
@@ -135,11 +135,11 @@ async function crear(
 export class HerramientasDeIntercambio implements OnModuleInit {
   constructor(
     @Inject(RegistroDeHerramientas) private readonly registro: RegistroDeHerramientas,
-    @Inject(EscritorDeAuditoria) private readonly escritor: EscritorDeAuditoria,
+    @Inject(EjecutorDeHerramientas) private readonly ejecutor: EjecutorDeHerramientas,
   ) {}
 
   onModuleInit(): void {
-    this.registro.agregar(crearHerramientasDeIntercambio(new Invocador(this.registro, this.escritor)));
+    this.registro.agregar(crearHerramientasDeIntercambio(new Invocador(this.ejecutor)));
   }
 }
 

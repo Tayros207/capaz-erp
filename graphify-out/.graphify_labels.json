@@ -1,6 +1,6 @@
 {
   "0": "AGENTS.md (reglas del constructor)",
-  "1": "database.service.ts",
+  "1": "con-empresa.ts",
   "2": "src/index.ts",
   "3": "web/package.json",
   "4": "main.ts",
@@ -41,11 +41,15 @@
   "39": "prettier@^3.4.2",
   "40": "@types/express@^5.0.0",
   "41": "solicitar.ts",
-  "42": "drizzle-kit",
+  "42": "ejecutor.ts",
   "43": "migrar.d.ts",
   "44": "favicon.svg (purple lightning-bolt logo, 48x46 favicon)",
   "45": "Inject",
-  "46": "oxlint@^1.58.0",
-  "47": "@types/pg@^8.15.0",
-  "48": "@vitest/coverage-v8@^4.1.2"
+  "46": "EjecutorDeHerramientas",
+  "47": "motor.ts",
+  "48": "@vitest/coverage-v8@^4.1.2",
+  "49": "Transaccion",
+  "50": "@nestjs/testing@^12.4.2",
+  "51": "@types/node@^24.0.0",
+  "52": "typescript@^6.0.3"
 }

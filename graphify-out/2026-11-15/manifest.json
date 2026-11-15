@@ -912,9 +912,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/miembros/miembros.module.ts": {
-    "mtime": 1794780380.3063722,
-    "seen": 1794781771.1043582,
-    "ast_hash": "e43866b8d438b621a0ff79f8cefad63b",
+    "mtime": 1794783187.1635826,
+    "seen": 1794784071.9690766,
+    "ast_hash": "e40847661c8c70e8bdae819001eeb6a8",
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/acceso.service.ts": {
@@ -1284,9 +1284,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/acceso/pantalla-iniciar-sesion.tsx": {
-    "mtime": 1794780462.2797303,
-    "seen": 1794781771.1046653,
-    "ast_hash": "62219ae5752edaddd773c28abc47a56b",
+    "mtime": 1794784026.8078632,
+    "seen": 1794784071.9695399,
+    "ast_hash": "c089364a6350f71d786ad8a0784f367f",
     "semantic_hash": ""
   },
   "apps/web/src/core/acceso/pantalla-nueva-empresa.tsx": {
@@ -1296,9 +1296,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/acceso/pantalla-registro.tsx": {
-    "mtime": 1794780462.2797303,
-    "seen": 1794781771.1046693,
-    "ast_hash": "f5739115db10a7ed7a01ea995fa5cf41",
+    "mtime": 1794784026.8080177,
+    "seen": 1794784071.969546,
+    "ast_hash": "00eb5336550a41e11db0805eaef725eb",
     "semantic_hash": ""
   },
   "apps/web/src/core/acceso/rutas.tsx": {
@@ -1332,15 +1332,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/ajustes/sucursales/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1046832,
-    "ast_hash": "d73da544db12c2f6ee12fa60d1d43353",
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.969605,
+    "ast_hash": "ece7f710f4194049e5b94bc3375d501e",
     "semantic_hash": ""
   },
   "apps/web/src/core/ajustes/usuarios/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1046855,
-    "ast_hash": "5c5f98e340b1cb08a731570eb1d33d74",
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.9696262,
+    "ast_hash": "ba24a1bb3e9babfa4e2c4930819676ff",
     "semantic_hash": ""
   },
   "apps/web/src/core/automatizaciones/rutas.tsx": {
@@ -1356,9 +1356,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1047175,
-    "ast_hash": "228d38e3829a235ef287aa6b9251863c",
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696622,
+    "ast_hash": "5850fe6fd7cd0ec79d18943a3ef1722d",
     "semantic_hash": ""
   },
   "apps/web/src/core/conecta/rutas.tsx": {
@@ -1380,15 +1380,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/invitaciones/rutas.tsx": {
-    "mtime": 1794780243.5835583,
-    "seen": 1794781771.1047263,
-    "ast_hash": "45bc37acd429d50d888326af4b804679",
+    "mtime": 1794784011.473078,
+    "seen": 1794784071.9696946,
+    "ast_hash": "1d0fa8dd762f2deeca4ab59f53503d85",
     "semantic_hash": ""
   },
   "apps/web/src/core/productos/rutas.tsx": {
-    "mtime": 1794780243.5835583,
-    "seen": 1794781771.1047282,
-    "ast_hash": "5ad21047c54bee5bd81abb05a10ea575",
+    "mtime": 1794783667.2851982,
+    "seen": 1794784071.969722,
+    "ast_hash": "52945ac0c3acb1ec270aad7bc5435caf",
     "semantic_hash": ""
   },
   "apps/web/src/modules/compras/rutas.tsx": {
@@ -1494,15 +1494,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/shared/sesion/guarda.spec.ts": {
-    "mtime": 1794780243.5897913,
-    "seen": 1794781771.1047742,
-    "ast_hash": "d28cbee00afccfd7d912cab16555cc24",
+    "mtime": 1794784026.8081462,
+    "seen": 1794784071.9700153,
+    "ast_hash": "f6c71e7a9b66fcd09aa44bb3407c58c5",
     "semantic_hash": ""
   },
   "apps/web/src/shared/sesion/guarda.ts": {
-    "mtime": 1794780243.5900667,
-    "seen": 1794781771.1047764,
-    "ast_hash": "a84c821b2f26af350344b84cd17155f4",
+    "mtime": 1794784026.80757,
+    "seen": 1794784071.9700189,
+    "ast_hash": "c65c4464964b899f1126b126c031f5a9",
     "semantic_hash": ""
   },
   "apps/web/src/shared/sesion/sesion.spec.ts": {
@@ -1836,9 +1836,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/miembros.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.104912,
-    "ast_hash": "5c699e542e50a025d3cc1e57c2505d98",
+    "mtime": 1794783187.1639662,
+    "seen": 1794784071.9702482,
+    "ast_hash": "a7511a2d93621a395940c02b45e061a2",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/modulos.ts": {
@@ -2493,6 +2493,318 @@
     "mtime": 1794783033.6922297,
     "seen": 1794783156.7912273,
     "ast_hash": "507587bb5d81265b601289c32a766007",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/cabeceras.ts": {
+    "mtime": 1794783187.1626189,
+    "seen": 1794784071.9690433,
+    "ast_hash": "c098cddc038e236576d9243a40b463fe",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/comunes.ts": {
+    "mtime": 1794783187.1626189,
+    "seen": 1794784071.9690475,
+    "ast_hash": "95b5ca003d67239e4cae82e7989efb9f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/herramientas-de-miembros.ts": {
+    "mtime": 1794783187.1627717,
+    "seen": 1794784071.969051,
+    "ast_hash": "9256a1d830f6c869b83528f40bbb1f6b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/invitacion-anular.ts": {
+    "mtime": 1794783187.1628778,
+    "seen": 1794784071.9690547,
+    "ast_hash": "fe8051ba250e6d6a3d8eaa3a5d1157ca",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/invitacion-crear.ts": {
+    "mtime": 1794783187.1629581,
+    "seen": 1794784071.9690576,
+    "ast_hash": "631fec88b2ce4bf48ca736a37b477baf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/invitaciones-listar.ts": {
+    "mtime": 1794783187.1630304,
+    "seen": 1794784071.9690604,
+    "ast_hash": "0ff92304fe3b3b5383c6d97950061b3e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/miembro-asignar-modulo.ts": {
+    "mtime": 1794783187.1631074,
+    "seen": 1794784071.9690628,
+    "ast_hash": "9202d1483e04a88121adf8396343918f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/miembro-cambiar-rol.ts": {
+    "mtime": 1794783187.163186,
+    "seen": 1794784071.9690657,
+    "ast_hash": "22e9f8347b67b69252d026e42f8a1e19",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/miembro-quitar.ts": {
+    "mtime": 1794783187.163271,
+    "seen": 1794784071.9690683,
+    "ast_hash": "3e6a9af2908a5df7fb46448e43ad2baa",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/herramientas/miembros-listar.ts": {
+    "mtime": 1794783187.1633453,
+    "seen": 1794784071.969071,
+    "ast_hash": "9df8cd8112b60844cf627b292922a19d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/miembros.int.spec.ts": {
+    "mtime": 1794783187.163472,
+    "seen": 1794784071.9690733,
+    "ast_hash": "5206405f9fe6f11b72ea3d94c1b94a17",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/miembros.service.ts": {
+    "mtime": 1794783187.1636775,
+    "seen": 1794784071.9690793,
+    "ast_hash": "508edb28ad9492711c74eebb133d8ac1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/reglas.spec.ts": {
+    "mtime": 1794783187.163755,
+    "seen": 1794784071.9690819,
+    "ast_hash": "4e15181c25611a98c98cbbd6dc7a15af",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/miembros/reglas.ts": {
+    "mtime": 1794783187.163755,
+    "seen": 1794784071.9690847,
+    "ast_hash": "401e27b643c42cbceeb7e57251a91cb4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/sucursales/api.ts": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.969591,
+    "ast_hash": "6c9ad7e24ceb6413ab463c2e6f146323",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/sucursales/hoja-sucursal.tsx": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9695935,
+    "ast_hash": "4464ba2bc72a9263de5afa318eaa9569",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/sucursales/logica.spec.ts": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9695966,
+    "ast_hash": "200b2f293b06f762d1f3a8307ce24b2b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/sucursales/logica.ts": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9695995,
+    "ast_hash": "6b2445dfa400f28509fa9c1a563db1eb",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/sucursales/pantalla-sucursales.tsx": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9696019,
+    "ast_hash": "22dd24abfa9eb61586c35b596c180053",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/api.ts": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.9696074,
+    "ast_hash": "e3820ba20bb064c04c7eb8dd12af1b18",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/copiar-enlace.ts": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.9696107,
+    "ast_hash": "753178abac89b798540da461ac372aa5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/hoja-invitar.tsx": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.9696136,
+    "ast_hash": "bea044148b752118f41ec118fbc2e57f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/hoja-miembro.tsx": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.969616,
+    "ast_hash": "4d66b585df83bda068e3b0e4a5cce698",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/logica.spec.ts": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.969618,
+    "ast_hash": "3338babc3e717b5d0b292c7bf7dd8afe",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/logica.ts": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.9696207,
+    "ast_hash": "83d26f1feca5e9ec505bde9078851c7f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/usuarios/pantalla-usuarios.tsx": {
+    "mtime": 1794784011.4720778,
+    "seen": 1794784071.969623,
+    "ast_hash": "e56d1ac1a706b58d20eadae2b6ec14a0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/api.ts": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9696357,
+    "ast_hash": "476c9f9d5e6ee9e5743480614ade2e57",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/candidatas.tsx": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.9696386,
+    "ast_hash": "46f4421949fa7bff6a8991ced5e343bb",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/claves.ts": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.969641,
+    "ast_hash": "4724197867abd4f4475b8a787c11b905",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/consultas.tsx": {
+    "mtime": 1794783667.2831984,
+    "seen": 1794784071.969644,
+    "ast_hash": "02d92eb627bfd961b908c9463e35e169",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/formulario-cliente.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.969646,
+    "ast_hash": "55067b59709c2197d20daaa1c0fdb489",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/hoja-nuevo-cliente.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696484,
+    "ast_hash": "49b48c0b63c2366e53ba6eac61cc4294",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/logica.spec.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696507,
+    "ast_hash": "f7927c20643a007254cd858dc1c134e5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/logica.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696531,
+    "ast_hash": "3936b96ab4c55801ba3550e2e23c7fd2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/pantalla-ficha.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.969656,
+    "ast_hash": "628ca7f9ebc28d0109a10734b44a9b0a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/pantalla-lista.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696589,
+    "ast_hash": "48e9623a065ffdaab2b17ab1a91cf707",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/clientes/use-retardo.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696648,
+    "ast_hash": "a6a5107d62130cafd57b98196425ad58",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/invitaciones/api.ts": {
+    "mtime": 1794784011.473078,
+    "seen": 1794784071.9696784,
+    "ast_hash": "bf02681ad6c55872e3e330685c637dc3",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/invitaciones/logica.spec.ts": {
+    "mtime": 1794784011.473078,
+    "seen": 1794784071.9696808,
+    "ast_hash": "865f733cf54b8a18a3a9298269d19f7c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/invitaciones/logica.ts": {
+    "mtime": 1794784011.473078,
+    "seen": 1794784071.969689,
+    "ast_hash": "aa83132ed4919668e2d6563a02f670ca",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/invitaciones/pantalla-invitacion.tsx": {
+    "mtime": 1794784011.473078,
+    "seen": 1794784071.9696918,
+    "ast_hash": "90da63dba04cf41db8a005f2b6d957f3",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/api.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696972,
+    "ast_hash": "f75d98132fa6523b1cc5dd72bddee40f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/candidatas.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9696999,
+    "ast_hash": "435398e112ff8946766fa2a4f13e253c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/claves.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9697022,
+    "ast_hash": "7535349716d866bc2f8665498eba38a3",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/consultas.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9697046,
+    "ast_hash": "02d92eb627bfd961b908c9463e35e169",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/formulario-producto.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.969707,
+    "ast_hash": "465dc106cc1af7ff67949fd11f699670",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/hoja-nuevo-producto.tsx": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9697094,
+    "ast_hash": "152d243f52a8b58bb73c128409c5375b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/logica.spec.ts": {
+    "mtime": 1794783667.2841983,
+    "seen": 1794784071.9697115,
+    "ast_hash": "b6739dbbf8f7fa054e0b984a2d14c191",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/logica.ts": {
+    "mtime": 1794783667.2851982,
+    "seen": 1794784071.9697142,
+    "ast_hash": "7cbfedb367d1138afccb0b073812bf28",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/pantalla-ficha.tsx": {
+    "mtime": 1794783667.2851982,
+    "seen": 1794784071.9697163,
+    "ast_hash": "b94e5f1a390a784511f3d1b58aec7dc8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/pantalla-lista.tsx": {
+    "mtime": 1794783667.2851982,
+    "seen": 1794784071.9697185,
+    "ast_hash": "d8573c46cef3560982c7082d9d9d6af2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/productos/use-retardo.ts": {
+    "mtime": 1794783667.2851982,
+    "seen": 1794784071.9697244,
+    "ast_hash": "a6a5107d62130cafd57b98196425ad58",
     "semantic_hash": ""
   }
 }
