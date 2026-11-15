@@ -22,7 +22,7 @@ export class DatabaseService implements OnModuleDestroy {
   constructor(@Inject(CONFIG) config: Config) {
     this.aplicacion = new pg.Pool({ connectionString: config.DATABASE_URL_APP, max: 10 });
     this.auth = new pg.Pool({ connectionString: config.DATABASE_URL_AUTH, max: 5 });
-    this.sistema = new pg.Pool({ connectionString: config.DATABASE_URL_SISTEMA, max: 3 });
+    this.sistema = new pg.Pool({ connectionString: config.DATABASE_URL_SISTEMA, max: 5 });
     this.db = drizzle(this.aplicacion);
     this.conEmpresa = crearConEmpresa(this.db);
   }
