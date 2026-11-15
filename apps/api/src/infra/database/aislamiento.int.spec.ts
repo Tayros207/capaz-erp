@@ -32,6 +32,9 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     modo: 'insercion',
   },
   'core.contadores': { sql: `insert into core.contadores (tenant_id, clave, serie, anio) values ($1, 'ejemplo', '', 2026)`, modo: 'completo' },
+  'core.clientes': { sql: `insert into core.clientes (tenant_id, clase, nombre, nombre_normalizado, creado_por) values ($1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
+  'core.productos': { sql: `insert into core.productos (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
+  'core.sucursales': { sql: `insert into core.sucursales (tenant_id, codigo, nombre) values ($1, 'LIM', 'Lima')`, modo: 'completo' },
 };
 
 let app: pg.Pool;

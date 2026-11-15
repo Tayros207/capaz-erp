@@ -190,5 +190,8 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
   it('no puede leer datos de negocio ni la nota de una solicitud para modificarla', async () => {
     await expect(sistema.query('select * from core.empresa_config')).rejects.toThrow(/permission denied/);
     await expect(sistema.query('select * from core.usuario_modulos')).rejects.toThrow(/permission denied/);
+    for (const t of ['clientes', 'productos', 'sucursales', 'auditoria', 'contadores']) {
+      await expect(sistema.query(`select * from core.${t}`)).rejects.toThrow(/permission denied/);
+    }
   });
 });

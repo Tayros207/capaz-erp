@@ -5,3 +5,4 @@ export * from './core-modulos.js';
 export * from './auth.js';
 export * from './core-herramientas.js';
 export * from './core-eventos.js';
+export * from './core-maestros.js';
