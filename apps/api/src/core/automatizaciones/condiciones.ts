@@ -79,7 +79,7 @@ export const evaluarCondiciones = (cs: readonly Condicion[], raiz: unknown): boo
 const PLANTILLA = /\{\{\s*([^{}]*?)\s*\}\}/g;
 const SOLO_PLANTILLA = /^\{\{\s*([^{}]*?)\s*\}\}$/;
 
-const comoTexto = (v: unknown): string => (typeof v === 'object' ? JSON.stringify(v) : String(v));
+const comoTexto = (v: unknown): string => (typeof v === 'object' ? JSON.stringify(v) : String(v as string | number | boolean));
 
 /**
  * Sustituye `{{ruta}}` en los valores de texto (en profundidad; las claves no se tocan). Un texto que es

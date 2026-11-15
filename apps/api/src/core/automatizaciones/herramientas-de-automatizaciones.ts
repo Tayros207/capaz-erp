@@ -1,6 +1,5 @@
 import { Inject, Injectable, type OnModuleInit } from '@nestjs/common';
 import { exito, rechazo, type Accion, type ModoDeRegla } from '@capaz/shared';
-import { EjecutorDeHerramientas } from '../herramientas/ejecutor.js';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import { definirHerramienta, type ContextoDeHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
 import { AYUDAS } from './ayudas.js';
