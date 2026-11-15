@@ -1,7 +1,10 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { ConConsultas } from './consultas.tsx';
+import { PantallaFichaCliente } from './pantalla-ficha.tsx';
+import { PantallaClientes } from './pantalla-lista.tsx';
 
-// Pantallas de «Clientes»: las construye su carril. Mientras tanto, un marcador.
+// `/clientes` (lista con búsqueda y alta) y `/clientes/:id` (ficha). Herramientas clientes_*.
 export const rutas: RouteObject[] = [
-  { path: 'clientes/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'clientes', element: <ConConsultas><PantallaClientes /></ConConsultas> },
+  { path: 'clientes/:id', element: <ConConsultas><PantallaFichaCliente /></ConConsultas> },
 ];
