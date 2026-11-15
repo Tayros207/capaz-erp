@@ -1,15 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Route, Routes } from 'react-router'
-import './index.css'
-import { Inicio } from './pages/inicio.tsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router';
+import './shared/estilos/tokens.css';
+import { Proveedores } from './app/proveedores.tsx';
+import { router } from './app/rutas.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Inicio />} />
-      </Routes>
-    </BrowserRouter>
+    <Proveedores>
+      <RouterProvider router={router} />
+    </Proveedores>
   </StrictMode>,
-)
+);
