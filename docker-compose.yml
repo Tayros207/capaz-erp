@@ -1,0 +1,14 @@
+# Solo para desarrollo local. La base de producción vive en Neon (São Paulo).
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: capaz
+      POSTGRES_PASSWORD: capaz_dev
+      POSTGRES_DB: capaz
+    ports:
+      - "127.0.0.1:5450:5432"
+    volumes:
+      - capaz-db:/var/lib/postgresql
+volumes:
+  capaz-db:

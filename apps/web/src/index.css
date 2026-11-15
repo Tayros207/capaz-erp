@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+/* Colores de proceso de imprenta (cian, magenta, amarillo) sobre papel cálido: el sistema visual «Pliego».
+   Es solo un punto de partida; el diseño definitivo se decide después. */
+@theme {
+  --color-papel: #f6f2e9;
+  --color-tinta: #1f1c18;
+  --color-tinta-suave: #5d574d;
+  --color-linea: #d9d1c1;
+  --color-cian: #0b8fb0;
+  --color-magenta: #c81e6b;
+  --color-amarillo: #b88a00;
+  --color-ok: #2f7d4f;
+}
+
+body {
+  background: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}

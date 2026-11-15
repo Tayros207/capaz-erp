@@ -1,0 +1,750 @@
+{
+  "id": "a243ce7b-ffcc-472a-b7d2-38b2a2af1dfb",
+  "prevId": "7feb1bbe-f921-4d04-a611-fe88a1b2bb61",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "core.empresa_config": {
+      "name": "empresa_config",
+      "schema": "core",
+      "columns": {
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "zona_horaria": {
+          "name": "zona_horaria",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'America/Lima'"
+        },
+        "moneda": {
+          "name": "moneda",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PEN'"
+        },
+        "locale": {
+          "name": "locale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'es-PE'"
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "name": "actualizado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "core.empresa_modulos": {
+      "name": "empresa_modulos",
+      "schema": "core",
+      "columns": {
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modulo": {
+          "name": "modulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estado": {
+          "name": "estado",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'activo'"
+        },
+        "alta_en": {
+          "name": "alta_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "prueba_hasta": {
+          "name": "prueba_hasta",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "baja_en": {
+          "name": "baja_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "motivo": {
+          "name": "motivo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "plan": {
+          "name": "plan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "precio_acordado_centimos": {
+          "name": "precio_acordado_centimos",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vigente_hasta": {
+          "name": "vigente_hasta",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "max_usuarios": {
+          "name": "max_usuarios",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "actualizado_en": {
+          "name": "actualizado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "empresa_modulos_modulo_modulos_codigo_fk": {
+          "name": "empresa_modulos_modulo_modulos_codigo_fk",
+          "tableFrom": "empresa_modulos",
+          "tableTo": "modulos",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "modulo"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "empresa_modulos_plan_planes_codigo_fk": {
+          "name": "empresa_modulos_plan_planes_codigo_fk",
+          "tableFrom": "empresa_modulos",
+          "tableTo": "planes",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "plan"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "empresa_modulos_tenant_id_modulo_pk": {
+          "name": "empresa_modulos_tenant_id_modulo_pk",
+          "columns": [
+            "tenant_id",
+            "modulo"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "empresa_modulo_estado": {
+          "name": "empresa_modulo_estado",
+          "value": "\"core\".\"empresa_modulos\".\"estado\" IN ('prueba', 'activo', 'suspendido', 'baja')"
+        },
+        "empresa_modulo_prueba": {
+          "name": "empresa_modulo_prueba",
+          "value": "(\"core\".\"empresa_modulos\".\"estado\" = 'prueba') = (\"core\".\"empresa_modulos\".\"prueba_hasta\" IS NOT NULL)"
+        },
+        "empresa_modulo_baja": {
+          "name": "empresa_modulo_baja",
+          "value": "(\"core\".\"empresa_modulos\".\"estado\" = 'baja') = (\"core\".\"empresa_modulos\".\"baja_en\" IS NOT NULL)"
+        },
+        "empresa_modulo_precio": {
+          "name": "empresa_modulo_precio",
+          "value": "\"core\".\"empresa_modulos\".\"precio_acordado_centimos\" IS NULL OR \"core\".\"empresa_modulos\".\"precio_acordado_centimos\" >= 0"
+        },
+        "empresa_modulo_usuarios": {
+          "name": "empresa_modulo_usuarios",
+          "value": "\"core\".\"empresa_modulos\".\"max_usuarios\" IS NULL OR \"core\".\"empresa_modulos\".\"max_usuarios\" > 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "core.empresa_modulos_eventos": {
+      "name": "empresa_modulos_eventos",
+      "schema": "core",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuidv7()"
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modulo": {
+          "name": "modulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "evento": {
+          "name": "evento",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estado_anterior": {
+          "name": "estado_anterior",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estado_nuevo": {
+          "name": "estado_nuevo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "motivo": {
+          "name": "motivo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "actor": {
+          "name": "actor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_modulos_eventos_empresa": {
+          "name": "idx_modulos_eventos_empresa",
+          "columns": [
+            {
+              "expression": "tenant_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "creado_en",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "empresa_modulos_eventos_modulo_modulos_codigo_fk": {
+          "name": "empresa_modulos_eventos_modulo_modulos_codigo_fk",
+          "tableFrom": "empresa_modulos_eventos",
+          "tableTo": "modulos",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "modulo"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "modulo_evento_tipo": {
+          "name": "modulo_evento_tipo",
+          "value": "\"core\".\"empresa_modulos_eventos\".\"evento\" IN ('alta', 'prueba', 'suspension', 'baja', 'reactivacion', 'cambio')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "core.modulos": {
+      "name": "modulos",
+      "schema": "core",
+      "columns": {
+        "codigo": {
+          "name": "codigo",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descripcion": {
+          "name": "descripcion",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0.0.0'"
+        },
+        "depende_de": {
+          "name": "depende_de",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::text[]"
+        },
+        "activo": {
+          "name": "activo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "por_defecto": {
+          "name": "por_defecto",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "prueba_dias": {
+          "name": "prueba_dias",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "core.plan_modulos": {
+      "name": "plan_modulos",
+      "schema": "core",
+      "columns": {
+        "plan": {
+          "name": "plan",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modulo": {
+          "name": "modulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "plan_modulos_plan_planes_codigo_fk": {
+          "name": "plan_modulos_plan_planes_codigo_fk",
+          "tableFrom": "plan_modulos",
+          "tableTo": "planes",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "plan"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "plan_modulos_modulo_modulos_codigo_fk": {
+          "name": "plan_modulos_modulo_modulos_codigo_fk",
+          "tableFrom": "plan_modulos",
+          "tableTo": "modulos",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "modulo"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "plan_modulos_plan_modulo_pk": {
+          "name": "plan_modulos_plan_modulo_pk",
+          "columns": [
+            "plan",
+            "modulo"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "core.planes": {
+      "name": "planes",
+      "schema": "core",
+      "columns": {
+        "codigo": {
+          "name": "codigo",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nombre": {
+          "name": "nombre",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "descripcion": {
+          "name": "descripcion",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "precio_centimos": {
+          "name": "precio_centimos",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "usuarios_incluidos": {
+          "name": "usuarios_incluidos",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activo": {
+          "name": "activo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "plan_precio": {
+          "name": "plan_precio",
+          "value": "\"core\".\"planes\".\"precio_centimos\" >= 0"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "core.plataforma_admins": {
+      "name": "plataforma_admins",
+      "schema": "core",
+      "columns": {
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "core.solicitudes_modulo": {
+      "name": "solicitudes_modulo",
+      "schema": "core",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuidv7()"
+        },
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modulo": {
+          "name": "modulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nota": {
+          "name": "nota",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estado": {
+          "name": "estado",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pendiente'"
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "atendido_en": {
+          "name": "atendido_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_solicitudes_pendientes": {
+          "name": "idx_solicitudes_pendientes",
+          "columns": [
+            {
+              "expression": "creado_en",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "where": "\"core\".\"solicitudes_modulo\".\"estado\" = 'pendiente'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "solicitudes_modulo_modulo_modulos_codigo_fk": {
+          "name": "solicitudes_modulo_modulo_modulos_codigo_fk",
+          "tableFrom": "solicitudes_modulo",
+          "tableTo": "modulos",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "modulo"
+          ],
+          "columnsTo": [
+            "codigo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "solicitud_estado": {
+          "name": "solicitud_estado",
+          "value": "\"core\".\"solicitudes_modulo\".\"estado\" IN ('pendiente', 'atendida', 'descartada')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "core.usuario_modulos": {
+      "name": "usuario_modulos",
+      "schema": "core",
+      "columns": {
+        "tenant_id": {
+          "name": "tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "usuario_id": {
+          "name": "usuario_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modulo": {
+          "name": "modulo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nivel": {
+          "name": "nivel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'completo'"
+        },
+        "alcance": {
+          "name": "alcance",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'todos'"
+        },
+        "creado_en": {
+          "name": "creado_en",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "usuario_modulo_contratado": {
+          "name": "usuario_modulo_contratado",
+          "tableFrom": "usuario_modulos",
+          "tableTo": "empresa_modulos",
+          "schemaTo": "core",
+          "columnsFrom": [
+            "tenant_id",
+            "modulo"
+          ],
+          "columnsTo": [
+            "tenant_id",
+            "modulo"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "usuario_modulos_tenant_id_usuario_id_modulo_pk": {
+          "name": "usuario_modulos_tenant_id_usuario_id_modulo_pk",
+          "columns": [
+            "tenant_id",
+            "usuario_id",
+            "modulo"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "usuario_modulo_nivel": {
+          "name": "usuario_modulo_nivel",
+          "value": "\"core\".\"usuario_modulos\".\"nivel\" IN ('completo', 'lectura')"
+        },
+        "usuario_modulo_alcance": {
+          "name": "usuario_modulo_alcance",
+          "value": "\"core\".\"usuario_modulos\".\"alcance\" IN ('todos', 'propios')"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {
+    "core": "core"
+  },
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

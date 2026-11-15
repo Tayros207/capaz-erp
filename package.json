@@ -1,0 +1,27 @@
+{
+  "name": "capaz-erp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Capaz ERP: gestión modular para la industria gráfica y publicitaria",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.34.5",
+  "scripts": {
+    "dev:api": "pnpm --filter api start:dev",
+    "dev:web": "pnpm --filter web dev",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "test:int": "pnpm --filter api test:int",
+    "check": "pnpm --filter @capaz/shared build && pnpm typecheck && pnpm lint && pnpm test && pnpm test:int",
+    "db:preparar": "pnpm --filter api db:preparar",
+    "db:migrar": "pnpm --filter api db:migrar",
+    "db:generar": "pnpm --filter api db:generar",
+    "plataforma": "pnpm --filter api plataforma"
+  }
+}

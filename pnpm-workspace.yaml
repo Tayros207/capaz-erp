@@ -1,0 +1,7 @@
+packages:
+  - apps/*
+  - packages/*
+
+# NestJS 12 apunta a TypeScript 6; se fija una sola versión para todo el repositorio.
+overrides:
+  typescript: 6.0.3

@@ -1,0 +1,2 @@
+DROP INDEX "core"."idx_solicitudes_pendientes";--> statement-breakpoint
+CREATE INDEX "idx_solicitudes_pendientes" ON "core"."solicitudes_modulo" USING btree ("tenant_id","creado_en") WHERE "core"."solicitudes_modulo"."estado" = 'pendiente';

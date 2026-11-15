@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794674057150,
+      "tag": "0000_cimientos",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794674058150,
+      "tag": "0001_empresa_config",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794676210079,
+      "tag": "0002_modulos_y_contratacion",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794676239299,
+      "tag": "0003_modulos_funciones",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794678019816,
+      "tag": "0004_indices_por_empresa",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794678706519,
+      "tag": "0005_auth_better_auth",
+      "breakpoints": true
+    }
+  ]
+}
