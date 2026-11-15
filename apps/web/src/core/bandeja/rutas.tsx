@@ -1,7 +1,10 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { ConConsultas } from './consultas.tsx';
+import { PantallaBorrador } from './pantalla-borrador.tsx';
+import { PantallaBandeja } from './pantalla-bandeja.tsx';
 
-// Pantallas de «Bandeja»: las construye su carril. Mientras tanto, un marcador.
+// `/bandeja` (lista de borradores) y `/bandeja/:id` (revisar uno). Herramientas borrador_*.
 export const rutas: RouteObject[] = [
-  { path: 'bandeja/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'bandeja', element: <ConConsultas><PantallaBandeja /></ConConsultas> },
+  { path: 'bandeja/:id', element: <ConConsultas><PantallaBorrador /></ConConsultas> },
 ];
