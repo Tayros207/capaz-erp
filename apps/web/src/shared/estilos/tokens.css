@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+
+/* Único lugar con valores de color, tipografía y medida (identidad: azul noche + esmeralda).
+   Valores provisionales y propios. Los componentes solo usan los nombres semánticos de abajo;
+   cambiar la identidad es cambiar solo este archivo. */
+
+@theme static {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Superficies */
+  --color-fondo: var(--c-fondo);
+  --color-superficie: var(--c-superficie);
+  --color-superficie-alta: var(--c-superficie-alta);
+  --color-borde: var(--c-borde);
+  --color-borde-fuerte: var(--c-borde-fuerte);
+
+  /* Texto */
+  --color-texto: var(--c-texto);
+  --color-texto-suave: var(--c-texto-suave);
+  --color-texto-inverso: var(--c-texto-inverso);
+
+  /* Acción y estados */
+  --color-accion: var(--c-accion);
+  --color-accion-texto: var(--c-accion-texto);
+  --color-peligro: var(--c-peligro);
+  --color-aviso: var(--c-aviso);
+  --color-exito: var(--c-exito);
+  --color-info: var(--c-info);
+  --color-foco: var(--c-foco);
+
+  /* Menú lateral */
+  --color-menu: var(--c-menu);
+  --color-menu-texto: var(--c-menu-texto);
+  --color-menu-activo: var(--c-menu-activo);
+
+  /* Acento por módulo */
+  --color-acento-esmeralda: var(--c-acento-esmeralda);
+  --color-acento-cian: var(--c-acento-cian);
+  --color-acento-ambar: var(--c-acento-ambar);
+  --color-acento-rosa: var(--c-acento-rosa);
+  --color-acento-gris: var(--c-acento-gris);
+
+  /* Tipografía (fuentes del sistema: no se instala ninguna) */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-titulo: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Medidas */
+  --radius-control: 0.375rem;
+  --radius-tarjeta: 0.5rem;
+  --shadow-elevada: 0 1px 2px rgb(10 20 40 / 0.08), 0 6px 16px rgb(10 20 40 / 0.12);
+}
+
+:root {
+  --alto-control: 2.75rem; /* 44 px: objetivo táctil mínimo propio */
+
+  /* Tema claro (por defecto) */
+  --c-fondo: oklch(0.975 0.004 250);
+  --c-superficie: oklch(1 0 0);
+  --c-superficie-alta: oklch(0.955 0.006 250);
+  --c-borde: oklch(0.9 0.008 250);
+  --c-borde-fuerte: oklch(0.72 0.015 250);
+  --c-texto: oklch(0.24 0.03 258);
+  --c-texto-suave: oklch(0.45 0.025 258);
+  --c-texto-inverso: oklch(0.99 0 0);
+  --c-accion: oklch(0.5 0.12 165);
+  --c-accion-texto: oklch(1 0 0);
+  --c-peligro: oklch(0.5 0.19 27);
+  --c-aviso: oklch(0.52 0.12 70);
+  --c-exito: oklch(0.45 0.11 150);
+  --c-info: oklch(0.48 0.13 250);
+  --c-foco: oklch(0.55 0.17 250);
+  --c-menu: oklch(0.24 0.06 258);
+  --c-menu-texto: oklch(0.93 0.012 250);
+  --c-menu-activo: oklch(0.33 0.07 258);
+  --c-acento-esmeralda: oklch(0.55 0.13 165);
+  --c-acento-cian: oklch(0.58 0.11 215);
+  --c-acento-ambar: oklch(0.65 0.14 75);
+  --c-acento-rosa: oklch(0.58 0.17 355);
+  --c-acento-gris: oklch(0.55 0.02 255);
+  color-scheme: light;
+}
+
+:root[data-tema='oscuro'] {
+  --c-fondo: oklch(0.19 0.02 258);
+  --c-superficie: oklch(0.24 0.025 258);
+  --c-superficie-alta: oklch(0.29 0.03 258);
+  --c-borde: oklch(0.33 0.025 258);
+  --c-borde-fuerte: oklch(0.5 0.03 258);
+  --c-texto: oklch(0.95 0.006 250);
+  --c-texto-suave: oklch(0.76 0.015 250);
+  --c-texto-inverso: oklch(0.19 0.02 258);
+  --c-accion: oklch(0.72 0.14 165);
+  --c-accion-texto: oklch(0.17 0.02 258);
+  --c-peligro: oklch(0.72 0.16 27);
+  --c-aviso: oklch(0.8 0.13 85);
+  --c-exito: oklch(0.76 0.14 150);
+  --c-info: oklch(0.76 0.11 245);
+  --c-foco: oklch(0.78 0.12 245);
+  --c-menu: oklch(0.15 0.045 258);
+  --c-menu-texto: oklch(0.9 0.012 250);
+  --c-menu-activo: oklch(0.25 0.055 258);
+  --c-acento-esmeralda: oklch(0.72 0.14 165);
+  --c-acento-cian: oklch(0.76 0.11 215);
+  --c-acento-ambar: oklch(0.8 0.14 80);
+  --c-acento-rosa: oklch(0.74 0.15 355);
+  --c-acento-gris: oklch(0.72 0.02 255);
+  color-scheme: dark;
+}
+
+html {
+  scroll-padding-block: 4rem; /* el foco no queda bajo barras fijas */
+}
+
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,50 @@
+import { describe, expect, it } from 'vitest';
+import type { Yo } from '@capaz/shared';
+import { destinoSegunSesion } from './guarda.ts';
+
+const base: Yo = {
+  usuario: { id: 'u1', nombre: 'Ana', correo: 'ana@ejemplo.pe' },
+  empresa: null,
+  empresas: [],
+  puedeCrearEmpresas: true,
+  modulos: [],
+  permisos: [],
+};
+const conEmpresa: Yo = { ...base, empresa: { id: 'e1', nombre: 'Gráfica Sur', rol: 'owner' } };
+
+describe('destinoSegunSesion', () => {
+  it('sin sesión: solo registro e inicio de sesión son públicos', () => {
+    expect(destinoSegunSesion(null, '/inicio')).toBe('/iniciar-sesion');
+    expect(destinoSegunSesion(null, '/')).toBe('/iniciar-sesion');
+    expect(destinoSegunSesion(null, '/nueva-empresa')).toBe('/iniciar-sesion');
+    expect(destinoSegunSesion(null, '/iniciar-sesion')).toBeNull();
+    expect(destinoSegunSesion(null, '/registro')).toBeNull();
+  });
+
+  it('con sesión y sin empresa: todo va a /nueva-empresa', () => {
+    expect(destinoSegunSesion(base, '/inicio')).toBe('/nueva-empresa');
+    expect(destinoSegunSesion(base, '/iniciar-sesion')).toBe('/nueva-empresa');
+    expect(destinoSegunSesion(base, '/nueva-empresa')).toBeNull();
+  });
+
+  it('con empresa: entra, y las pantallas de acceso llevan a /inicio', () => {
+    expect(destinoSegunSesion(conEmpresa, '/clientes')).toBeNull();
+    expect(destinoSegunSesion(conEmpresa, '/ajustes/usuarios')).toBeNull();
+    expect(destinoSegunSesion(conEmpresa, '/')).toBe('/inicio');
+    expect(destinoSegunSesion(conEmpresa, '/iniciar-sesion')).toBe('/inicio');
+    expect(destinoSegunSesion(conEmpresa, '/registro')).toBe('/inicio');
+    expect(destinoSegunSesion(conEmpresa, '/nueva-empresa')).toBe('/inicio');
+  });
+
+  it('ignora la barra final y no confunde prefijos parecidos', () => {
+    expect(destinoSegunSesion(null, '/iniciar-sesion/')).toBeNull();
+    expect(destinoSegunSesion(null, '/registro-otro')).toBe('/iniciar-sesion');
+    expect(destinoSegunSesion(conEmpresa, '/registros')).toBeNull();
+  });
+
+  it('/kit siempre es accesible', () => {
+    expect(destinoSegunSesion(null, '/kit')).toBeNull();
+    expect(destinoSegunSesion(base, '/kit')).toBeNull();
+    expect(destinoSegunSesion(conEmpresa, '/kit')).toBeNull();
+  });
+});
