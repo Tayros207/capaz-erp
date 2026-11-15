@@ -1,7 +1,11 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { ConConsultas } from './consultas.tsx';
+import { PantallaRegla } from './pantalla-regla.tsx';
+import { PantallaReglas } from './pantalla-reglas.tsx';
 
-// Pantallas de «Automatizaciones»: las construye su carril. Mientras tanto, un marcador.
+// `/ajustes/automatizaciones` (reglas e historial), `/nueva` (editor) y `/:id` (editar, probar, historial de una regla).
 export const rutas: RouteObject[] = [
-  { path: 'ajustes/automatizaciones/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'ajustes/automatizaciones', element: <ConConsultas><PantallaReglas /></ConConsultas> },
+  { path: 'ajustes/automatizaciones/nueva', element: <ConConsultas><PantallaRegla /></ConConsultas> },
+  { path: 'ajustes/automatizaciones/:id', element: <ConConsultas><PantallaRegla /></ConConsultas> },
 ];
