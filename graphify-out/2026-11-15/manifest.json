@@ -36,9 +36,9 @@
     "semantic_hash": "9fc8aee8c3c801aae684c46fd76a41e2"
   },
   "apps/api/drizzle/meta/_journal.json": {
-    "mtime": 1794780742.9199295,
-    "seen": 1794781771.1042585,
-    "ast_hash": "29f433c73a1a4c703e56e80abd308d46",
+    "mtime": 1794782283.6765542,
+    "seen": 1794782554.1491778,
+    "ast_hash": "5685acad9fa88f9af1c1211f806ff4ae",
     "semantic_hash": ""
   },
   "apps/api/nest-cli.json": {
@@ -120,9 +120,9 @@
     "semantic_hash": "8629c864b029444be5691601830ee211"
   },
   "apps/api/src/db/esquema/index.ts": {
-    "mtime": 1794780742.9202628,
-    "seen": 1794781771.1044154,
-    "ast_hash": "a4d66fe40d60c430d8886a89ae2a2b5f",
+    "mtime": 1794782283.6767967,
+    "seen": 1794782554.1494336,
+    "ast_hash": "46f2d92ecff7b5910db700d5c4f119f5",
     "semantic_hash": ""
   },
   "apps/api/src/infra/config/config.module.ts": {
@@ -150,15 +150,15 @@
     "semantic_hash": "a73f077ebca34651d33ed17590795b63"
   },
   "apps/api/src/infra/database/aislamiento.int.spec.ts": {
-    "mtime": 1794780742.9205437,
-    "seen": 1794781771.1044304,
-    "ast_hash": "6a45004a80a7fd659fc1121f902adce1",
+    "mtime": 1794782283.67716,
+    "seen": 1794782554.149445,
+    "ast_hash": "3432855161fddf1bee46c16c9d259d41",
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/catalogo.int.spec.ts": {
-    "mtime": 1794678046.5687718,
-    "seen": 1794781771.104433,
-    "ast_hash": "380e3d1235ff278807553097361e1326",
+    "mtime": 1794782283.677308,
+    "seen": 1794782554.149447,
+    "ast_hash": "a991bf99bf7c79e5d1fe6aee4ad731af",
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/con-empresa.int.spec.ts": {
@@ -714,9 +714,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/auditoria/auditoria.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.104296,
-    "ast_hash": "4886ce6340f268c6c37c2dfedf5e527f",
+    "mtime": 1794782374.3277416,
+    "seen": 1794782554.1492152,
+    "ast_hash": "04373277da888d15b39e3fd321acb48e",
     "semantic_hash": ""
   },
   "apps/api/src/core/auth/auth.int.spec.ts": {
@@ -804,15 +804,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/empresas/empresas.module.ts": {
-    "mtime": 1794678802.2321718,
-    "seen": 1794781771.1043255,
-    "ast_hash": "996594e0ed1cb39c3afb75e778c65d44",
+    "mtime": 1794782374.3284469,
+    "seen": 1794782554.1492796,
+    "ast_hash": "b0acfa769a08c39280d00655cdf96668",
     "semantic_hash": ""
   },
   "apps/api/src/core/empresas/empresas.service.ts": {
-    "mtime": 1794679266.9258404,
-    "seen": 1794781771.1043274,
-    "ast_hash": "f5a7144782013ee459de93db6f2a80a3",
+    "mtime": 1794781872.8465583,
+    "seen": 1794782554.1492817,
+    "ast_hash": "a467526726cda495f02101538b5447a1",
     "semantic_hash": ""
   },
   "apps/api/src/core/eventos/emisor.ts": {
@@ -876,15 +876,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/herramientas.module.ts": {
-    "mtime": 1794780380.3060374,
-    "seen": 1794781771.1043475,
-    "ast_hash": "f2ab3765b0349ee1e3ee5415138af0d1",
+    "mtime": 1794782374.32987,
+    "seen": 1794782554.1493344,
+    "ast_hash": "5fd14cce926c95489c90317141b630d5",
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/registro-agregar.spec.ts": {
-    "mtime": 1794780380.306185,
-    "seen": 1794781771.1043491,
-    "ast_hash": "1e13217773d107408d31157d010ab9d2",
+    "mtime": 1794782374.3301961,
+    "seen": 1794782554.1493423,
+    "ast_hash": "3261634b67fc10d038fa12db1de75a96",
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/registro.spec.ts": {
@@ -1026,9 +1026,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/contratacion.int.spec.ts": {
-    "mtime": 1794780742.9206922,
-    "seen": 1794781771.1044414,
-    "ast_hash": "71c0631251451b2c6ae2c5b3dfa5143b",
+    "mtime": 1794782283.677316,
+    "seen": 1794782554.1494539,
+    "ast_hash": "331f4b40297b3aa2868065b7a9d6eda0",
     "semantic_hash": ""
   },
   "apps/api/src/infra/http/decoradores.ts": {
@@ -1758,9 +1758,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/auditoria.ts": {
-    "mtime": 1794780380.3100467,
-    "seen": 1794781771.1048884,
-    "ast_hash": "3b475687681af1c3d6abd5f456b7e05b",
+    "mtime": 1794782374.3303072,
+    "seen": 1794782554.1498103,
+    "ast_hash": "dd81858e897be5478c3ffe38a2ed9387",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/automatizaciones.ts": {
@@ -1812,9 +1812,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/empresa.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049051,
-    "ast_hash": "017d25a61d0f18619fb689bb047b028a",
+    "mtime": 1794782374.3304133,
+    "seen": 1794782554.1498308,
+    "ast_hash": "b1a42da634e7f23ab4ef59e33f403155",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/index.ts": {
@@ -1842,9 +1842,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/modulos.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.104914,
-    "ast_hash": "52a0f80eb57e39a6cb144725e77a06a1",
+    "mtime": 1794782374.3304987,
+    "seen": 1794782554.1498423,
+    "ast_hash": "6a481f47be2c1720e49b2d348f70f7ad",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/ordenes.ts": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794776397.5593774,
-    "seen": 1794781771.105011,
-    "ast_hash": "da177b71923906b7625421468e335c68",
+    "mtime": 1794782551.4988942,
+    "seen": 1794782554.1499429,
+    "ast_hash": "72f30a685f1ad273f350d6de989dd41e",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -1989,6 +1989,276 @@
     "mtime": 1794679629.441697,
     "seen": 1794781771.1050525,
     "ast_hash": "8c114269cfcc588b52ef3c8418648ecb",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0009_plataforma.sql": {
+    "mtime": 1794782283.673316,
+    "seen": 1794782554.149135,
+    "ast_hash": "2f3f2e8744404dcfd15acf65712ac9dc",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0010_conexiones.sql": {
+    "mtime": 1794782283.6744957,
+    "seen": 1794782554.1491382,
+    "ast_hash": "f81e369a0c151d48d4cc1fdc7ff2ad1a",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0011_automatizaciones_y_borradores.sql": {
+    "mtime": 1794782283.6745982,
+    "seen": 1794782554.1491401,
+    "ast_hash": "6ccd70062872f6b9137471f39c8b3662",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0012_permiso_trigramas.sql": {
+    "mtime": 1794782283.6745982,
+    "seen": 1794782554.1491427,
+    "ast_hash": "9f0ea9479bf7415faa936f23b215853a",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0009_snapshot.json": {
+    "mtime": 1794782283.6750317,
+    "seen": 1794782554.1491694,
+    "ast_hash": "3de58e57c5e29c227a925207b757acf6",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0010_snapshot.json": {
+    "mtime": 1794782283.6754897,
+    "seen": 1794782554.1491714,
+    "ast_hash": "0db0568228adf1475e8f634e3b205636",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0011_snapshot.json": {
+    "mtime": 1794782283.6759477,
+    "seen": 1794782554.1491735,
+    "ast_hash": "d9c79408b6bd76f499d6a860dd9ddaca",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0012_snapshot.json": {
+    "mtime": 1794782283.6764119,
+    "seen": 1794782554.1491756,
+    "ast_hash": "019f35d5ce0da6ac17785c5978673b30",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/auditoria/escritor.ts": {
+    "mtime": 1794782374.3277416,
+    "seen": 1794782554.1492174,
+    "ast_hash": "0517a7e4ef23cc3eec02539fda5f5e9b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/auditoria/herramientas/auditoria-listar.ts": {
+    "mtime": 1794782374.3281364,
+    "seen": 1794782554.1492193,
+    "ast_hash": "8d5fc4f5b6805c1b7575c7a0b3b80efe",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/auditoria/herramientas/herramientas-de-auditoria.ts": {
+    "mtime": 1794782374.328252,
+    "seen": 1794782554.1492293,
+    "ast_hash": "f6ca0d2fc1bbf714e3023ae92746b018",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/domain/cliente.spec.ts": {
+    "mtime": 1794781872.8457134,
+    "seen": 1794782554.1492538,
+    "ast_hash": "0552abc8bfec88cb21a2205a15aa3923",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/domain/cliente.ts": {
+    "mtime": 1794781872.8458335,
+    "seen": 1794782554.149256,
+    "ast_hash": "d88caf4a88a940bc719a0fd5b0e2cb42",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/domain/cursor.ts": {
+    "mtime": 1794781872.8459647,
+    "seen": 1794782554.149258,
+    "ast_hash": "823950920e578b0614a489e445b45dfd",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/domain/documento.ts": {
+    "mtime": 1794781872.846045,
+    "seen": 1794782554.1492598,
+    "ast_hash": "6ec417bdf9c3ad1dd3264f1f492dc8ff",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/domain/normalizacion.ts": {
+    "mtime": 1794781872.846132,
+    "seen": 1794782554.1492615,
+    "ast_hash": "c0755891efbaaa7e023b9920b459f5bf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/repositories/clientes.repository.ts": {
+    "mtime": 1794781872.846132,
+    "seen": 1794782554.1492631,
+    "ast_hash": "f0f503e09118060862a75580bcbf530a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/clientes/repositories/maestros.repository.int.spec.ts": {
+    "mtime": 1794781872.8463159,
+    "seen": 1794782554.149265,
+    "ast_hash": "31cc2f91bde1115f4cbc47b98beaf2cf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/empresas/herramientas/empresa-actualizar-configuracion.ts": {
+    "mtime": 1794782374.3285356,
+    "seen": 1794782554.1492836,
+    "ast_hash": "4f0bbea2b30b67f1adefed0c079ab389",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/empresas/herramientas/empresa-ver-configuracion.ts": {
+    "mtime": 1794782374.3286197,
+    "seen": 1794782554.1492853,
+    "ast_hash": "192c6f119d5c7d27abf3a1f0d4b54722",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/empresas/herramientas/herramientas-de-empresas.ts": {
+    "mtime": 1794782374.3287249,
+    "seen": 1794782554.1492872,
+    "ast_hash": "1124bfd93fce6515ca44136d3d42f72c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/empresas/herramientas/modulo-solicitar.ts": {
+    "mtime": 1794782374.3288014,
+    "seen": 1794782554.149289,
+    "ast_hash": "38a046783ee91bd571f4da5636534604",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/almacen-de-estado.ts": {
+    "mtime": 1794782374.3288808,
+    "seen": 1794782554.1493149,
+    "ast_hash": "91b7acd5a061e36d997570fa4e71dd9c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/confirmacion.spec.ts": {
+    "mtime": 1794782374.328957,
+    "seen": 1794782554.149317,
+    "ast_hash": "0b485388525882cfb27e0e2b11688a06",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/confirmacion.ts": {
+    "mtime": 1794782374.3290365,
+    "seen": 1794782554.149319,
+    "ast_hash": "f7b22425e658489cafb296b7a5cdf30b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/ejecutor-transaccion.int.spec.ts": {
+    "mtime": 1794782374.329158,
+    "seen": 1794782554.1493208,
+    "ast_hash": "c50b40bd93810faa3e0038504b00899b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/ejecutor.int.spec.ts": {
+    "mtime": 1794782374.3292756,
+    "seen": 1794782554.149323,
+    "ast_hash": "0b62ef454b3a1f1a5a6ff828f0f0841e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/ejecutor.ts": {
+    "mtime": 1794782374.3294182,
+    "seen": 1794782554.149325,
+    "ast_hash": "34fbe955a42670ea6269f90fbf7f27af",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/errores-de-zod.spec.ts": {
+    "mtime": 1794782374.329493,
+    "seen": 1794782554.1493266,
+    "ast_hash": "30ad5c31cb6d36034435432493aee90f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/errores-de-zod.ts": {
+    "mtime": 1794782374.3295598,
+    "seen": 1794782554.149329,
+    "ast_hash": "b89988151af80dafe115a32b228b6969",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/herramientas.controller.ts": {
+    "mtime": 1794782374.3296301,
+    "seen": 1794782554.1493306,
+    "ast_hash": "a2fb41c4c8c0be4fbc4feda85b4f4b90",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/herramientas.int.spec.ts": {
+    "mtime": 1794782374.3297586,
+    "seen": 1794782554.1493323,
+    "ast_hash": "e4a7e46edc8804eccc542ec9f57f4101",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/http-de-pruebas.ts": {
+    "mtime": 1794782374.3299437,
+    "seen": 1794782554.1493363,
+    "ast_hash": "4c540239ebb48f8ed722fb1c7a91b108",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/pruebas-del-ejecutor.ts": {
+    "mtime": 1794782374.3300312,
+    "seen": 1794782554.1493385,
+    "ast_hash": "14291b2fb343b40e4fde66d828bbde07",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/pruebas.ts": {
+    "mtime": 1794782374.3301055,
+    "seen": 1794782554.14934,
+    "ast_hash": "1190ec9b74fd053c37e2181da90c8160",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/domain/producto.spec.ts": {
+    "mtime": 1794781872.8466504,
+    "seen": 1794782554.1493952,
+    "ast_hash": "41ec4f9c724dad9f0d88b932fcf02c68",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/domain/producto.ts": {
+    "mtime": 1794781872.8467286,
+    "seen": 1794782554.1493979,
+    "ast_hash": "649bdace7cdda34ecfeb776bf27ccff9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/productos/repositories/productos.repository.ts": {
+    "mtime": 1794781872.8467286,
+    "seen": 1794782554.1494021,
+    "ast_hash": "267ffcd4e323ee77c72a71fcb0c27731",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/domain/sucursal.spec.ts": {
+    "mtime": 1794781872.8467286,
+    "seen": 1794782554.149404,
+    "ast_hash": "fd2ca7c589822f6085832acd30ccc296",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/domain/sucursal.ts": {
+    "mtime": 1794781872.8470755,
+    "seen": 1794782554.149406,
+    "ast_hash": "381393984814c463d7865632a11268e7",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/empresas-asegurar.int.spec.ts": {
+    "mtime": 1794781872.8472006,
+    "seen": 1794782554.1494076,
+    "ast_hash": "4914d5137943b97ca4f5ee418dcb3091",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/sucursales/repositories/sucursales.repository.ts": {
+    "mtime": 1794781872.8472006,
+    "seen": 1794782554.1494095,
+    "ast_hash": "97b86f3282f6e1dc16d44e8a376998ab",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/core-automatizaciones.ts": {
+    "mtime": 1794782283.676682,
+    "seen": 1794782554.1494162,
+    "ast_hash": "b13aabfe2eeb0580143192bcf22fd302",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/core-conexiones.ts": {
+    "mtime": 1794782283.6767967,
+    "seen": 1794782554.1494179,
+    "ast_hash": "5694b6596e962aac027e2bc35495dfe0",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/core-plataforma.ts": {
+    "mtime": 1794782283.6767967,
+    "seen": 1794782554.149429,
+    "ast_hash": "b94d7eb8e1210a30b37b8fcd0834db14",
     "semantic_hash": ""
   }
 }
