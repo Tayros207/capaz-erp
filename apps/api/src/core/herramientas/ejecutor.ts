@@ -77,6 +77,12 @@ export class EjecutorDeHerramientas {
   /** Reloj y generador de `jti` reemplazables en las pruebas. */
   reloj: () => Date = () => new Date();
   nuevoJti: () => string = () => randomUUID();
+  /**
+   * Peticiones de confirmación que ESTE ejecutor firmó. Una herramienta que ejecuta otra con
+   * `ejecutarDentro` (bandeja de borradores) puede devolver esa misma respuesta, y solo esa: el
+   * objeto no se puede fabricar desde fuera. Una respuesta inventada por la herramienta no está aquí.
+   */
+  private readonly confirmacionesEmitidas = new WeakSet<object>();
 
   constructor(
     @Inject(RegistroDeHerramientas) private readonly registro: RegistroDeHerramientas,
@@ -219,7 +225,12 @@ export class EjecutorDeHerramientas {
   ): Promise<Respuesta<unknown>> {
     const r = await h.ejecutar(datos, ctx, tx);
     if ('requiereConfirmacion' in r) {
-      // Solo el ejecutor puede pedir confirmación: un token no firmado por él no valdría nada.
+      // Solo el ejecutor puede pedir confirmación: un token no firmado por él no valdría nada. Se
+      // reenvía únicamente la que él mismo emitió para una herramienta propuesta (`ejecutarDentro`);
+      // se revierte todo y no se gasta nada, igual que al pedirla de una herramienta crítica directa.
+      if (this.confirmacionesEmitidas.has(r)) {
+        throw new Revertir({ respuesta: r, resultado: 'pendiente_confirmacion', codigo: null });
+      }
       throw rechazar('error_interno', 'Una herramienta no puede pedir confirmación por su cuenta.');
     }
     if (!r.ok) throw new Revertir({ respuesta: r, resultado: 'rechazada', codigo: r.error.codigo });
@@ -259,8 +270,13 @@ export class EjecutorDeHerramientas {
       { herramienta: h.nombre, hashArgs, huella: resumen.huella, usuarioId: ctx.usuarioId, empresaId: ctx.empresaId, jti: this.nuevoJti(), exp },
       this.config.CONFIRMACION_SECRET,
     );
+    const respuesta: Respuesta<unknown> = {
+      ok: false,
+      requiereConfirmacion: { resumen: resumen.resumen, token, venceEn: new Date(exp * 1000).toISOString() },
+    };
+    this.confirmacionesEmitidas.add(respuesta);
     return new Revertir({
-      respuesta: { ok: false, requiereConfirmacion: { resumen: resumen.resumen, token, venceEn: new Date(exp * 1000).toISOString() } },
+      respuesta,
       resultado: 'pendiente_confirmacion',
       codigo: null,
     });
