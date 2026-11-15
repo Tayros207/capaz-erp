@@ -1,7 +1,14 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../shared/ui/estado-vacio.tsx';
+import { Marco } from './marco.tsx';
+import { PantallaEmpresa } from './pantalla-empresa.tsx';
+import { PantallaEmpresas } from './pantalla-empresas.tsx';
+import { PantallaPlanes } from './pantalla-planes.tsx';
+import { PantallaSolicitudes } from './pantalla-solicitudes.tsx';
 
-// Pantallas de «Plataforma»: las construye su carril. Mientras tanto, un marcador.
+// Consola de plataforma (solo operadores). Habla con `/api/v1/plataforma/herramientas/:nombre`, no con la puerta de empresas.
 export const rutas: RouteObject[] = [
-  { path: 'plataforma/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'plataforma', element: <Marco><PantallaEmpresas /></Marco> },
+  { path: 'plataforma/empresas/:id', element: <Marco><PantallaEmpresa /></Marco> },
+  { path: 'plataforma/planes', element: <Marco><PantallaPlanes /></Marco> },
+  { path: 'plataforma/solicitudes', element: <Marco><PantallaSolicitudes /></Marco> },
 ];
