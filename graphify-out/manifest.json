@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/borradores.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.1043122,
-    "ast_hash": "9dafe860cf21e8e7825033ab218b2a18",
+    "mtime": 1794782922.3378785,
+    "seen": 1794783032.0856736,
+    "ast_hash": "3264c4f0c7df270a25fd4d951acc7e8e",
     "semantic_hash": ""
   },
   "apps/api/src/core/clientes/clientes.module.ts": {
@@ -1770,9 +1770,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/borradores.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.104892,
-    "ast_hash": "a853aeb1254dd60990e0a0d524d5ff24",
+    "mtime": 1794782922.33847,
+    "seen": 1794783032.0864773,
+    "ast_hash": "676d2debfbc6a913f6fe58c903bc659c",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/clientes.ts": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794782551.4988942,
-    "seen": 1794782554.1499429,
-    "ast_hash": "72f30a685f1ad273f350d6de989dd41e",
+    "mtime": 1794783029.3210542,
+    "seen": 1794783032.0866323,
+    "ast_hash": "589a5a846751cd20daa4c0181193083c",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -2385,6 +2385,42 @@
     "mtime": 1794782823.8761408,
     "seen": 1794782872.746299,
     "ast_hash": "2be72b88fa42f2a0818f40f98eccbfb9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/ayudas.ts": {
+    "mtime": 1794782922.3367054,
+    "seen": 1794783032.0856664,
+    "ast_hash": "857379f50827086dbe71b88eae0b3eaf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/borradores.int.spec.ts": {
+    "mtime": 1794782922.3377268,
+    "seen": 1794783032.0856702,
+    "ast_hash": "cb5d08ceba1a6c6b5a96a6d9737763c1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/catalogo.ts": {
+    "mtime": 1794782922.3378785,
+    "seen": 1794783032.0856762,
+    "ast_hash": "220b31256cf3f049cbc7fc08b35d8a5c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/herramientas-de-borradores.ts": {
+    "mtime": 1794782922.3380575,
+    "seen": 1794783032.0856788,
+    "ast_hash": "57191f970668a51a747824835c627667",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/proponer.ts": {
+    "mtime": 1794782922.338146,
+    "seen": 1794783032.0856812,
+    "ast_hash": "1a8882f60b1d79083e36a850383505cb",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/repositorio.ts": {
+    "mtime": 1794782922.3382437,
+    "seen": 1794783032.085683,
+    "ast_hash": "763a256542ca1ab8a8b335fa2568c1e3",
     "semantic_hash": ""
   }
 }
