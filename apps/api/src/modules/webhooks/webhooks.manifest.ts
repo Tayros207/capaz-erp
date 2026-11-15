@@ -1,6 +1,7 @@
 import type { ManifiestoDeEntrada } from '@capaz/shared';
 
-// Módulo en construcción: solo su manifiesto, para que el menú y la contratación ya lo conozcan.
+// Módulo de la familia «conexiones» con su conector (`webhooks.connector.ts`). Sus herramientas usan los permisos
+// `conexiones:*` del núcleo.
 export const manifiestoWebhooks: ManifiestoDeEntrada = {
   codigo: 'webhooks',
   nombre: 'Webhooks y claves',
@@ -18,5 +19,6 @@ export const manifiestoWebhooks: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'gris',
   icono: 'webhooks',
+  // Se quita junto con el ajuste de `catalogo.spec.ts` (ya no son nueve en construcción): ver informe del carril S7.
   enConstruccion: true,
 };
