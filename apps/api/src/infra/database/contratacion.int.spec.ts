@@ -139,6 +139,9 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.idempotencia': ['delete'],
     'core.eventos_salida': ['delete'],
     'core.eventos_procesados': ['delete'],
+    'core.auditoria_plataforma': ['select', 'insert'],
+    'core.v_empresas_plataforma': ['select'],
+    'core.conectores': ['select', 'insert', 'update', 'delete'],
   };
 
   it('ninguna otra tabla es accesible, y las permitidas tienen justo esos permisos', async () => {
@@ -163,6 +166,10 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
       update: ['disponible_en', 'fallido_en', 'intentos', 'procesado_en', 'ultimo_error'],
     },
     'core.eventos_procesados': { select: ['procesado_en', 'tenant_id'] },
+    'core.auditoria': { select: ['creado_en', 'tenant_id'] },
+    'core.conexiones': { select: ['conector', 'creado_en', 'estado', 'id', 'tenant_id', 'ultimo_uso_en'] },
+    'core.claves_api': { select: ['alcance', 'hash', 'id', 'revocada_en', 'tenant_id'], update: ['ultimo_uso_en'] },
+    'core.reglas_automaticas': { select: ['activa', 'disparador_tipo', 'id', 'tenant_id'] },
   };
 
   it('los permisos por columna de capaz_sistema son exactamente los previstos', async () => {
@@ -185,6 +192,25 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     await expect(sistema.query('select * from core.eventos_salida')).rejects.toThrow(/permission denied/);
     await expect(sistema.query('select ultimo_error from core.eventos_salida')).rejects.toThrow(/permission denied/);
     await sistema.query('select id, tenant_id, tipo, creado_en, disponible_en, procesado_en, intentos, fallido_en from core.eventos_salida');
+  });
+
+  it('capaz_sistema no puede leer las credenciales de conexiones, pero sí las columnas permitidas', async () => {
+    await expect(sistema.query('select credenciales_cifradas from core.conexiones')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select * from core.conexiones')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select configuracion from core.conexiones')).rejects.toThrow(/permission denied/);
+    await sistema.query('select id, tenant_id, conector, estado, ultimo_uso_en, creado_en from core.conexiones');
+    await expect(sistema.query('select * from core.webhooks_salientes')).rejects.toThrow(/permission denied/);
+    await expect(sistema.query('select * from core.borradores')).rejects.toThrow(/permission denied/);
+  });
+
+  it('la auditoría de plataforma solo admite inserción de capaz_sistema; capaz_app no la ve', async () => {
+    await sistema.query(`insert into core.auditoria_plataforma (actor_usuario_id, herramienta, resultado, request_id) values ('op1', 'ejemplo', 'ok', 'r1')`);
+    await expect(sistema.query(`update core.auditoria_plataforma set codigo = 'x'`)).rejects.toThrow(/permission denied/);
+    await expect(sistema.query(`delete from core.auditoria_plataforma`)).rejects.toThrow(/permission denied/);
+    await expect(app.query('select * from core.auditoria_plataforma')).rejects.toThrow(/permission denied/);
+    await expect(app.query('select * from core.v_empresas_plataforma')).rejects.toThrow(/permission denied/);
+    await sistema.query('select empresa_id, nombre, alta_en, miembros from core.v_empresas_plataforma');
+    await expect(sistema.query('select usuario_id from core.auditoria')).rejects.toThrow(/permission denied/);
   });
 
   it('no puede leer datos de negocio ni la nota de una solicitud para modificarla', async () => {

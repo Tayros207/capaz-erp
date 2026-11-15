@@ -6,3 +6,6 @@ export * from './auth.js';
 export * from './core-herramientas.js';
 export * from './core-eventos.js';
 export * from './core-maestros.js';
+export * from './core-plataforma.js';
+export * from './core-conexiones.js';
+export * from './core-automatizaciones.js';

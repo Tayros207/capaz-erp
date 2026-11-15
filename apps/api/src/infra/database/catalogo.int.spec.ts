@@ -91,4 +91,25 @@ describe('catálogo: roles', () => {
       where has_table_privilege(r.rol, c.oid, 'select')`);
     expect(rows).toEqual([]);
   });
+
+  it('capaz_app puede usar pg_trgm (usage en public) pero no crear nada en public; los demás roles no reciben nada', async () => {
+    const { rows } = await owner.query<{ rol: string; usage: boolean; crear: boolean }>(`
+      select r as rol, has_schema_privilege(r, 'public', 'usage') as usage, has_schema_privilege(r, 'public', 'create') as crear
+      from unnest(array['capaz_app', 'capaz_sistema', 'capaz_auth']) r`);
+    const por = Object.fromEntries(rows.map((r) => [r.rol, r]));
+    expect(por.capaz_app).toMatchObject({ usage: true, crear: false });
+    expect(por.capaz_sistema).toMatchObject({ usage: false, crear: false });
+    expect(por.capaz_auth).toMatchObject({ usage: false, crear: false });
+  });
+
+  it('capaz_app ejecuta similarity() y el operador % de pg_trgm', async () => {
+    const app = abrirPool('app');
+    try {
+      const { rows } = await app.query<{ s: number; p: boolean }>(`select similarity('ana', 'anna') as s, 'ana' % 'anna' as p`);
+      expect(rows[0]!.s).toBeGreaterThan(0);
+      expect(typeof rows[0]!.p).toBe('boolean');
+    } finally {
+      await app.end();
+    }
+  });
 });
