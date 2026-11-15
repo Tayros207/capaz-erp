@@ -1,0 +1,103 @@
+import type { Ayuda } from '@capaz/shared';
+
+const campoId = { nombre: 'id', queSeAnota: 'La regla sobre la que actúas.', ejemplo: '0192f3a0-…' };
+const campoDatos = { nombre: 'datos', queSeAnota: 'Datos de ejemplo del disparo; en las condiciones se leen como datos.campo.', ejemplo: '{ "total": 150 }' };
+
+export const AYUDAS = {
+  listar: {
+    titulo: 'Ver las reglas automáticas',
+    paraQueSirve: 'Lista las reglas «cuando pase esto, haz aquello» de tu empresa.',
+    cuandoUsarla: 'Para revisar qué automatiza el sistema y qué está activo.',
+    campos: [
+      { nombre: 'activa', queSeAnota: 'Solo las activas o solo las apagadas (opcional).', ejemplo: 'true' },
+      { nombre: 'disparador', queSeAnota: 'evento, tiempo, webhook o manual (opcional).', ejemplo: 'tiempo' },
+    ],
+    ejemploTecleado: 'ver mis reglas automáticas',
+    ejemploHablado: 'qué reglas tengo activas',
+    erroresComunes: ['Una regla nueva nace apagada.'],
+    relacionadas: ['regla_ver', 'regla_guardar'],
+  },
+  ver: {
+    titulo: 'Ver una regla',
+    paraQueSirve: 'Muestra el disparador, las condiciones, las acciones, el modo y el límite diario.',
+    cuandoUsarla: 'Antes de probarla, activarla o editarla.',
+    campos: [campoId],
+    ejemploTecleado: 'abrir la regla',
+    ejemploHablado: 'muéstrame esa regla',
+    erroresComunes: ['No existe esa regla.'],
+    relacionadas: ['reglas_listar', 'regla_probar'],
+  },
+  guardar: {
+    titulo: 'Guardar una regla',
+    paraQueSirve: 'Crea o cambia una regla: disparador, condiciones (igual, distinto, mayor, menor, contiene, existe), acciones y modo.',
+    cuandoUsarla: 'Para que el sistema haga solo, o proponga, un trabajo repetido.',
+    campos: [
+      { nombre: 'disparador', queSeAnota: 'evento, tiempo (N días después de una fecha), webhook o manual.', ejemplo: '{ "tipo": "tiempo", "fuente": "core.prueba_de_modulo_vence", "dias": -3 }' },
+      { nombre: 'condiciones', queSeAnota: 'Lista de campo, op y valor; todas deben cumplirse.', ejemplo: '[{ "campo": "datos.modulo", "op": "igual", "valor": "registro" }]' },
+      { nombre: 'acciones', queSeAnota: 'Herramientas con sus argumentos; los textos admiten {{datos.campo}}.', ejemplo: '[{ "herramienta": "clientes_crear", "args": { "nombre": "{{datos.nombre}}" } }]' },
+      { nombre: 'modo', queSeAnota: 'borrador, pide_aprobacion o automatico.', ejemplo: 'borrador' },
+      { nombre: 'limiteDiario', queSeAnota: 'Cuántas veces puede actuar por día.', ejemplo: '50' },
+    ],
+    ejemploTecleado: 'crear una regla que proponga un cliente cuando llegue un webhook',
+    ejemploHablado: 'avísame tres días antes de que venza una prueba',
+    erroresComunes: [
+      'Una acción que mueve dinero o es crítica no puede ir en modo automático.',
+      'Al cambiar una regla en modo automático queda apagada hasta activarla de nuevo.',
+    ],
+    relacionadas: ['regla_probar', 'regla_activar'],
+  },
+  activar: {
+    titulo: 'Activar una regla',
+    paraQueSirve: 'Enciende la regla para que actúe cuando se dé su disparador.',
+    cuandoUsarla: 'Después de probarla con «qué haría».',
+    campos: [campoId],
+    ejemploTecleado: 'activar la regla',
+    ejemploHablado: 'enciende esa regla',
+    erroresComunes: ['Se confirma desde la pantalla: una regla puede actuar sola.', 'Se revisa de nuevo que sus acciones sean válidas para su modo.'],
+    relacionadas: ['regla_desactivar', 'regla_probar'],
+  },
+  desactivar: {
+    titulo: 'Desactivar una regla',
+    paraQueSirve: 'Apaga la regla; no borra su historial.',
+    cuandoUsarla: 'Cuando la regla ya no hace falta o hace cosas que no debe.',
+    campos: [campoId],
+    ejemploTecleado: 'apagar la regla',
+    ejemploHablado: 'apaga esa regla',
+    erroresComunes: ['No existe esa regla.'],
+    relacionadas: ['regla_activar'],
+  },
+  probar: {
+    titulo: 'Probar una regla («qué haría»)',
+    paraQueSirve: 'Muestra qué haría la regla con unos datos de ejemplo, sin ejecutar nada; solo deja una prueba en el historial.',
+    cuandoUsarla: 'Antes de activar una regla o cuando no entiendes por qué actuó.',
+    campos: [campoId, campoDatos],
+    ejemploTecleado: 'probar la regla con total 150',
+    ejemploHablado: 'qué haría esa regla con este dato',
+    erroresComunes: ['Los datos de ejemplo deben traer lo que usan las condiciones y las plantillas.'],
+    relacionadas: ['regla_ejecutar', 'regla_ejecuciones_listar'],
+  },
+  ejecutar: {
+    titulo: 'Ejecutar una regla a mano',
+    paraQueSirve: 'Corre una regla activa una vez con los datos que indiques; respeta el modo y el límite diario.',
+    cuandoUsarla: 'Cuando quieres que la regla actúe ahora sin esperar su disparador.',
+    campos: [campoId, campoDatos],
+    ejemploTecleado: 'ejecutar la regla ahora',
+    ejemploHablado: 'corre esa regla ya',
+    erroresComunes: ['La regla debe estar activa.', 'En modo automático se usan tus permisos, no los de quien la creó.'],
+    relacionadas: ['regla_probar', 'regla_ejecuciones_listar'],
+  },
+  ejecuciones: {
+    titulo: 'Ver el historial de una regla',
+    paraQueSirve: 'Lista cada vez que una regla actuó, se probó o fue omitida, con su resultado.',
+    cuandoUsarla: 'Para saber qué hizo el sistema y por qué.',
+    campos: [
+      { nombre: 'reglaId', queSeAnota: 'Solo las de una regla (opcional).', ejemplo: '0192f3a0-…' },
+      { nombre: 'simulada', queSeAnota: 'Solo pruebas o solo reales (opcional).', ejemplo: 'false' },
+      { nombre: 'resultado', queSeAnota: 'ok, rechazada, omitida_por_limite, borrador_creado o sin_coincidencia (opcional).', ejemplo: 'borrador_creado' },
+    ],
+    ejemploTecleado: 'ver el historial de reglas',
+    ejemploHablado: 'qué han hecho mis reglas',
+    erroresComunes: ['Las pruebas («qué haría») aparecen marcadas como simuladas.'],
+    relacionadas: ['regla_ver', 'regla_probar'],
+  },
+} as const satisfies Record<string, Ayuda>;
