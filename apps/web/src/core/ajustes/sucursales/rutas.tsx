@@ -1,7 +1,6 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../../shared/ui/estado-vacio.tsx';
+import { cargarSucursales } from './api.ts';
+import { PantallaSucursales } from './pantalla-sucursales.tsx';
 
-// Pantallas de «Sucursales»: las construye su carril. Mientras tanto, un marcador.
-export const rutas: RouteObject[] = [
-  { path: 'ajustes/sucursales/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
-];
+// `/ajustes/sucursales`: lista, alta, edición y «marcar principal» (herramientas sucursal_* y sucursales_listar).
+export const rutas: RouteObject[] = [{ path: 'ajustes/sucursales', loader: cargarSucursales, element: <PantallaSucursales /> }];
