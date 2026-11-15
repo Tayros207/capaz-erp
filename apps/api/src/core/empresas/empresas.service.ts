@@ -2,8 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { empresaConfig } from '../../db/esquema/core.js';
 import { DatabaseService } from '../../infra/database/database.service.js';
 import { CatalogoDeModulos } from '../modulos/catalogo.js';
+import { asegurarSucursalPrincipal } from '../sucursales/repositories/sucursales.repository.js';
 
-/** Aprovisionamiento de una empresa: deja lista su configuración y sus módulos por defecto. Idempotente. */
+/** Aprovisionamiento de una empresa: deja lista su configuración, su sucursal principal y sus módulos por defecto. Idempotente. */
 @Injectable()
 export class EmpresasService {
   private readonly listas = new Set<string>();
@@ -14,16 +15,17 @@ export class EmpresasService {
   ) {}
 
   /**
-   * Siembra `core.empresa_config` y activa los módulos por defecto que aún no tengan fila (con el rol
+   * Siembra `core.empresa_config` y la sucursal principal «PRI» (si no hay ninguna), y activa los módulos por defecto que aún no tengan fila (con el rol
    * de plataforma: la empresa no puede activarse módulos sola). La creación de la empresa
    * (autenticación) y su aprovisionamiento (negocio y plataforma) usan conexiones distintas y no son
    * atómicas: se repite hasta que quede completo. Nunca reactiva un módulo dado de baja.
    */
   async asegurar(empresaId: string, usuarioId: string): Promise<void> {
     if (this.listas.has(empresaId)) return;
-    await this.db.conEmpresa({ empresaId, usuarioId }, (tx) =>
-      tx.insert(empresaConfig).values({ tenantId: empresaId }).onConflictDoNothing(),
-    );
+    await this.db.conEmpresa({ empresaId, usuarioId }, async (tx) => {
+      await tx.insert(empresaConfig).values({ tenantId: empresaId }).onConflictDoNothing();
+      await asegurarSucursalPrincipal(tx, { empresaId, usuarioId });
+    });
     await this.activarPorDefecto(empresaId);
     this.listas.add(empresaId);
   }
