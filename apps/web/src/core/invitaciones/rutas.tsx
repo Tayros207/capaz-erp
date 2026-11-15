@@ -1,7 +1,5 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { PantallaInvitacion } from './pantalla-invitacion.tsx';
 
-// Pantallas de «Invitaciones»: las construye su carril. Mientras tanto, un marcador.
-export const rutas: RouteObject[] = [
-  { path: 'invitaciones/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
-];
+// `/invitacion/:id`: la persona invitada ve la invitación y la acepta (rutas de Better Auth permitidas).
+export const rutas: RouteObject[] = [{ path: 'invitacion/:id', element: <PantallaInvitacion /> }];
