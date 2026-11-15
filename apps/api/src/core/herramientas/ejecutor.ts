@@ -9,7 +9,7 @@ import { MENSAJES } from '../../infra/http/error-de-negocio.js';
 import { LOGGER } from '../../infra/logger/logger.js';
 import { EscritorDeAuditoria, type EventoParaAuditar } from '../auditoria/escritor.js';
 import { guardarRespuesta, reservarClave, reservarConfirmacion } from './almacen-de-estado.js';
-import { crearToken, hashCanonico, TTL_CONFIRMACION_SEGUNDOS, verificarToken } from './confirmacion.js';
+import { crearToken, hashCanonico, type CargaDeToken, TTL_CONFIRMACION_SEGUNDOS, verificarToken } from './confirmacion.js';
 import { mensajeDeZod, OPCIONES_EN_ESPANOL } from './errores-de-zod.js';
 import { RegistroDeHerramientas } from './registro.js';
 import type { ContextoDeHerramienta, HerramientaRegistrada, Resumen } from './tipos.js';
@@ -242,8 +242,11 @@ export class EjecutorDeHerramientas {
     const r = await h.resumir(datos, ctx, tx);
     if (!r.ok) throw this.rechazoDeHerramienta(r.error);
     if (confirmacion === undefined) throw this.pedirConfirmacion(h, hash, r.resumen, ctx);
-    const jti = this.validarToken(confirmacion, h, hash, r.resumen.huella, ctx);
-    if (!(await reservarConfirmacion(tx, ctx.empresaId, jti))) throw rechazar('confirmacion_ya_usada');
+    const carga = this.validarToken(confirmacion, h, hash, ctx);
+    // Primero se reserva el `jti` y después se compara la huella: un token repetido responde «ya usada»
+    // aunque lo que hizo cambiara el estado; si la huella no coincide, se revierte y el `jti` no se gasta.
+    if (!(await reservarConfirmacion(tx, ctx.empresaId, carga.jti))) throw rechazar('confirmacion_ya_usada');
+    if (carga.huella !== r.resumen.huella) throw rechazar('confirmacion_desactualizada');
   }
 
   private rechazoDeHerramienta(error: ErrorDeRespuesta): Revertir {
@@ -263,8 +266,8 @@ export class EjecutorDeHerramientas {
     });
   }
 
-  /** Devuelve el `jti` si el token vale para ESTA llamada; si no, lanza el rechazo que corresponde. */
-  private validarToken(token: string, h: HerramientaRegistrada, hash: string, huella: string, ctx: ContextoDeHerramienta): string {
+  /** Devuelve la carga si el token vale para ESTA llamada (falta la huella); si no, lanza el rechazo que corresponde. */
+  private validarToken(token: string, h: HerramientaRegistrada, hash: string, ctx: ContextoDeHerramienta): CargaDeToken {
     const v = verificarToken(token, this.config.CONFIRMACION_SECRET, segundos(this.reloj()));
     if (!v.ok) throw rechazar(v.motivo === 'vencido' ? 'confirmacion_vencida' : 'confirmacion_invalida');
     const { carga } = v;
@@ -276,8 +279,7 @@ export class EjecutorDeHerramientas {
     ) {
       throw rechazar('confirmacion_no_coincide');
     }
-    if (carga.huella !== huella) throw rechazar('confirmacion_desactualizada');
-    return carga.jti;
+    return carga;
   }
 
   // --- fallos y auditoría ---

@@ -1,4 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { auditoriaListar } from '../auditoria/herramientas/auditoria-listar.js';
+import { empresaActualizarConfiguracion } from '../empresas/herramientas/empresa-actualizar-configuracion.js';
+import { empresaVerConfiguracion } from '../empresas/herramientas/empresa-ver-configuracion.js';
+import { crearModuloSolicitar } from '../empresas/herramientas/modulo-solicitar.js';
+import { manifiestoCore } from '../modulos/manifiesto-core.js';
 import { RegistroDeHerramientas } from './registro.js';
 import type { HerramientaRegistrada } from './tipos.js';
 
@@ -19,10 +24,21 @@ describe('RegistroDeHerramientas', () => {
     r.agregar([h]);
     expect(() => r.agregar([h])).toThrow(/repetida/);
   });
-  it('valida al terminar el arranque con los contratos reales (hoy vacíos)', () => {
-    const r = new RegistroDeHerramientas({
-      manifiestos: [{ codigo: 'core', permisos: [] }],
-    } as never);
-    expect(() => r.onApplicationBootstrap()).not.toThrow();
+  it('un contrato sin herramienta impide arrancar', () => {
+    const r = new RegistroDeHerramientas({ manifiestos: [{ codigo: 'core', permisos: [] }] } as never);
+    expect(() => r.onApplicationBootstrap()).toThrow(/empresa_ver_configuracion.*no tiene herramienta/s);
+  });
+  it('las herramientas del núcleo de esta fase son válidas frente a sus contratos y al manifiesto', () => {
+    const r = new RegistroDeHerramientas({ manifiestos: [manifiestoCore] } as never);
+    r.agregar([empresaVerConfiguracion, empresaActualizarConfiguracion, crearModuloSolicitar(undefined as never), auditoriaListar]);
+    // Los contratos de otras áreas pueden faltar aquí; los de esta fase no deben dar ningún problema.
+    try {
+      r.onApplicationBootstrap();
+    } catch (e) {
+      const propios = String((e as Error).message)
+        .split('\n')
+        .filter((l) => /empresa_|modulo_solicitar|auditoria_listar/.test(l));
+      expect(propios).toEqual([]);
+    }
   });
 });

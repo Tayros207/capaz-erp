@@ -1,9 +1,8 @@
-import type pg from 'pg';
 import { z } from 'zod';
 import { exito, rechazo, type AccesoDeModulo, type Respuesta } from '@capaz/shared';
 import type { Logger } from 'pino';
 import { sql } from 'drizzle-orm';
-import { conEmpresaDePruebas, empresaDePrueba, comoEmpresa } from '../../pruebas/base-de-pruebas.js';
+import { comoEmpresa, conEmpresaDePruebas, empresaDePrueba, type abrirPool } from '../../pruebas/base-de-pruebas.js';
 import type { DatabaseService } from '../../infra/database/database.service.js';
 import { EscritorDeAuditoria } from '../auditoria/escritor.js';
 import { EjecutorDeHerramientas } from './ejecutor.js';
@@ -129,7 +128,7 @@ export function herramientasDeEjemplo(estado: Entorno['estado']): HerramientaReg
 }
 
 /** Ejecutor real sobre la base de pruebas, con `extra` como herramientas adicionales. */
-export function crearEntorno(pool: pg.Pool, extra: (e: Entorno) => HerramientaRegistrada[] = () => []): Entorno {
+export function crearEntorno(pool: ReturnType<typeof abrirPool>, extra: (e: Entorno) => HerramientaRegistrada[] = () => []): Entorno {
   const empresaId = empresaDePrueba();
   const estado = { version: 1, ejecuciones: [] as string[] };
   const reloj = { ahora: new Date('2026-09-19T12:00:00.000Z') };
