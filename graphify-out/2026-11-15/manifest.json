@@ -1350,9 +1350,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1047153,
-    "ast_hash": "7a71c63e59d1228a8524ea268d9735fe",
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451216,
+    "ast_hash": "9183a46e06467db9dc5b089d73df6d2e",
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/rutas.tsx": {
@@ -1440,9 +1440,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/rutas.tsx": {
-    "mtime": 1794780243.5875585,
-    "seen": 1794781771.1047523,
-    "ast_hash": "ad303cb33034f103b4ac65346892fc5a",
+    "mtime": 1794784947.0729651,
+    "seen": 1794785106.1452456,
+    "ast_hash": "20b5ebea5b0d32fbb36f4fdae882bc04",
     "semantic_hash": ""
   },
   "apps/web/src/shared/api/cliente.spec.ts": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794783029.3210542,
-    "seen": 1794783032.0866323,
-    "ast_hash": "589a5a846751cd20daa4c0181193083c",
+    "mtime": 1794785103.6832137,
+    "seen": 1794785106.145554,
+    "ast_hash": "7ba4741dcacecb7f9add0a89b575500d",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -2154,9 +2154,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/ejecutor.ts": {
-    "mtime": 1794784326.926941,
-    "seen": 1794784406.1180754,
-    "ast_hash": "9f5eabdcabf825788834805ac3599304",
+    "mtime": 1794784983.6005135,
+    "seen": 1794785106.144635,
+    "ast_hash": "5ed073ac7302d26d1bf1d3ed44fa21bb",
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/errores-de-zod.spec.ts": {
@@ -2916,9 +2916,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/herramientas-de-intercambio.ts": {
-    "mtime": 1794784402.4796388,
-    "seen": 1794784406.1181197,
-    "ast_hash": "306a39d14bd19a383c3c4953da367a96",
+    "mtime": 1794784413.5276475,
+    "seen": 1794784567.7782302,
+    "ast_hash": "20fc0057f497006089150baf693d72a0",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/intercambio.int.spec.ts": {
@@ -2928,9 +2928,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/invocador.ts": {
-    "mtime": 1794784402.4799945,
-    "seen": 1794784406.118126,
-    "ast_hash": "037cb4d409a19a19865222353e13a4f4",
+    "mtime": 1794784413.5101054,
+    "seen": 1794784567.7782393,
+    "ast_hash": "83e539868c6817dc665ce38ab77e6a7a",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/planificar.ts": {
@@ -3027,6 +3027,156 @@
     "mtime": 1794784184.0001788,
     "seen": 1794784406.1182203,
     "ast_hash": "a6e619208b2a935864b5882fc2e4a662",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/borradores-criticos.int.spec.ts": {
+    "mtime": 1794784983.6003015,
+    "seen": 1794785106.1446187,
+    "ast_hash": "5b070b88ada3b5c7b95bda1c6ed55b89",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/api.ts": {
+    "mtime": 1794784889.3633215,
+    "seen": 1794785106.1451018,
+    "ast_hash": "9e407e64725f7b50a2f330a754f46894",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/claves.ts": {
+    "mtime": 1794784889.3633215,
+    "seen": 1794785106.1451042,
+    "ast_hash": "d22f04699115c79290cc4847d35ee31b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/consultas.tsx": {
+    "mtime": 1794784889.3633215,
+    "seen": 1794785106.145106,
+    "ast_hash": "e637664c9052858a710b7b86547e3e27",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/formulario-correccion.tsx": {
+    "mtime": 1794784889.3633215,
+    "seen": 1794785106.1451085,
+    "ast_hash": "7dac61bb52765264516134a0a8a53792",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/hoja-descartar.tsx": {
+    "mtime": 1794784889.3633215,
+    "seen": 1794785106.1451106,
+    "ast_hash": "2f254f5b3aac48b447b8e457c71577e9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/insignias.tsx": {
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451123,
+    "ast_hash": "5ffa405fc4e85660e067a3c471e9bf0c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/logica.spec.ts": {
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451142,
+    "ast_hash": "0f0f62b5542d0a6f67b8e087e5cb7263",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/logica.ts": {
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451156,
+    "ast_hash": "fe083887130fcd6ccc709074ceb92fef",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/pantalla-bandeja.tsx": {
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451175,
+    "ast_hash": "15ce7d1345a142b1c7e81355f15fa49a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/pantalla-borrador.tsx": {
+    "mtime": 1794784889.3643215,
+    "seen": 1794785106.1451192,
+    "ast_hash": "0c198cd465ac807062129971648852d6",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/api.ts": {
+    "mtime": 1794784947.070469,
+    "seen": 1794785106.1452196,
+    "ast_hash": "e4aff82cb86a65ac40098f6cf3c3168a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/claves.ts": {
+    "mtime": 1794784947.070469,
+    "seen": 1794785106.1452215,
+    "ast_hash": "6d82e135a18c236f7557e72a9637ae0f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/hoja-activar.tsx": {
+    "mtime": 1794784947.070469,
+    "seen": 1794785106.145223,
+    "ast_hash": "d4f122f1d38642b00a54ccc2938d5720",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/hoja-contrato.tsx": {
+    "mtime": 1794784947.071469,
+    "seen": 1794785106.1452248,
+    "ast_hash": "95ec2e2245546359977234580e795ab9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/hoja-empresa-nueva.tsx": {
+    "mtime": 1794784947.071469,
+    "seen": 1794785106.1452262,
+    "ast_hash": "12c42fa93c1ab1672f6e9471be9c215f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/hoja-plan.tsx": {
+    "mtime": 1794784947.071469,
+    "seen": 1794785106.1452281,
+    "ast_hash": "9637f6c4aea86ed9ea3b5444cf383d23",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/hoja-restablecer.tsx": {
+    "mtime": 1794784947.071469,
+    "seen": 1794785106.14523,
+    "ast_hash": "6e1001d52474a48d492587d5a2248802",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/logica.spec.ts": {
+    "mtime": 1794784947.071469,
+    "seen": 1794785106.145232,
+    "ast_hash": "49d72523499a6d44d96aecf4e883c0f7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/logica.ts": {
+    "mtime": 1794784947.0728056,
+    "seen": 1794785106.1452334,
+    "ast_hash": "8f84a5e991cbb037ba7223ee9e7a8d90",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/marco.tsx": {
+    "mtime": 1794784947.072877,
+    "seen": 1794785106.1452353,
+    "ast_hash": "54e12c110d0ad6cc85557d29ef63f277",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/pantalla-empresa.tsx": {
+    "mtime": 1794784947.0729651,
+    "seen": 1794785106.1452372,
+    "ast_hash": "4fa03f06e33d27235b88d6901c70cd68",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/pantalla-empresas.tsx": {
+    "mtime": 1794784947.0729651,
+    "seen": 1794785106.1452396,
+    "ast_hash": "357ac68f9bf8f9415311889e14a6e8ae",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/pantalla-planes.tsx": {
+    "mtime": 1794784947.0729651,
+    "seen": 1794785106.1452413,
+    "ast_hash": "cfe013f141b50aa7c41529f3be4822b2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/pantalla-solicitudes.tsx": {
+    "mtime": 1794784947.0729651,
+    "seen": 1794785106.1452432,
+    "ast_hash": "ab38f7c927dff4741667525f3c0f2a18",
     "semantic_hash": ""
   }
 }

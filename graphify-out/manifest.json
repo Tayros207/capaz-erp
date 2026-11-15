@@ -774,9 +774,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/conectores/conectores.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.1043158,
-    "ast_hash": "cfc45545e5967a33c4054eb0c5522b8d",
+    "mtime": 1794785571.3389122,
+    "seen": 1794785763.4323418,
+    "ast_hash": "cc1c4ca2784552171082bead1dc0649e",
     "semantic_hash": ""
   },
   "apps/api/src/core/correlativos/correlativos.module.ts": {
@@ -936,9 +936,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.spec.ts": {
-    "mtime": 1794780380.3079708,
-    "seen": 1794781771.104365,
-    "ast_hash": "0988fa77f9b4c391454be6078a57f91c",
+    "mtime": 1794785636.7548497,
+    "seen": 1794785763.432673,
+    "ast_hash": "cd4c1dd4c76fe58ad6a436b4671ec10a",
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.ts": {
@@ -1122,15 +1122,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/webhooks/webhooks.manifest.ts": {
-    "mtime": 1794780380.3099065,
-    "seen": 1794781771.1045403,
-    "ast_hash": "782966457291fcd36272a575a44e4598",
+    "mtime": 1794785577.4495394,
+    "seen": 1794785763.432939,
+    "ast_hash": "e65b63b513c96a490053bb03e07ee417",
     "semantic_hash": ""
   },
   "apps/api/src/modules/webhooks/webhooks.module.ts": {
-    "mtime": 1794780380.3100467,
-    "seen": 1794781771.1045427,
-    "ast_hash": "e36358f4c14e0547ae07105b5fd92438",
+    "mtime": 1794785571.3408458,
+    "seen": 1794785763.4329412,
+    "ast_hash": "03f638e1ad071fb33b8225f443eb9645",
     "semantic_hash": ""
   },
   "apps/api/src/pruebas/app-de-pruebas.ts": {
@@ -1788,9 +1788,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/conexiones.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1048975,
-    "ast_hash": "89a3903e78717a2fcad40b402b514e62",
+    "mtime": 1794785571.3410037,
+    "seen": 1794785763.4336662,
+    "ast_hash": "7f9edaa6849b155c75ff48d52eb588c1",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/contratos.spec.ts": {
@@ -2394,9 +2394,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/borradores.int.spec.ts": {
-    "mtime": 1794782922.3377268,
-    "seen": 1794783032.0856702,
-    "ast_hash": "cb5d08ceba1a6c6b5a96a6d9737763c1",
+    "mtime": 1794785636.7584662,
+    "seen": 1794785763.432281,
+    "ast_hash": "544a18ac7bcbd5b25df50c5e676d71af",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/catalogo.ts": {
@@ -2412,9 +2412,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/proponer.ts": {
-    "mtime": 1794782922.338146,
-    "seen": 1794783032.0856812,
-    "ast_hash": "1a8882f60b1d79083e36a850383505cb",
+    "mtime": 1794785577.4493139,
+    "seen": 1794785763.4322925,
+    "ast_hash": "9af2e0bd7dfc203fdf50d6c7fb845899",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/repositorio.ts": {
@@ -3177,6 +3177,132 @@
     "mtime": 1794784947.0729651,
     "seen": 1794785106.1452432,
     "ast_hash": "ab38f7c927dff4741667525f3c0f2a18",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/ayudas.ts": {
+    "mtime": 1794785571.3382583,
+    "seen": 1794785763.4323316,
+    "ast_hash": "e4936069c323991e3fed5b386de72b51",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/cifrado.spec.ts": {
+    "mtime": 1794785571.3385508,
+    "seen": 1794785763.4323347,
+    "ast_hash": "b3dfd26c4a329701f2610e2d9d69c527",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/cifrado.ts": {
+    "mtime": 1794785571.3386414,
+    "seen": 1794785763.4323368,
+    "ast_hash": "d9f0ea5b4048bc6fccefd3f628041e5c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/conectores.int.spec.ts": {
+    "mtime": 1794785571.3387713,
+    "seen": 1794785763.4323392,
+    "ast_hash": "7827666133769d612e1be22bb357278e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/destinos.spec.ts": {
+    "mtime": 1794785571.338995,
+    "seen": 1794785763.432344,
+    "ast_hash": "b4655070ed473f81233d3a152b1b99c3",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/destinos.ts": {
+    "mtime": 1794785571.3390875,
+    "seen": 1794785763.4323463,
+    "ast_hash": "d37e69e08e23a20c8013b6a86ce3b5a5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/entrada.controller.ts": {
+    "mtime": 1794785571.339184,
+    "seen": 1794785763.4323487,
+    "ast_hash": "151bead963dd8cfb345818cb17e5c849",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/entrada.int.spec.ts": {
+    "mtime": 1794785571.3393002,
+    "seen": 1794785763.4323506,
+    "ast_hash": "2fa9947c417f490f2b6b92461940140c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/enviar.ts": {
+    "mtime": 1794785571.339442,
+    "seen": 1794785763.4323525,
+    "ast_hash": "c764f7f79b024eae75d8a1b5732a1238",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/firma.spec.ts": {
+    "mtime": 1794785571.3395236,
+    "seen": 1794785763.4323542,
+    "ast_hash": "87be19e11cbe13c4c42aab97ae5cb767",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/firma.ts": {
+    "mtime": 1794785571.3395994,
+    "seen": 1794785763.432356,
+    "ast_hash": "79653e3358dd0f425e6c8383fe85e6f3",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/herramientas-de-conexiones.ts": {
+    "mtime": 1794785571.3397045,
+    "seen": 1794785763.432358,
+    "ast_hash": "b627fd670377cbce533eda4e5325f842",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/limitador.ts": {
+    "mtime": 1794785571.3397877,
+    "seen": 1794785763.43236,
+    "ast_hash": "bcc2c6c9468fd9e192642b2d777d8a2a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/registro-de-conectores.ts": {
+    "mtime": 1794785571.3398845,
+    "seen": 1794785763.4323618,
+    "ast_hash": "17538949fc69956327b7e9aa7c92752e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/repositorio.ts": {
+    "mtime": 1794785571.3399827,
+    "seen": 1794785763.4323637,
+    "ast_hash": "8224c9f8f88af095531ede773faba08a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/conectores/tokens.ts": {
+    "mtime": 1794785571.3400486,
+    "seen": 1794785763.432366,
+    "ast_hash": "ef061391150b9e4c0ec7a937f6d3370e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/webhooks/entrega.ts": {
+    "mtime": 1794785571.340165,
+    "seen": 1794785763.4329267,
+    "ast_hash": "1f0e5beb4a6bc99f4d2917bd96a6b03b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/webhooks/herramientas-de-webhooks.ts": {
+    "mtime": 1794785571.340266,
+    "seen": 1794785763.4329293,
+    "ast_hash": "004ca7c65b6e9726490f777e30e55e01",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/webhooks/repositorio.ts": {
+    "mtime": 1794785571.340379,
+    "seen": 1794785763.4329317,
+    "ast_hash": "e61f717e1ede745dd7bd7e074d93bfc0",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/webhooks/webhooks.connector.ts": {
+    "mtime": 1794785571.3404682,
+    "seen": 1794785763.4329338,
+    "ast_hash": "18beaf678043de6e4efe7ea3762e42ef",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/webhooks/webhooks.int.spec.ts": {
+    "mtime": 1794785571.3406148,
+    "seen": 1794785763.432936,
+    "ast_hash": "b8994531756098e403810481786faa53",
     "semantic_hash": ""
   }
 }
