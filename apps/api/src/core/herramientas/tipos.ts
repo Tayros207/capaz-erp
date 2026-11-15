@@ -108,7 +108,7 @@ export function definirHerramienta<N extends NombreDeHerramienta>(
   )[nombre];
   if (!contrato)
     throw new Error(
-      `La herramienta «${nombre}» no tiene contrato en @capaz/shared.`,
+      `La herramienta «${String(nombre)}» no tiene contrato en @capaz/shared.`,
     );
   const { resumir, auditar, ejecutar, ...resto } = h;
   return {
