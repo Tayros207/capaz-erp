@@ -71,6 +71,13 @@
       "when": 1794782038833,
       "tag": "0009_plataforma",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794782046483,
+      "tag": "0010_conexiones",
+      "breakpoints": true
     }
   ]
 }
