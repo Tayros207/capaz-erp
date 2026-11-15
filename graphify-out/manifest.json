@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794783029.3210542,
-    "seen": 1794783032.0866323,
-    "ast_hash": "589a5a846751cd20daa4c0181193083c",
+    "mtime": 1794784563.2905712,
+    "seen": 1794784567.7791557,
+    "ast_hash": "d0ca142df95bdf067a374a9094ccf152",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -2916,9 +2916,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/herramientas-de-intercambio.ts": {
-    "mtime": 1794784402.4796388,
-    "seen": 1794784406.1181197,
-    "ast_hash": "306a39d14bd19a383c3c4953da367a96",
+    "mtime": 1794784413.5276475,
+    "seen": 1794784567.7782302,
+    "ast_hash": "20fc0057f497006089150baf693d72a0",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/intercambio.int.spec.ts": {
@@ -2928,9 +2928,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/invocador.ts": {
-    "mtime": 1794784402.4799945,
-    "seen": 1794784406.118126,
-    "ast_hash": "037cb4d409a19a19865222353e13a4f4",
+    "mtime": 1794784413.5101054,
+    "seen": 1794784567.7782393,
+    "ast_hash": "83e539868c6817dc665ce38ab77e6a7a",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/planificar.ts": {

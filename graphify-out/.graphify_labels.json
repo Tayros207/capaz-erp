@@ -1,10 +1,10 @@
 {
   "0": "AGENTS.md (reglas del constructor)",
-  "1": "con-empresa.ts",
+  "1": "database.service.ts",
   "2": "src/index.ts",
   "3": "web/package.json",
   "4": "main.ts",
-  "5": "vitest",
+  "5": "con-empresa.ts",
   "6": "preparar-base.ts",
   "7": "compilerOptions",
   "8": "scripts",
@@ -35,11 +35,11 @@
   "33": "pantalla-registro.tsx",
   "34": "config.d.ts",
   "35": "web/tsconfig.json",
-  "36": "@nestjs/schematics@^12.0.0",
+  "36": "herramientas-de-intercambio.ts",
   "37": "Relevo: dónde quedó Capaz ERP y cómo seguir",
-  "38": "oxlint-tsgolint@^7.0.2001",
+  "38": "Invocador",
   "39": "prettier@^3.4.2",
-  "40": "@types/express@^5.0.0",
+  "40": "drizzle-kit",
   "41": "solicitar.ts",
   "42": "ejecutor.ts",
   "43": "migrar.d.ts",
@@ -49,7 +49,5 @@
   "47": "motor.ts",
   "48": "@vitest/coverage-v8@^4.1.2",
   "49": "Transaccion",
-  "50": "@nestjs/testing@^12.4.2",
-  "51": "@types/node@^24.0.0",
-  "52": "typescript@^6.0.3"
+  "50": "@nestjs/mau@^0.2.6"
 }

@@ -168,10 +168,10 @@
     "semantic_hash": "558843d51cd58d1fcbd2a67e19fba995"
   },
   "apps/api/src/infra/database/con-empresa.ts": {
-    "mtime": 1794674050.137852,
-    "seen": 1794676297.76812,
-    "ast_hash": "5289deb3c49a02b7d9ff628c235ea35f",
-    "semantic_hash": "5289deb3c49a02b7d9ff628c235ea35f"
+    "mtime": 1794784326.9261608,
+    "seen": 1794784406.1183012,
+    "ast_hash": "30f0adcfca163e587c0ee77cc3f7a7a7",
+    "semantic_hash": ""
   },
   "apps/api/src/infra/database/database.module.ts": {
     "mtime": 1794415479.6728947,
@@ -756,9 +756,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/automatizaciones/automatizaciones.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.1043098,
-    "ast_hash": "70f0746df220b335c8c457371dd06495",
+    "mtime": 1794784309.3774545,
+    "seen": 1794784406.1179368,
+    "ast_hash": "28e968430e2b1bab0dfbe23e6ae3ad00",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/borradores.module.ts": {
@@ -906,9 +906,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/intercambio.module.ts": {
-    "mtime": 1794780380.3063722,
-    "seen": 1794781771.1043563,
-    "ast_hash": "b6f44d3998440bceb6e7c7faebbbe458",
+    "mtime": 1794784402.4799044,
+    "seen": 1794784406.118124,
+    "ast_hash": "4fc1e97ae967fbd93f64d7be8a2e087d",
     "semantic_hash": ""
   },
   "apps/api/src/core/miembros/miembros.module.ts": {
@@ -978,9 +978,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/plataforma/plataforma.module.ts": {
-    "mtime": 1794780380.3081787,
-    "seen": 1794781771.1043775,
-    "ast_hash": "7c836a3367fa0b99d5800f2942a442d0",
+    "mtime": 1794784183.9995227,
+    "seen": 1794784406.118213,
+    "ast_hash": "864939375e476c65f11a39975338a6df",
     "semantic_hash": ""
   },
   "apps/api/src/core/productos/productos.module.ts": {
@@ -1764,9 +1764,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/automatizaciones.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.10489,
-    "ast_hash": "376c720cf304fb0f86c2e29ed8342ecb",
+    "mtime": 1794784309.3801765,
+    "seen": 1794784406.1188257,
+    "ast_hash": "ee5b7c865f01402b8897dba08e7e6071",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/borradores.ts": {
@@ -1830,9 +1830,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/intercambio.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049104,
-    "ast_hash": "6f91dd4b46ce69dcd660c47683ebffd7",
+    "mtime": 1794784402.4803286,
+    "seen": 1794784406.118853,
+    "ast_hash": "c3fdcfaf53da319a1d5d3e637b583ac7",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/miembros.ts": {
@@ -1860,9 +1860,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/plataforma.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049192,
-    "ast_hash": "1fff817c1fb377d5e50d28af7d197062",
+    "mtime": 1794784184.0006413,
+    "seen": 1794784406.1188653,
+    "ast_hash": "4c0b33868fefe07d165f30ea9cd0f447",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/productos.ts": {
@@ -2154,9 +2154,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/ejecutor.ts": {
-    "mtime": 1794782374.3294182,
-    "seen": 1794782554.149325,
-    "ast_hash": "34fbe955a42670ea6269f90fbf7f27af",
+    "mtime": 1794784326.926941,
+    "seen": 1794784406.1180754,
+    "ast_hash": "9f5eabdcabf825788834805ac3599304",
     "semantic_hash": ""
   },
   "apps/api/src/core/herramientas/errores-de-zod.spec.ts": {
@@ -2805,6 +2805,228 @@
     "mtime": 1794783667.2851982,
     "seen": 1794784071.9697244,
     "ast_hash": "a6a5107d62130cafd57b98196425ad58",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/automatizaciones.int.spec.ts": {
+    "mtime": 1794784309.377079,
+    "seen": 1794784406.1179335,
+    "ast_hash": "89eeccac8e1bdb7293588b4df68a3018",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/ayudas.ts": {
+    "mtime": 1794784309.377665,
+    "seen": 1794784406.1179392,
+    "ast_hash": "3fd5ca1c40db849cbe44a4d39429bcb9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/condiciones.spec.ts": {
+    "mtime": 1794784309.3779736,
+    "seen": 1794784406.1179416,
+    "ast_hash": "a4fd323221b94a17460da1156bad02c5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/condiciones.ts": {
+    "mtime": 1794784309.378091,
+    "seen": 1794784406.1179435,
+    "ast_hash": "f5c2d3972c7d0e713785b228f249d860",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/disparadores.ts": {
+    "mtime": 1794784309.3783379,
+    "seen": 1794784406.1179454,
+    "ast_hash": "52b9c1b905576a78dcb2d728e2fad0d6",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/fuentes.ts": {
+    "mtime": 1794784309.3786676,
+    "seen": 1794784406.1179473,
+    "ast_hash": "b81c17332a688935fb67d84e1c675a59",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/herramientas-de-automatizaciones.ts": {
+    "mtime": 1794784309.3788042,
+    "seen": 1794784406.1179492,
+    "ast_hash": "9706a6eacc67f08f7c97fc30a1aaf263",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/motor.ts": {
+    "mtime": 1794784331.078148,
+    "seen": 1794784406.117951,
+    "ast_hash": "b7f3bc83dd5f3b44b15558892f6344b1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/repositorio.ts": {
+    "mtime": 1794784309.379461,
+    "seen": 1794784406.1179526,
+    "ast_hash": "2c8c310e345782868ee2ebbd8da20729",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/tipos.ts": {
+    "mtime": 1794784309.3796592,
+    "seen": 1794784406.1179543,
+    "ast_hash": "8a16b0bd2b0781da45389b85b40f70fe",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/automatizaciones/validacion.ts": {
+    "mtime": 1794784309.3798387,
+    "seen": 1794784406.1179564,
+    "ast_hash": "454fe3ebfa4dc1dd0e1b2c694687ae22",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/herramientas/ejecutar-dentro-correlativos.int.spec.ts": {
+    "mtime": 1794784338.4369135,
+    "seen": 1794784406.1180675,
+    "ast_hash": "e38159c6936681f8db91f533b01dbb48",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/ayudas.ts": {
+    "mtime": 1794784402.4790347,
+    "seen": 1794784406.1181073,
+    "ast_hash": "5bea93faf757e3d64e9992d51b57ece1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/columnas.spec.ts": {
+    "mtime": 1794784402.4791298,
+    "seen": 1794784406.1181097,
+    "ast_hash": "014a8d9ec79d0c8df572f7cab853c76c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/columnas.ts": {
+    "mtime": 1794784402.4792428,
+    "seen": 1794784406.1181118,
+    "ast_hash": "3bece1beb962b80818f2c1acb15c6e3a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/csv.spec.ts": {
+    "mtime": 1794784402.4793403,
+    "seen": 1794784406.1181138,
+    "ast_hash": "4d085559b37cbeed61636200a077317f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/csv.ts": {
+    "mtime": 1794784402.4794478,
+    "seen": 1794784406.118116,
+    "ast_hash": "e4578b226317c63f11c112e9bdbb8459",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/exportar.ts": {
+    "mtime": 1794784402.4795358,
+    "seen": 1794784406.1181176,
+    "ast_hash": "f01bb0c8bf5a655d57382050a4a1ffab",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/herramientas-de-intercambio.ts": {
+    "mtime": 1794784402.4796388,
+    "seen": 1794784406.1181197,
+    "ast_hash": "306a39d14bd19a383c3c4953da367a96",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/intercambio.int.spec.ts": {
+    "mtime": 1794784402.479774,
+    "seen": 1794784406.1181214,
+    "ast_hash": "9bf70425defc11c16fa90d982b929a90",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/invocador.ts": {
+    "mtime": 1794784402.4799945,
+    "seen": 1794784406.118126,
+    "ast_hash": "037cb4d409a19a19865222353e13a4f4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/planificar.ts": {
+    "mtime": 1794784402.4800866,
+    "seen": 1794784406.1181276,
+    "ast_hash": "fd191988d98b634199a5d1cdc559a5f9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/intercambio/repositorio.ts": {
+    "mtime": 1794784402.48018,
+    "seen": 1794784406.1181297,
+    "ast_hash": "c98957b8c84ee4c4bc3c89a0e4168122",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/ayudas.ts": {
+    "mtime": 1794784183.9969032,
+    "seen": 1794784406.118193,
+    "ast_hash": "8e67d3f9a2c698c2712731a7b41efd96",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/ejecutor-de-plataforma.ts": {
+    "mtime": 1794784183.9973135,
+    "seen": 1794784406.1181946,
+    "ast_hash": "a64eba7722284476bf19e0757777810c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/guardia-de-plataforma.ts": {
+    "mtime": 1794784183.9976695,
+    "seen": 1794784406.118197,
+    "ast_hash": "7b6590a235cd3fc2501d302c7d6620d4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/herramienta-de-contrasena.ts": {
+    "mtime": 1794784183.9979014,
+    "seen": 1794784406.1181993,
+    "ast_hash": "3f922b452c66a1469ac78454ec4dd3a1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/herramientas-de-empresas.ts": {
+    "mtime": 1794784183.9981241,
+    "seen": 1794784406.118201,
+    "ast_hash": "f5742ebd924f1a79f6c08358ab5bafb8",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/herramientas-de-modulos.ts": {
+    "mtime": 1794784183.9981241,
+    "seen": 1794784406.118203,
+    "ast_hash": "cb3002227712e4c8c9fe124f642d2eee",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/herramientas-de-planes.ts": {
+    "mtime": 1794784183.9981241,
+    "seen": 1794784406.1182048,
+    "ast_hash": "1f59a5a5e580e57ab2f36bde856e26fe",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/herramientas-de-plataforma.ts": {
+    "mtime": 1794784183.9981241,
+    "seen": 1794784406.1182067,
+    "ast_hash": "10d5c1df626a3baecb06720ee4f3e30d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/plataforma.controller.ts": {
+    "mtime": 1794784183.9989822,
+    "seen": 1794784406.118209,
+    "ast_hash": "b7d2ddb3c37a5f5c34b0bf8d4b24157a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/plataforma.int.spec.ts": {
+    "mtime": 1794784183.9992087,
+    "seen": 1794784406.1182106,
+    "ast_hash": "8edac0da7f70fcacf994b8c12e6ce08b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/registro-de-plataforma.spec.ts": {
+    "mtime": 1794784183.9997656,
+    "seen": 1794784406.1182148,
+    "ast_hash": "888907838228cbe1a4e45392930952bf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/registro-de-plataforma.ts": {
+    "mtime": 1794784183.9999807,
+    "seen": 1794784406.1182168,
+    "ast_hash": "216dd82aa7f802723d84da0cfc6ed6d1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/repositorio.ts": {
+    "mtime": 1794784184.0001788,
+    "seen": 1794784406.1182184,
+    "ast_hash": "6acb92562267f0efaebafdac73007209",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/plataforma/tipos.ts": {
+    "mtime": 1794784184.0001788,
+    "seen": 1794784406.1182203,
+    "ast_hash": "a6e619208b2a935864b5882fc2e4a662",
     "semantic_hash": ""
   }
 }
