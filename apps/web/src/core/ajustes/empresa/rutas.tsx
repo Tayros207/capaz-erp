@@ -1,7 +1,6 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../../shared/ui/estado-vacio.tsx';
+import { cargarConfiguracion } from './cargador.ts';
+import { PantallaEmpresa } from './pantalla-empresa.tsx';
 
-// Pantallas de «Empresa»: las construye su carril. Mientras tanto, un marcador.
-export const rutas: RouteObject[] = [
-  { path: 'ajustes/empresa/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
-];
+// `/ajustes/empresa`: zona horaria de la empresa (herramientas empresa_ver_configuracion y empresa_actualizar_configuracion).
+export const rutas: RouteObject[] = [{ path: 'ajustes/empresa', loader: cargarConfiguracion, element: <PantallaEmpresa /> }];
