@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { aCentimos, centimosSchema, formatearSoles } from './dinero.js';
+import { aCentimos, centimosSchema, formatearSoles, importe, milesimasSchema } from './dinero.js';
 
 describe('aCentimos', () => {
   it.each([
@@ -49,5 +49,38 @@ describe('centimosSchema', () => {
     expect(centimosSchema.safeParse(100).success).toBe(true);
     expect(centimosSchema.safeParse(1.5).success).toBe(false);
     expect(centimosSchema.safeParse('100').success).toBe(false);
+  });
+});
+
+describe('importe', () => {
+  it.each([
+    [1000, 1000, 100], // 1 unidad × 1 sol = 100 céntimos
+    [2500, 12_340, 3085], // 2.5 × 12.34 = 30.85
+    [1000, 5, 1], // 0.005 sol = 0.5 céntimos: mitad hacia arriba
+    [1000, 4, 0], // 0.4 céntimos
+    [1000, 14, 1], // 1.4 → 1
+    [1000, 15, 2], // 1.5 → 2
+    [0, 99_999, 0],
+    [-1000, 5, 0], // -0.5 → 0 (mitad hacia arriba)
+    [-1000, 15, -1], // -1.5 → -1
+    [-1000, 16, -2], // -1.6 → -2
+  ])('importe(%i, %i) = %i céntimos', (cantidad, precio, esperado) => {
+    expect(importe(cantidad, precio)).toBe(esperado);
+  });
+
+  it('no pierde precisión con montos grandes', () => {
+    // 90 000 000 000 000 unidades × 1 sol: el producto excede 2^53 pero el resultado cabe.
+    expect(importe(90_000_000_000_000, 10_000)).toBe(90_000_000_000_000);
+    expect(importe(9_007_199_254_740_991, 1000)).toBe(900_719_925_474_099); // 9 007 199 254 740 991 / 10 = ...099.1
+  });
+
+  it('rechaza lo que no es entero seguro', () => {
+    expect(() => importe(1.5, 1000)).toThrow();
+    expect(() => importe(1000, Number.NaN)).toThrow();
+  });
+
+  it('milesimasSchema exige enteros seguros', () => {
+    expect(milesimasSchema.safeParse(1500).success).toBe(true);
+    expect(milesimasSchema.safeParse(1.5).success).toBe(false);
   });
 });

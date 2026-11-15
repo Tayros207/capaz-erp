@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { accesoDeModuloSchema } from './modulos.js';
+import { FAMILIAS, accesoDeModuloSchema } from './modulos.js';
 
 // Contrato de `GET /api/v1/yo` y de la creación de empresas. Los módulos con su estado se
 // agregan al terminar la fase 4.
@@ -15,6 +15,8 @@ export const moduloDeYoSchema = z.strictObject({
   codigo: z.string(),
   nombre: z.string(),
   descripcion: z.string(),
+  familia: z.enum(FAMILIAS),
+  orden: z.number().int(),
   acento: z.string(),
   icono: z.string(),
   enConstruccion: z.boolean(),
