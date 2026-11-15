@@ -1,17 +1,17 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 394 files · ~192,951 words
+- 412 files · ~203,822 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 724 nodes · 1079 edges · 49 communities (34 shown, 15 thin omitted)
+- 724 nodes · 1067 edges · 49 communities (34 shown, 15 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 34 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `de1874af`
+- Built from commit: `c53eb289`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,7 +21,7 @@
 - src/index.ts
 - web/package.json
 - main.ts
-- base-de-pruebas.ts
+- vitest
 - preparar-base.ts
 - compilerOptions
 - scripts
@@ -68,12 +68,12 @@
 2. `compilerOptions` - 18 edges
 3. `AGENTS.md (reglas del constructor)` - 18 edges
 4. `scripts` - 17 edges
-5. `compilerOptions` - 15 edges
-6. `@nestjs/common` - 14 edges
-7. `scripts` - 14 edges
-8. `DatabaseService` - 11 edges
-9. `analizar()` - 11 edges
-10. `compilerOptions` - 11 edges
+5. `vitest` - 16 edges
+6. `compilerOptions` - 15 edges
+7. `@nestjs/common` - 14 edges
+8. `scripts` - 14 edges
+9. `DatabaseService` - 11 edges
+10. `analizar()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Auditoria inmutable, idempotencia y outbox de eventos` --shares_data_with--> `ejecutar() y registro de herramientas`  [INFERRED]
@@ -113,16 +113,16 @@ Cohesion: 0.09
 Nodes (33): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), Codigo, codigoDeEstado() (+25 more)
 
 ### Community 3 - "web/package.json"
-Cohesion: 0.06
-Nodes (41): dependencies, @capaz/shared@workspace:*, react@^19.3.1, react-dom@^19.3.1, react-router@^8.5.1, devDependencies, oxlint@^1.90.0, tailwindcss@^4.3.5 (+33 more)
+Cohesion: 0.05
+Nodes (42): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query, devDependencies, oxlint (+34 more)
 
 ### Community 4 - "main.ts"
 Cohesion: 0.09
 Nodes (18): AppModule, leerConfigDelEntorno(), almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto() (+10 more)
 
-### Community 5 - "base-de-pruebas.ts"
+### Community 5 - "vitest"
 Cohesion: 0.09
-Nodes (22): core, empresaConfig, ADR-0012, A, B, EJEMPLOS, ESQUEMAS, ADR-0011 (+14 more)
+Nodes (23): core, empresaConfig, ADR-0012, A, B, EJEMPLOS, ESQUEMAS, ADR-0011 (+15 more)
 
 ### Community 6 - "preparar-base.ts"
 Cohesion: 0.15
@@ -237,24 +237,24 @@ Cohesion: 0.20
 Nodes (9): 1. En una frase, 2. Estado exacto, 3. Cómo arrancar el entorno, 4. Mapa del código, 5. Cosas que no son obvias (trampas ya pisadas), 6. Qué hacer ahora, en orden, 7. Documentación, 8. Decisiones del usuario que siguen abiertas (+1 more)
 
 ## Knowledge Gaps
-- **233 isolated node(s):** `Props`, `Problema`, `Traduccion`, `Credencial`, `Rol` (+228 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 302 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **256 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+251 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 324 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `pg` connect `base-de-pruebas.ts` to `database.service.ts`, `preparar-base.ts`, `dependencies`, `config.js`, `api/package.json`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **What connects `Props`, `Problema`, `Traduccion` to the rest of the system?**
-  _233 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `vitest` connect `vitest` to `database.service.ts`, `src/index.ts`, `web/package.json`, `main.ts`, `reglas.ts`?**
+  _High betweenness centrality (0.120) - this node is a cross-community bridge._
+- **What connects `name`, `private`, `version` to the rest of the system?**
+  _256 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
-- **Why does `@nestjs/common` connect `database.service.ts` to `api/package.json`, `src/index.ts`, `dependencies`, `main.ts`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+- **Why does `pg` connect `vitest` to `database.service.ts`, `preparar-base.ts`, `dependencies`, `config.js`, `api/package.json`?**
+  _High betweenness centrality (0.059) - this node is a cross-community bridge._
 - **Should `database.service.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.06458635703918723 - nodes in this community are weakly interconnected._
-- **Why does `drizzle-orm` connect `base-de-pruebas.ts` to `database.service.ts`, `preparar-base.ts`, `dependencies`, `config.js`, `api/package.json`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `@nestjs/common` connect `database.service.ts` to `api/package.json`, `src/index.ts`, `dependencies`, `main.ts`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08563134978229318 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09142857142857143 - nodes in this community are weakly interconnected._

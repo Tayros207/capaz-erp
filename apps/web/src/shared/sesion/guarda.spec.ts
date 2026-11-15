@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Yo } from '@capaz/shared';
-import { destinoSegunSesion } from './guarda.ts';
+import { destinoSegunSesion, rutaSiguiente } from './guarda.ts';
 
 const base: Yo = {
   usuario: { id: 'u1', nombre: 'Ana', correo: 'ana@ejemplo.pe' },
@@ -46,5 +46,17 @@ describe('destinoSegunSesion', () => {
     expect(destinoSegunSesion(null, '/kit')).toBeNull();
     expect(destinoSegunSesion(base, '/kit')).toBeNull();
     expect(destinoSegunSesion(conEmpresa, '/kit')).toBeNull();
+  });
+});
+
+describe('invitaciones y ruta siguiente', () => {
+  it('sin sesión, una invitación lleva a iniciar sesión recordando la ruta', () => {
+    expect(destinoSegunSesion(null, '/invitacion/abc')).toBe('/iniciar-sesion?siguiente=%2Finvitacion%2Fabc');
+  });
+  it('rutaSiguiente solo acepta rutas internas', () => {
+    expect(rutaSiguiente('?siguiente=%2Finvitacion%2Fabc')).toBe('/invitacion/abc');
+    expect(rutaSiguiente('?siguiente=https%3A%2F%2Fmalo.com')).toBe('/');
+    expect(rutaSiguiente('?siguiente=%2F%2Fmalo.com')).toBe('/');
+    expect(rutaSiguiente('')).toBe('/');
   });
 });

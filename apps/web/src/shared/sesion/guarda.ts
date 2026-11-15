@@ -18,8 +18,19 @@ export function destinoSegunSesion(yo: Yo | null, ruta: string): string | null {
   if (esRuta(r, '/kit')) return null;
   const publica = RUTAS_PUBLICAS.some((p) => esRuta(r, p));
 
-  if (!yo) return publica ? null : RUTA_INICIAR_SESION;
-  if (!yo.empresa) return esRuta(r, RUTA_NUEVA_EMPRESA) ? null : RUTA_NUEVA_EMPRESA;
+  // Una invitación se puede abrir con sesión aunque aún no se tenga empresa; sin sesión, se vuelve a ella tras entrar.
+  const invitacion = esRuta(r, '/invitacion');
+  if (!yo) {
+    if (publica) return null;
+    return invitacion ? `${RUTA_INICIAR_SESION}?siguiente=${encodeURIComponent(r)}` : RUTA_INICIAR_SESION;
+  }
+  if (!yo.empresa) return esRuta(r, RUTA_NUEVA_EMPRESA) || invitacion ? null : RUTA_NUEVA_EMPRESA;
   if (r === '/' || publica || esRuta(r, RUTA_NUEVA_EMPRESA)) return RUTA_INICIO;
   return null;
+}
+
+/** Ruta a la que volver tras iniciar sesión: solo rutas internas (nunca otro sitio). */
+export function rutaSiguiente(busqueda: string): string {
+  const valor = new URLSearchParams(busqueda).get('siguiente');
+  return valor && valor.startsWith('/') && !valor.startsWith('//') && !valor.includes('\\') ? valor : '/';
 }

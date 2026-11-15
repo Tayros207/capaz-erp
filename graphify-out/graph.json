@@ -528,7 +528,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "activa",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -541,7 +541,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "cambiodeempresa",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -554,7 +554,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "contextodeempresa",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -567,7 +567,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "transaccion",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -1301,7 +1301,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -1313,7 +1313,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "metadata": {
         "unresolved_calls": [
@@ -1343,7 +1343,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "ctx()",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -1355,7 +1355,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "empresafijada()",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -1367,7 +1367,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "metadata": {
         "unresolved_calls": [
@@ -1390,7 +1390,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "abrirpool()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -1402,7 +1402,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "comoempresa()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -1414,7 +1414,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "conempresadepruebas()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -1426,7 +1426,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "empresadeprueba()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -1438,7 +1438,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "urldepruebas()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -3456,28 +3456,6 @@
       "source_location": ""
     },
     {
-      "id": "apps_api_vitest_config",
-      "label": "vitest.config.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "src/index.ts",
-      "file_type": "code",
-      "norm_label": "vitest.config.ts",
-      "source_file": "apps/api/vitest.config.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_vitest_int_config",
-      "label": "vitest.int.config.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "src/index.ts",
-      "file_type": "code",
-      "norm_label": "vitest.int.config.ts",
-      "source_file": "apps/api/vitest.int.config.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "catch",
       "label": "Catch",
       "_origin": "ast",
@@ -4260,47 +4238,58 @@
     },
     {
       "id": "apps_web_package_dependencies_capaz_shared",
-      "label": "@capaz/shared@workspace:*",
+      "label": "@capaz/shared",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@capaz/shared@workspace:*",
+      "norm_label": "@capaz/shared",
       "source_file": "apps/web/package.json",
       "source_location": "L15"
     },
     {
       "id": "apps_web_package_dependencies_react",
-      "label": "react@^19.3.1",
+      "label": "react",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "react@^19.3.1",
-      "source_file": "apps/web/package.json",
-      "source_location": "L16"
-    },
-    {
-      "id": "apps_web_package_dependencies_react_dom",
-      "label": "react-dom@^19.3.1",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "react-dom@^19.3.1",
+      "norm_label": "react",
       "source_file": "apps/web/package.json",
       "source_location": "L17"
     },
     {
-      "id": "apps_web_package_dependencies_react_router",
-      "label": "react-router@^8.5.1",
+      "id": "apps_web_package_dependencies_react_dom",
+      "label": "react-dom",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "react-router@^8.5.1",
+      "norm_label": "react-dom",
       "source_file": "apps/web/package.json",
       "source_location": "L18"
+    },
+    {
+      "id": "apps_web_package_dependencies_react_router",
+      "label": "react-router",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "react-router",
+      "source_file": "apps/web/package.json",
+      "source_location": "L19"
+    },
+    {
+      "id": "apps_web_package_dependencies_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "@tanstack/react-query",
+      "source_file": "apps/web/package.json",
+      "source_location": "L16"
     },
     {
       "id": "apps_web_package_devdependencies",
@@ -4311,117 +4300,117 @@
       "file_type": "code",
       "norm_label": "devdependencies",
       "source_file": "apps/web/package.json",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "apps_web_package_devdependencies_oxlint",
-      "label": "oxlint@^1.90.0",
+      "label": "oxlint",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "oxlint@^1.90.0",
-      "source_file": "apps/web/package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "apps_web_package_devdependencies_tailwindcss",
-      "label": "tailwindcss@^4.3.5",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "tailwindcss@^4.3.5",
+      "norm_label": "oxlint",
       "source_file": "apps/web/package.json",
       "source_location": "L27"
     },
     {
-      "id": "apps_web_package_devdependencies_tailwindcss_vite",
-      "label": "@tailwindcss/vite@^4.3.5",
+      "id": "apps_web_package_devdependencies_tailwindcss",
+      "label": "tailwindcss",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@tailwindcss/vite@^4.3.5",
-      "source_file": "apps/web/package.json",
-      "source_location": "L21"
-    },
-    {
-      "id": "apps_web_package_devdependencies_types_node",
-      "label": "@types/node@^24.19.2",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@types/node@^24.19.2",
-      "source_file": "apps/web/package.json",
-      "source_location": "L22"
-    },
-    {
-      "id": "apps_web_package_devdependencies_types_react",
-      "label": "@types/react@^19.3.0",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@types/react@^19.3.0",
-      "source_file": "apps/web/package.json",
-      "source_location": "L23"
-    },
-    {
-      "id": "apps_web_package_devdependencies_types_react_dom",
-      "label": "@types/react-dom@^19.3.0",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "@types/react-dom@^19.3.0",
-      "source_file": "apps/web/package.json",
-      "source_location": "L24"
-    },
-    {
-      "id": "apps_web_package_devdependencies_typescript",
-      "label": "typescript@^6.0.3",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "code",
-      "norm_label": "typescript@^6.0.3",
+      "norm_label": "tailwindcss",
       "source_file": "apps/web/package.json",
       "source_location": "L28"
     },
     {
-      "id": "apps_web_package_devdependencies_vite",
-      "label": "vite@^8.3.8",
+      "id": "apps_web_package_devdependencies_tailwindcss_vite",
+      "label": "@tailwindcss/vite",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "vite@^8.3.8",
+      "norm_label": "@tailwindcss/vite",
       "source_file": "apps/web/package.json",
-      "source_location": "L29"
+      "source_location": "L22"
     },
     {
-      "id": "apps_web_package_devdependencies_vitejs_plugin_react",
-      "label": "@vitejs/plugin-react@^6.3.0",
+      "id": "apps_web_package_devdependencies_types_node",
+      "label": "@types/node",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "@vitejs/plugin-react@^6.3.0",
+      "norm_label": "@types/node",
+      "source_file": "apps/web/package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "apps_web_package_devdependencies_types_react",
+      "label": "@types/react",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "@types/react",
+      "source_file": "apps/web/package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "apps_web_package_devdependencies_types_react_dom",
+      "label": "@types/react-dom",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "@types/react-dom",
       "source_file": "apps/web/package.json",
       "source_location": "L25"
     },
     {
-      "id": "apps_web_package_devdependencies_vitest",
-      "label": "vitest@^4.1.2",
+      "id": "apps_web_package_devdependencies_typescript",
+      "label": "typescript",
       "_origin": "ast",
       "community": 3,
       "community_name": "web/package.json",
       "file_type": "code",
-      "norm_label": "vitest@^4.1.2",
+      "norm_label": "typescript",
+      "source_file": "apps/web/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "apps_web_package_devdependencies_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "vite",
       "source_file": "apps/web/package.json",
       "source_location": "L30"
+    },
+    {
+      "id": "apps_web_package_devdependencies_vitejs_plugin_react",
+      "label": "@vitejs/plugin-react",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "@vitejs/plugin-react",
+      "source_file": "apps/web/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "apps_web_package_devdependencies_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "code",
+      "norm_label": "vitest",
+      "source_file": "apps/web/package.json",
+      "source_location": "L31"
     },
     {
       "id": "apps_web_package_name",
@@ -4567,7 +4556,7 @@
       "source_location": "L1"
     },
     {
-      "id": "apps_web_package_json_ref_capaz_shared",
+      "id": "ref_capaz_shared",
       "label": "@capaz/shared",
       "_origin": "ast",
       "community": 3,
@@ -4578,7 +4567,7 @@
       "source_location": "L15"
     },
     {
-      "id": "apps_web_package_json_ref_oxlint",
+      "id": "ref_oxlint",
       "label": "oxlint",
       "_origin": "ast",
       "community": 3,
@@ -4586,51 +4575,7 @@
       "file_type": "concept",
       "norm_label": "oxlint",
       "source_file": "apps/web/package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "apps_web_package_json_ref_types_node",
-      "label": "@types/node",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "concept",
-      "norm_label": "@types/node",
-      "source_file": "apps/web/package.json",
-      "source_location": "L22"
-    },
-    {
-      "id": "apps_web_package_json_ref_typescript",
-      "label": "typescript",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "concept",
-      "norm_label": "typescript",
-      "source_file": "apps/web/package.json",
-      "source_location": "L28"
-    },
-    {
-      "id": "apps_web_package_json_ref_vite",
-      "label": "vite",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "concept",
-      "norm_label": "vite",
-      "source_file": "apps/web/package.json",
-      "source_location": "L29"
-    },
-    {
-      "id": "apps_web_package_json_ref_vitest",
-      "label": "vitest",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "web/package.json",
-      "file_type": "concept",
-      "norm_label": "vitest",
-      "source_file": "apps/web/package.json",
-      "source_location": "L30"
+      "source_location": "L27"
     },
     {
       "id": "ref_react",
@@ -4641,7 +4586,7 @@
       "file_type": "concept",
       "norm_label": "react",
       "source_file": "apps/web/package.json",
-      "source_location": "L16"
+      "source_location": "L17"
     },
     {
       "id": "ref_react_dom",
@@ -4652,7 +4597,7 @@
       "file_type": "concept",
       "norm_label": "react-dom",
       "source_file": "apps/web/package.json",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "ref_react_router",
@@ -4663,7 +4608,7 @@
       "file_type": "concept",
       "norm_label": "react-router",
       "source_file": "apps/web/package.json",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "ref_tailwindcss",
@@ -4674,7 +4619,7 @@
       "file_type": "concept",
       "norm_label": "tailwindcss",
       "source_file": "apps/web/package.json",
-      "source_location": "L27"
+      "source_location": "L28"
     },
     {
       "id": "ref_tailwindcss_vite",
@@ -4685,7 +4630,29 @@
       "file_type": "concept",
       "norm_label": "@tailwindcss/vite",
       "source_file": "apps/web/package.json",
-      "source_location": "L21"
+      "source_location": "L22"
+    },
+    {
+      "id": "ref_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "@tanstack/react-query",
+      "source_file": "apps/web/package.json",
+      "source_location": "L16"
+    },
+    {
+      "id": "ref_types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "@types/node",
+      "source_file": "apps/web/package.json",
+      "source_location": "L23"
     },
     {
       "id": "ref_types_react",
@@ -4696,7 +4663,7 @@
       "file_type": "concept",
       "norm_label": "@types/react",
       "source_file": "apps/web/package.json",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "ref_types_react_dom",
@@ -4707,7 +4674,29 @@
       "file_type": "concept",
       "norm_label": "@types/react-dom",
       "source_file": "apps/web/package.json",
-      "source_location": "L24"
+      "source_location": "L25"
+    },
+    {
+      "id": "ref_typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "typescript",
+      "source_file": "apps/web/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "ref_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "web/package.json",
+      "file_type": "concept",
+      "norm_label": "vite",
+      "source_file": "apps/web/package.json",
+      "source_location": "L30"
     },
     {
       "id": "ref_vitejs_plugin_react",
@@ -4718,7 +4707,7 @@
       "file_type": "concept",
       "norm_label": "@vitejs/plugin-react",
       "source_file": "apps/web/package.json",
-      "source_location": "L25"
+      "source_location": "L26"
     },
     {
       "id": "apps_api_nest_cli",
@@ -5428,7 +5417,7 @@
       "label": "core.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "core.ts",
       "source_file": "apps/api/src/db/esquema/core.ts",
@@ -5439,7 +5428,7 @@
       "label": "core",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "core",
       "source_file": "apps/api/src/db/esquema/core.ts",
@@ -5450,7 +5439,7 @@
       "label": "empresaConfig",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "empresaconfig",
       "source_file": "apps/api/src/db/esquema/core.ts",
@@ -5461,7 +5450,7 @@
       "label": "esquema/index.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "esquema/index.ts",
       "source_file": "apps/api/src/db/esquema/index.ts",
@@ -5472,7 +5461,7 @@
       "label": "aislamiento.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "aislamiento.int.spec.ts",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -5483,7 +5472,7 @@
       "label": "A",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "a",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -5494,7 +5483,7 @@
       "label": "B",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "b",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -5505,7 +5494,7 @@
       "label": "EJEMPLOS",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "ejemplos",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -5516,7 +5505,7 @@
       "label": "catalogo.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "catalogo.int.spec.ts",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -5527,7 +5516,7 @@
       "label": "ESQUEMAS",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "esquemas",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -5538,7 +5527,7 @@
       "label": "con-empresa.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "con-empresa.ts",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -5549,7 +5538,7 @@
       "label": "con-empresa.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "con-empresa.int.spec.ts",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -5560,7 +5549,7 @@
       "label": "transaccionActual",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "transaccionactual",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
@@ -5571,10 +5560,32 @@
       "label": "base-de-pruebas.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "code",
       "norm_label": "base-de-pruebas.ts",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_vitest_config",
+      "label": "vitest.config.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "vitest.config.ts",
+      "source_file": "apps/api/vitest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_vitest_int_config",
+      "label": "vitest.int.config.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "vitest",
+      "file_type": "code",
+      "norm_label": "vitest.int.config.ts",
+      "source_file": "apps/api/vitest.int.config.ts",
       "source_location": "L1"
     },
     {
@@ -5582,7 +5593,7 @@
       "label": "ADR-0012",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "concept",
       "norm_label": "adr-0012",
       "source_file": "apps/api/src/db/esquema/core.ts",
@@ -5593,7 +5604,7 @@
       "label": "ADR-0011",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "concept",
       "norm_label": "adr-0011",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -5604,7 +5615,7 @@
       "label": "ADR-0012",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "concept",
       "norm_label": "adr-0012",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -5615,7 +5626,7 @@
       "label": "drizzle-orm",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "concept",
       "norm_label": "drizzle-orm",
       "source_file": "apps/api/package.json",
@@ -5626,10 +5637,21 @@
       "label": "pg",
       "_origin": "ast",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "file_type": "concept",
       "norm_label": "pg",
       "source_file": "apps/api/package.json",
+      "source_location": "L31"
+    },
+    {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "vitest",
+      "file_type": "concept",
+      "norm_label": "vitest",
+      "source_file": "apps/web/package.json",
       "source_location": "L31"
     },
     {
@@ -8679,17 +8701,6 @@
       "type": "external"
     },
     {
-      "id": "ref_vitest",
-      "label": "ref_vitest",
-      "community": 2,
-      "community_name": "src/index.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_vitest",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_zod",
       "label": "ref_zod",
       "community": 2,
@@ -8708,17 +8719,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "apps_web_src_index",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_vite",
-      "label": "ref_vite",
-      "community": 3,
-      "community_name": "web/package.json",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_vite",
       "source_file": "",
       "type": "external"
     },
@@ -8946,7 +8946,7 @@
       "id": "ref_node_async_hooks",
       "label": "ref_node_async_hooks",
       "community": 5,
-      "community_name": "base-de-pruebas.ts",
+      "community_name": "vitest",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_async_hooks",
@@ -11508,7 +11508,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_capaz_shared",
+      "target": "ref_capaz_shared",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11520,7 +11520,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_react",
+      "target": "ref_tanstack_react_query",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11532,7 +11532,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_react_dom",
+      "target": "ref_react",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11544,7 +11544,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_react_router",
+      "target": "ref_react_dom",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11556,19 +11556,19 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_tailwindcss_vite",
+      "target": "ref_react_router",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/web/package.json",
-      "source_location": "L21",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_types_node",
+      "target": "ref_tailwindcss_vite",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11580,7 +11580,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_types_react",
+      "target": "ref_types_node",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11592,7 +11592,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_types_react_dom",
+      "target": "ref_types_react",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11604,7 +11604,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_vitejs_plugin_react",
+      "target": "ref_types_react_dom",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11616,7 +11616,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_oxlint",
+      "target": "ref_vitejs_plugin_react",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11628,7 +11628,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "ref_tailwindcss",
+      "target": "ref_oxlint",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11640,7 +11640,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_typescript",
+      "target": "ref_tailwindcss",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11652,7 +11652,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_vite",
+      "target": "ref_typescript",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11664,7 +11664,7 @@
     },
     {
       "source": "apps_web_package",
-      "target": "apps_web_package_json_ref_vitest",
+      "target": "ref_vite",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11672,6 +11672,18 @@
       "context": "import",
       "source_file": "apps/web/package.json",
       "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_package",
+      "target": "ref_vitest",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/web/package.json",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -16318,7 +16330,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -16378,7 +16390,7 @@
     },
     {
       "source": "apps_web_package_dependencies",
-      "target": "apps_web_package_dependencies_react",
+      "target": "apps_web_package_dependencies_tanstack_react_query",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16389,7 +16401,7 @@
     },
     {
       "source": "apps_web_package_dependencies",
-      "target": "apps_web_package_dependencies_react_dom",
+      "target": "apps_web_package_dependencies_react",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16400,13 +16412,24 @@
     },
     {
       "source": "apps_web_package_dependencies",
-      "target": "apps_web_package_dependencies_react_router",
+      "target": "apps_web_package_dependencies_react_dom",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
       "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_web_package_dependencies",
+      "target": "apps_web_package_dependencies_react_router",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/web/package.json",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -16417,7 +16440,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -16428,7 +16451,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -16439,7 +16462,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -16450,7 +16473,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -16461,7 +16484,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -16472,7 +16495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -16483,7 +16506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -16494,7 +16517,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -16505,7 +16528,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -16516,7 +16539,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/web/package.json",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -18431,160 +18454,6 @@
       "confidence_score": 1.0,
       "source_file": "apps/api/package.json",
       "source_location": "L46",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_dependencies_capaz_shared",
-      "target": "apps_web_package_json_ref_capaz_shared",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_dependencies_react",
-      "target": "ref_react",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_dependencies_react_dom",
-      "target": "ref_react_dom",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_dependencies_react_router",
-      "target": "ref_react_router",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L18",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_oxlint",
-      "target": "apps_web_package_json_ref_oxlint",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L26",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_tailwindcss",
-      "target": "ref_tailwindcss",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L27",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_tailwindcss_vite",
-      "target": "ref_tailwindcss_vite",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_types_node",
-      "target": "apps_web_package_json_ref_types_node",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L22",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_types_react",
-      "target": "ref_types_react",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L23",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_types_react_dom",
-      "target": "ref_types_react_dom",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L24",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_typescript",
-      "target": "apps_web_package_json_ref_typescript",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_vite",
-      "target": "apps_web_package_json_ref_vite",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L29",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_vitejs_plugin_react",
-      "target": "ref_vitejs_plugin_react",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L25",
-      "weight": 1.0
-    },
-    {
-      "source": "apps_web_package_devdependencies_vitest",
-      "target": "apps_web_package_json_ref_vitest",
-      "relation": "declares",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "apps/web/package.json",
-      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -21384,5 +21253,5 @@
       "source_file": "docs/ARQUITECTURA-DE-IA.md"
     }
   ],
-  "built_at_commit": "de1874af2d97d018cae27d3b668775ddf93507a9"
+  "built_at_commit": "c53eb289e67e067c681ce9377d76cfc86a7a29ca"
 }

@@ -1,3 +1,4 @@
+import { rutaSiguiente } from '../../shared/sesion/guarda.ts';
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -24,7 +25,7 @@ export function PantallaIniciarSesion() {
     const r = await iniciarSesion({ correo, clave });
     if (r.ok) {
       // Recarga completa: la ruta raíz vuelve a pedir «yo» y la guarda decide el destino.
-      window.location.assign('/');
+      window.location.assign(rutaSiguiente(window.location.search));
       return;
     }
     setFallo('error' in r ? mensajeDeError(r.error.codigo, 'iniciar') : 'No se pudo iniciar sesión.');

@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/borradores.module.ts": {
-    "mtime": 1794780380.3050673,
-    "seen": 1794781771.1043122,
-    "ast_hash": "9dafe860cf21e8e7825033ab218b2a18",
+    "mtime": 1794782922.3378785,
+    "seen": 1794783032.0856736,
+    "ast_hash": "3264c4f0c7df270a25fd4d951acc7e8e",
     "semantic_hash": ""
   },
   "apps/api/src/core/clientes/clientes.module.ts": {
@@ -1152,9 +1152,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/barra-superior.tsx": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1045756,
-    "ast_hash": "812cea95b7867335fc39f9e958bdff7c",
+    "mtime": 1794782831.610344,
+    "seen": 1794782872.746047,
+    "ast_hash": "4fe958dfcfc7ece2b93a538e051380ae",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/carcasa.tsx": {
@@ -1218,9 +1218,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/solicitar.ts": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1046405,
-    "ast_hash": "4a8a5ff29a9474443031d7013e15aed1",
+    "mtime": 1794782828.5995264,
+    "seen": 1794782872.7460833,
+    "ast_hash": "0178f8624dbf80e32f93ed3c0bebfedc",
     "semantic_hash": ""
   },
   "apps/web/src/app/error-de-ruta.tsx": {
@@ -1320,15 +1320,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/ajustes/empresa/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1046782,
-    "ast_hash": "a4dbbc18ebc7f20d49601368cbfbeba5",
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461486,
+    "ast_hash": "5e573ccc5494b3feadc986e586475837",
     "semantic_hash": ""
   },
   "apps/web/src/core/ajustes/historial/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1046805,
-    "ast_hash": "737ec5849b7f42f8db1426fd1ce9334e",
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461624,
+    "ast_hash": "9c2c47fc2304a2fd3de4b8557250cd41",
     "semantic_hash": ""
   },
   "apps/web/src/core/ajustes/sucursales/rutas.tsx": {
@@ -1770,9 +1770,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/borradores.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.104892,
-    "ast_hash": "a853aeb1254dd60990e0a0d524d5ff24",
+    "mtime": 1794782922.33847,
+    "seen": 1794783032.0864773,
+    "ast_hash": "676d2debfbc6a913f6fe58c903bc659c",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/clientes.ts": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794782551.4988942,
-    "seen": 1794782554.1499429,
-    "ast_hash": "72f30a685f1ad273f350d6de989dd41e",
+    "mtime": 1794783029.3210542,
+    "seen": 1794783032.0866323,
+    "ast_hash": "589a5a846751cd20daa4c0181193083c",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -2259,6 +2259,168 @@
     "mtime": 1794782283.6767967,
     "seen": 1794782554.149429,
     "ast_hash": "b94d7eb8e1210a30b37b8fcd0834db14",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/empresa/cargador.ts": {
+    "mtime": 1794782823.8737864,
+    "seen": 1794782872.7461367,
+    "ast_hash": "44f030befb50a4862e73ce853116eaf4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/empresa/logica.spec.ts": {
+    "mtime": 1794782823.8737864,
+    "seen": 1794782872.74614,
+    "ast_hash": "b8cd5903a3c7f3d2fffdb8da172c965c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/empresa/logica.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461426,
+    "ast_hash": "3a9482e152f294f8d9bda82d0931a6a8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/empresa/pantalla-empresa.tsx": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461455,
+    "ast_hash": "75f28bc3e2d7e0d9e6d665ed9e4b6acd",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/historial/cargador.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461514,
+    "ast_hash": "2384cadb9eba6f348e218f0ac7838786",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/historial/logica.spec.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461543,
+    "ast_hash": "67d8ed40556a1d3a317468ca3e46a07c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/historial/logica.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7461572,
+    "ast_hash": "bf6b079d0719ee58e35b87b7b63a30be",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/ajustes/historial/pantalla-historial.tsx": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.746159,
+    "ast_hash": "ebc2675441d116e899f62ceca0793029",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/herramientas.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.746241,
+    "ast_hash": "e150074f8ba6e3597852176b79a0058d",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/almacen.ts": {
+    "mtime": 1794782823.8745174,
+    "seen": 1794782872.7462442,
+    "ast_hash": "8237a26a6336be92609cb611b7f0459f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/cola.spec.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462468,
+    "ast_hash": "5afed464f1140ef20164897faceacd04",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/cola.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462497,
+    "ast_hash": "2ed63d687b62b63d916de26fd5f463bf",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/confirmacion.spec.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462528,
+    "ast_hash": "cd8d6c4704431b61ae7cb62bde46057f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/confirmacion.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.746256,
+    "ast_hash": "cae679bf84aa2ad772d45fb0235d1aac",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/estado-del-llamador.spec.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462587,
+    "ast_hash": "69bc8904bc5f4d3332236c9af2290501",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/estado-del-llamador.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462862,
+    "ast_hash": "d4c49d8e956a75a94d912efc86c1c3dc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/indicador-de-guardado.tsx": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462893,
+    "ast_hash": "13e6ead11909180c40ba70c473cd3981",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/llamar.spec.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462916,
+    "ast_hash": "4f23ded97230399bdb8faf8d3cce6a77",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/llamar.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.7462943,
+    "ast_hash": "124e5e01b85e6c98e97297f6d9ebc80a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/transporte.spec.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.746297,
+    "ast_hash": "ad1c9a47ea93c77b9ce745bf6bdfba6b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/api/llamador/transporte.ts": {
+    "mtime": 1794782823.8761408,
+    "seen": 1794782872.746299,
+    "ast_hash": "2be72b88fa42f2a0818f40f98eccbfb9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/ayudas.ts": {
+    "mtime": 1794782922.3367054,
+    "seen": 1794783032.0856664,
+    "ast_hash": "857379f50827086dbe71b88eae0b3eaf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/borradores.int.spec.ts": {
+    "mtime": 1794782922.3377268,
+    "seen": 1794783032.0856702,
+    "ast_hash": "cb5d08ceba1a6c6b5a96a6d9737763c1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/catalogo.ts": {
+    "mtime": 1794782922.3378785,
+    "seen": 1794783032.0856762,
+    "ast_hash": "220b31256cf3f049cbc7fc08b35d8a5c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/herramientas-de-borradores.ts": {
+    "mtime": 1794782922.3380575,
+    "seen": 1794783032.0856788,
+    "ast_hash": "57191f970668a51a747824835c627667",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/proponer.ts": {
+    "mtime": 1794782922.338146,
+    "seen": 1794783032.0856812,
+    "ast_hash": "1a8882f60b1d79083e36a850383505cb",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/borradores/repositorio.ts": {
+    "mtime": 1794782922.3382437,
+    "seen": 1794783032.085683,
+    "ast_hash": "763a256542ca1ab8a8b335fa2568c1e3",
     "semantic_hash": ""
   }
 }

@@ -1,10 +1,10 @@
 {
   "0": "AGENTS.md (reglas del constructor)",
-  "1": "main.ts",
+  "1": "database.service.ts",
   "2": "src/index.ts",
   "3": "web/package.json",
-  "4": "contexto.ts",
-  "5": "database.service.ts",
+  "4": "main.ts",
+  "5": "base-de-pruebas.ts",
   "6": "preparar-base.ts",
   "7": "compilerOptions",
   "8": "scripts",
@@ -32,7 +32,7 @@
   "30": "nest-cli.json",
   "31": "web/.oxlintrc.json",
   "32": "pnpm-workspace.yaml",
-  "33": "@nestjs/testing@^12.4.2",
+  "33": "barra-superior.tsx",
   "34": "config.d.ts",
   "35": "web/tsconfig.json",
   "36": "@nestjs/schematics@^12.0.0",
@@ -40,10 +40,12 @@
   "38": "oxlint-tsgolint@^7.0.2001",
   "39": "prettier@^3.4.2",
   "40": "@types/express@^5.0.0",
-  "41": "typescript@^6.0.3",
+  "41": "solicitar.ts",
   "42": "drizzle-kit",
   "43": "migrar.d.ts",
   "44": "favicon.svg (purple lightning-bolt logo, 48x46 favicon)",
   "45": "Inject",
-  "46": "vite@^8.0.0"
+  "46": "oxlint@^1.58.0",
+  "47": "@types/pg@^8.15.0",
+  "48": "@vitest/coverage-v8@^4.1.2"
 }

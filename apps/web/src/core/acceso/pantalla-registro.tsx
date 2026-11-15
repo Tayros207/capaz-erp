@@ -1,3 +1,4 @@
+import { rutaSiguiente } from '../../shared/sesion/guarda.ts';
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -25,7 +26,7 @@ export function PantallaRegistro() {
     const r = await registrarse({ nombre, correo, clave });
     if (r.ok) {
       // Al registrarse queda con sesión; la guarda lo lleva a crear su empresa (o a su inicio).
-      window.location.assign('/');
+      window.location.assign(rutaSiguiente(window.location.search));
       return;
     }
     setFallo('error' in r ? mensajeDeError(r.error.codigo, 'registro') : 'No se pudo crear la cuenta.');
