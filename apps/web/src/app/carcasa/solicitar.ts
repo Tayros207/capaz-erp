@@ -1,8 +1,16 @@
+import { llamar } from '../../shared/api/herramientas.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
 
-// «Solicitar» un módulo no contratado. La herramienta `modulo_solicitar` llega a la pantalla con W5
-// (`shared/api/herramientas.ts`, aún no integrado). Mientras tanto todo pasa por esta función: cuando
-// W5 exista, solo cambia su cuerpo para llamar a la herramienta; el menú y las tarjetas no se tocan.
-export async function solicitarModulo(_codigo: string, nombre: string): Promise<void> {
-  notificar(`Pronto podrás solicitar «${nombre}» desde aquí. Por ahora, pídelo a tu administrador.`, 'info');
+// «Solicitar» un módulo no contratado: llama a la herramienta `modulo_solicitar`.
+// El menú y las tarjetas solo conocen esta función.
+export async function solicitarModulo(codigo: string, nombre: string): Promise<void> {
+  const r = await llamar('modulo_solicitar', { modulo: codigo });
+  if (r.ok && 'datos' in r) {
+    notificar(
+      r.datos.yaSolicitado ? `Ya habías solicitado «${nombre}».` : `Solicitaste «${nombre}». Te avisaremos.`,
+      r.datos.yaSolicitado ? 'info' : 'exito',
+    );
+  } else if ('error' in r) {
+    notificar(r.error.mensaje, 'error');
+  }
 }

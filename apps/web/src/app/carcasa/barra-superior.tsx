@@ -5,6 +5,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { Icono } from '../../shared/ui/icono.tsx';
 import { IconoMenu } from './iconos-menu.tsx';
 import { SelectorDeEmpresa } from './selector-empresa.tsx';
+import { IndicadorDeGuardado } from '../../shared/api/llamador/indicador-de-guardado.tsx';
 
 type Props = { yo: Yo; migas: string[]; plegado: boolean; alPlegar: () => void; alSalir: () => void };
 
@@ -30,6 +31,7 @@ export function BarraSuperior({ yo, migas, plegado, alPlegar, alSalir }: Props) 
         ))}
       </nav>
       <div className="ml-auto flex min-w-0 items-center gap-1">
+        <IndicadorDeGuardado />
         {yo.empresa ? <SelectorDeEmpresa activa={yo.empresa} empresas={yo.empresas} /> : null}
         <Boton variante="fantasma" icono={tema === 'oscuro' ? 'sol' : 'luna'}
           aria-label={tema === 'oscuro' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
