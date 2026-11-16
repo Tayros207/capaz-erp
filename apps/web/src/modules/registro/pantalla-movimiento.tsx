@@ -1,13 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import type { ReactNode } from 'react';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
+import { Boton } from '../../shared/ui/boton.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
-import { verMovimiento } from './api.ts';
+import { anularMovimiento, verMovimiento } from './api.ts';
+import { resolverAccion } from './acciones.ts';
+import { HojaMotivo } from './hoja-motivo.tsx';
+import { usePuedeEditar } from './use-registro.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
 import { ETIQUETA_DE_MEDIO, ETIQUETA_DE_TIPO, formatearDia } from './logica.ts';
 import { Monto } from './pantalla-movimientos.tsx';
@@ -25,6 +30,8 @@ function Dato({ nombre, children }: { nombre: string; children: ReactNode }) {
 export function PantallaMovimiento() {
   const { id = '' } = useParams();
   const consulta = useQuery({ queryKey: [...CLAVE_REGISTRO, 'movimiento', id], queryFn: async () => datosOError(await verMovimiento(id)) });
+  const puedeAnular = usePuedeEditar('registro:anular');
+  const [anulando, setAnulando] = useState(false);
   if (consulta.isPending) {
     return (
       <div aria-busy="true" aria-label="Cargando movimiento" className="flex flex-col gap-2">
@@ -40,9 +47,17 @@ export function PantallaMovimiento() {
       <EncabezadoDePagina
         titulo={`${ETIQUETA_DE_TIPO[m.tipo]} ${m.codigo}`}
         migas={[{ texto: 'Movimientos', a: '/m/registro/movimientos' }, { texto: m.codigo }]}
-        accionesSecundarias={m.estado === 'anulado' ? <Insignia tono="neutro">Anulado</Insignia> : undefined}
+        accionesSecundarias={
+          m.estado === 'anulado' ? <Insignia tono="neutro">Anulado</Insignia> : puedeAnular ? <Boton variante="peligro" onClick={() => setAnulando(true)}>Anular</Boton> : undefined
+        }
       />
-      {/* M-registro-w2: aquí va el botón «Anular» (`llamarConfirmando('movimiento_anular', …)`, pidiendo antes el motivo). */}
+      <HojaMotivo
+        abierto={anulando}
+        titulo={`Anular ${m.codigo}`}
+        textoEnviar="Continuar"
+        alEnviar={async (motivo) => resolverAccion(await anularMovimiento(m.id, motivo), `${m.codigo} anulado.`)}
+        alCerrar={() => setAnulando(false)}
+      />
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Dato nombre="Monto"><Monto m={m} /></Dato>
         <Dato nombre="Fecha">{formatearDia(m.fecha)}</Dato>
