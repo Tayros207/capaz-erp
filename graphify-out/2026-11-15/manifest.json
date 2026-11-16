@@ -1344,9 +1344,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/automatizaciones/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1047127,
-    "ast_hash": "059fdc35a0089ca7e88ab070004ed2d6",
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.8176136,
+    "ast_hash": "a5cf467d7970c41b29a67dcc22334bf7",
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/rutas.tsx": {
@@ -1362,9 +1362,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/conecta/rutas.tsx": {
-    "mtime": 1794780243.5805147,
-    "seen": 1794781771.1047199,
-    "ast_hash": "e629782ea01b2eaf84e3ecb07343851b",
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8176975,
+    "ast_hash": "a9a006aeb3d486a6bcf3148cf2bbb519",
     "semantic_hash": ""
   },
   "apps/web/src/core/inicio/pantalla-inicio.tsx": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794785103.6832137,
-    "seen": 1794785106.145554,
-    "ast_hash": "7ba4741dcacecb7f9add0a89b575500d",
+    "mtime": 1794786346.2126074,
+    "seen": 1794786350.818115,
+    "ast_hash": "4a4e76a9cd0231b6ae754c5d4de68f04",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -3303,6 +3303,186 @@
     "mtime": 1794785571.3406148,
     "seen": 1794785763.432936,
     "ast_hash": "b8994531756098e403810481786faa53",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/api.ts": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8175876,
+    "ast_hash": "81a1f04cf9b9a319e0ef1244be2e5c3f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/claves.ts": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.817591,
+    "ast_hash": "176b3a53d0d0cc708068413ca1d4ca51",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/consultas.tsx": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8175933,
+    "ast_hash": "02d92eb627bfd961b908c9463e35e169",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/filas-de-argumentos.tsx": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8175955,
+    "ast_hash": "423244990d02144e05138c57028c35f1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/formulario-regla.tsx": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8175974,
+    "ast_hash": "68298d0fe4fa8654091dc22ae9ff560f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/historial.tsx": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8175998,
+    "ast_hash": "2c1894897c1db1c6812b8a107c9d14d9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/logica.spec.ts": {
+    "mtime": 1794786221.354541,
+    "seen": 1794786350.8176017,
+    "ast_hash": "a4d2e2e0ab19c2832c4d03949ba25b92",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/logica.ts": {
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.8176038,
+    "ast_hash": "95fe622bc947869180850294ab94a08f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/panel-probar.tsx": {
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.817606,
+    "ast_hash": "487c9d4e13728e76f19ba790cf9a1545",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/pantalla-regla.tsx": {
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.8176076,
+    "ast_hash": "d5be88dd7f6b27a78a3fecda8491d047",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/pantalla-reglas.tsx": {
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.8176093,
+    "ast_hash": "380f060cd687bc19b249b92be07115aa",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/automatizaciones/pasos-de-regla.tsx": {
+    "mtime": 1794786221.355541,
+    "seen": 1794786350.8176112,
+    "ast_hash": "a447a96909abee84d98fe0f0f2a042f7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/api.ts": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.817673,
+    "ast_hash": "46626050b4a9ad4ae71221367ac91fed",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/claves.ts": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.817675,
+    "ast_hash": "492f8ba76c6cd47b20d2c9d5e8d5e1cd",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/consultas.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.8176768,
+    "ast_hash": "02d92eb627bfd961b908c9463e35e169",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/envios-de-webhook.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.817679,
+    "ast_hash": "ddc19a1aeba1533a4477a2872f19466c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/filas-de-campos.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.8176808,
+    "ast_hash": "1d91c5fbe285e53320642bbe124a73ad",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/hoja-conexion.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.8176825,
+    "ast_hash": "7fa6f5a8e8f7f6bc79017de72a609e90",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/hoja-secreto.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.8176842,
+    "ast_hash": "b4bf5e79b90b9ab5f2dfb7b696c21982",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/hoja-webhook.tsx": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.8176863,
+    "ast_hash": "b485f96724fb199d22f85332efd74770",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/logica.spec.ts": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.817688,
+    "ast_hash": "74e9909901d6e9337b107509e293b1d1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/logica.ts": {
+    "mtime": 1794786221.356541,
+    "seen": 1794786350.81769,
+    "ast_hash": "21059b3b40bea403ad1816d5de3c630f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/navegador.ts": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8176913,
+    "ast_hash": "5cf33ada16cda288108e0e5931f05658",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/panel-de-importacion.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8176932,
+    "ast_hash": "102dfb1f4a1b044d728d358cd9593916",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/pantalla-conecta.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.817695,
+    "ast_hash": "d11f5d7df2686770ac0f8608a26e3268",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/seccion-claves.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8176994,
+    "ast_hash": "11da02860135348aaa985bce9b2204fa",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/seccion-conectores.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.817701,
+    "ast_hash": "af1c451a476d575cc56348b18b4be1d1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/seccion-intercambio.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.817703,
+    "ast_hash": "cc1e95ece97277c6b8d5e777021bd4db",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/seccion-webhooks.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8177047,
+    "ast_hash": "f91a366bfcc3bbd66c5dea83471cd2d0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/conecta/selector-de-entidad.tsx": {
+    "mtime": 1794786221.357541,
+    "seen": 1794786350.8177068,
+    "ast_hash": "ef0b071cadf4625bcf17deb1ef820352",
     "semantic_hash": ""
   }
 }

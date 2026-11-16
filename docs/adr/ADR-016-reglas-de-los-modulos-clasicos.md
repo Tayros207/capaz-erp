@@ -1,6 +1,6 @@
 # ADR-016: Reglas de datos y de conducta de los módulos clásicos
 
-**Estado:** PROPUESTO (2026-11-15, redactado por el arquitecto de planes en la puerta entre olas) · **Decide:** Moisés, con revisión técnica de Keny · **Relacionado:** ADR-008, ADR-011, ADR-012, ADR-013, ADR-014, ADR-015
+**Estado:** ACEPTADO (2026-11-15, por delegación del usuario; pendiente de revisión de Keny) (2026-11-15, redactado por el arquitecto de planes en la puerta entre olas) · **Decide:** Moisés, con revisión técnica de Keny · **Relacionado:** ADR-008, ADR-011, ADR-012, ADR-013, ADR-014, ADR-015
 
 > No cambia ningún ADR aceptado salvo una frase de ADR-008 (punto 7). Recoge lo que se fijó al congelar las fichas de la ola 2 (`docs/FICHAS-OLA-2.md`) contra el código real de la ola 1. La ola 2 se construye con estas reglas; si alguna se rechaza, se corrige la ficha antes de lanzar el carril afectado.
 

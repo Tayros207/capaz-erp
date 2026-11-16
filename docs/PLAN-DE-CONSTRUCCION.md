@@ -699,6 +699,8 @@ Actualizado en la puerta de la ola 2 (2026-11-15). «Integrado» = en `main` con
 | Final | 12 | Facturación SUNAT | — | M | pendiente |
 | — | V | Audios reales y línea base (usuario) | — | — | pospuesta por el usuario (voz más adelante) |
 
+> **Resueltas el 2026-11-15 (noche) por delegación del usuario («tú toma la mejor decisión técnica y estratégica»):** D15 a D25 se aceptan **con la recomendación del arquitecto**; en particular **D17: los precios de un pedido incluyen IGV 18 %, guardado en cada pedido**; D21: ADR-016 aceptado con revisión de Keny; D22: arreglar `enviar.ts` en C1; D23: revisión visual por tandas con Keny; D25: decidir con Keny si X1 se adelanta (host y migraciones 0006 a 0016 en Neon).
+
 ## 9. Decisiones del usuario
 
 **RESUELTAS el 2026-11-15** (Moisés delegó lo técnico en el agente principal y aprobó el resto):
