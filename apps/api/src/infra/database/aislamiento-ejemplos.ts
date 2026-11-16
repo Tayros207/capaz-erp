@@ -151,4 +151,29 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     modo: 'insercion',
   },
   'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
+  'cotizador.configuracion': { sql: `insert into cotizador.configuracion (tenant_id) values ($1)`, modo: 'completo' },
+  'cotizador.listas_de_precio': {
+    sql: `insert into cotizador.listas_de_precio (id, tenant_id, nombre, nombre_normalizado, p100_centimos, p1000_centimos, p5000_centimos, creado_por) values (md5($1::text || 'q1')::uuid, $1, 'Volantes A5', 'volantes a5', 19000, 58000, 120000, 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.ajustes_de_cliente': {
+    sql: `insert into cotizador.ajustes_de_cliente (tenant_id, cliente_id, porcentaje, creado_por) values ($1, md5($1::text || 'cl')::uuid, -5, 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.cotizaciones': {
+    sql: `insert into cotizador.cotizaciones (id, tenant_id, titulo, creado_por) values (md5($1::text || 'q2')::uuid, $1, 'Volantes', 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.versiones': {
+    sql: `insert into cotizador.versiones (id, tenant_id, cotizacion_id, version, creado_por) values (md5($1::text || 'q3')::uuid, $1, md5($1::text || 'q2')::uuid, 1, 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.version_lineas': {
+    sql: `insert into cotizador.version_lineas (tenant_id, version_id, posicion, descripcion, cantidad_milesimas, precio_unitario_milesimas, importe_centimos, igv_centimos, total_centimos) values ($1, md5($1::text || 'q3')::uuid, 0, 'Línea', 1000, 1000, 100, 18, 118)`,
+    modo: 'completo',
+  },
+  'cotizador.eventos': {
+    sql: `insert into cotizador.eventos (tenant_id, cotizacion_id, version, tipo, usuario_id) values ($1, md5($1::text || 'q2')::uuid, 1, 'creada', 'u1')`,
+    modo: 'insercion',
+  },
 };
