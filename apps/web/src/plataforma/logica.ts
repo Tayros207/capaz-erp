@@ -230,14 +230,18 @@ export function kpisDeEmpresas(empresas: readonly EmpresaResumen[], ahora: Date,
 
 const sinTildes = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 
-export type FiltroDeEmpresas = { texto: string; estado: EstadoDeEmpresa | 'todas'; modulo: string | 'todos' };
-export const FILTRO_VACIO: FiltroDeEmpresas = { texto: '', estado: 'todas', modulo: 'todos' };
+export type FiltroDeEmpresas = { texto: string; estado: EstadoDeEmpresa | 'todas'; modulo: string | 'todos'; vencenEn: number | null };
+export const FILTRO_VACIO: FiltroDeEmpresas = { texto: '', estado: 'todas', modulo: 'todos', vencenEn: null };
 
 /** Busca por nombre, id, código o nombre de módulo; filtra por estado de la empresa y por módulo contratado (no dado de baja). */
-export function filtrarEmpresas<T extends EmpresaResumen>(empresas: readonly T[], f: FiltroDeEmpresas): T[] {
+export function filtrarEmpresas<T extends EmpresaResumen>(empresas: readonly T[], f: FiltroDeEmpresas, ahora: Date = new Date()): T[] {
   const q = sinTildes(f.texto.trim());
   return empresas.filter((e) => {
     if (f.estado !== 'todas' && estadoDeEmpresa(e) !== f.estado) return false;
+    if (f.vencenEn !== null) {
+      const v = proximoVencimiento(e, ahora);
+      if (!v || v.dias > f.vencenEn) return false;
+    }
     if (f.modulo !== 'todos' && !e.modulos.some((m) => m.modulo === f.modulo && m.estado !== 'baja')) return false;
     if (!q) return true;
     const pajar = sinTildes([e.nombre, e.id, ...e.modulos.flatMap((m) => [m.modulo, nombreDeModulo(m.modulo)])].join(' '));
@@ -254,4 +258,57 @@ export function inicialesDeEmpresa(nombre: string): string {
   const p = nombre.trim().split(/\s+/).filter(Boolean);
   if (p.length === 0) return '?';
   return ((p[0]![0] ?? '') + (p.length > 1 ? (p[1]![0] ?? '') : '')).toUpperCase();
+}
+
+export type ClaveDeOrden = 'nombre' | 'estado' | 'miembros' | 'vence' | 'alta';
+export type OrdenDeEmpresas = { clave: ClaveDeOrden; direccion: 'asc' | 'desc' };
+
+const GRAVEDAD: Record<EstadoDeEmpresa, number> = { baja: 0, suspendida: 1, prueba: 2, activa: 3, sin_modulos: 4 };
+
+/** Copia ordenada. «vence»: lo más próximo primero; las empresas sin vencimiento van siempre al final. */
+export function ordenarEmpresas<T extends EmpresaResumen>(empresas: readonly T[], orden: OrdenDeEmpresas, ahora: Date = new Date()): T[] {
+  const signo = orden.direccion === 'asc' ? 1 : -1;
+  const valor = (e: T): number | string => {
+    switch (orden.clave) {
+      case 'nombre': return sinTildes(e.nombre);
+      case 'estado': return GRAVEDAD[estadoDeEmpresa(e)];
+      case 'miembros': return e.miembros;
+      case 'alta': return new Date(e.altaEn).getTime();
+      case 'vence': return proximoVencimiento(e, ahora)?.dias ?? Number.POSITIVE_INFINITY;
+    }
+  };
+  return [...empresas].sort((a, b) => {
+    const va = valor(a);
+    const vb = valor(b);
+    const porNombre = () => sinTildes(a.nombre).localeCompare(sinTildes(b.nombre), 'es');
+    if (orden.clave === 'vence' && va !== vb) {
+      if (va === Number.POSITIVE_INFINITY) return 1;
+      if (vb === Number.POSITIVE_INFINITY) return -1;
+    }
+    const c = typeof va === 'string' ? va.localeCompare(vb as string, 'es') : (va as number) - (vb as number);
+    return c * signo || porNombre();
+  });
+}
+
+/** Lectura de la dirección de la barra de direcciones: `?estado=prueba&modulo=crm&vence=7&q=texto`. */
+export function filtroDesdeBusqueda(params: URLSearchParams): FiltroDeEmpresas {
+  const estados: ReadonlyArray<EstadoDeEmpresa> = ['sin_modulos', 'activa', 'prueba', 'suspendida', 'baja'];
+  const estado = params.get('estado');
+  const vence = Number(params.get('vence'));
+  return {
+    texto: params.get('q') ?? '',
+    estado: estados.includes(estado as EstadoDeEmpresa) ? (estado as EstadoDeEmpresa) : 'todas',
+    modulo: params.get('modulo') || 'todos',
+    vencenEn: Number.isInteger(vence) && vence > 0 && vence <= 365 ? vence : null,
+  };
+}
+
+/** Lo contrario: solo escribe lo que difiere del filtro vacío. */
+export function busquedaDesdeFiltro(f: FiltroDeEmpresas): URLSearchParams {
+  const p = new URLSearchParams();
+  if (f.texto.trim()) p.set('q', f.texto);
+  if (f.estado !== 'todas') p.set('estado', f.estado);
+  if (f.modulo !== 'todos') p.set('modulo', f.modulo);
+  if (f.vencenEn !== null) p.set('vence', String(f.vencenEn));
+  return p;
 }

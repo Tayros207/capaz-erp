@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  diasHasta, estadoDeEmpresa, filtrarEmpresas, FILTRO_VACIO, inicialesDeEmpresa, kpisDeEmpresas, modulosPresentes, nombreDeModulo,
+  diasHasta, estadoDeEmpresa, busquedaDesdeFiltro, filtrarEmpresas, filtroDesdeBusqueda, FILTRO_VACIO, ordenarEmpresas, inicialesDeEmpresa, kpisDeEmpresas, modulosPresentes, nombreDeModulo,
   proximoVencimiento, textoDeVencimiento, type EmpresaResumen,
 } from './logica.ts';
 
@@ -82,6 +82,41 @@ describe('filtrarEmpresas', () => {
   });
   it('lista los módulos presentes', () => {
     expect(modulosPresentes(lista)).toEqual(['ordenes', 'personal', 'registro']);
+  });
+});
+
+describe('filtrar por vencimiento', () => {
+  it('deja solo las que vencen dentro de la ventana (o ya vencidas)', () => {
+    const lista = [emp('a', 'A', [m('crm', 'prueba', en(3))]), emp('b', 'B', [m('crm', 'prueba', en(30))]), emp('c', 'C', [m('crm', 'activo')])];
+    expect(filtrarEmpresas(lista, { ...FILTRO_VACIO, vencenEn: 7 }, AHORA).map((e) => e.id)).toEqual(['a']);
+  });
+});
+
+describe('ordenarEmpresas', () => {
+  const lista = [
+    emp('1', 'Zeta', [m('crm', 'activo')], 5),
+    emp('2', 'Álamo', [m('crm', 'prueba', en(2))], 1),
+    emp('3', 'Beta', [m('crm', 'baja')], 3),
+    emp('4', 'Gama', [m('crm', 'activo', null, en(9))], 2),
+  ];
+  const ids = (o: Parameters<typeof ordenarEmpresas>[1]) => ordenarEmpresas(lista, o, AHORA).map((e) => e.id);
+  it('por nombre sin tildes', () => expect(ids({ clave: 'nombre', direccion: 'asc' })).toEqual(['2', '3', '4', '1']));
+  it('por miembros', () => expect(ids({ clave: 'miembros', direccion: 'desc' })).toEqual(['1', '3', '4', '2']));
+  it('por estado: lo más grave primero', () => expect(ids({ clave: 'estado', direccion: 'asc' })).toEqual(['3', '2', '4', '1']));
+  it('por vencimiento: lo más próximo primero y sin vencimiento al final, también al invertir', () => {
+    expect(ids({ clave: 'vence', direccion: 'asc' })).toEqual(['2', '4', '3', '1']);
+    expect(ids({ clave: 'vence', direccion: 'desc' }).slice(0, 2)).toEqual(['4', '2']);
+  });
+});
+
+describe('filtro en la dirección', () => {
+  it('ida y vuelta', () => {
+    const f = { texto: 'ana', estado: 'prueba' as const, modulo: 'crm', vencenEn: 7 };
+    expect(filtroDesdeBusqueda(busquedaDesdeFiltro(f))).toEqual(f);
+    expect(busquedaDesdeFiltro(FILTRO_VACIO).toString()).toBe('');
+  });
+  it('ignora valores inválidos', () => {
+    expect(filtroDesdeBusqueda(new URLSearchParams('estado=otro&vence=abc&modulo='))).toEqual(FILTRO_VACIO);
   });
 });
 
