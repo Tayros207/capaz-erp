@@ -1253,3 +1253,6 @@ Entre el plan aprobado, las fichas anteriores y el código real. Todo lo que aqu
 - El reconocimiento de voz en un celular real (necesita HTTPS) y su comportamiento en iPhone.
 - Las bases de Cotizín y de Tairos.RC, y los costos de cualquier servicio externo: no se consultaron.
 - El comparador de R21 sí se probó, sobre copias temporales fuera del repositorio: da `IGUAL` con solo cambios de `import` y renombres, y `DISTINTO` al cambiar un esperado.
+
+---
+**Corrección del integrador (2026-11-16):** la tabla de §5.1 omitía `COT/src/lib/semillas/index.ts` (6 líneas: exporta `SEMILLAS = { PE: semillaEsPE }` y `SEMILLA_POR_DEFECTO`), que la prueba `semilla-es-pe.spec.ts` importa. Se copia como `domain/motor/base/semillas.ts` (57 archivos de código, no 56) y la prueba apunta a `./semillas.js`. Lo detectó el carril s0.
