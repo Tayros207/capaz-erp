@@ -39,3 +39,6 @@ export const anularDeuda = (id: string, motivo: string) =>
   llamarConfirmando('deuda_anular', { id, motivo }, { titulo: 'Anular deuda', textoConfirmar: 'Anular', peligroso: true });
 export const verCajaDelDia = (fecha: string) => llamar('caja_del_dia', { fecha });
 export const verResumen = (desde: string, hasta: string) => llamar('registro_resumen', { desde, hasta });
+
+/** Datos del cliente (teléfono y nombre) por la herramienta del núcleo de clientes. */
+export const verCliente = (id: string) => llamar('clientes_ver', { id });
