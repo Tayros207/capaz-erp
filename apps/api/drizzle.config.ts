@@ -6,7 +6,7 @@ export default defineConfig({
   dialect: 'postgresql',
   schema: './src/db/esquema/index.ts',
   out: './drizzle',
-  schemaFilter: ['auth', 'core', 'registro', 'cotizador'],
+  schemaFilter: ['auth', 'core', 'registro', 'cotizador', 'crm', 'ordenes'],
   migrations: { schema: 'core', table: 'migraciones' },
   strict: true,
   verbose: true,

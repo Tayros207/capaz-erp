@@ -32,7 +32,7 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     modo: 'insercion',
   },
   'core.contadores': { sql: `insert into core.contadores (tenant_id, clave, serie, anio) values ($1, 'ejemplo', '', 2026)`, modo: 'completo' },
-  'core.clientes': { sql: `insert into core.clientes (tenant_id, clase, nombre, nombre_normalizado, creado_por) values ($1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
+  'core.clientes': { sql: `insert into core.clientes (id, tenant_id, clase, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'cl')::uuid, $1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
   'core.productos': { sql: `insert into core.productos (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
   'core.sucursales': { sql: `insert into core.sucursales (tenant_id, codigo, nombre) values ($1, 'LIM', 'Lima')`, modo: 'completo' },
   'core.conexiones': { sql: `insert into core.conexiones (id, tenant_id, conector, creado_por) values (md5($1::text || 'c1')::uuid, $1, 'ejemplo', 'u1')`, modo: 'completo' },
@@ -69,6 +69,22 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into core.reglas_ejecuciones (tenant_id, regla_id, disparado_por, resultado) values ($1, md5($1::text || 'd1')::uuid, '{}', 'ok')`,
     modo: 'insercion',
   },
+  'registro.cuentas': {
+    sql: `insert into registro.cuentas (id, tenant_id, nombre, nombre_normalizado, tipo, creado_por) values (md5($1::text || 'r1')::uuid, $1, 'Caja', 'caja', 'caja', 'u1')`,
+    modo: 'completo',
+  },
+  'registro.categorias': {
+    sql: `insert into registro.categorias (id, tenant_id, nombre, nombre_normalizado, tipo, creado_por) values (md5($1::text || 'r2')::uuid, $1, 'Ventas', 'ventas', 'ingreso', 'u1')`,
+    modo: 'completo',
+  },
+  'registro.deudas': {
+    sql: `insert into registro.deudas (id, tenant_id, numero, anio, tipo, contacto_id, concepto, total_centimos, fecha, creado_por) values (md5($1::text || 'r3')::uuid, $1, 1, 2026, 'por_cobrar', md5($1::text || 'cl')::uuid, 'Venta', 1000, date '2026-01-01', 'u1')`,
+    modo: 'completo',
+  },
+  'registro.movimientos': {
+    sql: `insert into registro.movimientos (tenant_id, numero, anio, tipo, fecha, monto_centimos, cuenta_id, creado_por) values ($1, 1, 2026, 'ingreso', date '2026-01-01', 500, md5($1::text || 'r1')::uuid, 'u1')`,
+    modo: 'insercion',
+  },
   'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
 };
 
@@ -81,9 +97,25 @@ beforeAll(async () => {
   app = abrirPool('app');
   owner = abrirPool('owner');
   await owner.query(`insert into core.modulos (codigo, nombre) values ('ejemplo', 'Ejemplo') on conflict do nothing`);
+  await owner.query(
+    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos') on conflict do nothing`,
+  );
   await owner.query(`insert into core.conectores (codigo, nombre, autenticacion) values ('ejemplo', 'Ejemplo', 'ninguna') on conflict do nothing`);
   // empresa_modulos va antes que usuario_modulos (llave compuesta).
   const orden = Object.keys(EJEMPLOS).sort((a, b) => (a === 'core.empresa_modulos' ? -1 : b === 'core.empresa_modulos' ? 1 : 0));
+  // El disparador de escritura de cada módulo exige que la empresa lo tenga activo.
+  for (const emp of [A, B]) {
+    await comoEmpresa(
+      owner,
+      emp,
+      (c) =>
+        c.query(
+          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo') on conflict do nothing`,
+          [emp],
+        ),
+      { confirmar: true },
+    );
+  }
   for (const tabla of orden) {
     for (const emp of [A, B]) await comoEmpresa(owner, emp, (c) => c.query(EJEMPLOS[tabla]!.sql, [emp]), { confirmar: true });
   }
@@ -97,7 +129,7 @@ describe('toda tabla con tenant_id tiene su ejemplo aquí', () => {
   it('la lista de ejemplos cubre el catálogo', async () => {
     const { rows } = await owner.query<{ tabla: string }>(`
       select n.nspname || '.' || c.relname as tabla from pg_class c join pg_namespace n on n.oid = c.relnamespace
-      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador')
+      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador','crm','ordenes')
         and exists (select 1 from pg_attribute a where a.attrelid = c.oid and a.attname = 'tenant_id')`);
     expect(rows.map((r) => r.tabla).sort()).toEqual(Object.keys(EJEMPLOS).sort());
   });
@@ -144,5 +176,41 @@ describe('capaz_app no puede saltarse la RLS', () => {
     await comoEmpresa(app, A, async (c) => {
       await expect(c.query('set role capaz_owner')).rejects.toThrow();
     });
+  });
+});
+
+describe('registro: reglas propias de DB2a con capaz_app', () => {
+  it('no puede cambiar el monto de un movimiento, pero sí anularlo', async () => {
+    await comoEmpresa(app, A, async (c) => {
+      await expect(c.query(`update registro.movimientos set monto_centimos = 1`)).rejects.toThrow(/permission denied/);
+    });
+    await comoEmpresa(app, A, async (c) => {
+      const r = await c.query(
+        `update registro.movimientos set estado = 'anulado', anulado_en = now(), anulado_por = 'u1', motivo_anulacion = 'prueba'`,
+      );
+      expect(r.rowCount).toBeGreaterThan(0);
+    });
+  });
+
+  it('no puede borrar una deuda (disparador)', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from registro.deudas`))).rejects.toThrow();
+  });
+
+  it('con el módulo registro en baja, un insert falla con «no está activo»', async () => {
+    const E = empresaDePrueba();
+    await comoEmpresa(
+      owner,
+      E,
+      async (c) => {
+        await c.query(`insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1, 'registro', 'activo')`, [E]);
+        await c.query(`update core.empresa_modulos set estado = 'baja', baja_en = now() where tenant_id = $1 and modulo = 'registro'`, [E]);
+      },
+      { confirmar: true },
+    );
+    await expect(
+      comoEmpresa(app, E, (c) =>
+        c.query(`insert into registro.categorias (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'X', 'x', 'egreso', 'u1')`, [E]),
+      ),
+    ).rejects.toThrow(/no está activo/);
   });
 });
