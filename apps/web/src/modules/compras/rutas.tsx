@@ -1,7 +1,13 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { PantallaFichaCompra } from './pantalla-ficha.tsx';
+import { PantallaCompras } from './pantalla-lista.tsx';
+import { PantallaNuevaCompra } from './pantalla-nueva.tsx';
+import { PantallaRecepcion } from './pantalla-recepcion.tsx';
 
-// Pantallas de «compras»: las construye su carril. Mientras tanto, un marcador.
+// Compras: lista, alta, ficha y recepción. Herramientas compra_*, compras_listar.
 export const rutas: RouteObject[] = [
-  { path: 'm/compras/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'm/compras', element: <PantallaCompras /> },
+  { path: 'm/compras/nueva', element: <PantallaNuevaCompra /> },
+  { path: 'm/compras/:id', element: <PantallaFichaCompra /> },
+  { path: 'm/compras/:id/recibir', element: <PantallaRecepcion /> },
 ];

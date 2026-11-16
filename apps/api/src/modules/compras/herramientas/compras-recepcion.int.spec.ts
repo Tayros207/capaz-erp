@@ -5,7 +5,7 @@ import { ESTADOS_DE_COMPRA } from '@capaz/shared';
 import { RegistroDeFuentesDeTiempo } from '../../../core/automatizaciones/tipos.js';
 import { abrirSesion, crearEmpresa, type Sesion } from '../../../core/herramientas/http-de-pruebas.js';
 import { levantarApp, type AppDePruebas } from '../../../pruebas/app-de-pruebas.js';
-import { abrirPool, conEmpresaDePruebas } from '../../../pruebas/base-de-pruebas.js';
+import { abrirPool, comoEmpresa, conEmpresaDePruebas } from '../../../pruebas/base-de-pruebas.js';
 import { activarCompras, codigo, confirmarCritica, crearBorrador, crearEnviada, crearProducto, crearProveedor, datos, eventosDe, linea, mensaje, recibir } from './pruebas-de-compras.js';
 
 // Compras por HTTP real, parte 3: recepción total o parcial (evento por recepción, idempotencia,
@@ -130,6 +130,19 @@ describe('compra_recibir', () => {
     expect(v.detalle[0]).toMatchObject({ recibidoMilesimas: 6_000, pendienteMilesimas: 4_000 });
     expect(v.recepciones).toHaveLength(1);
     expect(await recibidas(c.id)).toHaveLength(1);
+  });
+
+  it('la auditoría guarda códigos, estados y cifras; nunca notas ni nombres (R13)', async () => {
+    const c = await crearEnviada(dueno, proveedor, { notas: 'Nota privada de la orden' });
+    datos(await recibir(dueno, c, [1_000], { nota: 'Nota privada de la entrega' }));
+    const filas = await comoEmpresa(appPool, empresaA, async (x) =>
+      (await x.query('select herramienta, entidad_tipo, resumen from core.auditoria where entidad_id = $1 order by creado_en, id', [c.id])).rows as Array<Record<string, any>>,
+    );
+    expect(filas.map((f) => f.herramienta)).toEqual(['compra_crear', 'compra_enviar', 'compra_recibir']);
+    expect(filas.at(-1)).toMatchObject({ entidad_tipo: 'compra', resumen: { codigo: c.codigo, estado: 'recibida_parcial', recepcion: 1, importeCentimos: 1_180 } });
+    const texto = JSON.stringify(filas);
+    expect(texto).not.toContain('Nota privada');
+    expect(texto).not.toContain('Papelera');
   });
 
   it('recepciones simultáneas que sí caben se turnan y numeran sin repetir', async () => {
