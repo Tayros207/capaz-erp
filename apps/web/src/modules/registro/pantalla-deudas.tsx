@@ -12,6 +12,7 @@ import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { Lista } from '../../shared/ui/datos/lista.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
+import { MenuDeAcciones } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { listarDeudas, POR_PAGINA, verResumen } from './api.ts';
 import { HojaDeDeudaNueva } from './hoja-deuda-nueva.tsx';
@@ -22,7 +23,8 @@ import {
   type FiltroDeDeudas, type TipoDeDeuda,
 } from './logica.ts';
 
-const COLUMNAS: Array<Columna<DeudaDto>> = [
+function columnasDeDeudas(tipo: TipoDeDeuda, ir: (ruta: string) => void): Array<Columna<DeudaDto>> {
+  const base: Array<Columna<DeudaDto>> = [
   { id: 'codigo', titulo: 'Código', principal: true, celda: (d) => d.codigo },
   { id: 'contacto', titulo: 'Contacto', celda: (d) => d.contactoNombre },
   { id: 'concepto', titulo: 'Concepto', celda: (d) => d.concepto },
@@ -30,7 +32,19 @@ const COLUMNAS: Array<Columna<DeudaDto>> = [
   { id: 'total', titulo: 'Total', alinear: 'derecha', celda: (d) => <span className="tabular-nums">{formatearSoles(d.totalCentimos)}</span> },
   { id: 'saldo', titulo: 'Saldo', alinear: 'derecha', celda: (d) => <span className="font-medium tabular-nums">{formatearSoles(d.saldoCentimos)}</span> },
   { id: 'estado', titulo: 'Estado', celda: (d) => <Insignia tono={tonoDeEstadoDeDeuda(d)}>{textoDeEstadoDeDeuda(d)}</Insignia> },
-];
+  ];
+  if (tipo !== 'por_cobrar') return base;
+  return [...base, {
+    id: 'acciones',
+    titulo: 'Acciones',
+    alinear: 'derecha',
+    celda: (d) => (
+      <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+        <MenuDeAcciones etiqueta={`Acciones de ${d.codigo}`} acciones={[{ etiqueta: 'Estado de cuenta', onSeleccionar: () => ir(`/m/registro/estado-de-cuenta/${d.contactoId}`) }]} />
+      </span>
+    ),
+  }];
+}
 
 /** Cifras del tipo de deuda (saldo abierto y vencido). Necesitan el permiso de reportes: sin él, no se muestran. */
 function CifrasDeDeudas({ tipo }: { tipo: TipoDeDeuda }) {
@@ -89,7 +103,7 @@ export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
         <>
           <Lista
             etiqueta={titulo}
-            columnas={COLUMNAS}
+            columnas={columnasDeDeudas(tipo, (ruta) => void navegar(ruta))}
             filas={filas}
             clave={(d) => d.id}
             onAbrir={(d) => void navegar(`/m/registro/deudas/${d.id}`)}

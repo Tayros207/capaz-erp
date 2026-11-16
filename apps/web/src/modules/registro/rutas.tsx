@@ -6,10 +6,15 @@ import { PantallaCaja } from './pantalla-caja.tsx';
 import { PantallaDeuda } from './pantalla-deuda.tsx';
 import { PantallaDeudas } from './pantalla-deudas.tsx';
 import { PantallaMovimiento } from './pantalla-movimiento.tsx';
+import { PantallaEstadoDeCuenta } from './pantalla-estado-de-cuenta.tsx';
 import { PantallaMovimientos } from './pantalla-movimientos.tsx';
+import { PantallaRecibo } from './pantalla-recibo.tsx';
 
 // Pantallas de «registro» (Finanzas ligeras), bajo `m/registro/…` con marco propio (ficha §4.7).
 export const rutas: RouteObject[] = [
+  // Documentos imprimibles: fuera del marco (sin navegación de sección) para que la hoja salga limpia.
+  { path: 'm/registro/deudas/:id/abonos/:abonoId/recibo', element: <PantallaRecibo /> },
+  { path: 'm/registro/estado-de-cuenta/:contactoId', element: <PantallaEstadoDeCuenta /> },
   {
     path: 'm/registro',
     element: <MarcoDeRegistro />,
