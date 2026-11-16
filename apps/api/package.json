@@ -21,7 +21,8 @@
     "db:migrar": "node scripts/migrar.ts",
     "db:migrar:test": "node scripts/migrar.ts --base capaz_test",
     "db:generar": "drizzle-kit generate",
-    "plataforma": "node scripts/plataforma.ts"
+    "plataforma": "node scripts/plataforma.ts",
+    "db:sembrar-demo": "node scripts/sembrar-demo.ts"
   },
   "dependencies": {
     "@capaz/shared": "workspace:*",
