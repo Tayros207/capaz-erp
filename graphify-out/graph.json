@@ -126,6 +126,22 @@
       "source_location": "L6"
     },
     {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest",
+      "label": "LoggerDeNest",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "_ts_fields": {
+        "logger": "Logger"
+      },
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": "loggerdenest",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L42"
+    },
+    {
       "id": "apps_api_src_infra_http_filtro_de_errores_filtrodeerrores",
       "label": "FiltroDeErrores",
       "_callable": true,
@@ -142,22 +158,6 @@
       "source_location": "L25"
     },
     {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest",
-      "label": "LoggerDeNest",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "_ts_fields": {
-        "logger": "Logger"
-      },
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "loggerdenest",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L42"
-    },
-    {
       "id": "apps_api_src_infra_config_config_config",
       "label": "Config",
       "_callable": true,
@@ -169,32 +169,6 @@
       "norm_label": "config",
       "source_file": "apps/api/src/infra/config/config.ts",
       "source_location": "L35"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_configinvalida",
-      "label": "ConfigInvalida",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "configinvalida",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_module_configmodule",
-      "label": "ConfigModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "configmodule",
-      "source_file": "apps/api/src/infra/config/config.module.ts",
-      "source_location": "L9"
     },
     {
       "id": "apps_api_src_infra_database_con_empresa_activa",
@@ -262,19 +236,6 @@
       "source_location": "L13"
     },
     {
-      "id": "apps_api_src_infra_database_database_module_databasemodule",
-      "label": "DatabaseModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "databasemodule",
-      "source_file": "apps/api/src/infra/database/database.module.ts",
-      "source_location": "L9"
-    },
-    {
       "id": "apps_api_src_infra_database_database_service_databaseservice",
       "label": "DatabaseService",
       "_callable": true,
@@ -301,45 +262,6 @@
       "source_location": "L7"
     },
     {
-      "id": "apps_api_src_infra_health_health_module_healthmodule",
-      "label": "HealthModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "healthmodule",
-      "source_file": "apps/api/src/infra/health/health.module.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "apps_api_src_infra_http_http_module_httpmodule",
-      "label": "HttpModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "httpmodule",
-      "source_file": "apps/api/src/infra/http/http.module.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_module_loggermodule",
-      "label": "LoggerModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "loggermodule",
-      "source_file": "apps/api/src/infra/logger/logger.module.ts",
-      "source_location": "L10"
-    },
-    {
       "id": "packages_shared_src_health_healthresponse",
       "label": "HealthResponse",
       "_callable": true,
@@ -353,6 +275,84 @@
       "source_location": "L10"
     },
     {
+      "id": "apps_api_src_infra_config_config_configinvalida",
+      "label": "ConfigInvalida",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": "configinvalida",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "apps_api_src_app_module_appmodule",
+      "label": "AppModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "appmodule",
+      "source_file": "apps/api/src/app.module.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "apps_api_src_infra_config_config_module_configmodule",
+      "label": "ConfigModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "configmodule",
+      "source_file": "apps/api/src/infra/config/config.module.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "apps_api_src_infra_database_database_module_databasemodule",
+      "label": "DatabaseModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "databasemodule",
+      "source_file": "apps/api/src/infra/database/database.module.ts",
+      "source_location": "L9"
+    },
+    {
+      "id": "apps_api_src_infra_health_health_module_healthmodule",
+      "label": "HealthModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "healthmodule",
+      "source_file": "apps/api/src/infra/health/health.module.ts",
+      "source_location": "L7"
+    },
+    {
+      "id": "apps_api_src_infra_http_http_module_httpmodule",
+      "label": "HttpModule",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "httpmodule",
+      "source_file": "apps/api/src/infra/http/http.module.ts",
+      "source_location": "L6"
+    },
+    {
       "id": "apps_api_src_infra_http_filtro_de_errores_traduccion",
       "label": "Traduccion",
       "_callable": true,
@@ -364,6 +364,19 @@
       "norm_label": "traduccion",
       "source_file": "apps/api/src/infra/http/filtro-de-errores.ts",
       "source_location": "L9"
+    },
+    {
+      "id": "apps_api_src_infra_http_validacion_problema",
+      "label": "Problema",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "problema",
+      "source_file": "apps/api/src/infra/http/validacion.ts",
+      "source_location": "L4"
     },
     {
       "id": "packages_shared_src_codigos_codigo",
@@ -522,39 +535,13 @@
       "source_location": "L11"
     },
     {
-      "id": "apps_api_src_core_borradores_proponer_propuestadeborrador",
-      "label": "PropuestaDeBorrador",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "file_type": "code",
-      "norm_label": "propuestadeborrador",
-      "source_file": "apps/api/src/core/borradores/proponer.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "apps_api_src_app_module_appmodule",
-      "label": "AppModule",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "appmodule",
-      "source_file": "apps/api/src/app.module.ts",
-      "source_location": "L11"
-    },
-    {
       "id": "apps_api_src_infra_http_contexto_canaldellamada",
       "label": "CanalDeLlamada",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "canaldellamada",
       "source_file": "apps/api/src/infra/http/contexto.ts",
@@ -567,24 +554,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "contextodepeticion",
       "source_file": "apps/api/src/infra/http/contexto.ts",
       "source_location": "L10"
     },
     {
-      "id": "apps_api_src_infra_http_validacion_problema",
-      "label": "Problema",
+      "id": "apps_api_src_infra_logger_logger_module_loggermodule",
+      "label": "LoggerModule",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
-      "norm_label": "problema",
-      "source_file": "apps/api/src/infra/http/validacion.ts",
-      "source_location": "L4"
+      "norm_label": "loggermodule",
+      "source_file": "apps/api/src/infra/logger/logger.module.ts",
+      "source_location": "L10"
     },
     {
       "id": "apps_api_src_core_herramientas_ejecutor_fallo",
@@ -762,7 +749,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "code",
       "norm_label": "herramientaconsecretos",
       "source_file": "apps/api/src/core/borradores/proponer.ts",
@@ -775,11 +762,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "code",
       "norm_label": "herramientadeborradordesconocida",
       "source_file": "apps/api/src/core/borradores/proponer.ts",
       "source_location": "L19"
+    },
+    {
+      "id": "apps_api_src_core_borradores_proponer_propuestadeborrador",
+      "label": "PropuestaDeBorrador",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "file_type": "code",
+      "norm_label": "propuestadeborrador",
+      "source_file": "apps/api/src/core/borradores/proponer.ts",
+      "source_location": "L8"
     },
     {
       "id": "apps_api_scripts_config_credencial",
@@ -870,30 +870,6 @@
       "norm_label": ".constructor()",
       "source_file": "apps/api/src/core/herramientas/ejecutor.ts",
       "source_location": "L81"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_configinvalida_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L38"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_leerconfig",
-      "label": "leerConfig()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "leerconfig()",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L49"
     },
     {
       "id": "apps_api_src_infra_database_con_empresa_cambiodeempresa_constructor",
@@ -992,6 +968,126 @@
       "source_location": "L5"
     },
     {
+      "id": "apps_api_src_infra_config_config_configinvalida_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "apps_api_src_infra_config_config_leerconfig",
+      "label": "leerConfig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": "leerconfig()",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L49"
+    },
+    {
+      "id": "apps_api_src_infra_config_config_leerconfigdelentorno",
+      "label": "leerConfigDelEntorno()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": "leerconfigdelentorno()",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_debug",
+      "label": ".debug()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".debug()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_fatal",
+      "label": ".fatal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".fatal()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L60"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_log",
+      "label": ".log()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".log()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L45"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_verbose",
+      "label": ".verbose()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".verbose()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_loggerdenest_warn",
+      "label": ".warn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": ".warn()",
+      "source_file": "apps/api/src/infra/logger/logger.ts",
+      "source_location": "L51"
+    },
+    {
+      "id": "apps_api_src_main_bootstrap",
+      "label": "bootstrap()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "main.ts",
+      "file_type": "code",
+      "norm_label": "bootstrap()",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L11"
+    },
+    {
       "id": "apps_api_src_infra_http_error_de_negocio_errordenegocio_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -1061,6 +1157,30 @@
       "norm_label": "traducir()",
       "source_file": "apps/api/src/infra/http/filtro-de-errores.ts",
       "source_location": "L11"
+    },
+    {
+      "id": "apps_api_src_infra_http_validacion_crearpipedevalidacion",
+      "label": "crearPipeDeValidacion()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "crearpipedevalidacion()",
+      "source_file": "apps/api/src/infra/http/validacion.ts",
+      "source_location": "L13"
+    },
+    {
+      "id": "apps_api_src_infra_http_validacion_mensajedevalidacion",
+      "label": "mensajeDeValidacion()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "mensajedevalidacion()",
+      "source_file": "apps/api/src/infra/http/validacion.ts",
+      "source_location": "L7"
     },
     {
       "id": "packages_shared_src_codigos_codigodeestado",
@@ -1279,16 +1399,28 @@
       "source_location": "L33"
     },
     {
-      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_crear",
-      "label": "crear()",
+      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_crearherramientasdeintercambio",
+      "label": "crearHerramientasDeIntercambio()",
       "_callable": true,
       "_origin": "ast",
       "community": 36,
       "community_name": "herramientas-de-intercambio.ts",
       "file_type": "code",
-      "norm_label": "crear()",
+      "norm_label": "crearherramientasdeintercambio()",
       "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
-      "source_location": "L118"
+      "source_location": "L45"
+    },
+    {
+      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_herramientasdeintercambio_onmoduleinit",
+      "label": ".onModuleInit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "herramientas-de-intercambio.ts",
+      "file_type": "code",
+      "norm_label": ".onmoduleinit()",
+      "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
+      "source_location": "L141"
     },
     {
       "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_huellade",
@@ -1339,30 +1471,6 @@
       "source_location": "L19"
     },
     {
-      "id": "apps_api_src_core_intercambio_invocador_invocador_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 36,
-      "community_name": "herramientas-de-intercambio.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "apps/api/src/core/intercambio/invocador.ts",
-      "source_location": "L12"
-    },
-    {
-      "id": "apps_api_src_core_intercambio_invocador_invocador_invocar",
-      "label": ".invocar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 36,
-      "community_name": "herramientas-de-intercambio.ts",
-      "file_type": "code",
-      "norm_label": ".invocar()",
-      "source_file": "apps/api/src/core/intercambio/invocador.ts",
-      "source_location": "L14"
-    },
-    {
       "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_lectura",
       "label": "lectura()",
       "_callable": true,
@@ -1411,40 +1519,124 @@
       "source_location": "L74"
     },
     {
-      "id": "apps_api_src_core_borradores_borradores_int_spec_proponer",
-      "label": "proponer()",
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_basede",
+      "label": "baseDe()",
       "_callable": true,
       "_origin": "ast",
-      "community": 38,
-      "community_name": "borradores.int.spec.ts",
+      "community": 39,
+      "community_name": "config.js",
       "file_type": "code",
-      "norm_label": "proponer()",
-      "source_file": "apps/api/src/core/borradores/borradores.int.spec.ts",
-      "source_location": "L60"
+      "norm_label": "basede()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L32"
     },
     {
-      "id": "apps_api_src_pruebas_base_de_pruebas_conempresadepruebas",
-      "label": "conEmpresaDePruebas()",
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_cargarenv",
+      "label": "cargarEnv()",
       "_callable": true,
       "_origin": "ast",
-      "community": 38,
-      "community_name": "borradores.int.spec.ts",
+      "community": 39,
+      "community_name": "config.js",
       "file_type": "code",
-      "norm_label": "conempresadepruebas()",
-      "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
-      "source_location": "L53"
+      "norm_label": "cargarenv()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L2"
     },
     {
-      "id": "apps_api_src_infra_config_config_leerconfigdelentorno",
-      "label": "leerConfigDelEntorno()",
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_conbase",
+      "label": "conBase()",
       "_callable": true,
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 39,
+      "community_name": "config.js",
       "file_type": "code",
-      "norm_label": "leerconfigdelentorno()",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L57"
+      "norm_label": "conbase()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_credencialde",
+      "label": "credencialDe()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "credencialde()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_credencialesderoles",
+      "label": "credencialesDeRoles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "credencialesderoles()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_urldeadmin",
+      "label": "urlDeAdmin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "urldeadmin()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L36"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_urldeldueno",
+      "label": "urlDelDueno()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "urldeldueno()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L35"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_variable",
+      "label": "variable()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "variable()",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L9"
+    },
+    {
+      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_migrar",
+      "label": "migrar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "migrar()",
+      "source_file": "apps/api/scripts/migrar.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_verificarroles",
+      "label": "verificarRoles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "verificarroles()",
+      "source_file": "apps/api/scripts/migrar.js",
+      "source_location": "L7"
     },
     {
       "id": "apps_api_src_infra_http_contexto_concontexto",
@@ -1452,7 +1644,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "metadata": {
         "unresolved_calls": [
@@ -1475,7 +1667,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "metadata": {
         "unresolved_calls": [
@@ -1498,7 +1690,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "crearcontexto()",
       "source_file": "apps/api/src/infra/http/contexto.ts",
@@ -1510,7 +1702,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "iddepeticion()",
       "source_file": "apps/api/src/infra/http/contexto.ts",
@@ -1522,35 +1714,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "middlewaredecontexto()",
       "source_file": "apps/api/src/infra/http/contexto.ts",
       "source_location": "L46"
-    },
-    {
-      "id": "apps_api_src_infra_http_validacion_crearpipedevalidacion",
-      "label": "crearPipeDeValidacion()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "crearpipedevalidacion()",
-      "source_file": "apps/api/src/infra/http/validacion.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "apps_api_src_infra_http_validacion_mensajedevalidacion",
-      "label": "mensajeDeValidacion()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "mensajedevalidacion()",
-      "source_file": "apps/api/src/infra/http/validacion.ts",
-      "source_location": "L7"
     },
     {
       "id": "apps_api_src_infra_logger_http_logger_crearregistrohttp",
@@ -1558,7 +1726,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "crearregistrohttp()",
       "source_file": "apps/api/src/infra/logger/http-logger.ts",
@@ -1569,108 +1737,24 @@
       "label": "crearLogger()",
       "_callable": true,
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "crearlogger()",
       "source_file": "apps/api/src/infra/logger/logger.ts",
       "source_location": "L26"
     },
     {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L43"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_debug",
-      "label": ".debug()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".debug()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_fatal",
-      "label": ".fatal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".fatal()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L60"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_log",
-      "label": ".log()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".log()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L45"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_verbose",
-      "label": ".verbose()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".verbose()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L57"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_loggerdenest_warn",
-      "label": ".warn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": ".warn()",
-      "source_file": "apps/api/src/infra/logger/logger.ts",
-      "source_location": "L51"
-    },
-    {
       "id": "apps_api_src_infra_logger_logger_spec_capturar",
       "label": "capturar()",
       "_callable": true,
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "capturar()",
       "source_file": "apps/api/src/infra/logger/logger.spec.ts",
       "source_location": "L4"
-    },
-    {
-      "id": "apps_api_src_main_bootstrap",
-      "label": "bootstrap()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "bootstrap()",
-      "source_file": "apps/api/src/main.ts",
-      "source_location": "L11"
     },
     {
       "id": "apps_web_src_app_carcasa_solicitar_solicitarmodulo",
@@ -1829,6 +1913,18 @@
       "source_location": "L48"
     },
     {
+      "id": "apps_api_src_core_intercambio_invocador_invocador_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "EjecutorDeHerramientas",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "apps/api/src/core/intercambio/invocador.ts",
+      "source_location": "L12"
+    },
+    {
       "id": "apps_api_src_core_automatizaciones_motor_accionrechazada_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -1925,12 +2021,60 @@
       "source_location": "L64"
     },
     {
+      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_crear",
+      "label": "crear()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "Transaccion",
+      "file_type": "code",
+      "norm_label": "crear()",
+      "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
+      "source_location": "L118"
+    },
+    {
+      "id": "apps_api_src_core_intercambio_invocador_invocador_invocar",
+      "label": ".invocar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "Transaccion",
+      "file_type": "code",
+      "norm_label": ".invocar()",
+      "source_file": "apps/api/src/core/intercambio/invocador.ts",
+      "source_location": "L14"
+    },
+    {
+      "id": "apps_api_src_core_borradores_borradores_int_spec_estadode",
+      "label": "estadoDe()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "base-de-pruebas.ts",
+      "file_type": "code",
+      "norm_label": "estadode()",
+      "source_file": "apps/api/src/core/borradores/borradores.int.spec.ts",
+      "source_location": "L78"
+    },
+    {
+      "id": "apps_api_src_core_borradores_borradores_int_spec_proponer",
+      "label": "proponer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "base-de-pruebas.ts",
+      "file_type": "code",
+      "norm_label": "proponer()",
+      "source_file": "apps/api/src/core/borradores/borradores.int.spec.ts",
+      "source_location": "L60"
+    },
+    {
       "id": "apps_api_src_infra_database_con_empresa_int_spec_ctx",
       "label": "ctx()",
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "ctx()",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -1942,7 +2086,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "empresafijada()",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -1954,11 +2098,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "abrirpool()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
       "source_location": "L22"
+    },
+    {
+      "id": "apps_api_src_pruebas_base_de_pruebas_comoempresa",
+      "label": "comoEmpresa()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "base-de-pruebas.ts",
+      "file_type": "code",
+      "norm_label": "comoempresa()",
+      "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
+      "source_location": "L32"
+    },
+    {
+      "id": "apps_api_src_pruebas_base_de_pruebas_conempresadepruebas",
+      "label": "conEmpresaDePruebas()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "base-de-pruebas.ts",
+      "file_type": "code",
+      "norm_label": "conempresadepruebas()",
+      "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
+      "source_location": "L53"
     },
     {
       "id": "apps_api_src_pruebas_base_de_pruebas_empresadeprueba",
@@ -1966,7 +2134,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "empresadeprueba()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
@@ -1978,35 +2146,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "urldepruebas()",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
       "source_location": "L12"
-    },
-    {
-      "id": "apps_api_src_core_borradores_borradores_int_spec_estadode",
-      "label": "estadoDe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "comoEmpresa",
-      "file_type": "code",
-      "norm_label": "estadode()",
-      "source_file": "apps/api/src/core/borradores/borradores.int.spec.ts",
-      "source_location": "L78"
-    },
-    {
-      "id": "apps_api_src_pruebas_base_de_pruebas_comoempresa",
-      "label": "comoEmpresa()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 50,
-      "community_name": "comoEmpresa",
-      "file_type": "code",
-      "norm_label": "comoempresa()",
-      "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
-      "source_location": "L32"
     },
     {
       "id": "apps_api_src_core_herramientas_ejecutor_comoobjeto",
@@ -2134,7 +2278,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/api/src/core/borradores/proponer.ts",
@@ -2146,7 +2290,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/api/src/core/borradores/proponer.ts",
@@ -2158,107 +2302,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "code",
       "norm_label": "proponerborrador()",
       "source_file": "apps/api/src/core/borradores/proponer.ts",
       "source_location": "L46"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_basede",
-      "label": "baseDe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "basede()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L32"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_cargarenv",
-      "label": "cargarEnv()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "cargarenv()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L2"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_conbase",
-      "label": "conBase()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "conbase()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_credencialde",
-      "label": "credencialDe()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "credencialde()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_credencialesderoles",
-      "label": "credencialesDeRoles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "credencialesderoles()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_urldeadmin",
-      "label": "urlDeAdmin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "urldeadmin()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L36"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_urldeldueno",
-      "label": "urlDelDueno()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "urldeldueno()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L35"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_variable",
-      "label": "variable()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "variable()",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L9"
     },
     {
       "id": "apps_api_scripts_config_ts_apps_api_scripts_config_basede",
@@ -2355,30 +2403,6 @@
       "norm_label": "variable()",
       "source_file": "apps/api/scripts/config.ts",
       "source_location": "L20"
-    },
-    {
-      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_migrar",
-      "label": "migrar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "migrar()",
-      "source_file": "apps/api/scripts/migrar.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_verificarroles",
-      "label": "verificarRoles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "verificarroles()",
-      "source_file": "apps/api/scripts/migrar.js",
-      "source_location": "L7"
     },
     {
       "id": "apps_api_scripts_migrar_ts_apps_api_scripts_migrar_migrar",
@@ -2513,18 +2537,6 @@
       "source_location": "L73"
     },
     {
-      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_crearherramientasdeintercambio",
-      "label": "crearHerramientasDeIntercambio()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "HerramientasDeIntercambio",
-      "file_type": "code",
-      "norm_label": "crearherramientasdeintercambio()",
-      "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
-      "source_location": "L45"
-    },
-    {
       "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_herramientasdeintercambio_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -2535,18 +2547,6 @@
       "norm_label": ".constructor()",
       "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
       "source_location": "L136"
-    },
-    {
-      "id": "apps_api_src_core_intercambio_herramientas_de_intercambio_herramientasdeintercambio_onmoduleinit",
-      "label": ".onModuleInit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 61,
-      "community_name": "HerramientasDeIntercambio",
-      "file_type": "code",
-      "norm_label": ".onmoduleinit()",
-      "source_file": "apps/api/src/core/intercambio/herramientas-de-intercambio.ts",
-      "source_location": "L141"
     },
     {
       "id": "apps_api_src_arquitectura_arquitectura_spec_ejemplo",
@@ -2705,17 +2705,6 @@
       "source_location": "L15"
     },
     {
-      "id": "apps_api_src_app_module",
-      "label": "app.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "app.module.ts",
-      "source_file": "apps/api/src/app.module.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "apps_api_src_core_herramientas_ejecutor_ts_inject",
       "label": "Inject",
       "_origin": "ast",
@@ -2725,116 +2714,6 @@
       "norm_label": "inject",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_config_config",
-      "label": "config/config.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "config/config.ts",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_config_2fb60054b43a",
-      "label": "CONFIG",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "config",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_esquemadeconfig",
-      "label": "esquemaDeConfig",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "esquemadeconfig",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L10"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_module",
-      "label": "config.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "config.module.ts",
-      "source_file": "apps/api/src/infra/config/config.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_module_ts_global",
-      "label": "Global",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "global",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_config_config_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_config_config_secreto",
-      "label": "secreto",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "secreto",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L8"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_spec",
-      "label": "config.spec.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "config.spec.ts",
-      "source_file": "apps/api/src/infra/config/config.spec.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_spec_base",
-      "label": "base",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "base",
-      "source_file": "apps/api/src/infra/config/config.spec.ts",
-      "source_location": "L4"
-    },
-    {
-      "id": "apps_api_src_infra_config_config_url",
-      "label": "url",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "url",
-      "source_file": "apps/api/src/infra/config/config.ts",
-      "source_location": "L7"
     },
     {
       "id": "apps_api_src_infra_database_con_empresa",
@@ -2857,39 +2736,6 @@
       "norm_label": "transaccionactual",
       "source_file": "apps/api/src/infra/database/con-empresa.ts",
       "source_location": "L16"
-    },
-    {
-      "id": "apps_api_src_infra_database_database_module",
-      "label": "database.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "database.module.ts",
-      "source_file": "apps/api/src/infra/database/database.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_database_database_module_ts_global",
-      "label": "Global",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "global",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_database_database_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "apps_api_src_infra_database_database_service",
@@ -2936,83 +2782,6 @@
       "source_location": ""
     },
     {
-      "id": "apps_api_src_infra_health_health_module",
-      "label": "health.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "health.module.ts",
-      "source_file": "apps/api/src/infra/health/health.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_health_health_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_http_http_module",
-      "label": "http.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "http.module.ts",
-      "source_file": "apps/api/src/infra/http/http.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_http_http_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_module",
-      "label": "logger.module.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "logger.module.ts",
-      "source_file": "apps/api/src/infra/logger/logger.module.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_module_ts_global",
-      "label": "Global",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "global",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_logger_logger_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "controller",
       "label": "Controller",
       "_origin": "ast",
@@ -3044,17 +2813,6 @@
       "norm_label": "adr-0011",
       "source_file": "apps/api/src/infra/database/database.service.ts",
       "source_location": "L10"
-    },
-    {
-      "id": "ref_nestjs_common",
-      "label": "@nestjs/common",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "con-empresa.ts",
-      "file_type": "concept",
-      "norm_label": "@nestjs/common",
-      "source_file": "apps/api/package.json",
-      "source_location": "L27"
     },
     {
       "id": "packages_shared_package",
@@ -3508,169 +3266,92 @@
       "source_location": "L25"
     },
     {
-      "id": "apps_api_package_dependencies",
-      "label": "dependencies",
+      "id": "apps_api_src_infra_config_config",
+      "label": "config/config.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "dependencies",
-      "source_file": "apps/api/package.json",
-      "source_location": "L25"
+      "norm_label": "config/config.ts",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L1"
     },
     {
-      "id": "apps_api_package_dependencies_capaz_shared",
-      "label": "@capaz/shared@workspace:*",
+      "id": "apps_api_src_infra_config_config_esquemadeconfig",
+      "label": "esquemaDeConfig",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "@capaz/shared@workspace:*",
-      "source_file": "apps/api/package.json",
-      "source_location": "L26"
+      "norm_label": "esquemadeconfig",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L10"
     },
     {
-      "id": "apps_api_package_dependencies_nestjs_common",
-      "label": "@nestjs/common@^12.4.2",
+      "id": "apps_api_src_infra_config_config_secreto",
+      "label": "secreto",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "@nestjs/common@^12.4.2",
-      "source_file": "apps/api/package.json",
-      "source_location": "L27"
+      "norm_label": "secreto",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L8"
     },
     {
-      "id": "apps_api_package_dependencies_nestjs_core",
-      "label": "@nestjs/core@^12.4.2",
+      "id": "apps_api_src_infra_config_config_spec",
+      "label": "config.spec.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "@nestjs/core@^12.4.2",
-      "source_file": "apps/api/package.json",
-      "source_location": "L28"
+      "norm_label": "config.spec.ts",
+      "source_file": "apps/api/src/infra/config/config.spec.ts",
+      "source_location": "L1"
     },
     {
-      "id": "apps_api_package_dependencies_nestjs_platform_express",
-      "label": "@nestjs/platform-express@^12.4.2",
+      "id": "apps_api_src_infra_config_config_spec_base",
+      "label": "base",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "@nestjs/platform-express@^12.4.2",
-      "source_file": "apps/api/package.json",
-      "source_location": "L29"
+      "norm_label": "base",
+      "source_file": "apps/api/src/infra/config/config.spec.ts",
+      "source_location": "L4"
     },
     {
-      "id": "apps_api_package_dependencies_pino",
-      "label": "pino@^10.4.0",
+      "id": "apps_api_src_infra_config_config_url",
+      "label": "url",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "pino@^10.4.0",
-      "source_file": "apps/api/package.json",
-      "source_location": "L32"
+      "norm_label": "url",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L7"
     },
     {
-      "id": "apps_api_package_dependencies_reflect_metadata",
-      "label": "reflect-metadata@^0.2.2",
+      "id": "apps_api_src_infra_config_load_env",
+      "label": "load-env.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "reflect-metadata@^0.2.2",
-      "source_file": "apps/api/package.json",
-      "source_location": "L34"
+      "norm_label": "load-env.ts",
+      "source_file": "apps/api/src/infra/config/load-env.ts",
+      "source_location": "L1"
     },
     {
-      "id": "apps_api_package_dependencies_rxjs",
-      "label": "rxjs@^7.8.1",
+      "id": "apps_api_src_main",
+      "label": "main.ts",
       "_origin": "ast",
       "community": 12,
-      "community_name": "dependencies",
+      "community_name": "main.ts",
       "file_type": "code",
-      "norm_label": "rxjs@^7.8.1",
-      "source_file": "apps/api/package.json",
-      "source_location": "L35"
-    },
-    {
-      "id": "apps_api_package_dependencies_zod",
-      "label": "zod@^4.6.7",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "code",
-      "norm_label": "zod@^4.6.7",
-      "source_file": "apps/api/package.json",
-      "source_location": "L36"
-    },
-    {
-      "id": "apps_api_package_json_ref_capaz_shared",
-      "label": "@capaz/shared",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "@capaz/shared",
-      "source_file": "apps/api/package.json",
-      "source_location": "L26"
-    },
-    {
-      "id": "apps_api_package_json_ref_zod",
-      "label": "zod",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "zod",
-      "source_file": "apps/api/package.json",
-      "source_location": "L36"
-    },
-    {
-      "id": "ref_nestjs_core",
-      "label": "@nestjs/core",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "@nestjs/core",
-      "source_file": "apps/api/package.json",
-      "source_location": "L28"
-    },
-    {
-      "id": "ref_nestjs_platform_express",
-      "label": "@nestjs/platform-express",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "@nestjs/platform-express",
-      "source_file": "apps/api/package.json",
-      "source_location": "L29"
-    },
-    {
-      "id": "ref_reflect_metadata",
-      "label": "reflect-metadata",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "reflect-metadata",
-      "source_file": "apps/api/package.json",
-      "source_location": "L34"
-    },
-    {
-      "id": "ref_rxjs",
-      "label": "rxjs",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "dependencies",
-      "file_type": "concept",
-      "norm_label": "rxjs",
-      "source_file": "apps/api/package.json",
-      "source_location": "L35"
+      "norm_label": "main.ts",
+      "source_file": "apps/api/src/main.ts",
+      "source_location": "L1"
     },
     {
       "id": "apps_api_package_scripts",
@@ -4047,15 +3728,147 @@
       "source_location": "L22"
     },
     {
-      "id": "apps_api_src_core_herramientas_ejecutar_dentro_correlativos_int_spec",
-      "label": "ejecutar-dentro-correlativos.int.spec.ts",
+      "id": "apps_api_src_app_module",
+      "label": "app.module.ts",
       "_origin": "ast",
       "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
+      "community_name": "@nestjs/common",
       "file_type": "code",
-      "norm_label": "ejecutar-dentro-correlativos.int.spec.ts",
-      "source_file": "apps/api/src/core/herramientas/ejecutar-dentro-correlativos.int.spec.ts",
+      "norm_label": "app.module.ts",
+      "source_file": "apps/api/src/app.module.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_app_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_config_config_module",
+      "label": "config.module.ts",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "config.module.ts",
+      "source_file": "apps/api/src/infra/config/config.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_config_config_module_ts_global",
+      "label": "Global",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "global",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_config_config_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_database_database_module",
+      "label": "database.module.ts",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "database.module.ts",
+      "source_file": "apps/api/src/infra/database/database.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_database_database_module_ts_global",
+      "label": "Global",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "global",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_database_database_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_health_health_module",
+      "label": "health.module.ts",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "health.module.ts",
+      "source_file": "apps/api/src/infra/health/health.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_health_health_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_http_http_module",
+      "label": "http.module.ts",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "http.module.ts",
+      "source_file": "apps/api/src/infra/http/http.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_http_http_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "ref_nestjs_common",
+      "label": "@nestjs/common",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "@nestjs/common",
+      "file_type": "concept",
+      "norm_label": "@nestjs/common",
+      "source_file": "apps/api/package.json",
+      "source_location": "L27"
     },
     {
       "id": "packages_shared_tsconfig",
@@ -4265,6 +4078,50 @@
       "norm_label": "inject",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_http_validacion",
+      "label": "validacion.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "validacion.ts",
+      "source_file": "apps/api/src/infra/http/validacion.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_http_validacion_spec",
+      "label": "validacion.spec.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "validacion.spec.ts",
+      "source_file": "apps/api/src/infra/http/validacion.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_vitest_config",
+      "label": "vitest.config.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "vitest.config.ts",
+      "source_file": "apps/api/vitest.config.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_vitest_int_config",
+      "label": "vitest.int.config.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "code",
+      "norm_label": "vitest.int.config.ts",
+      "source_file": "apps/api/vitest.int.config.ts",
+      "source_location": "L1"
     },
     {
       "id": "catch",
@@ -4487,6 +4344,17 @@
       "source_location": "L32"
     },
     {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "src/index.ts",
+      "file_type": "concept",
+      "norm_label": "vitest",
+      "source_file": "apps/web/package.json",
+      "source_location": "L31"
+    },
+    {
       "id": "docs_fichas_ola_2_8_n1_inicio_y_bandeja_con_pendientes",
       "label": "8. N1 \u00b7 Inicio y bandeja con pendientes",
       "_origin": "ast",
@@ -4497,6 +4365,17 @@
       "norm_label": "8. n1 \u00b7 inicio y bandeja con pendientes",
       "source_file": "docs/FICHAS-OLA-2.md",
       "source_location": "L684"
+    },
+    {
+      "id": "apps_api_drizzle_config",
+      "label": "drizzle.config.ts",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "drizzle.config.ts",
+      "source_file": "apps/api/drizzle.config.ts",
+      "source_location": "L1"
     },
     {
       "id": "apps_api_package",
@@ -4510,6 +4389,105 @@
       "source_location": "L1"
     },
     {
+      "id": "apps_api_package_dependencies",
+      "label": "dependencies",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "dependencies",
+      "source_file": "apps/api/package.json",
+      "source_location": "L25"
+    },
+    {
+      "id": "apps_api_package_dependencies_capaz_shared",
+      "label": "@capaz/shared@workspace:*",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "@capaz/shared@workspace:*",
+      "source_file": "apps/api/package.json",
+      "source_location": "L26"
+    },
+    {
+      "id": "apps_api_package_dependencies_nestjs_common",
+      "label": "@nestjs/common@^12.4.2",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "@nestjs/common@^12.4.2",
+      "source_file": "apps/api/package.json",
+      "source_location": "L27"
+    },
+    {
+      "id": "apps_api_package_dependencies_nestjs_core",
+      "label": "@nestjs/core@^12.4.2",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "@nestjs/core@^12.4.2",
+      "source_file": "apps/api/package.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "apps_api_package_dependencies_nestjs_platform_express",
+      "label": "@nestjs/platform-express@^12.4.2",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "@nestjs/platform-express@^12.4.2",
+      "source_file": "apps/api/package.json",
+      "source_location": "L29"
+    },
+    {
+      "id": "apps_api_package_dependencies_pino",
+      "label": "pino@^10.4.0",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "pino@^10.4.0",
+      "source_file": "apps/api/package.json",
+      "source_location": "L32"
+    },
+    {
+      "id": "apps_api_package_dependencies_reflect_metadata",
+      "label": "reflect-metadata@^0.2.2",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "reflect-metadata@^0.2.2",
+      "source_file": "apps/api/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "apps_api_package_dependencies_rxjs",
+      "label": "rxjs@^7.8.1",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "rxjs@^7.8.1",
+      "source_file": "apps/api/package.json",
+      "source_location": "L35"
+    },
+    {
+      "id": "apps_api_package_dependencies_zod",
+      "label": "zod@^4.6.7",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "zod@^4.6.7",
+      "source_file": "apps/api/package.json",
+      "source_location": "L36"
+    },
+    {
       "id": "apps_api_package_devdependencies",
       "label": "devDependencies",
       "_origin": "ast",
@@ -4519,6 +4497,17 @@
       "norm_label": "devdependencies",
       "source_file": "apps/api/package.json",
       "source_location": "L38"
+    },
+    {
+      "id": "apps_api_package_devdependencies_drizzle_kit",
+      "label": "drizzle-kit@^0.31.11",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "drizzle-kit@^0.31.11",
+      "source_file": "apps/api/package.json",
+      "source_location": "L47"
     },
     {
       "id": "apps_api_package_devdependencies_nestjs_cli",
@@ -4653,6 +4642,17 @@
       "source_location": "L52"
     },
     {
+      "id": "apps_api_package_devdependencies_vite",
+      "label": "vite@^8.0.0",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "vite@^8.0.0",
+      "source_file": "apps/api/package.json",
+      "source_location": "L53"
+    },
+    {
       "id": "apps_api_package_devdependencies_vitest",
       "label": "vitest@^4.1.2",
       "_origin": "ast",
@@ -4662,6 +4662,17 @@
       "norm_label": "vitest@^4.1.2",
       "source_file": "apps/api/package.json",
       "source_location": "L54"
+    },
+    {
+      "id": "apps_api_package_devdependencies_vitest_coverage_v8",
+      "label": "@vitest/coverage-v8@^4.1.2",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "code",
+      "norm_label": "@vitest/coverage-v8@^4.1.2",
+      "source_file": "apps/api/package.json",
+      "source_location": "L46"
     },
     {
       "id": "apps_api_package_license",
@@ -4719,6 +4730,17 @@
       "source_location": "L3"
     },
     {
+      "id": "apps_api_package_json_ref_capaz_shared",
+      "label": "@capaz/shared",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "@capaz/shared",
+      "source_file": "apps/api/package.json",
+      "source_location": "L26"
+    },
+    {
       "id": "apps_api_package_json_ref_oxlint",
       "label": "oxlint",
       "_origin": "ast",
@@ -4752,6 +4774,17 @@
       "source_location": "L52"
     },
     {
+      "id": "apps_api_package_json_ref_vite",
+      "label": "vite",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "vite",
+      "source_file": "apps/api/package.json",
+      "source_location": "L53"
+    },
+    {
       "id": "apps_api_package_json_ref_vitest",
       "label": "vitest",
       "_origin": "ast",
@@ -4761,6 +4794,28 @@
       "norm_label": "vitest",
       "source_file": "apps/api/package.json",
       "source_location": "L54"
+    },
+    {
+      "id": "apps_api_package_json_ref_zod",
+      "label": "zod",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "zod",
+      "source_file": "apps/api/package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "ref_drizzle_kit",
+      "label": "drizzle-kit",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "drizzle-kit",
+      "source_file": "apps/api/package.json",
+      "source_location": "L47"
     },
     {
       "id": "ref_nestjs_cli",
@@ -4774,6 +4829,17 @@
       "source_location": "L39"
     },
     {
+      "id": "ref_nestjs_core",
+      "label": "@nestjs/core",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "@nestjs/core",
+      "source_file": "apps/api/package.json",
+      "source_location": "L28"
+    },
+    {
       "id": "ref_nestjs_mau",
       "label": "@nestjs/mau",
       "_origin": "ast",
@@ -4783,6 +4849,17 @@
       "norm_label": "@nestjs/mau",
       "source_file": "apps/api/package.json",
       "source_location": "L40"
+    },
+    {
+      "id": "ref_nestjs_platform_express",
+      "label": "@nestjs/platform-express",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "@nestjs/platform-express",
+      "source_file": "apps/api/package.json",
+      "source_location": "L29"
     },
     {
       "id": "ref_nestjs_schematics",
@@ -4829,6 +4906,28 @@
       "source_location": "L50"
     },
     {
+      "id": "ref_reflect_metadata",
+      "label": "reflect-metadata",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "reflect-metadata",
+      "source_file": "apps/api/package.json",
+      "source_location": "L34"
+    },
+    {
+      "id": "ref_rxjs",
+      "label": "rxjs",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "rxjs",
+      "source_file": "apps/api/package.json",
+      "source_location": "L35"
+    },
+    {
       "id": "ref_source_map_support",
       "label": "source-map-support",
       "_origin": "ast",
@@ -4860,6 +4959,17 @@
       "norm_label": "@types/pg",
       "source_file": "apps/api/package.json",
       "source_location": "L45"
+    },
+    {
+      "id": "ref_vitest_coverage_v8",
+      "label": "@vitest/coverage-v8",
+      "_origin": "ast",
+      "community": 20,
+      "community_name": "api/package.json",
+      "file_type": "concept",
+      "norm_label": "@vitest/coverage-v8",
+      "source_file": "apps/api/package.json",
+      "source_location": "L46"
     },
     {
       "id": "docker_compose",
@@ -5047,6 +5157,28 @@
       "norm_label": "manifiestoordenes",
       "source_file": "apps/api/src/modules/ordenes/ordenes.manifest.ts",
       "source_location": "L4"
+    },
+    {
+      "id": "apps_api_src_modules_registro_registro_manifest",
+      "label": "registro.manifest.ts",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "catalogo.spec.ts",
+      "file_type": "code",
+      "norm_label": "registro.manifest.ts",
+      "source_file": "apps/api/src/modules/registro/registro.manifest.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_modules_registro_registro_manifest_manifiestoregistro",
+      "label": "manifiestoRegistro",
+      "_origin": "ast",
+      "community": 24,
+      "community_name": "catalogo.spec.ts",
+      "file_type": "code",
+      "norm_label": "manifiestoregistro",
+      "source_file": "apps/api/src/modules/registro/registro.manifest.ts",
+      "source_location": "L5"
     },
     {
       "id": "apps_api_src_modules_webhooks_webhooks_manifest",
@@ -6581,66 +6713,77 @@
       "source_location": "L72"
     },
     {
-      "id": "apps_api_src_core_borradores_proponer",
-      "label": "proponer.ts",
+      "id": "apps_api_src_core_herramientas_ejecutar_dentro_correlativos_int_spec",
+      "label": "ejecutar-dentro-correlativos.int.spec.ts",
       "_origin": "ast",
-      "community": 39,
-      "community_name": "proponer.ts",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
       "file_type": "code",
-      "norm_label": "proponer.ts",
-      "source_file": "apps/api/src/core/borradores/proponer.ts",
+      "norm_label": "ejecutar-dentro-correlativos.int.spec.ts",
+      "source_file": "apps/api/src/core/herramientas/ejecutar-dentro-correlativos.int.spec.ts",
       "source_location": "L1"
     },
     {
-      "id": "apps_api_src_core_borradores_proponer_herramientas_con_secretos",
-      "label": "HERRAMIENTAS_CON_SECRETOS",
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config",
+      "label": "config.js",
       "_origin": "ast",
       "community": 39,
-      "community_name": "proponer.ts",
+      "community_name": "config.js",
       "file_type": "code",
-      "norm_label": "herramientas_con_secretos",
-      "source_file": "apps/api/src/core/borradores/proponer.ts",
-      "source_location": "L34"
+      "norm_label": "config.js",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_scripts_config_js_apps_api_scripts_config_roles",
+      "label": "ROLES",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "roles",
+      "source_file": "apps/api/scripts/config.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar",
+      "label": "migrar.js",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "migrar.js",
+      "source_file": "apps/api/scripts/migrar.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_carpeta",
+      "label": "CARPETA",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "config.js",
+      "file_type": "code",
+      "norm_label": "carpeta",
+      "source_file": "apps/api/scripts/migrar.js",
+      "source_location": "L6"
     },
     {
       "id": "apps_api_package_dependencies_pino_http",
       "label": "pino-http@^11.0.0",
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "pino-http@^11.0.0",
       "source_file": "apps/api/package.json",
       "source_location": "L33"
     },
     {
-      "id": "apps_api_src_app_module_ts_module",
-      "label": "Module",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_api_src_infra_config_load_env",
-      "label": "load-env.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "load-env.ts",
-      "source_file": "apps/api/src/infra/config/load-env.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "apps_api_src_infra_http_contexto",
       "label": "contexto.ts",
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "contexto.ts",
       "source_file": "apps/api/src/infra/http/contexto.ts",
@@ -6651,7 +6794,7 @@
       "label": "almacen",
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "almacen",
       "source_file": "apps/api/src/infra/http/contexto.ts",
@@ -6662,32 +6805,10 @@
       "label": "contexto.spec.ts",
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "contexto.spec.ts",
       "source_file": "apps/api/src/infra/http/contexto.spec.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_http_validacion",
-      "label": "validacion.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "validacion.ts",
-      "source_file": "apps/api/src/infra/http/validacion.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_infra_http_validacion_spec",
-      "label": "validacion.spec.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "validacion.spec.ts",
-      "source_file": "apps/api/src/infra/http/validacion.spec.ts",
       "source_location": "L1"
     },
     {
@@ -6695,18 +6816,40 @@
       "label": "http-logger.ts",
       "_origin": "ast",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "file_type": "code",
       "norm_label": "http-logger.ts",
       "source_file": "apps/api/src/infra/logger/http-logger.ts",
       "source_location": "L1"
     },
     {
+      "id": "ref_pino_http",
+      "label": "pino-http",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "contexto.ts",
+      "file_type": "concept",
+      "norm_label": "pino-http",
+      "source_file": "apps/api/package.json",
+      "source_location": "L33"
+    },
+    {
+      "id": "apps_api_src_infra_config_config_config_2fb60054b43a",
+      "label": "CONFIG",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "logger.ts",
+      "file_type": "code",
+      "norm_label": "config",
+      "source_file": "apps/api/src/infra/config/config.ts",
+      "source_location": "L59"
+    },
+    {
       "id": "apps_api_src_infra_logger_logger",
       "label": "logger.ts",
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "logger.ts",
       "source_file": "apps/api/src/infra/logger/logger.ts",
@@ -6716,8 +6859,8 @@
       "id": "apps_api_src_infra_logger_logger_campos_ocultos",
       "label": "CAMPOS_OCULTOS",
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "campos_ocultos",
       "source_file": "apps/api/src/infra/logger/logger.ts",
@@ -6727,78 +6870,56 @@
       "id": "apps_api_src_infra_logger_logger_logger",
       "label": "LOGGER",
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "logger",
       "source_file": "apps/api/src/infra/logger/logger.ts",
       "source_location": "L7"
     },
     {
+      "id": "apps_api_src_infra_logger_logger_module",
+      "label": "logger.module.ts",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "logger.ts",
+      "file_type": "code",
+      "norm_label": "logger.module.ts",
+      "source_file": "apps/api/src/infra/logger/logger.module.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_module_ts_global",
+      "label": "Global",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "logger.ts",
+      "file_type": "code",
+      "norm_label": "global",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_api_src_infra_logger_logger_module_ts_module",
+      "label": "Module",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "logger.ts",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "apps_api_src_infra_logger_logger_spec",
       "label": "logger.spec.ts",
       "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
+      "community": 40,
+      "community_name": "logger.ts",
       "file_type": "code",
       "norm_label": "logger.spec.ts",
       "source_file": "apps/api/src/infra/logger/logger.spec.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "apps_api_src_main",
-      "label": "main.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "code",
-      "norm_label": "main.ts",
-      "source_file": "apps/api/src/main.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "ref_pino_http",
-      "label": "pino-http",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "main.ts",
-      "file_type": "concept",
-      "norm_label": "pino-http",
-      "source_file": "apps/api/package.json",
-      "source_location": "L33"
-    },
-    {
-      "id": "apps_api_drizzle_config",
-      "label": "drizzle.config.ts",
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "drizzle-kit",
-      "file_type": "code",
-      "norm_label": "drizzle.config.ts",
-      "source_file": "apps/api/drizzle.config.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_package_devdependencies_drizzle_kit",
-      "label": "drizzle-kit@^0.31.11",
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "drizzle-kit",
-      "file_type": "code",
-      "norm_label": "drizzle-kit@^0.31.11",
-      "source_file": "apps/api/package.json",
-      "source_location": "L47"
-    },
-    {
-      "id": "ref_drizzle_kit",
-      "label": "drizzle-kit",
-      "_origin": "ast",
-      "community": 40,
-      "community_name": "drizzle-kit",
-      "file_type": "concept",
-      "norm_label": "drizzle-kit",
-      "source_file": "apps/api/package.json",
-      "source_location": "L47"
     },
     {
       "id": "apps_web_src_app_carcasa_solicitar",
@@ -6854,6 +6975,18 @@
       "norm_label": "injectable",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "docs_plan_paralelo_s1_herramientas",
+      "label": "S1 \u00b7 Herramientas",
+      "_origin": "ast",
+      "community": 46,
+      "community_name": "EjecutorDeHerramientas",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "s1 \u00b7 herramientas",
+      "source_file": "docs/PLAN-PARALELO.md",
+      "source_location": "L253"
     },
     {
       "id": "apps_api_src_core_automatizaciones_motor",
@@ -7193,7 +7326,7 @@
       "label": "pg@^8.23.1",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "pg@^8.23.1",
       "source_file": "apps/api/package.json",
@@ -7204,7 +7337,7 @@
       "label": "aislamiento.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "aislamiento.int.spec.ts",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -7215,7 +7348,7 @@
       "label": "A",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "a",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -7226,7 +7359,7 @@
       "label": "B",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "b",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -7237,7 +7370,7 @@
       "label": "EJEMPLOS",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "ejemplos",
       "source_file": "apps/api/src/infra/database/aislamiento.int.spec.ts",
@@ -7248,7 +7381,7 @@
       "label": "catalogo.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "catalogo.int.spec.ts",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -7259,7 +7392,7 @@
       "label": "ESQUEMAS",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "esquemas",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -7270,7 +7403,7 @@
       "label": "con-empresa.int.spec.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "con-empresa.int.spec.ts",
       "source_file": "apps/api/src/infra/database/con-empresa.int.spec.ts",
@@ -7281,32 +7414,10 @@
       "label": "base-de-pruebas.ts",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "code",
       "norm_label": "base-de-pruebas.ts",
       "source_file": "apps/api/src/pruebas/base-de-pruebas.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_vitest_config",
-      "label": "vitest.config.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "vitest",
-      "file_type": "code",
-      "norm_label": "vitest.config.ts",
-      "source_file": "apps/api/vitest.config.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_vitest_int_config",
-      "label": "vitest.int.config.ts",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "vitest",
-      "file_type": "code",
-      "norm_label": "vitest.int.config.ts",
-      "source_file": "apps/api/vitest.int.config.ts",
       "source_location": "L1"
     },
     {
@@ -7314,7 +7425,7 @@
       "label": "ADR-0011",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "concept",
       "norm_label": "adr-0011",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -7325,7 +7436,7 @@
       "label": "ADR-0012",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "concept",
       "norm_label": "adr-0012",
       "source_file": "apps/api/src/infra/database/catalogo.int.spec.ts",
@@ -7336,56 +7447,23 @@
       "label": "pg",
       "_origin": "ast",
       "community": 5,
-      "community_name": "vitest",
+      "community_name": "base-de-pruebas.ts",
       "file_type": "concept",
       "norm_label": "pg",
       "source_file": "apps/api/package.json",
       "source_location": "L31"
     },
     {
-      "id": "ref_vitest",
-      "label": "vitest",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "vitest",
-      "file_type": "concept",
-      "norm_label": "vitest",
-      "source_file": "apps/web/package.json",
-      "source_location": "L31"
-    },
-    {
       "id": "docs_fichas_ola_2_2_c1_paso_previo_de_servidor",
       "label": "2. C1 \u00b7 Paso previo de servidor",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "comoEmpresa",
+      "community": 5,
+      "community_name": "base-de-pruebas.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "2. c1 \u00b7 paso previo de servidor",
       "source_file": "docs/FICHAS-OLA-2.md",
       "source_location": "L76"
-    },
-    {
-      "id": "apps_api_package_devdependencies_vite",
-      "label": "vite@^8.0.0",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "vite@^8.0.0",
-      "file_type": "code",
-      "norm_label": "vite@^8.0.0",
-      "source_file": "apps/api/package.json",
-      "source_location": "L53"
-    },
-    {
-      "id": "apps_api_package_json_ref_vite",
-      "label": "vite",
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "vite@^8.0.0",
-      "file_type": "concept",
-      "norm_label": "vite",
-      "source_file": "apps/api/package.json",
-      "source_location": "L53"
     },
     {
       "id": "docs_fichas_ola_2_1_reglas_comunes_de_todo_m\u00f3dulo_cl\u00e1sico",
@@ -7410,18 +7488,6 @@
       "norm_label": "3. contratos congelados",
       "source_file": "docs/PLAN-PARALELO.md",
       "source_location": "L102"
-    },
-    {
-      "id": "docs_plan_paralelo_s1_herramientas",
-      "label": "S1 \u00b7 Herramientas",
-      "_origin": "ast",
-      "community": 52,
-      "community_name": ".ejecutarDentro",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "s1 \u00b7 herramientas",
-      "source_file": "docs/PLAN-PARALELO.md",
-      "source_location": "L253"
     },
     {
       "id": "docs_relevo",
@@ -7669,11 +7735,33 @@
       "source_location": "L1"
     },
     {
+      "id": "apps_api_src_core_borradores_proponer",
+      "label": "proponer.ts",
+      "_origin": "ast",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "file_type": "code",
+      "norm_label": "proponer.ts",
+      "source_file": "apps/api/src/core/borradores/proponer.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_api_src_core_borradores_proponer_herramientas_con_secretos",
+      "label": "HERRAMIENTAS_CON_SECRETOS",
+      "_origin": "ast",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "file_type": "code",
+      "norm_label": "herramientas_con_secretos",
+      "source_file": "apps/api/src/core/borradores/proponer.ts",
+      "source_location": "L34"
+    },
+    {
       "id": "docs_adr_adr_016_reglas_de_los_modulos_clasicos",
       "label": "ADR-016-reglas-de-los-modulos-clasicos.md",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "adr-016-reglas-de-los-modulos-clasicos.md",
@@ -7685,7 +7773,7 @@
       "label": "ADR-016: Reglas de datos y de conducta de los m\u00f3dulos cl\u00e1sicos",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "adr-016: reglas de datos y de conducta de los modulos clasicos",
@@ -7697,7 +7785,7 @@
       "label": "Alternativas descartadas",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "alternativas descartadas",
@@ -7709,7 +7797,7 @@
       "label": "Consecuencias",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "consecuencias",
@@ -7721,7 +7809,7 @@
       "label": "Contexto",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "contexto",
@@ -7733,34 +7821,12 @@
       "label": "Decisi\u00f3n propuesta",
       "_origin": "ast",
       "community": 55,
-      "community_name": "proponerBorrador",
+      "community_name": "proponer.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "decision propuesta",
       "source_file": "docs/adr/ADR-016-reglas-de-los-modulos-clasicos.md",
       "source_location": "L11"
-    },
-    {
-      "id": "apps_api_package_devdependencies_vitest_coverage_v8",
-      "label": "@vitest/coverage-v8@^4.1.2",
-      "_origin": "ast",
-      "community": 56,
-      "community_name": "@vitest/coverage-v8@^4.1.2",
-      "file_type": "code",
-      "norm_label": "@vitest/coverage-v8@^4.1.2",
-      "source_file": "apps/api/package.json",
-      "source_location": "L46"
-    },
-    {
-      "id": "ref_vitest_coverage_v8",
-      "label": "@vitest/coverage-v8",
-      "_origin": "ast",
-      "community": 56,
-      "community_name": "@vitest/coverage-v8@^4.1.2",
-      "file_type": "concept",
-      "norm_label": "@vitest/coverage-v8",
-      "source_file": "apps/api/package.json",
-      "source_location": "L46"
     },
     {
       "id": "docs_plan_paralelo_2_1_propiedad_exclusiva",
@@ -7955,28 +8021,6 @@
       "source_location": "L1"
     },
     {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config",
-      "label": "config.js",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "config.js",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_scripts_config_js_apps_api_scripts_config_roles",
-      "label": "ROLES",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "roles",
-      "source_file": "apps/api/scripts/config.js",
-      "source_location": "L1"
-    },
-    {
       "id": "apps_api_scripts_config_ts_apps_api_scripts_config",
       "label": "scripts/config.ts",
       "_origin": "ast",
@@ -7997,28 +8041,6 @@
       "norm_label": "roles",
       "source_file": "apps/api/scripts/config.ts",
       "source_location": "L8"
-    },
-    {
-      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar",
-      "label": "migrar.js",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "migrar.js",
-      "source_file": "apps/api/scripts/migrar.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "apps_api_scripts_migrar_js_apps_api_scripts_migrar_carpeta",
-      "label": "CARPETA",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "preparar-base.ts",
-      "file_type": "code",
-      "norm_label": "carpeta",
-      "source_file": "apps/api/scripts/migrar.js",
-      "source_location": "L6"
     },
     {
       "id": "apps_api_scripts_migrar_ts_apps_api_scripts_migrar",
@@ -11223,94 +11245,6 @@
       "type": "external"
     },
     {
-      "id": "apps_api_src_core_correlativos_siguiente_numero",
-      "label": "apps_api_src_core_correlativos_siguiente_numero",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_correlativos_siguiente_numero",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
-      "label": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_herramientas_pruebas",
-      "label": "apps_api_src_core_herramientas_pruebas",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_herramientas_pruebas",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
-      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
-      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
-      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
-      "label": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "packages_shared_dist_index_exito",
-      "label": "packages_shared_dist_index_exito",
-      "community": 17,
-      "community_name": "ejecutar-dentro-correlativos.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_dist_index_exito",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_zod",
       "label": "ref_zod",
       "community": 2,
@@ -11472,28 +11406,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "apps_api_src_modules_personal_personal_manifest_manifiestopersonal",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_modules_registro_registro_manifest",
-      "label": "apps_api_src_modules_registro_registro_manifest",
-      "community": 24,
-      "community_name": "catalogo.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_modules_registro_registro_manifest",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_modules_registro_registro_manifest_manifiestoregistro",
-      "label": "apps_api_src_modules_registro_registro_manifest_manifiestoregistro",
-      "community": 24,
-      "community_name": "catalogo.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_modules_registro_registro_manifest_manifiestoregistro",
       "source_file": "",
       "type": "external"
     },
@@ -12070,6 +11982,17 @@
       "type": "external"
     },
     {
+      "id": "packages_shared_dist_index_respuesta",
+      "label": "packages_shared_dist_index_respuesta",
+      "community": 36,
+      "community_name": "herramientas-de-intercambio.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_dist_index_respuesta",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "apps_api_src_core_borradores_catalogo_conectarcatalogo",
       "label": "apps_api_src_core_borradores_catalogo_conectarcatalogo",
       "community": 38,
@@ -12103,6 +12026,50 @@
       "type": "external"
     },
     {
+      "id": "apps_api_src_core_correlativos_siguiente_numero",
+      "label": "apps_api_src_core_correlativos_siguiente_numero",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_correlativos_siguiente_numero",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
+      "label": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_correlativos_siguiente_numero_siguientenumero",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_herramientas_pruebas",
+      "label": "apps_api_src_core_herramientas_pruebas",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_herramientas_pruebas",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
+      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor_acceso",
       "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_acceso",
       "community": 38,
@@ -12121,6 +12088,28 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_codigode",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
+      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_crearentorno",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
+      "label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_herramientas_pruebas_del_ejecutor_entorno",
       "source_file": "",
       "type": "external"
     },
@@ -12147,6 +12136,17 @@
       "type": "external"
     },
     {
+      "id": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
+      "label": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_herramientas_pruebas_herramientadeprueba",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "apps_api_src_core_herramientas_tipos_herramientaregistrada",
       "label": "apps_api_src_core_herramientas_tipos_herramientaregistrada",
       "community": 38,
@@ -12154,6 +12154,17 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "apps_api_src_core_herramientas_tipos_herramientaregistrada",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "packages_shared_dist_index_exito",
+      "label": "packages_shared_dist_index_exito",
+      "community": 38,
+      "community_name": "borradores.int.spec.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_dist_index_exito",
       "source_file": "",
       "type": "external"
     },
@@ -12169,90 +12180,13 @@
       "type": "external"
     },
     {
-      "id": "packages_shared_dist_index_respuesta",
-      "label": "packages_shared_dist_index_respuesta",
-      "community": 38,
-      "community_name": "borradores.int.spec.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_dist_index_respuesta",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_borradores_catalogo",
-      "label": "apps_api_src_core_borradores_catalogo",
+      "id": "ref_node_url",
+      "label": "ref_node_url",
       "community": 39,
-      "community_name": "proponer.ts",
+      "community_name": "config.js",
       "external": true,
       "file_type": "concept",
-      "norm_label": "apps_api_src_core_borradores_catalogo",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
-      "label": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_eventos_emisor",
-      "label": "apps_api_src_core_eventos_emisor",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_eventos_emisor",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_core_eventos_emisor_emitir",
-      "label": "apps_api_src_core_eventos_emisor_emitir",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_core_eventos_emisor_emitir",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_db_esquema_core_automatizaciones",
-      "label": "apps_api_src_db_esquema_core_automatizaciones",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_db_esquema_core_automatizaciones",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "apps_api_src_db_esquema_core_automatizaciones_borradores",
-      "label": "apps_api_src_db_esquema_core_automatizaciones_borradores",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "apps_api_src_db_esquema_core_automatizaciones_borradores",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "packages_shared_dist_index_nombredeherramienta",
-      "label": "packages_shared_dist_index_nombredeherramienta",
-      "community": 39,
-      "community_name": "proponer.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "packages_shared_dist_index_nombredeherramienta",
+      "norm_label": "ref_node_url",
       "source_file": "",
       "type": "external"
     },
@@ -12260,7 +12194,7 @@
       "id": "ref_express",
       "label": "ref_express",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_express",
@@ -12271,7 +12205,7 @@
       "id": "ref_node_crypto",
       "label": "ref_node_crypto",
       "community": 4,
-      "community_name": "main.ts",
+      "community_name": "contexto.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_crypto",
@@ -12686,13 +12620,79 @@
       "type": "external"
     },
     {
-      "id": "ref_node_url",
-      "label": "ref_node_url",
-      "community": 6,
-      "community_name": "preparar-base.ts",
+      "id": "apps_api_src_core_borradores_catalogo",
+      "label": "apps_api_src_core_borradores_catalogo",
+      "community": 55,
+      "community_name": "proponer.ts",
       "external": true,
       "file_type": "concept",
-      "norm_label": "ref_node_url",
+      "norm_label": "apps_api_src_core_borradores_catalogo",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
+      "label": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_borradores_catalogo_datosdeherramienta",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_eventos_emisor",
+      "label": "apps_api_src_core_eventos_emisor",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_eventos_emisor",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_core_eventos_emisor_emitir",
+      "label": "apps_api_src_core_eventos_emisor_emitir",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_core_eventos_emisor_emitir",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_db_esquema_core_automatizaciones",
+      "label": "apps_api_src_db_esquema_core_automatizaciones",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_db_esquema_core_automatizaciones",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "apps_api_src_db_esquema_core_automatizaciones_borradores",
+      "label": "apps_api_src_db_esquema_core_automatizaciones_borradores",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "apps_api_src_db_esquema_core_automatizaciones_borradores",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "packages_shared_dist_index_nombredeherramienta",
+      "label": "packages_shared_dist_index_nombredeherramienta",
+      "community": 55,
+      "community_name": "proponer.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "packages_shared_dist_index_nombredeherramienta",
       "source_file": "",
       "type": "external"
     },
@@ -17380,6 +17380,18 @@
       "weight": 1.0
     },
     {
+      "source": "apps_api_src_modules_registro_registro_manifest",
+      "target": "packages_shared_dist_index_manifiestodeentrada",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/modules/registro/registro.manifest.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "apps_api_src_modules_webhooks_webhooks_manifest",
       "target": "packages_shared_dist_index_manifiestodeentrada",
       "relation": "imports",
@@ -20453,6 +20465,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/api/src/modules/ordenes/ordenes.manifest.ts",
+      "source_location": "L1",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_modules_registro_registro_manifest",
+      "target": "packages_shared_dist_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/api/src/modules/registro/registro.manifest.ts",
       "source_location": "L1",
       "type_only": true,
       "weight": 1.0
@@ -24003,6 +24028,17 @@
       "confidence_score": 1.0,
       "source_file": "apps/api/src/modules/ordenes/ordenes.manifest.ts",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_api_src_modules_registro_registro_manifest",
+      "target": "apps_api_src_modules_registro_registro_manifest_manifiestoregistro",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/api/src/modules/registro/registro.manifest.ts",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -31437,5 +31473,5 @@
       "source_file": "docs/ARQUITECTURA-DE-IA.md"
     }
   ],
-  "built_at_commit": "cfbf936f96551c3f77ab43e0b39d392ebb07a6c7"
+  "built_at_commit": "5af718e1781c2e5c9ed95d7cefcc1d5b2d179776"
 }

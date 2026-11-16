@@ -1,5 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
-import { RouterProvider, createMemoryRouter } from 'react-router';
+import { useState, type ReactNode } from 'react';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
@@ -52,25 +51,21 @@ function Cantidades() {
 }
 
 function Navegacion() {
-  const enrutador = useMemo(
-    () =>
-      createMemoryRouter(
-        [{ path: '*', element: <NavegacionDeSeccion etiqueta="Secciones de ejemplo" secciones={[
-          { a: '/', texto: 'Resumen', fin: true },
-          { a: '/caja', texto: 'Caja del día' },
-          { a: '/deudas', texto: 'Cuentas por cobrar' },
-          { a: '/gastos', texto: 'Gastos' },
-          { a: '/reportes', texto: 'Reportes' },
-          { a: '/ajustes', texto: 'Ajustes del módulo' },
-        ]} /> }],
-        { initialEntries: ['/caja'] },
-      ),
-    [],
-  );
+  // Usa el enrutador de la propia aplicación: un enrutador anidado rompe la página. Los enlaces son rutas reales.
   return (
     <div className="sm:col-span-2">
-      <p className="mb-2 text-sm text-texto-suave">Enrutador propio del ejemplo; a 390 px la fila se desplaza en horizontal.</p>
-      <RouterProvider router={enrutador} />
+      <p className="mb-2 text-sm text-texto-suave">Ejemplo con rutas reales de la aplicación; a 390 px la fila se desplaza en horizontal.</p>
+      <NavegacionDeSeccion
+        etiqueta="Secciones de ejemplo"
+        secciones={[
+          { a: '/kit', texto: 'Esta página', fin: true },
+          { a: '/inicio', texto: 'Inicio' },
+          { a: '/clientes', texto: 'Clientes' },
+          { a: '/productos', texto: 'Productos' },
+          { a: '/bandeja', texto: 'Bandeja' },
+          { a: '/ajustes/empresa', texto: 'Ajustes de la empresa' },
+        ]}
+      />
     </div>
   );
 }
