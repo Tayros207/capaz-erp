@@ -122,7 +122,7 @@ beforeAll(async () => {
   owner = abrirPool('owner');
   await owner.query(`insert into core.modulos (codigo, nombre) values ('ejemplo', 'Ejemplo') on conflict do nothing`);
   await owner.query(
-    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos') on conflict do nothing`,
+    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos'), ('insumos', 'Inventario'), ('compras', 'Compras'), ('personal', 'Personal') on conflict do nothing`,
   );
   await owner.query(`insert into core.conectores (codigo, nombre, autenticacion) values ('ejemplo', 'Ejemplo', 'ninguna') on conflict do nothing`);
   // empresa_modulos va antes que usuario_modulos (llave compuesta).
@@ -134,7 +134,7 @@ beforeAll(async () => {
       emp,
       (c) =>
         c.query(
-          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo') on conflict do nothing`,
+          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo'), ($1,'insumos','activo'), ($1,'compras','activo'), ($1,'personal','activo') on conflict do nothing`,
           [emp],
         ),
       { confirmar: true },
@@ -153,7 +153,7 @@ describe('toda tabla con tenant_id tiene su ejemplo aquí', () => {
   it('la lista de ejemplos cubre el catálogo', async () => {
     const { rows } = await owner.query<{ tabla: string }>(`
       select n.nspname || '.' || c.relname as tabla from pg_class c join pg_namespace n on n.oid = c.relnamespace
-      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador','crm','ordenes')
+      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador','crm','ordenes','insumos','compras','personal')
         and exists (select 1 from pg_attribute a where a.attrelid = c.oid and a.attname = 'tenant_id')`);
     expect(rows.map((r) => r.tabla).sort()).toEqual(Object.keys(EJEMPLOS).sort());
   });

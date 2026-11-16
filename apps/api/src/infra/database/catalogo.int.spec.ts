@@ -5,7 +5,7 @@ import { abrirPool } from '../../pruebas/base-de-pruebas.js';
 // Pruebas de catálogo (ADR-011, ADR-012): leen pg_catalog y fallan si aparece una tabla, llave o
 // función que rompa las reglas. Son la defensa contra el olvido en migraciones futuras.
 
-const ESQUEMAS = ['core', 'registro', 'cotizador', 'crm', 'ordenes'];
+const ESQUEMAS = ['core', 'registro', 'cotizador', 'crm', 'ordenes', 'insumos', 'compras', 'personal'];
 let owner: pg.Pool;
 
 beforeAll(() => {
@@ -82,10 +82,10 @@ describe('catálogo: roles', () => {
     expect(rows).toEqual([]);
   });
 
-  it('capaz_app no puede leer ninguna tabla del esquema auth; capaz_sistema no toca registro, cotizador, crm ni ordenes', async () => {
+  it('capaz_app no puede leer ninguna tabla del esquema auth; capaz_sistema no toca registro, cotizador, crm, ordenes, insumos, compras ni personal', async () => {
     const { rows } = await owner.query<{ rol: string; tabla: string }>(`
       select r.rol, n.nspname || '.' || c.relname as tabla
-      from (values ('capaz_app', array['auth']), ('capaz_sistema', array['registro','cotizador','crm','ordenes'])) as r(rol, esquemas)
+      from (values ('capaz_app', array['auth']), ('capaz_sistema', array['registro','cotizador','crm','ordenes','insumos','compras','personal'])) as r(rol, esquemas)
       join pg_namespace n on n.nspname = any(r.esquemas)
       join pg_class c on c.relnamespace = n.oid and c.relkind in ('r','v')
       where has_table_privilege(r.rol, c.oid, 'select')`);
