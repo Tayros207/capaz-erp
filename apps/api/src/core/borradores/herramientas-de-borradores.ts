@@ -6,7 +6,9 @@ import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import { definirHerramienta, type ContextoDeHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
 import { conectarCatalogo, datosDeHerramienta } from './catalogo.js';
 import { AYUDAS } from './ayudas.js';
+import { hoyDeLaEmpresa } from '../empresas/hoy.js';
 import * as repo from './repositorio.js';
+import { metricasDeBorradores } from './repositorio-de-metricas.js';
 
 type Fila = NonNullable<Awaited<ReturnType<typeof repo.buscar>>>;
 type Previo = { ok: true; fila: Fila } | { ok: false; respuesta: Respuesta<never> };
@@ -119,7 +121,20 @@ export function crearHerramientasDeBorradores(ejecutor: EjecutorDeHerramientas):
     },
   });
 
-  return [listar, resumen, ver, corregir, aprobar, descartar];
+  const metricas = definirHerramienta('borradores_metricas', {
+    modulo: 'core',
+    permiso: 'borradores:ver',
+    criticidad: 'lectura',
+    ayuda: AYUDAS.metricas,
+    async ejecutar(args, ctx, tx) {
+      const accesibles = ctx.modulos.filter((m) => m.puedeEntrar).map((m) => m.codigo);
+      const modulos = args.modulo ? accesibles.filter((m) => m === args.modulo) : accesibles;
+      const { zona } = await hoyDeLaEmpresa(tx);
+      return exito(await metricasDeBorradores(tx, { desde: args.desde, hasta: args.hasta, zona, origenes: args.origen ? [args.origen] : ['voz', 'texto'], modulos }));
+    },
+  });
+
+  return [listar, resumen, ver, corregir, aprobar, descartar, metricas];
 }
 
 @Injectable()
