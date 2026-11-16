@@ -7,6 +7,8 @@ import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import type { HerramientaRegistrada } from '../herramientas/tipos.js';
 import { CatalogoDeModulos } from '../modulos/catalogo.js';
 import { herramientaDeContrasena } from './herramienta-de-contrasena.js';
+import { herramientasDeCatalogo } from './herramientas-de-catalogo.js';
+import { herramientasDeCuenta } from './herramientas-de-cuenta.js';
 import { herramientasDeEmpresas } from './herramientas-de-empresas.js';
 import { herramientasDeModulos } from './herramientas-de-modulos.js';
 import { herramientasDePlanes, herramientasDeSolicitudes } from './herramientas-de-planes.js';
@@ -34,6 +36,8 @@ export class HerramientasDePlataforma implements OnModuleInit, OnApplicationBoot
     const herramientas: HerramientaDePlataformaRegistrada[] = [
       ...herramientasDeEmpresas({ auth: this.db.auth, catalogo: this.catalogo }),
       ...herramientasDeModulos(),
+      ...herramientasDeCuenta(this.db.auth),
+      ...herramientasDeCatalogo(this.catalogo),
       ...herramientasDePlanes(),
       ...herramientasDeSolicitudes(),
       herramientaDeContrasena({ auth: this.auth, pool: this.db.auth, origenes: this.config.ORIGENES_PERMITIDOS }),

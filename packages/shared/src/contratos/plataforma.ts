@@ -9,6 +9,7 @@ import { contrato } from '../herramientas.js';
 // Solo el carril de esta área edita este archivo.
 
 export const ESTADOS_DE_MODULO = ['prueba', 'activo', 'suspendido', 'baja'] as const;
+export const ESTADOS_DE_CUENTA = ['activa', 'prueba', 'pausada', 'baja'] as const;
 export const ESTADOS_DE_SOLICITUD = ['pendiente', 'atendida', 'descartada'] as const;
 
 const idDeEmpresa = z.string().trim().min(1, { error: 'Indica la empresa.' }).max(100);
@@ -41,14 +42,27 @@ export const eventoDeContratoSchema = z.strictObject({
   creadoEn: fecha,
 });
 
+export const eventoDeCuentaSchema = z.strictObject({
+  evento: z.string(),
+  estadoAnterior: z.string().nullable(),
+  estadoNuevo: z.string(),
+  motivo: z.string().nullable(),
+  actor: z.string().nullable(),
+  creadoEn: fecha,
+});
+
 export const empresaResumidaSchema = z.strictObject({
   id: z.string(),
   nombre: z.string(),
   altaEn: fecha,
   miembros: z.number().int(),
+  /** Estado de la cuenta entera (sin fila de cuenta cuenta como activa). */
+  estadoCuenta: z.enum(ESTADOS_DE_CUENTA),
   modulos: z.array(
     z.strictObject({
       modulo: z.string(),
+      /** Nombre visible del módulo (el código solo para identificarlo). */
+      nombre: z.string(),
       estado: z.enum(ESTADOS_DE_MODULO),
       pruebaHasta: fecha.nullable(),
       vigenteHasta: fecha.nullable(),
@@ -63,9 +77,60 @@ export const empresaFichaSchema = z.strictObject({
   miembros: z.number().int(),
   /** Última vez que la empresa hizo algo (solo la fecha; nunca qué). */
   ultimaActividadEn: fecha.nullable(),
+  estadoCuenta: z.enum(ESTADOS_DE_CUENTA),
+  motivoCuenta: z.string().nullable(),
+  /** Últimos 50 cambios de estado de la cuenta, del más nuevo al más antiguo. */
+  eventosDeCuenta: z.array(eventoDeCuentaSchema),
   modulos: z.array(moduloDeEmpresaSchema),
   historial: z.array(eventoDeContratoSchema),
 });
+
+/** Estado de la cuenta de una empresa tras un cambio. */
+export const cuentaDeEmpresaSchema = z.strictObject({
+  empresa: z.string(),
+  estadoCuenta: z.enum(ESTADOS_DE_CUENTA),
+  motivoCuenta: z.string().nullable(),
+  cambiadoEn: fecha,
+});
+
+export const moduloDelCatalogoSchema = z.strictObject({
+  codigo: z.string(),
+  nombre: z.string(),
+  familia: z.string(),
+  descripcion: z.string(),
+  enConstruccion: z.boolean(),
+  porDefecto: z.boolean(),
+  dependeDe: z.array(z.string()),
+});
+
+export const vencimientoSchema = z.strictObject({
+  empresa: z.string(),
+  empresaNombre: z.string(),
+  modulo: z.string(),
+  moduloNombre: z.string(),
+  tipo: z.enum(['prueba', 'contrato']),
+  fecha,
+  diasRestantes: z.number().int(),
+  precioAcordadoCentimos: centimosSchema.nullable(),
+});
+
+export const ingresoPorEmpresaSchema = z.strictObject({
+  empresa: z.string(),
+  empresaNombre: z.string(),
+  vencimientos: z.number().int(),
+  ingresoMensualAcordadoCentimos: centimosSchema,
+});
+
+export const aplicadoEnAltaSchema = z.strictObject({
+  modulo: z.string(),
+  nombre: z.string(),
+  estado: z.enum(['activo', 'prueba']),
+  pruebaHasta: fecha.nullable(),
+  /** Verdadero si no se pidió: se activó porque otro módulo lo necesita. */
+  porDependencia: z.boolean(),
+});
+
+const motivoDeCuenta = z.string().trim().min(5, { error: 'El motivo debe tener al menos 5 caracteres.' }).max(300);
 
 /** Estado de un módulo de una empresa tras un cambio. */
 export const contratoDeModuloSchema = z.strictObject({
@@ -113,8 +178,42 @@ export const contratosDePlataforma = {
     z.strictObject({
       nombre: z.string().trim().min(2, { error: 'El nombre de la empresa es muy corto.' }).max(120),
       correoDelDueno: z.string().trim().toLowerCase().pipe(z.email({ error: 'El correo no es válido.' })),
+      /** Código de un plan existente y activo: sus módulos se activan y quedan con ese plan. */
+      plan: z.string().trim().min(1).max(60).optional(),
+      /** Módulos a dar, además del plan. Sin plan ni módulos se dan los módulos por defecto. */
+      modulos: z
+        .array(
+          z.strictObject({
+            codigo: codigoDeModulo,
+            pruebaDias: z.number().int().min(1, { error: 'Mínimo 1 día.' }).max(365, { error: 'Máximo 365 días.' }).optional(),
+          }),
+        )
+        .max(50)
+        .optional(),
     }),
-    z.strictObject({ id: z.string(), nombre: z.string(), modulosActivados: z.array(z.string()) }),
+    z.strictObject({
+      id: z.string(),
+      nombre: z.string(),
+      modulosActivados: z.array(z.string()),
+      plan: z.string().nullable(),
+      estadoCuenta: z.enum(ESTADOS_DE_CUENTA),
+      modulos: z.array(aplicadoEnAltaSchema),
+    }),
+  ),
+  plataforma_cuenta_pausar: contrato(z.strictObject({ empresa: idDeEmpresa, motivo: motivoDeCuenta }), cuentaDeEmpresaSchema),
+  plataforma_cuenta_dar_de_baja: contrato(z.strictObject({ empresa: idDeEmpresa, motivo: motivoDeCuenta }), cuentaDeEmpresaSchema),
+  plataforma_cuenta_reactivar: contrato(z.strictObject({ empresa: idDeEmpresa, motivo }), cuentaDeEmpresaSchema),
+  plataforma_modulos_listar: contrato(z.strictObject({}), z.strictObject({ items: z.array(moduloDelCatalogoSchema) })),
+  /** Solo contratos y cifras: nunca datos de negocio de la empresa. */
+  plataforma_vencimientos_listar: contrato(
+    z.strictObject({ dias: z.number().int().min(1, { error: 'Mínimo 1 día.' }).max(90, { error: 'Máximo 90 días.' }).default(14) }),
+    z.strictObject({
+      dias: z.number().int(),
+      items: z.array(vencimientoSchema),
+      porEmpresa: z.array(ingresoPorEmpresaSchema),
+      /** Suma de lo acordado por las empresas con vencimientos en el plazo. */
+      ingresoMensualAcordadoCentimos: centimosSchema,
+    }),
   ),
   plataforma_modulo_activar: contrato(
     z.strictObject({

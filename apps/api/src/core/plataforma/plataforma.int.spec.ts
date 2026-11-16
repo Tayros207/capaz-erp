@@ -94,7 +94,7 @@ describe('lectura: contratos y cifras, nunca datos de negocio', () => {
     const ficha = await plat(operador, 'plataforma_empresas_ver', { empresa });
     expect(ficha.estado).toBe(200);
     expect(ficha.cuerpo.datos).toMatchObject({ id: empresa, nombre: 'Imprenta Plataforma', miembros: 1 });
-    expect(Object.keys(ficha.cuerpo.datos).sort()).toEqual(['altaEn', 'historial', 'id', 'miembros', 'modulos', 'nombre', 'ultimaActividadEn']);
+    expect(Object.keys(ficha.cuerpo.datos).sort()).toEqual(['altaEn', 'estadoCuenta', 'eventosDeCuenta', 'historial', 'id', 'miembros', 'modulos', 'motivoCuenta', 'nombre', 'ultimaActividadEn']);
   });
 
   it('una empresa que no existe responde no_encontrado; empresaId no es un argumento', async () => {
