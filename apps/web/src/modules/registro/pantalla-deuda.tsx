@@ -5,6 +5,7 @@ import { formatearSoles, type DeudaConAbonosDto, type MovimientoDto } from '@cap
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
+import { MenuDeAcciones } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
 import { BarraDeEstado } from '../../shared/ui/datos/barra-de-estado.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
@@ -32,13 +33,28 @@ function Dato({ nombre, children }: { nombre: string; children: ReactNode }) {
   );
 }
 
-const COLUMNAS_DE_ABONOS: Array<Columna<MovimientoDto>> = [
+function columnasDeAbonos(d: DeudaConAbonosDto, ir: (ruta: string) => void): Array<Columna<MovimientoDto>> {
+  const base: Array<Columna<MovimientoDto>> = [
   { id: 'fecha', titulo: 'Fecha', principal: true, celda: (m) => formatearDia(m.fecha) },
   { id: 'codigo', titulo: 'Código', celda: (m) => m.codigo },
   { id: 'medio', titulo: 'Medio', celda: (m) => ETIQUETA_DE_MEDIO[m.medioDePago] },
   { id: 'cuenta', titulo: 'Cuenta', celda: (m) => m.cuentaNombre },
   { id: 'monto', titulo: 'Monto', alinear: 'derecha', celda: (m) => <Monto m={m} /> },
-];
+  ];
+  if (d.tipo !== 'por_cobrar') return base;
+  const recibo: Columna<MovimientoDto> = {
+    id: 'recibo',
+    titulo: 'Recibo',
+    alinear: 'derecha',
+    celda: (m) =>
+      m.estado === 'anulado' ? <span className="text-sm text-texto-suave">Anulado</span> : (
+        <span onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+          <MenuDeAcciones etiqueta={`Acciones del abono ${m.codigo}`} acciones={[{ etiqueta: 'Imprimir recibo', onSeleccionar: () => ir(`/m/registro/deudas/${d.id}/abonos/${m.id}/recibo`) }]} />
+        </span>
+      ),
+  };
+  return [...base, recibo];
+}
 
 function Contenido({ d }: { d: DeudaConAbonosDto }) {
   const navegar = useNavigate();
@@ -82,7 +98,7 @@ function Contenido({ d }: { d: DeudaConAbonosDto }) {
         <h2 className="font-titulo font-semibold text-texto">Abonos</h2>
         <Lista
           etiqueta="Abonos de la deuda"
-          columnas={COLUMNAS_DE_ABONOS}
+          columnas={columnasDeAbonos(d, (ruta) => void navegar(ruta))}
           filas={d.abonos}
           clave={(m) => m.id}
           onAbrir={(m) => void navegar(`/m/registro/movimientos/${m.id}`)}
