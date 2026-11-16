@@ -169,6 +169,13 @@
       "when": 1794851431886,
       "tag": "0023_ficha_de_cuenta",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794853696132,
+      "tag": "0024_cotizador",
+      "breakpoints": true
     }
   ]
 }

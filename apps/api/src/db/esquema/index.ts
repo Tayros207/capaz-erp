@@ -15,3 +15,4 @@ export * from './ordenes.js';
 export * from './insumos.js';
 export * from './compras.js';
 export * from './personal.js';
+export * from './cotizador.js';
