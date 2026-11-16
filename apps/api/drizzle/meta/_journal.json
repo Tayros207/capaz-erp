@@ -155,6 +155,13 @@
       "when": 1794844634412,
       "tag": "0021_datos_de_empresa",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794845422039,
+      "tag": "0022_estado_de_cuenta",
+      "breakpoints": true
     }
   ]
 }
