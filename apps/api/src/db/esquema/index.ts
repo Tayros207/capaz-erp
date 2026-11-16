@@ -10,3 +10,4 @@ export * from './core-plataforma.js';
 export * from './core-conexiones.js';
 export * from './core-automatizaciones.js';
 export * from './registro.js';
+export * from './crm.js';
