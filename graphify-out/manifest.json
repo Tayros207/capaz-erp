@@ -936,9 +936,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.spec.ts": {
-    "mtime": 1794801669.343093,
-    "seen": 1794802018.137329,
-    "ast_hash": "ac7b8a6c4d7167d59c1af172419f7bf0",
+    "mtime": 1794802019.2353287,
+    "seen": 1794802412.9441745,
+    "ast_hash": "2761a90f289fdda071a0875970d2bb9c",
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.ts": {
@@ -1110,9 +1110,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/reportes/reportes.manifest.ts": {
-    "mtime": 1794802014.1528823,
-    "seen": 1794802018.1379611,
-    "ast_hash": "d459c25a592f21bab67aeee6a0272490",
+    "mtime": 1794802019.2327874,
+    "seen": 1794802412.9450738,
+    "ast_hash": "027353823891e43bcc266457b3e03c68",
     "semantic_hash": ""
   },
   "apps/api/src/modules/reportes/reportes.module.ts": {
@@ -2898,15 +2898,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/csv.spec.ts": {
-    "mtime": 1794784402.4793403,
-    "seen": 1794784406.1181138,
-    "ast_hash": "4d085559b37cbeed61636200a077317f",
+    "mtime": 1794802108.3327966,
+    "seen": 1794802412.9440768,
+    "ast_hash": "23f88447e6830681b29d149b3bd4936e",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/csv.ts": {
-    "mtime": 1794784402.4794478,
-    "seen": 1794784406.118116,
-    "ast_hash": "e4578b226317c63f11c112e9bdbb8459",
+    "mtime": 1794802019.2138355,
+    "seen": 1794802412.944081,
+    "ast_hash": "effb9e873eb39494e6d76bcb5ad1d0b0",
     "semantic_hash": ""
   },
   "apps/api/src/core/intercambio/exportar.ts": {

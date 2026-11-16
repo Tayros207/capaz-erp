@@ -36,9 +36,11 @@ function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: M
       <NavLink to={item.ruta} onClick={alNavegar} title={conTitulo ? item.nombre : undefined}
         className={({ isActive }) => unir(base, 'hover:bg-menu-activo', isActive && 'bg-menu-activo font-semibold')}>
         <IconoMenu nombre={item.icono} />
-        <span className={texto}>{item.nombre}</span>
+        <span className={unir('flex min-w-0 flex-1 flex-col', SOLO_LECTORES[modo])}>
+          <span className="truncate">{item.nombre}</span>
+          {item.etiqueta ? <span className="truncate text-xs font-normal text-menu-texto/80">{item.etiqueta}</span> : null}
+        </span>
         {item.clave === 'bandeja' ? <InsigniaDePendientes cantidad={pendientes} className={SOBRE_ICONO[modo]} /> : null}
-        {item.etiqueta ? <span className={OCULTO[modo]}><Insignia tono={TONO_DE_ESTADO[item.estado]}>{item.etiqueta}</Insignia></span> : null}
       </NavLink>
     );
   }

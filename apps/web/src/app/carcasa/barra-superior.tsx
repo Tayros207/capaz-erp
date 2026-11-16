@@ -24,7 +24,7 @@ export function BarraSuperior({ yo, migas, plegado, alPlegar, alSalir }: Props) 
       <nav aria-label="Ubicación" className="hidden min-w-0 items-center gap-1 text-sm text-texto-suave lg:flex">
         <Link to="/inicio" className="rounded-control px-1 hover:text-texto">Inicio</Link>
         {migas.filter((m) => m !== 'Inicio').map((m, i, todas) => (
-          <span key={m} className="flex items-center gap-1">
+          <span key={`${i}-${m}`} className="flex items-center gap-1">
             <Icono nombre="flecha-derecha" className="size-4" />
             <span aria-current={i === todas.length - 1 ? 'page' : undefined} className={i === todas.length - 1 ? 'font-semibold text-texto' : undefined}>{m}</span>
           </span>
