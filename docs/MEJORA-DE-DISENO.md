@@ -102,3 +102,9 @@ Librerías añadidas en este bloque (autorizadas 2026-11-16): `@fontsource-varia
 **Datos de prueba locales** añadidos solo para ver la consola: 4 planes `demo_*` y 4 solicitudes pendientes en la base local (no en Neon).
 
 **No verificado / pendiente:** pantallas internas de cada módulo (no se tocaron); revisión visual humana a 390 y 1280 px en claro y oscuro; hojas (contrato, activar, plan) conservan su estilo anterior; sin cuenta de operador, las pruebas de pantalla son manuales.
+
+## 8. Decisiones del usuario (2026-11-16, directas en la conversación)
+
+- **Aprobada la fuente Inter** (`@fontsource-variable/inter` 5.3.0, OFL-1.1, local) y el conjunto de librerías de diseño ya registradas.
+- **Color de acción:** el verde esmeralda se cambia por un **índigo suave** (`--c-accion` ≈ oklch(0.5 0.13 268) en claro, oklch(0.74 0.11 268) en oscuro; barra lateral activa en el mismo tono). El acento «esmeralda» queda solo como color opcional de módulo. Cambio en `tokens.css`.
+- Pendiente de revisión visual del usuario a 390 y 1280 px, claro y oscuro.

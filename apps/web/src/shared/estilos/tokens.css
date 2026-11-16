@@ -2,7 +2,7 @@
 @import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
 
-/* Único lugar con valores de color, tipografía y medida (identidad: azul noche + esmeralda).
+/* Único lugar con valores de color, tipografía y medida (identidad: azul noche + índigo suave).
    Valores provisionales y propios. Los componentes solo usan los nombres semánticos de abajo;
    cambiar la identidad es cambiar solo este archivo. */
 
@@ -80,7 +80,7 @@
   --c-texto: oklch(0.2 0.03 262);
   --c-texto-suave: oklch(0.48 0.02 258);
   --c-texto-inverso: oklch(0.99 0 0);
-  --c-accion: oklch(0.52 0.135 163);
+  --c-accion: oklch(0.5 0.13 268);
   --c-accion-texto: oklch(1 0 0);
   --c-peligro: oklch(0.55 0.2 27);
   --c-aviso: oklch(0.58 0.13 70);
@@ -99,8 +99,8 @@
   --c-lateral-borde: oklch(0.92 0.006 250);
   --c-lateral-texto: oklch(0.36 0.025 258);
   --c-lateral-suave: oklch(0.58 0.02 258);
-  --c-lateral-activo: oklch(0.95 0.025 163);
-  --c-lateral-activo-texto: oklch(0.36 0.1 163);
+  --c-lateral-activo: oklch(0.95 0.022 268);
+  --c-lateral-activo-texto: oklch(0.38 0.11 268);
   color-scheme: light;
 }
 
@@ -113,7 +113,7 @@
   --c-texto: oklch(0.95 0.006 250);
   --c-texto-suave: oklch(0.76 0.015 250);
   --c-texto-inverso: oklch(0.19 0.02 258);
-  --c-accion: oklch(0.72 0.14 165);
+  --c-accion: oklch(0.74 0.11 268);
   --c-accion-texto: oklch(0.17 0.02 258);
   --c-peligro: oklch(0.72 0.16 27);
   --c-aviso: oklch(0.8 0.13 85);
@@ -132,8 +132,8 @@
   --c-lateral-borde: oklch(0.27 0.025 260);
   --c-lateral-texto: oklch(0.84 0.012 252);
   --c-lateral-suave: oklch(0.64 0.02 255);
-  --c-lateral-activo: oklch(0.27 0.045 175);
-  --c-lateral-activo-texto: oklch(0.9 0.08 165);
+  --c-lateral-activo: oklch(0.27 0.05 268);
+  --c-lateral-activo-texto: oklch(0.9 0.06 268);
   color-scheme: dark;
 }
 
