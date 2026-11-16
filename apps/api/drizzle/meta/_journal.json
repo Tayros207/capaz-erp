@@ -99,6 +99,13 @@
       "when": 1794787998195,
       "tag": "0013_modulos_clasicos_base",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1794788003748,
+      "tag": "0014_registro",
+      "breakpoints": true
     }
   ]
 }
