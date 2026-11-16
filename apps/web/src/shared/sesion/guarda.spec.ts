@@ -9,10 +9,17 @@ const base: Yo = {
   puedeCrearEmpresas: true,
   modulos: [],
   permisos: [],
+  operador: false,
 };
 const conEmpresa: Yo = { ...base, empresa: { id: 'e1', nombre: 'Gráfica Sur', rol: 'owner' } };
 
 describe('destinoSegunSesion', () => {
+  it('/restablecer-contrasena es pública con o sin sesión y con o sin empresa', () => {
+    expect(destinoSegunSesion(null, '/restablecer-contrasena')).toBeNull();
+    expect(destinoSegunSesion(base, '/restablecer-contrasena')).toBeNull();
+    expect(destinoSegunSesion(conEmpresa, '/restablecer-contrasena')).toBeNull();
+  });
+
   it('sin sesión: solo registro e inicio de sesión son públicos', () => {
     expect(destinoSegunSesion(null, '/inicio')).toBe('/iniciar-sesion');
     expect(destinoSegunSesion(null, '/')).toBe('/iniciar-sesion');

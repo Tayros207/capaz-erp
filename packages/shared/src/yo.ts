@@ -36,6 +36,8 @@ export const yoSchema = z.strictObject({
   modulos: z.array(moduloDeYoSchema),
   /** Permisos efectivos de esta persona en la empresa activa. */
   permisos: z.array(z.string()),
+  /** Si la persona es operador de la plataforma (está en la lista blanca del servidor). Solo sirve para mostrar la entrada del menú: la consola vuelve a comprobarlo en cada petición. */
+  operador: z.boolean(),
 });
 export type Yo = z.infer<typeof yoSchema>;
 

@@ -9,6 +9,7 @@ const yo: Yo = {
   puedeCrearEmpresas: false,
   modulos: [],
   permisos: ['clientes:ver', 'clientes:editar'],
+  operador: false,
 };
 
 describe('puede', () => {

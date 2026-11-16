@@ -40,6 +40,10 @@ export const registrarse = (d: { nombre: string; correo: string; clave: string }
 export const iniciarSesion = (d: { correo: string; clave: string }) =>
   pedirAuth('/sign-in/email', { email: d.correo.trim(), password: d.clave });
 
+/** Cambia la contraseña con el token de un solo uso del enlace. El token solo viaja en el cuerpo y no se registra. */
+export const restablecerContrasena = (d: { token: string; clave: string }) =>
+  pedirAuth('/reset-password', { newPassword: d.clave, token: d.token });
+
 /** La usará la carcasa (W4). Tras el éxito, quien llama recarga la página para soltar la sesión en memoria. */
 export const cerrarSesion = () => pedirAuth('/sign-out', {});
 

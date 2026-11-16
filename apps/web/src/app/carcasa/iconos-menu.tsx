@@ -22,6 +22,7 @@ const GLIFOS: Record<string, ReactNode> = {
   analisis: <path d="M4 20h16M7 16v-4m5 4V8m5 8v-6" />,
   conexiones: (<><circle cx="6" cy="12" r="2" /><circle cx="18" cy="6" r="2" /><circle cx="18" cy="18" r="2" /><path d="m8 11 8-4M8 13l8 4" /></>),
   candado: (<><rect x="5.5" y="10.5" width="13" height="9.5" rx="2" /><path d="M8.5 10.500V8a3.5 3.5 0 0 1 7 0v2.5" /></>),
+  plataforma: (<><path d="M12 3.500 20 7.500v5c0 4-3.200 6.800-8 8-4.800-1.200-8-4-8-8v-5l8-4Z" /><path d="M9 12l2 2 4-4" /></>),
   salir: <path d="M10 4.500H5.500v15H10M14.5 8.5 18 12l-3.5 3.500M18 12H9.5" />,
   'panel-izquierda': <path d="M4.5 5h15v14h-15zM9.5 5v14" />,
 };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { esCorreoValido, hayErrores, validarEmpresa, validarInicio, validarRegistro } from './validacion.ts';
+import { esCorreoValido, hayErrores, leerEnlaceDeRestablecer, validarEmpresa, validarInicio, validarNuevaClave, validarRegistro } from './validacion.ts';
 
 describe('validación de acceso', () => {
   it('reconoce correos', () => {
@@ -24,5 +24,20 @@ describe('validación de acceso', () => {
     expect(validarEmpresa(' a ').nombre).toBeDefined();
     expect(validarEmpresa('Imprenta Sol')).toEqual({});
     expect(validarEmpresa('x'.repeat(81)).nombre).toMatch(/80/);
+  });
+});
+
+describe('restablecer contraseña', () => {
+  it('pide 10 a 128 caracteres y que coincidan', () => {
+    expect(validarNuevaClave({ clave: 'corta', repetir: 'corta' }).clave).toMatch(/al menos 10/);
+    expect(validarNuevaClave({ clave: 'x'.repeat(129), repetir: 'x'.repeat(129) }).clave).toMatch(/128/);
+    expect(validarNuevaClave({ clave: 'una-clave-larga', repetir: 'otra-distinta' }).repetir).toMatch(/no coinciden/);
+    expect(validarNuevaClave({ clave: 'una-clave-larga', repetir: 'una-clave-larga' })).toEqual({});
+  });
+  it('lee el token del enlace; con error o sin token no sirve', () => {
+    expect(leerEnlaceDeRestablecer('?token=abc_DEF-1')).toEqual({ estado: 'valido', token: 'abc_DEF-1' });
+    expect(leerEnlaceDeRestablecer('?error=INVALID_TOKEN')).toEqual({ estado: 'invalido' });
+    expect(leerEnlaceDeRestablecer('?token=abc&error=INVALID_TOKEN')).toEqual({ estado: 'invalido' });
+    expect(leerEnlaceDeRestablecer('')).toEqual({ estado: 'invalido' });
   });
 });

@@ -209,6 +209,27 @@ describe('solicitudes, empresas y cuentas', () => {
   });
 });
 
+describe('restablecer contraseña y otros operadores', () => {
+  it('rechaza la cuenta de OTRO operador (con aviso y auditoría) y permite la de quien no lo es', async () => {
+    const colega = await abrirSesion(app, 'Colega operador');
+    await sistema.query('insert into core.plataforma_admins (usuario_id) values ($1)', [colega.usuarioId]);
+    const antes = (await auditoria(operador.usuarioId)).length;
+    const pedido = await plat(operador, 'plataforma_restablecer_contrasena', { correo: colega.correo });
+    expect(pedido.estado).toBe(403);
+    expect(pedido.cuerpo).toMatchObject({ ok: false, error: { codigo: 'sin_permiso', mensaje: expect.stringContaining('otro operador') } });
+    expect(pedido.cuerpo.requiereConfirmacion).toBeUndefined();
+    const filas = await auditoria(operador.usuarioId);
+    expect(filas.length).toBe(antes + 1);
+    expect(filas.at(-1)).toMatchObject({ herramienta: 'plataforma_restablecer_contrasena', resultado: 'rechazada', codigo: 'sin_permiso' });
+    // La contraseña del colega no cambió.
+    expect((await colega.pedir('POST', '/api/auth/sign-in/email', { email: colega.correo, password: CLAVE_DE_PRUEBA })).estado).toBe(200);
+    // Quien no es operador sigue pudiendo restablecerse.
+    const r = await critica(operador, 'plataforma_restablecer_contrasena', { correo: normal.correo });
+    expect(r.estado).toBe(200);
+    expect(r.cuerpo.ok).toBe(true);
+  });
+});
+
 describe('auditoría de plataforma', () => {
   it('deja cada acción con su actor, y los rechazos como rechazada; no se puede editar', async () => {
     const filas = await auditoria(operador.usuarioId);

@@ -42,3 +42,24 @@ export function validarEmpresa(nombre: string): Errores<'nombre'> {
 }
 
 export const hayErrores = (e: object): boolean => Object.keys(e).length > 0;
+
+export type DatosNuevaClave = { clave: string; repetir: string };
+
+/** Mismas reglas que el registro (10 a 128 caracteres) más la repetición. */
+export function validarNuevaClave(d: DatosNuevaClave): Errores<'clave' | 'repetir'> {
+  const e: Errores<'clave' | 'repetir'> = {};
+  if (d.clave.length < LARGO_MIN_CLAVE) e.clave = `La contraseña necesita al menos ${LARGO_MIN_CLAVE} caracteres.`;
+  else if (d.clave.length > LARGO_MAX_CLAVE) e.clave = `La contraseña no puede pasar de ${LARGO_MAX_CLAVE} caracteres.`;
+  if (!e.clave && d.repetir !== d.clave) e.repetir = 'Las dos contraseñas no coinciden.';
+  return e;
+}
+
+export type EnlaceDeRestablecer = { estado: 'valido'; token: string } | { estado: 'invalido' };
+
+/** Better Auth vuelve a esta pantalla con `?token=…` (enlace bueno) o `?error=…` (vencido o ya usado). Sin token, no sirve. */
+export function leerEnlaceDeRestablecer(busqueda: string): EnlaceDeRestablecer {
+  const p = new URLSearchParams(busqueda);
+  const token = p.get('token');
+  if (p.get('error') || !token) return { estado: 'invalido' };
+  return { estado: 'valido', token };
+}

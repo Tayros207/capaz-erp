@@ -11,13 +11,14 @@ const modulo = (codigo: string, familia: ModuloDeYo['familia'], motivo: MotivoDe
   codigo, nombre: codigo.toUpperCase(), descripcion: 'd', familia, orden: 0, acento: 'esmeralda', icono: codigo, enConstruccion: false, secciones: [], acceso: acceso(codigo, motivo, ac), ...extra,
 });
 
-const yoCon = (modulos: ModuloDeYo[]): Yo => ({
+const yoCon = (modulos: ModuloDeYo[], operador = false): Yo => ({
   usuario: { id: 'u', nombre: 'Ana', correo: 'a@b.pe' },
   empresa: { id: 'e', nombre: 'Imprenta', rol: 'admin' },
   empresas: [],
   puedeCrearEmpresas: false,
   modulos,
   permisos: [],
+  operador,
 });
 
 describe('menuDesdeYo', () => {
@@ -38,6 +39,17 @@ describe('menuDesdeYo', () => {
     const oculto = modulo('x', 'ventas', 'sin_asignar', {}, { visible: false });
     const m = menuDesdeYo(yoCon([modulo('b', 'ventas', 'activo', { orden: 2 }), modulo('a', 'ventas', 'activo', { orden: 1 }), oculto]));
     expect(m.familias[0]?.items.map((i) => i.clave)).toEqual(['modulo-a', 'modulo-b']);
+  });
+});
+
+describe('entrada «Plataforma» del operador', () => {
+  it('no aparece para quien no es operador', () => {
+    expect(menuDesdeYo(yoCon([])).operador ?? []).toEqual([]);
+  });
+  it('aparece en su propio grupo, con destino /plataforma, solo si es operador', () => {
+    const m = menuDesdeYo(yoCon([], true));
+    expect(m.operador ?? []).toHaveLength(1);
+    expect(m.operador?.[0]).toMatchObject({ clave: 'plataforma', nombre: 'Plataforma', ruta: '/plataforma', estado: 'entra' });
   });
 });
 

@@ -1,6 +1,6 @@
 import { FAMILIAS, FAMILIAS_CLASICAS, NOMBRE_DE_FAMILIA, type Familia, type ModuloDeYo, type Yo } from '@capaz/shared';
 
-// Función pura que convierte `yo` en la estructura del menú: núcleo, familias y ajustes.
+// Función pura que convierte `yo` en la estructura del menú: núcleo, familias, ajustes y, si es operador, su grupo.
 // La barra lateral, la barra inferior y las tarjetas de /inicio solo dibujan lo que sale de aquí.
 
 /** Cómo se ve y qué permite un módulo. */
@@ -26,7 +26,7 @@ export type ItemDeMenu = {
 
 export type FamiliaDeMenu = { familia: Familia; nombre: string; items: ItemDeMenu[] };
 
-export type MenuDeYo = { nucleo: ItemDeMenu[]; familias: FamiliaDeMenu[]; ajustes: ItemDeMenu[] };
+export type MenuDeYo = { nucleo: ItemDeMenu[]; familias: FamiliaDeMenu[]; ajustes: ItemDeMenu[]; operador?: ItemDeMenu[] };
 
 export const RUTA_DE_MODULO = (codigo: string) => `/m/${codigo}`;
 
@@ -48,6 +48,11 @@ export const AJUSTES: readonly ItemDeMenu[] = [
   fijo('ajustes-conecta', 'Conecta', '/ajustes/conecta', 'conecta', 'Conexiones con otros sistemas'),
   fijo('ajustes-automatizaciones', 'Automatizaciones', '/ajustes/automatizaciones', 'automatizaciones', 'Reglas que trabajan solas'),
   fijo('ajustes-historial', 'Historial', '/ajustes/historial', 'historial', 'Quién hizo qué y cuándo'),
+];
+
+/** Solo se ofrece a operadores de la plataforma (`yo.operador`); la consola lo vuelve a comprobar en el servidor. */
+export const OPERADOR: readonly ItemDeMenu[] = [
+  fijo('plataforma', 'Plataforma', '/plataforma', 'plataforma', 'Empresas, módulos y planes de los clientes'),
 ];
 
 const plural = (n: number, uno: string, varios: string) => (n === 1 ? uno : varios);
@@ -104,7 +109,7 @@ export function menuDesdeYo(yo: Yo): MenuDeYo {
     const items = [...modulos].sort((a, b) => a.orden - b.orden || a.nombre.localeCompare(b.nombre, 'es')).map(itemDeModulo);
     familias.push({ familia, nombre: NOMBRE_DE_FAMILIA[familia], items });
   }
-  return { nucleo: [...NUCLEO], familias, ajustes: [...AJUSTES] };
+  return { nucleo: [...NUCLEO], familias, ajustes: [...AJUSTES], operador: yo.operador ? [...OPERADOR] : [] };
 }
 
 /** Los cuatro destinos de la barra inferior móvil (el resto va en «Más»). */
