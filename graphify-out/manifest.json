@@ -1146,9 +1146,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/barra-inferior.tsx": {
-    "mtime": 1794780700.664023,
-    "seen": 1794781771.1045735,
-    "ast_hash": "cb610d2dcc600d28cc7b50fc17b2db10",
+    "mtime": 1794797430.1613462,
+    "seen": 1794797683.252296,
+    "ast_hash": "844e26c261093e905bea99fb41d14d58",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/barra-superior.tsx": {
@@ -1158,9 +1158,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/carcasa.tsx": {
-    "mtime": 1794796584.9957442,
-    "seen": 1794796669.3002658,
-    "ast_hash": "8b1c2b95b181345cafbb154f087b9855",
+    "mtime": 1794797430.1613462,
+    "seen": 1794797683.252301,
+    "ast_hash": "dc06333059e14ec759b79e0f0f3f0e41",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/iconos-menu.tsx": {
@@ -1170,27 +1170,27 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/lista-de-menu.tsx": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.104582,
-    "ast_hash": "c8b39c7aa8faaee76dc0a7fe14a989a3",
+    "mtime": 1794797430.1621592,
+    "seen": 1794797683.2523084,
+    "ast_hash": "3c765a0192609ddffbef547c79b7771c",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/menu-lateral.tsx": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1045847,
-    "ast_hash": "cc0b319ffd3dd698b4c5d4480588ce14",
+    "mtime": 1794797430.1622934,
+    "seen": 1794797683.2523108,
+    "ast_hash": "fa104bf39261af2d55852e750f671d53",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/menu.spec.ts": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1045873,
-    "ast_hash": "7851a88bd4dcb78240f009530efb308c",
+    "mtime": 1794797430.1624637,
+    "seen": 1794797683.252313,
+    "ast_hash": "24c1b4d392423b8fe84763d062336de1",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/menu.ts": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1045895,
-    "ast_hash": "e6efa712027a31759ba7e6639ad73f79",
+    "mtime": 1794797430.1626365,
+    "seen": 1794797683.252315,
+    "ast_hash": "99fc026918d2f9ecfafea4e5e0e4f3a9",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/migas.spec.ts": {
@@ -1350,9 +1350,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/rutas.tsx": {
-    "mtime": 1794784889.3643215,
-    "seen": 1794785106.1451216,
-    "ast_hash": "9183a46e06467db9dc5b089d73df6d2e",
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.2525048,
+    "ast_hash": "bf0d124a0153774c7b6bd22cf9ef4432",
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/rutas.tsx": {
@@ -1368,9 +1368,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/inicio/pantalla-inicio.tsx": {
-    "mtime": 1794796585.0028987,
-    "seen": 1794796669.300593,
-    "ast_hash": "c3448a178cdf06d59600874f467e5b12",
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.2525997,
+    "ast_hash": "2624a94a2151c35a1902a536c0ec8f4a",
     "semantic_hash": ""
   },
   "apps/web/src/core/inicio/rutas.tsx": {
@@ -1770,9 +1770,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/borradores.ts": {
-    "mtime": 1794788508.574368,
-    "seen": 1794794523.3452172,
-    "ast_hash": "294a762360191436a090d9ef5a8b066e",
+    "mtime": 1794797430.1640136,
+    "seen": 1794797683.2531714,
+    "ast_hash": "3e16386b8be331cf8a4a38e5d61ce770",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/clientes.ts": {
@@ -2388,15 +2388,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/ayudas.ts": {
-    "mtime": 1794782922.3367054,
-    "seen": 1794783032.0856664,
-    "ast_hash": "857379f50827086dbe71b88eae0b3eaf",
+    "mtime": 1794797430.1606698,
+    "seen": 1794797683.2514884,
+    "ast_hash": "523716f67d9e13c679b6702fdd00ca78",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/borradores.int.spec.ts": {
-    "mtime": 1794785636.7584662,
-    "seen": 1794785763.432281,
-    "ast_hash": "544a18ac7bcbd5b25df50c5e676d71af",
+    "mtime": 1794797430.160875,
+    "seen": 1794797683.2514923,
+    "ast_hash": "0b54ec1adb070541c9b94c4a12136bab",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/catalogo.ts": {
@@ -2406,9 +2406,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/herramientas-de-borradores.ts": {
-    "mtime": 1794782922.3380575,
-    "seen": 1794783032.0856788,
-    "ast_hash": "57191f970668a51a747824835c627667",
+    "mtime": 1794797430.1610434,
+    "seen": 1794797683.2515023,
+    "ast_hash": "0f2f470546d0153566e2bbde9e5ed2d7",
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/proponer.ts": {
@@ -2418,9 +2418,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/borradores/repositorio.ts": {
-    "mtime": 1794782922.3382437,
-    "seen": 1794783032.085683,
-    "ast_hash": "763a256542ca1ab8a8b335fa2568c1e3",
+    "mtime": 1794797430.16119,
+    "seen": 1794797683.2515082,
+    "ast_hash": "fa4ebb4c9aabc42ceaeee205c158eb40",
     "semantic_hash": ""
   },
   "apps/api/src/core/clientes/herramientas/cliente-mapeo.ts": {
@@ -3047,16 +3047,10 @@
     "ast_hash": "d22f04699115c79290cc4847d35ee31b",
     "semantic_hash": ""
   },
-  "apps/web/src/core/bandeja/consultas.tsx": {
-    "mtime": 1794784889.3633215,
-    "seen": 1794785106.145106,
-    "ast_hash": "e637664c9052858a710b7b86547e3e27",
-    "semantic_hash": ""
-  },
   "apps/web/src/core/bandeja/formulario-correccion.tsx": {
-    "mtime": 1794784889.3633215,
-    "seen": 1794785106.1451085,
-    "ast_hash": "7dac61bb52765264516134a0a8a53792",
+    "mtime": 1794797430.1628017,
+    "seen": 1794797683.2524874,
+    "ast_hash": "dafd16f50013c950a51f0094731bcbe7",
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/hoja-descartar.tsx": {
@@ -3072,15 +3066,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/logica.spec.ts": {
-    "mtime": 1794784889.3643215,
-    "seen": 1794785106.1451142,
-    "ast_hash": "0f0f62b5542d0a6f67b8e087e5cb7263",
+    "mtime": 1794797430.1629553,
+    "seen": 1794797683.252495,
+    "ast_hash": "d8d04841039dd56d15f035352e010163",
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/logica.ts": {
-    "mtime": 1794788508.574368,
-    "seen": 1794794523.344537,
-    "ast_hash": "4eea7f5bc96629cc448812bec7dfecfd",
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.2524974,
+    "ast_hash": "3b8ee3b10375d1bd7b3c21bb9ffb1fb8",
     "semantic_hash": ""
   },
   "apps/web/src/core/bandeja/pantalla-bandeja.tsx": {
@@ -3492,9 +3486,9 @@
     "semantic_hash": ""
   },
   "docs/FICHAS-OLA-3.md": {
-    "mtime": 1794787509.6709895,
-    "seen": 1794787882.525281,
-    "ast_hash": "ef951b735e5081bf8c4b4a2a0091a1a9",
+    "mtime": 1794797677.018344,
+    "seen": 1794797683.2538886,
+    "ast_hash": "faeea809e228aea38a1b5cedaa0b10d5",
     "semantic_hash": ""
   },
   "docs/adr/ADR-016-reglas-de-los-modulos-clasicos.md": {
@@ -4515,6 +4509,42 @@
     "mtime": 1794795308.392272,
     "seen": 1794795534.1062322,
     "ast_hash": "259767f88c265ac9104191abead193d5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/pruebas/recorridos/ola-2.int.spec.ts": {
+    "mtime": 1794797430.1613462,
+    "seen": 1794797683.2522755,
+    "ast_hash": "98aec3938cc110e6162e69ee786f22f7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/app/carcasa/insignia-de-pendientes.tsx": {
+    "mtime": 1794797430.1619666,
+    "seen": 1794797683.2523057,
+    "ast_hash": "0fbe85627abbfadc55febb8a6e8b87cf",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/bandeja/use-pendientes.ts": {
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.2525074,
+    "ast_hash": "7a9b42998234f0f02a2b60ec59fc7295",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/inicio/logica.spec.ts": {
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.252595,
+    "ast_hash": "aa70f8db0a6ff827beb52a5765419a9c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/inicio/logica.ts": {
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.2525976,
+    "ast_hash": "728e2c61db90427c74392f6a2ca7df68",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/inicio/pendientes.tsx": {
+    "mtime": 1794797430.1631541,
+    "seen": 1794797683.252602,
+    "ast_hash": "7f832ac8efa7090cad9b1187f62f78df",
     "semantic_hash": ""
   }
 }

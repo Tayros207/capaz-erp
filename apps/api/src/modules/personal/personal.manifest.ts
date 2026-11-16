@@ -21,5 +21,4 @@ export const manifiestoPersonal: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'rosa',
   icono: 'personal',
-  enConstruccion: true,
 };
