@@ -5,7 +5,7 @@ import { listadoSchema, paginaSchema } from '../listado.js';
 // Contratos del área «borradores»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo.
 
-export const ORIGENES_DE_BORRADOR = ['voz', 'texto', 'agente', 'regla', 'conector', 'importacion'] as const;
+export const ORIGENES_DE_BORRADOR = ['voz', 'texto', 'agente', 'regla', 'conector', 'importacion', 'modulo'] as const;
 export const PRIORIDADES_DE_BORRADOR = ['normal', 'alta'] as const;
 export const ESTADOS_DE_BORRADOR = ['pendiente', 'aprobado', 'descartado'] as const;
 

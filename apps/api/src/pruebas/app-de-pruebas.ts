@@ -25,6 +25,8 @@ export type AppDePruebas = {
   url: string;
   origen: string;
   cerrar: () => Promise<void>;
+  /** Un proveedor de la aplicación (p. ej. `Relevo`, para llamar a `procesarLote()`). */
+  obtener: <T>(token: Type<T> | symbol) => T;
   /** Cliente HTTP con jar de cookies, uno por «navegador». */
   cliente: () => ClienteHttp;
 };
@@ -68,6 +70,7 @@ export async function levantarApp(opciones: { alta?: 'abierta' | 'plataforma'; i
     url,
     origen: url,
     cerrar: () => app.close(),
+    obtener: <T>(token: Type<T> | symbol) => app.get<T>(token as Type<T>),
     cliente: () => {
       const cookies = new Map<string, string>();
       const guardar = (res: Response) => {

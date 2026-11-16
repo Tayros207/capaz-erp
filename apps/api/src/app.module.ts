@@ -4,6 +4,7 @@ import { HerramientasModule } from './core/herramientas/herramientas.module.js';
 import { ModulosModule } from './core/modulos/modulos.module.js';
 import { manifiestoCotizador } from './modules/cotizador/cotizador.manifest.js';
 import { manifiestoRegistro } from './modules/registro/registro.manifest.js';
+import { RegistroModule } from './modules/registro/registro.module.js';
 import { AuditoriaModule } from './core/auditoria/auditoria.module.js';
 import { EventosModule } from './core/eventos/eventos.module.js';
 import { CorrelativosModule } from './core/correlativos/correlativos.module.js';
@@ -68,6 +69,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
     ConectoresModule,
     AutomatizacionesModule,
     IntercambioModule,
+    RegistroModule,
     CrmModule,
     OrdenesModule,
     ComprasModule,

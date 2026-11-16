@@ -28,7 +28,8 @@ export function enviarJson(d: DestinoValido, cuerpo: string, cabeceras: Record<s
         path: `${url.pathname}${url.search}`,
         servername: url.hostname.replace(/^\[|\]$/g, ''),
         // Conecta a la dirección ya validada.
-        lookup: (_h: string, _o: unknown, cb: (e: Error | null, a: string, f: number) => void) => cb(null, d.direccion, d.familia),
+        // Node 24 llama con `{ all: true }` y espera una lista; con `all` falso espera (dirección, familia).
+        lookup: (_h: string, o: { all?: boolean } | undefined, cb: (...a: unknown[]) => void) => (o?.all ? cb(null, [{ address: d.direccion, family: d.familia }]) : cb(null, d.direccion, d.familia)),
         headers: { ...cabeceras, 'content-type': 'application/json', 'content-length': String(Buffer.byteLength(cuerpo)), 'user-agent': 'Capaz-Webhooks/1' },
         agent: false,
         timeout: tiempoMs,
