@@ -43,3 +43,14 @@ Antes de cada fase o plan de módulo, el constructor lee los archivos de la fila
 
 ## Cómo usarlo
 Leer el archivo, entender el modelo y los casos que cubre, y anotar la decisión propia en un documento de diseño. Nada de pegar código.
+
+## SAP S/4HANA (referencia aceptada el 2026-11-16)
+
+El usuario pidió guiarse también con SAP S/4HANA. Se usa **solo como inspiración de ideas**, con la regla 12 de `AGENTS.md`: no se copian nombres de pantallas, transacciones, textos, iconos, colores, medidas ni «Fiori» (marca de SAP). Qué ideas sirven a Capaz, adaptadas a pyme:
+
+- **Procesos de extremo a extremo con documentos enlazados:** pedido → entrega → cobro (order-to-cash) y compra → recepción → pago (procure-to-pay), con un «flujo de documentos» visible en cada ficha (de qué nació y qué generó). Encaja con la vista 360 y el historial de la propuesta de mejoras.
+- **Estados claros por documento y bloqueos** (borrador, confirmado, en proceso, cerrado, anulado) y reglas de qué se puede cambiar en cada uno.
+- **Interfaz por roles:** cada persona ve primero lo suyo (pendientes, alertas) y no un menú de todo; consistente con Inicio con pendientes y la bandeja.
+- **Datos maestros únicos** (clientes, productos, sucursales) usados por todos los módulos; **organización** por empresa, sucursal y centro.
+- **Mensajes de error y confirmaciones** entendibles y explicables.
+No se adoptan: complejidad de contabilidad formal, tablas de configuración masivas, ni terminología propia de SAP.
