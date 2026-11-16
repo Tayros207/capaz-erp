@@ -237,6 +237,29 @@ describe('lectura y aislamiento', () => {
   });
 });
 
+describe('borradores_resumen', () => {
+  it('cuenta pendientes y de alta prioridad, solo de módulos a los que se puede entrar', async () => {
+    const resumen = async (cambios = {}) => datos<{ pendientes: number; deAltaPrioridad: number }>(await llamar('borradores_resumen', {}, cambios));
+    expect(await resumen()).toEqual({ pendientes: 0, deAltaPrioridad: 0 });
+    await proponer({ prioridad: 'alta' });
+    await proponer();
+    await proponer({ herramienta: 'de_registro' as NombreDeHerramienta, args: { valor: 'r' } });
+    const resuelto = await proponer();
+    datos(await llamar('borrador_descartar', { id: resuelto.id, motivo: 'x' }));
+    expect(await resumen()).toEqual({ pendientes: 3, deAltaPrioridad: 1 });
+    expect(await resumen({ modulos: [acceso('core')] })).toEqual({ pendientes: 2, deAltaPrioridad: 1 });
+  });
+
+  it('no cuenta los de otra empresa y pide borradores:ver', async () => {
+    await proponer();
+    const otra = empresaDePrueba();
+    const ctx = { empresaId: otra, modulos: [acceso('core'), acceso('registro')], permisos: PERMISOS };
+    const r = await e.ejecutor.ejecutar('borradores_resumen', {}, { ctx: e.ctx(ctx) });
+    expect(datos(r)).toEqual({ pendientes: 0, deAltaPrioridad: 0 });
+    expect(codigoDe(await llamar('borradores_resumen', {}, { permisos: [] }))).toBe('sin_permiso');
+  });
+});
+
 describe('herramientas con secretos', () => {
   it('no se pueden proponer como borrador', async () => {
     const { HERRAMIENTAS_CON_SECRETOS } = await import('./proponer.js');

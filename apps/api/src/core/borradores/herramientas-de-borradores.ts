@@ -49,6 +49,17 @@ export function crearHerramientasDeBorradores(ejecutor: EjecutorDeHerramientas):
     },
   });
 
+  const resumen = definirHerramienta('borradores_resumen', {
+    modulo: 'core',
+    permiso: 'borradores:ver',
+    criticidad: 'lectura',
+    ayuda: AYUDAS.resumen,
+    async ejecutar(_args, ctx, tx) {
+      const modulos = ctx.modulos.filter((m) => m.puedeEntrar).map((m) => m.codigo);
+      return exito(await repo.contarPendientes(tx, modulos));
+    },
+  });
+
   const ver = definirHerramienta('borrador_ver', {
     modulo: 'core',
     permiso: 'borradores:ver',
@@ -108,7 +119,7 @@ export function crearHerramientasDeBorradores(ejecutor: EjecutorDeHerramientas):
     },
   });
 
-  return [listar, ver, corregir, aprobar, descartar];
+  return [listar, resumen, ver, corregir, aprobar, descartar];
 }
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Campo } from '../../shared/ui/campo.tsx';
-import { etiquetaDeCampo, tipoDeCampo } from './logica.ts';
+import { etiquetaDeArgumento, medidaDeArgumento, tipoDeCampo } from './logica.ts';
 
 const AYUDA = { numero: 'Un número.', booleano: 'Escribe Sí o No.', json: 'Formato estructurado: edítalo con cuidado.', texto: undefined } as const;
 
@@ -19,10 +19,10 @@ export function FormularioCorreccion({ original, valores, errores, alCambiar }: 
       {claves.map((k) => (
         <Campo
           key={k}
-          etiqueta={etiquetaDeCampo(k)}
+          etiqueta={medidaDeArgumento(k) === 'centimos' ? `${etiquetaDeArgumento(k)} (S/)` : etiquetaDeArgumento(k)}
           value={valores[k] ?? ''}
           error={errores[k]}
-          ayuda={AYUDA[tipoDeCampo(original[k])]}
+          ayuda={medidaDeArgumento(k) === 'centimos' ? 'En soles, con hasta dos decimales.' : medidaDeArgumento(k) === 'milesimas' ? 'Hasta tres decimales.' : AYUDA[tipoDeCampo(original[k])]}
           inputMode={tipoDeCampo(original[k]) === 'numero' ? 'decimal' : undefined}
           onChange={(e) => alCambiar(k, e.target.value)}
         />

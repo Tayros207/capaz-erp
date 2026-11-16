@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
+import { usePendientes } from '../../core/bandeja/use-pendientes.ts';
 import { cerrarSesion } from '../../core/acceso/api.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
@@ -23,6 +24,7 @@ export function Carcasa() {
   const navegar = useNavigate();
   const [plegado, setPlegado] = useState(leerPlegado);
   const menu = useMemo(() => (yo?.empresa ? menuDesdeYo(yo) : null), [yo]);
+  const { pendientes } = usePendientes(Boolean(yo?.empresa) && (yo?.permisos.includes('borradores:ver') ?? false));
   const aviso = yo?.empresa ? avisoDeAccesoDenegado(yo, pathname) : null;
 
   useEffect(() => {
@@ -47,12 +49,12 @@ export function Carcasa() {
       <BarraSuperior yo={yo} migas={migasDeRuta(menu, pathname)} plegado={plegado}
         alPlegar={() => { guardarPlegado(!plegado); setPlegado(!plegado); }} alSalir={() => void salir()} />
       <div className="flex">
-        <MenuLateral menu={menu} plegado={plegado} />
+        <MenuLateral menu={menu} plegado={plegado} pendientes={pendientes} />
         <main id="contenido" className="min-w-0 flex-1 px-4 pt-4 pb-24 md:px-6 md:pb-8">
           {aviso ? null : <Outlet />}
         </main>
       </div>
-      <BarraInferior menu={menu} alSalir={() => void salir()} />
+      <BarraInferior menu={menu} alSalir={() => void salir()} pendientes={pendientes} />
     </div>
   );
 }
