@@ -11,7 +11,7 @@ import { Insignia } from '../../shared/ui/insignia.tsx';
 import { archivarCategoria, listarCategorias } from './api.ts';
 import { resolverAccion } from './acciones.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
-import { ETIQUETA_DE_TIPO } from './logica.ts';
+import { esCategoriaDeTransferencia, ETIQUETA_DE_TIPO } from './logica.ts';
 import { HojaDeCategoria } from './hoja-categoria.tsx';
 
 /** Categorías de ingresos y egresos: lista, alta y renombrado en hoja, archivar. */
@@ -26,6 +26,7 @@ export function PanelDeCategorias({ puedeConfigurar }: { puedeConfigurar: boolea
         <span className="inline-flex flex-wrap items-center gap-2">
           {c.nombre}
           {c.archivadoEn ? <Insignia tono="neutro">Archivada</Insignia> : null}
+          {esCategoriaDeTransferencia(c) ? <Insignia tono="info">Del sistema</Insignia> : null}
         </span>
       ),
     },
@@ -33,7 +34,7 @@ export function PanelDeCategorias({ puedeConfigurar }: { puedeConfigurar: boolea
     ...(puedeConfigurar
       ? [{
           id: 'acciones', titulo: 'Acciones', alinear: 'derecha' as const,
-          celda: (c: CategoriaDto) => c.archivadoEn ? '—' : (
+          celda: (c: CategoriaDto) => c.archivadoEn || esCategoriaDeTransferencia(c) ? '—' : (
             <span className="inline-flex gap-1">
               <Boton variante="fantasma" onClick={() => setHoja({ categoria: c })}>Editar</Boton>
               <Boton variante="fantasma" onClick={() => void resolverAccion(archivarCategoria(c.id), 'Categoría archivada.')}>Archivar</Boton>

@@ -5,6 +5,9 @@ import {
   estaAbierta, formularioDeCuenta, formularioDeDeuda, pasoDeDeuda, textoDeEstadoDeDeuda, tonoDeEstadoDeDeuda, validarAbono, validarCuenta, validarDeuda, validarMotivo, validarNombre,
   argumentosDeListado, argumentosDeMovimiento, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
   formularioInicial, mensajeDeRechazo, montoConSigno, siguienteFormulario, validarMovimiento,
+  argumentosDeDeudaNueva, deudaNuevaEnBlanco, validarDeudaNueva,
+  argumentosDeTransferencia, cuentasDeDestino, esCategoriaDeTransferencia, esTransferencia, invertirTransferencia, puedeTransferir, siguienteTransferencia,
+  textoDeTransferenciasNetas, transferenciaInicial, validarTransferencia,
 } from './logica.ts';
 
 const c = (n: number) => n as Centimos;
@@ -172,5 +175,80 @@ describe('cuentas y categorías', () => {
     expect(argumentosDeCuentaNueva(cuentaEnBlanco()).saldoInicialCentimos).toBe(0);
     expect(argumentosDeCuentaEditada('c', { nombre: 'Yape', tipo: 'billetera', saldoInicial: c(5) })).toEqual({ id: 'c', nombre: 'Yape', tipo: 'billetera' });
     expect(formularioDeCuenta(cuenta('z', { saldoInicialCentimos: 700 })).saldoInicial).toBe(700);
+  });
+});
+
+describe('nueva deuda a mano', () => {
+  const completa = { ...deudaNuevaEnBlanco(), contacto: { id: 'c1', nombre: 'Juan' }, concepto: ' Volantes ', total: c(20_000) };
+
+  it('pide contacto, concepto y total', () => {
+    expect(validarDeudaNueva(deudaNuevaEnBlanco(), HOY)).toEqual({ contacto: 'Elige el cliente o proveedor.', concepto: 'Indica el concepto.', total: 'Escribe el total.' });
+    expect(validarDeudaNueva({ ...completa, total: c(0) }, HOY)).toEqual({ total: 'El total debe ser mayor que cero.' });
+    expect(validarDeudaNueva(completa, HOY)).toEqual({});
+  });
+  it('el vencimiento es opcional pero no puede ser anterior a hoy', () => {
+    expect(validarDeudaNueva({ ...completa, venceEn: '2026-03-09' }, HOY)).toEqual({ venceEn: 'El vencimiento no puede ser anterior a hoy.' });
+    expect(validarDeudaNueva({ ...completa, venceEn: HOY }, HOY)).toEqual({});
+    expect(validarDeudaNueva({ ...completa, venceEn: 'mañana' }, HOY)).toHaveProperty('venceEn');
+  });
+  it('arma los argumentos sin lo vacío y con el tipo de la pantalla', () => {
+    expect(argumentosDeDeudaNueva('por_cobrar', completa)).toEqual({ tipo: 'por_cobrar', contactoId: 'c1', concepto: 'Volantes', totalCentimos: 20_000 });
+    expect(argumentosDeDeudaNueva('por_pagar', { ...completa, venceEn: '2026-04-01', notas: ' x ' })).toEqual({
+      tipo: 'por_pagar', contactoId: 'c1', concepto: 'Volantes', totalCentimos: 20_000, venceEn: '2026-04-01', notas: 'x',
+    });
+    expect(() => argumentosDeDeudaNueva('por_cobrar', deudaNuevaEnBlanco())).toThrow();
+  });
+});
+
+describe('transferencia entre cuentas', () => {
+  const cuentas = [cuenta('banco', { tipo: 'banco' }), cuenta('caja', { esPrincipal: true }), cuenta('vieja', { archivadoEn: '2026-02-01T00:00:00.000Z' })];
+
+  it('sale de la principal y llega a otra cuenta en uso; necesita dos cuentas vivas', () => {
+    expect(transferenciaInicial(HOY, cuentas)).toEqual({ origenId: 'caja', destinoId: 'banco', monto: null, fecha: HOY, nota: '' });
+    expect(transferenciaInicial(HOY, [cuentas[1]!]).destinoId).toBe('');
+    expect(puedeTransferir(cuentas)).toBe(true);
+    expect(puedeTransferir([cuentas[1]!, cuentas[2]!])).toBe(false);
+    expect(cuentasDeDestino(cuentas, 'caja').map((x) => x.id)).toEqual(['banco']);
+  });
+
+  it('valida cuentas distintas, monto y fecha', () => {
+    const base = { ...transferenciaInicial(HOY, cuentas), monto: c(20_001) };
+    expect(validarTransferencia(base, HOY)).toEqual({});
+    expect(validarTransferencia({ ...base, destinoId: 'caja' }, HOY)).toEqual({ destinoId: 'El destino debe ser otra cuenta.' });
+    expect(validarTransferencia({ ...base, destinoId: '', origenId: '' }, HOY)).toEqual({ origenId: 'Elige la cuenta de origen.', destinoId: 'Elige la cuenta de destino.' });
+    expect(validarTransferencia({ ...base, monto: null }, HOY)).toEqual({ monto: 'Escribe el monto.' });
+    expect(validarTransferencia({ ...base, monto: c(0) }, HOY)).toEqual({ monto: 'El monto debe ser mayor que cero.' });
+    expect(validarTransferencia({ ...base, fecha: '2026-03-11' }, HOY)).toEqual({ fecha: 'La fecha no puede ser futura.' });
+    expect(validarTransferencia({ ...base, nota: 'x'.repeat(501) }, HOY)).toHaveProperty('nota');
+  });
+
+  it('arma los argumentos sin la nota vacía; invertir y repetir conservan lo que corresponde', () => {
+    const f = { ...transferenciaInicial(HOY, cuentas), monto: c(20_001) };
+    expect(argumentosDeTransferencia(f)).toEqual({ origenId: 'caja', destinoId: 'banco', montoCentimos: 20_001, fecha: HOY });
+    expect(argumentosDeTransferencia({ ...f, nota: ' Depósito ' })).toHaveProperty('nota', 'Depósito');
+    expect(() => argumentosDeTransferencia({ ...f, monto: null })).toThrow();
+    expect(invertirTransferencia(f)).toMatchObject({ origenId: 'banco', destinoId: 'caja' });
+    expect(siguienteTransferencia({ ...f, nota: 'x' })).toEqual({ ...f, monto: null, nota: '' });
+  });
+
+  it('una pata de transferencia no tiene tono de ganancia ni de gasto; la categoría del sistema no se ofrece', () => {
+    const pata = { montoCentimos: 20_001, transferenciaId: 't1' };
+    expect(montoConSigno({ ...pata, tipo: 'egreso', estado: 'activo' })).toEqual({ texto: '− S/ 200.01', tono: 'suave', anulado: false });
+    expect(montoConSigno({ ...pata, tipo: 'ingreso', estado: 'activo' })).toEqual({ texto: '+ S/ 200.01', tono: 'suave', anulado: false });
+    expect(montoConSigno({ ...pata, tipo: 'ingreso', estado: 'anulado' }).tono).toBe('neutro');
+    expect(esTransferencia({ transferenciaId: 't1' })).toBe(true);
+    expect(esTransferencia({ transferenciaId: null })).toBe(false);
+    const categorias: CategoriaDto[] = [
+      { id: '1', nombre: 'Ventas', tipo: 'ingreso', archivadoEn: null },
+      { id: '2', nombre: 'Transferencia', tipo: 'ingreso', archivadoEn: null },
+    ];
+    expect(esCategoriaDeTransferencia(categorias[1]!)).toBe(true);
+    expect(categoriasDe('ingreso', categorias).map((x) => x.nombre)).toEqual(['Ventas']);
+  });
+
+  it('el neto de transferencias del día lleva signo', () => {
+    expect(textoDeTransferenciasNetas(-20_001)).toBe('− S/ 200.01');
+    expect(textoDeTransferenciasNetas(20_001)).toBe('+ S/ 200.01');
+    expect(textoDeTransferenciasNetas(0)).toBe('S/ 0.00');
   });
 });

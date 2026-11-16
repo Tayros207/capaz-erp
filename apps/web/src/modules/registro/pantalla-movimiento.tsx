@@ -14,7 +14,7 @@ import { resolverAccion } from './acciones.ts';
 import { HojaMotivo } from './hoja-motivo.tsx';
 import { usePuedeEditar } from './use-registro.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
-import { ETIQUETA_DE_MEDIO, ETIQUETA_DE_TIPO, formatearDia } from './logica.ts';
+import { esTransferencia, ETIQUETA_DE_MEDIO, ETIQUETA_DE_TIPO, formatearDia } from './logica.ts';
 import { Monto } from './pantalla-movimientos.tsx';
 
 function Dato({ nombre, children }: { nombre: string; children: ReactNode }) {
@@ -53,7 +53,7 @@ export function PantallaMovimiento() {
       />
       <HojaMotivo
         abierto={anulando}
-        titulo={`Anular ${m.codigo}`}
+        titulo={esTransferencia(m) ? `Anular la transferencia (${m.codigo} y su otra pata)` : `Anular ${m.codigo}`}
         textoEnviar="Continuar"
         alEnviar={async (motivo) => resolverAccion(await anularMovimiento(m.id, motivo), `${m.codigo} anulado.`)}
         alCerrar={() => setAnulando(false)}
@@ -67,6 +67,7 @@ export function PantallaMovimiento() {
         <Dato nombre="Medio de pago">{ETIQUETA_DE_MEDIO[m.medioDePago]}</Dato>
         <Dato nombre="Descripción">{m.descripcion ?? '—'}</Dato>
         <Dato nombre="Registrado">{formatearFechaHora(m.creadoEn)}</Dato>
+        {esTransferencia(m) ? <Dato nombre="Tipo"><Insignia tono="info">Transferencia entre cuentas</Insignia></Dato> : null}
         {m.deudaId ? <Dato nombre="Abono de una deuda"><Link to={`/m/registro/deudas/${m.deudaId}`}>Ver la deuda</Link></Dato> : null}
         {m.anuladoEn ? <Dato nombre="Anulado">{formatearFechaHora(m.anuladoEn)} · {m.motivoAnulacion ?? 'Sin motivo'}</Dato> : null}
       </dl>

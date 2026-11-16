@@ -55,6 +55,16 @@ describe('contratos de registro', () => {
     expect(entra('registro_resumen', { desde: '2025-01-01', hasta: '2026-01-02' })).toBe(false);
   });
 
+  it('la transferencia pide dos cuentas, un monto entero positivo y nada más', () => {
+    const base = { origenId: ID, destinoId: '0192f0c4-7b1e-7000-8000-000000000002', montoCentimos: 20_001 };
+    expect(entra('cuentas_transferir', base)).toBe(true);
+    expect(entra('cuentas_transferir', { ...base, fecha: '2026-03-10', nota: 'Depósito' })).toBe(true);
+    for (const montoCentimos of [0, -1, 1.5, '5']) expect(entra('cuentas_transferir', { ...base, montoCentimos })).toBe(false);
+    expect(entra('cuentas_transferir', { ...base, destinoId: undefined })).toBe(false);
+    expect(entra('cuentas_transferir', { ...base, categoriaId: ID })).toBe(false);
+    expect(entra('cuentas_transferir', { ...base, nota: 'x'.repeat(501) })).toBe(false);
+  });
+
   it('ninguna herramienta del módulo pide empresa, usuario ni permisos', () => {
     const prohibidos = ['empresaId', 'tenantId', 'usuarioId', 'permisos', 'creadoPor'];
     for (const [nombre, c] of Object.entries(CONTRATOS)) {

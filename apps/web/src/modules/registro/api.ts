@@ -11,6 +11,7 @@ export const iniciarRegistro = () => llamar('registro_iniciar', {});
 export const listarCuentas = (incluirArchivadas = false) => llamar('cuentas_listar', { incluirArchivadas });
 export const listarCategorias = (incluirArchivadas = false) => llamar('categorias_listar', { incluirArchivadas });
 export const registrarMovimiento = (args: EntradaDe<'movimiento_registrar'>) => llamar('movimiento_registrar', args);
+export const transferirEntreCuentas = (args: EntradaDe<'cuentas_transferir'>) => llamar('cuentas_transferir', args);
 export const verMovimiento = (id: string) => llamar('movimiento_ver', { id });
 export const listarMovimientos = (args: EntradaDe<'movimientos_listar'>) => llamar('movimientos_listar', args);
 
@@ -30,6 +31,7 @@ export const crearCategoria = (args: EntradaDe<'categoria_crear'>) => llamar('ca
 export const editarCategoria = (id: string, nombre: string) => llamar('categoria_editar', { id, nombre });
 export const archivarCategoria = (id: string) => llamar('categoria_archivar', { id });
 export const listarDeudas = (args: EntradaDe<'deudas_listar'>) => llamar('deudas_listar', args);
+export const crearDeuda = (args: EntradaDe<'deuda_crear'>) => llamar('deuda_crear', args);
 export const verDeuda = (id: string) => llamar('deuda_ver', { id });
 export const editarDeuda = (args: EntradaDe<'deuda_editar'>) => llamar('deuda_editar', args);
 export const abonarDeuda = (args: EntradaDe<'deuda_abonar'>) => llamar('deuda_abonar', args);

@@ -12,14 +12,15 @@ import { Lista } from '../../shared/ui/datos/lista.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
-import { Insignia } from '../../shared/ui/insignia.tsx';
 import { listarMovimientos, POR_PAGINA } from './api.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
+import { DetalleDeMovimiento } from './detalle-de-movimiento.tsx';
 import { HojaDeMovimiento } from './hoja-movimiento.tsx';
-import { argumentosDeListado, detalleDeMovimiento, errorDeRango, FILTROS_VACIOS, formatearDia, montoConSigno, type FiltrosDeMovimientos, type TipoDeMovimiento } from './logica.ts';
+import { HojaDeTransferencia } from './hoja-transferencia.tsx';
+import { argumentosDeListado, errorDeRango, FILTROS_VACIOS, formatearDia, montoConSigno, puedeTransferir, type FiltrosDeMovimientos, type TipoDeMovimiento } from './logica.ts';
 import { useCuentas, usePuedeEditar } from './use-registro.ts';
 
-const CLASE_DE_TONO = { exito: 'text-exito', peligro: 'text-peligro', neutro: 'line-through' } as const;
+const CLASE_DE_TONO = { exito: 'text-exito', peligro: 'text-peligro', neutro: 'line-through', suave: 'text-texto-suave' } as const;
 
 /** Monto con signo y tono; el signo también va en el texto, no solo en el color. */
 export function Monto({ m }: { m: MovimientoDto }) {
@@ -34,12 +35,7 @@ const COLUMNAS: Array<Columna<MovimientoDto>> = [
     id: 'detalle',
     titulo: 'Detalle',
     principal: true,
-    celda: (m) => (
-      <span className="inline-flex flex-wrap items-center gap-2">
-        {detalleDeMovimiento(m)}
-        {m.estado === 'anulado' ? <Insignia tono="neutro">Anulado</Insignia> : null}
-      </span>
-    ),
+    celda: (m) => <DetalleDeMovimiento m={m} />,
   },
   { id: 'categoria', titulo: 'Categoría', celda: (m) => m.categoriaNombre ?? '—' },
   { id: 'cuenta', titulo: 'Cuenta', celda: (m) => m.cuentaNombre },
@@ -52,6 +48,7 @@ export function PantallaMovimientos() {
   const cuentas = useCuentas();
   const [filtros, setFiltros] = useState<FiltrosDeMovimientos>(FILTROS_VACIOS);
   const [nuevo, setNuevo] = useState<TipoDeMovimiento | null>(null);
+  const [transfiriendo, setTransfiriendo] = useState(false);
   const rangoMalo = errorDeRango(filtros);
   const cambiar = (c: Partial<FiltrosDeMovimientos>) => setFiltros((f) => ({ ...f, ...c }));
 
@@ -70,7 +67,14 @@ export function PantallaMovimientos() {
       <EncabezadoDePagina
         titulo="Movimientos"
         accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNuevo('ingreso')}>Nuevo ingreso</Boton> : undefined}
-        accionesSecundarias={puedeEditar ? <Boton icono="mas" onClick={() => setNuevo('egreso')}>Nuevo egreso</Boton> : undefined}
+        accionesSecundarias={
+          puedeEditar ? (
+            <>
+              <Boton onClick={() => setTransfiriendo(true)} disabled={!puedeTransferir(cuentas.data?.items ?? [])} title={puedeTransferir(cuentas.data?.items ?? []) ? undefined : 'Necesitas al menos dos cuentas'}>Transferir entre cuentas</Boton>
+              <Boton icono="mas" onClick={() => setNuevo('egreso')}>Nuevo egreso</Boton>
+            </>
+          ) : undefined
+        }
       />
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Campo etiqueta="Desde" type="date" value={filtros.desde} onChange={(e) => cambiar({ desde: e.target.value })} />
@@ -115,6 +119,7 @@ export function PantallaMovimientos() {
         </>
       )}
 
+      <HojaDeTransferencia abierto={transfiriendo} cuentas={cuentas.data?.items ?? []} alCerrar={() => setTransfiriendo(false)} />
       <HojaDeMovimiento tipo={nuevo} cuentas={cuentas.data?.items ?? []} alCerrar={() => setNuevo(null)} />
     </div>
   );

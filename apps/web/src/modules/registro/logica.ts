@@ -1,11 +1,11 @@
-import { formatearSoles, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type MovimientoDto } from '@capaz/shared';
+import { formatearSoles, NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type MovimientoDto } from '@capaz/shared';
 
 // Lógica pura de las pantallas de `registro`: validación de formularios, armado de argumentos, signo y tono
 // de los montos, textos y mensajes. Sin React ni red: se prueba en `logica.spec.ts`.
 
 export type TipoDeMovimiento = MovimientoDto['tipo'];
 export type MedioDePago = MovimientoDto['medioDePago'];
-export type Tono = 'exito' | 'peligro' | 'neutro';
+export type Tono = 'exito' | 'peligro' | 'neutro' | 'suave';
 
 export const ETIQUETA_DE_MEDIO: Record<MedioDePago, string> = {
   efectivo: 'Efectivo', transferencia: 'Transferencia', yape: 'Yape', plin: 'Plin', tarjeta: 'Tarjeta', otro: 'Otro',
@@ -26,11 +26,22 @@ export function formatearDia(dia: string): string {
   return a && m && d ? `${d}/${m}/${a}` : dia;
 }
 
-/** Monto con signo y tono: los ingresos suman en verde, los egresos restan en rojo; un anulado no cuenta. */
-export function montoConSigno(m: Pick<MovimientoDto, 'tipo' | 'montoCentimos' | 'estado'>): { texto: string; tono: Tono; anulado: boolean } {
+/** Un movimiento es una pata de transferencia entre cuentas cuando lleva su identificador. */
+export const esTransferencia = (m: Pick<MovimientoDto, 'transferenciaId'>): boolean => m.transferenciaId !== null;
+
+/** La categoría del sistema que usan las transferencias: no se ofrece al registrar a mano ni se edita. */
+export const esCategoriaDeTransferencia = (c: Pick<CategoriaDto, 'nombre'>): boolean => c.nombre.trim().toLowerCase() === NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA.toLowerCase();
+
+/**
+ * Monto con signo y tono: los ingresos suman en verde, los egresos restan en rojo; un anulado no cuenta y una
+ * pata de transferencia no es ni ganancia ni gasto (tono suave: el dinero solo cambia de cuenta).
+ */
+export function montoConSigno(m: Pick<MovimientoDto, 'tipo' | 'montoCentimos' | 'estado'> & { transferenciaId?: string | null }): { texto: string; tono: Tono; anulado: boolean } {
   const anulado = m.estado === 'anulado';
   const signo = m.tipo === 'ingreso' ? '+' : '−';
-  return { texto: `${signo} ${formatearSoles(m.montoCentimos)}`, tono: anulado ? 'neutro' : m.tipo === 'ingreso' ? 'exito' : 'peligro', anulado };
+  const deTransferencia = (m.transferenciaId ?? null) !== null;
+  const tono: Tono = anulado ? 'neutro' : deTransferencia ? 'suave' : m.tipo === 'ingreso' ? 'exito' : 'peligro';
+  return { texto: `${signo} ${formatearSoles(m.montoCentimos)}`, tono, anulado };
 }
 
 /** Lo que identifica a un movimiento en la lista: su descripción o, si no tiene, el contacto. */
@@ -60,7 +71,7 @@ export const siguienteFormulario = (f: FormularioDeMovimiento): FormularioDeMovi
 
 /** Las categorías en uso del tipo del movimiento. */
 export const categoriasDe = (tipo: TipoDeMovimiento, categorias: readonly CategoriaDto[]): CategoriaDto[] =>
-  categorias.filter((c) => c.tipo === tipo && c.archivadoEn === null);
+  categorias.filter((c) => c.tipo === tipo && c.archivadoEn === null && !esCategoriaDeTransferencia(c));
 
 export function validarMovimiento(f: FormularioDeMovimiento, hoy: string): ErroresDeMovimiento {
   const e: ErroresDeMovimiento = {};
@@ -237,4 +248,95 @@ const MENSAJES: Record<string, string> = {
 export function mensajeDeRechazo(codigo: string, mensaje: string): string {
   if (codigo === 'sin_permiso' && mensaje.startsWith('Tu acceso')) return mensaje;
   return MENSAJES[codigo] ?? mensaje;
+}
+
+// ---- Nueva deuda a mano (por cobrar o por pagar) ----
+
+export type FormularioDeDeudaNueva = { contacto: { id: string; nombre: string } | null; concepto: string; total: Centimos | null; venceEn: string; notas: string };
+export type ErroresDeDeudaNueva = Partial<Record<'contacto' | 'concepto' | 'total' | 'venceEn' | 'notas', string>>;
+
+export const deudaNuevaEnBlanco = (): FormularioDeDeudaNueva => ({ contacto: null, concepto: '', total: null, venceEn: '', notas: '' });
+
+/** El vencimiento no puede ser anterior a hoy (la deuda se anota con la fecha de hoy). */
+export function validarDeudaNueva(f: FormularioDeDeudaNueva, hoy: string): ErroresDeDeudaNueva {
+  const e: ErroresDeDeudaNueva = {};
+  if (!f.contacto) e.contacto = 'Elige el cliente o proveedor.';
+  if (!f.concepto.trim()) e.concepto = 'Indica el concepto.';
+  else if (f.concepto.trim().length > 200) e.concepto = 'El concepto admite hasta 200 caracteres.';
+  if (f.total === null) e.total = 'Escribe el total.';
+  else if (!Number.isSafeInteger(f.total) || f.total <= 0) e.total = 'El total debe ser mayor que cero.';
+  if (f.venceEn && !/^\d{4}-\d{2}-\d{2}$/.test(f.venceEn)) e.venceEn = 'Elige una fecha válida.';
+  else if (f.venceEn && f.venceEn < hoy) e.venceEn = 'El vencimiento no puede ser anterior a hoy.';
+  if (f.notas.trim().length > 2000) e.notas = 'Las notas admiten hasta 2000 caracteres.';
+  return e;
+}
+
+/** Argumentos de `deuda_crear`: lo vacío no viaja. La fecha la fija el servidor (hoy de la empresa). */
+export function argumentosDeDeudaNueva(tipo: TipoDeDeuda, f: FormularioDeDeudaNueva): EntradaDe<'deuda_crear'> {
+  if (!f.contacto || f.total === null) throw new Error('No se arma una deuda sin contacto ni total.');
+  const args: EntradaDe<'deuda_crear'> = { tipo, contactoId: f.contacto.id, concepto: f.concepto.trim(), totalCentimos: f.total };
+  if (f.venceEn) args.venceEn = f.venceEn;
+  const notas = f.notas.trim();
+  if (notas) args.notas = notas;
+  return args;
+}
+
+/** Título de la hoja de nueva deuda, según el tipo. */
+export const TITULO_DE_DEUDA_NUEVA: Record<TipoDeDeuda, string> = { por_cobrar: 'Nueva deuda por cobrar', por_pagar: 'Nueva deuda por pagar' };
+export const ETIQUETA_DE_CONTACTO_DE_DEUDA: Record<TipoDeDeuda, string> = { por_cobrar: 'Cliente', por_pagar: 'Proveedor' };
+
+// ---- Transferencia entre cuentas ----
+
+export type FormularioDeTransferencia = { origenId: string; destinoId: string; monto: Centimos | null; fecha: string; nota: string };
+export type ErroresDeTransferencia = Partial<Record<'origenId' | 'destinoId' | 'monto' | 'fecha' | 'nota', string>>;
+
+/** Cuentas en uso (no archivadas). */
+export const cuentasVivas = (cuentas: readonly CuentaDto[]): CuentaDto[] => cuentas.filter((c) => c.archivadoEn === null);
+
+/** Formulario en blanco: sale de la cuenta principal y llega a la primera otra cuenta en uso. */
+export function transferenciaInicial(hoy: string, cuentas: readonly CuentaDto[]): FormularioDeTransferencia {
+  const vivas = cuentasVivas(cuentas);
+  const origen = vivas.find((c) => c.esPrincipal) ?? vivas[0];
+  const destino = vivas.find((c) => c.id !== origen?.id);
+  return { origenId: origen?.id ?? '', destinoId: destino?.id ?? '', monto: null, fecha: hoy, nota: '' };
+}
+
+/** Las cuentas a las que se puede transferir desde `origenId`: todas las vivas menos la de origen. */
+export const cuentasDeDestino = (cuentas: readonly CuentaDto[], origenId: string): CuentaDto[] => cuentasVivas(cuentas).filter((c) => c.id !== origenId);
+
+/** Hace falta al menos dos cuentas en uso para transferir. */
+export const puedeTransferir = (cuentas: readonly CuentaDto[]): boolean => cuentasVivas(cuentas).length >= 2;
+
+export function validarTransferencia(f: FormularioDeTransferencia, hoy: string): ErroresDeTransferencia {
+  const e: ErroresDeTransferencia = {};
+  if (!f.origenId) e.origenId = 'Elige la cuenta de origen.';
+  if (!f.destinoId) e.destinoId = 'Elige la cuenta de destino.';
+  else if (f.destinoId === f.origenId) e.destinoId = 'El destino debe ser otra cuenta.';
+  if (f.monto === null) e.monto = 'Escribe el monto.';
+  else if (!Number.isSafeInteger(f.monto) || f.monto <= 0) e.monto = 'El monto debe ser mayor que cero.';
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(f.fecha)) e.fecha = 'Elige la fecha.';
+  else if (f.fecha > hoy) e.fecha = 'La fecha no puede ser futura.';
+  if (f.nota.trim().length > 500) e.nota = 'La nota admite hasta 500 caracteres.';
+  return e;
+}
+
+/** Argumentos de `cuentas_transferir`: la nota vacía no viaja. */
+export function argumentosDeTransferencia(f: FormularioDeTransferencia): EntradaDe<'cuentas_transferir'> {
+  if (f.monto === null) throw new Error('No se arma una transferencia sin monto.');
+  const args: EntradaDe<'cuentas_transferir'> = { origenId: f.origenId, destinoId: f.destinoId, montoCentimos: f.monto, fecha: f.fecha };
+  const nota = f.nota.trim();
+  if (nota) args.nota = nota;
+  return args;
+}
+
+/** Tras guardar, la hoja queda lista para otra: se conservan cuentas y fecha; se vacían monto y nota. */
+export const siguienteTransferencia = (f: FormularioDeTransferencia): FormularioDeTransferencia => ({ ...f, monto: null, nota: '' });
+
+/** Intercambia origen y destino (el botón «Invertir»). */
+export const invertirTransferencia = (f: FormularioDeTransferencia): FormularioDeTransferencia => ({ ...f, origenId: f.destinoId, destinoId: f.origenId });
+
+/** Texto de un monto de transferencia neto del día en la caja: con signo, vacío si no hubo. */
+export function textoDeTransferenciasNetas(centimos: number): string {
+  if (centimos === 0) return formatearSoles(0 as Centimos);
+  return `${centimos > 0 ? '+' : '−'} ${formatearSoles(Math.abs(centimos) as Centimos)}`;
 }

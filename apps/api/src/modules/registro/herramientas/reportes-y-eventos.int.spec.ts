@@ -67,8 +67,8 @@ describe('caja_del_dia y registro_resumen', () => {
     expect(hoy).toEqual({
       fecha: HOY.dia,
       cuentas: [
-        { cuentaId: caja, nombre: 'Caja', saldoInicialCentimos: 25_000, ingresosCentimos: 12_051, egresosCentimos: 3_025, saldoFinalCentimos: 34_026, movimientos: 3 },
-        { cuentaId: banco, nombre: 'Banco', saldoInicialCentimos: 100_000, ingresosCentimos: 0, egresosCentimos: 20_000, saldoFinalCentimos: 80_000, movimientos: 1 },
+        { cuentaId: caja, nombre: 'Caja', saldoInicialCentimos: 25_000, ingresosCentimos: 12_051, egresosCentimos: 3_025, transferenciasNetasCentimos: 0, saldoFinalCentimos: 34_026, movimientos: 3 },
+        { cuentaId: banco, nombre: 'Banco', saldoInicialCentimos: 100_000, ingresosCentimos: 0, egresosCentimos: 20_000, transferenciasNetasCentimos: 0, saldoFinalCentimos: 80_000, movimientos: 1 },
       ],
       totalIngresosCentimos: 12_051,
       totalEgresosCentimos: 23_025,
@@ -81,7 +81,7 @@ describe('caja_del_dia y registro_resumen', () => {
   it('se puede pedir otro día y una sola cuenta', async () => {
     const ayer = await datosDe(dueno, 'caja_del_dia', { fecha: AYER, cuentaId: caja });
     expect(ayer).toMatchObject({ fecha: AYER, totalIngresosCentimos: 40_000, totalEgresosCentimos: 15_000 });
-    expect(ayer.cuentas).toEqual([{ cuentaId: caja, nombre: 'Caja', saldoInicialCentimos: 0, ingresosCentimos: 40_000, egresosCentimos: 15_000, saldoFinalCentimos: 25_000, movimientos: 2 }]);
+    expect(ayer.cuentas).toEqual([{ cuentaId: caja, nombre: 'Caja', saldoInicialCentimos: 0, ingresosCentimos: 40_000, egresosCentimos: 15_000, transferenciasNetasCentimos: 0, saldoFinalCentimos: 25_000, movimientos: 2 }]);
     expect(codigoDe(await dueno.herramienta('caja_del_dia', { cuentaId: randomUUID() }))).toBe('no_encontrado');
     expect(codigoDe(await dueno.herramienta('caja_del_dia', { fecha: 'ayer' }))).toBe('argumentos_invalidos');
     // La otra empresa no puede mirar la caja de una cuenta ajena, y su caja está vacía.

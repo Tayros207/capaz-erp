@@ -67,6 +67,8 @@ export const movimientoSchema = z.strictObject({
   descripcion: z.string().nullable(),
   deudaId: z.string().nullable(),
   sucursalId: z.string().nullable(),
+  /** Identificador común de las dos patas de una transferencia entre cuentas; `null` si no es una pata. */
+  transferenciaId: z.string().nullable(),
   origen: z.enum(ORIGENES_DE_MOVIMIENTO),
   estado: z.enum(ESTADOS_DE_MOVIMIENTO),
   anuladoEn: z.iso.datetime().nullable(),
@@ -131,6 +133,20 @@ export const registrarMovimientoSchema = z.strictObject({
   origen: z.enum(ORIGENES_DE_MOVIMIENTO).default('teclado'),
   origenRef: texto(200).optional(),
 });
+
+export const transferirCuentasSchema = z.strictObject({
+  origenId: z.uuid(),
+  destinoId: z.uuid(),
+  montoCentimos: positivo,
+  fecha: dia.optional(),
+  nota: texto(500).nullish(),
+});
+export const transferenciaSchema = z.strictObject({ transferenciaId: z.string(), egreso: movimientoSchema, ingreso: movimientoSchema });
+export type TransferenciaDto = z.infer<typeof transferenciaSchema>;
+
+/** Categoría reservada de las dos patas de una transferencia: no se crea, edita, archiva ni se usa a mano. */
+export const NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA = 'Transferencia';
+
 export const listarMovimientosSchema = z.strictObject({
   ...paginaSchema.shape,
   desde: dia.optional(),
@@ -184,6 +200,8 @@ export const cajaDelDiaSchema = z.strictObject({
       saldoInicialCentimos: z.number().int(),
       ingresosCentimos: z.number().int(),
       egresosCentimos: z.number().int(),
+      /** Entradas menos salidas por transferencias entre cuentas del día: no son ingresos ni egresos, pero mueven el saldo. */
+      transferenciasNetasCentimos: z.number().int(),
       saldoFinalCentimos: z.number().int(),
       movimientos: z.number().int(),
     }),
@@ -230,6 +248,7 @@ export const contratosDeRegistro = {
   movimiento_registrar: contrato(registrarMovimientoSchema, movimientoSchema),
   movimiento_ver: contrato(soloId, movimientoSchema),
   movimientos_listar: contrato(listarMovimientosSchema, listadoSchema(movimientoSchema)),
+  cuentas_transferir: contrato(transferirCuentasSchema, transferenciaSchema),
   movimiento_anular: contrato(z.strictObject({ id: z.uuid(), motivo }), movimientoSchema),
   deuda_crear: contrato(crearDeudaSchema, deudaSchema),
   deuda_ver: contrato(soloId, deudaConAbonosSchema),

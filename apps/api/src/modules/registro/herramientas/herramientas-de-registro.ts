@@ -11,6 +11,7 @@ import { deudaAnular, deudaCrear, deudaEditar } from './deudas-escritura.js';
 import { deudasListar, deudaVer } from './deudas-lectura.js';
 import { movimientoAnular, movimientoRegistrar } from './movimientos-escritura.js';
 import { movimientosListar, movimientoVer } from './movimientos-lectura.js';
+import { cuentasTransferir } from './transferencias.js';
 import { cajaDelDia, registroResumen } from './reportes-herramientas.js';
 
 export const HERRAMIENTAS_DE_REGISTRO = [
@@ -28,6 +29,7 @@ export const HERRAMIENTAS_DE_REGISTRO = [
   movimientoVer,
   movimientosListar,
   movimientoAnular,
+  cuentasTransferir,
   deudaCrear,
   deudaVer,
   deudasListar,

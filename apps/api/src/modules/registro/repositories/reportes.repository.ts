@@ -1,6 +1,7 @@
 import { and, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import { registroCategorias, registroDeudas, registroMovimientos } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import { LIKE_DE_TRANSFERENCIA } from '../domain/transferencia.js';
 
 // Lecturas agregadas del módulo (resumen del periodo y deudas abiertas). No escriben. Las sumas salen de la base
 // como enteros (`bigint`) y se convierten comprobando el rango seguro.
@@ -13,7 +14,7 @@ const aEntero = (valor: string | number | null): number => {
 
 export type TotalPorCategoria = { categoriaId: string | null; nombre: string | null; tipo: 'ingreso' | 'egreso'; totalCentimos: number };
 
-/** Movimientos ACTIVOS del rango, agrupados por tipo y categoría (del total mayor al menor). */
+/** Movimientos ACTIVOS del rango (sin las transferencias entre cuentas), agrupados por tipo y categoría (del total mayor al menor). */
 export async function totalesPorCategoria(tx: Transaccion, ctx: ContextoDeEmpresa, desde: string, hasta: string): Promise<TotalPorCategoria[]> {
   const m = registroMovimientos;
   const total = sql<string>`sum(${m.montoCentimos})::bigint`;
@@ -21,7 +22,7 @@ export async function totalesPorCategoria(tx: Transaccion, ctx: ContextoDeEmpres
     .select({ categoriaId: m.categoriaId, nombre: registroCategorias.nombre, tipo: m.tipo, total })
     .from(m)
     .leftJoin(registroCategorias, and(eq(registroCategorias.tenantId, m.tenantId), eq(registroCategorias.id, m.categoriaId)))
-    .where(and(eq(m.tenantId, ctx.empresaId), eq(m.estado, 'activo'), gte(m.fecha, desde), lte(m.fecha, hasta)))
+    .where(and(eq(m.tenantId, ctx.empresaId), eq(m.estado, 'activo'), sql`(${m.origenRef} is null or ${m.origenRef} not like ${LIKE_DE_TRANSFERENCIA})`, gte(m.fecha, desde), lte(m.fecha, hasta)))
     .groupBy(m.categoriaId, registroCategorias.nombre, m.tipo)
     .orderBy(m.tipo, sql`${total} desc`, registroCategorias.nombre);
   return filas.map((f) => ({ categoriaId: f.categoriaId, nombre: f.nombre, tipo: f.tipo as 'ingreso' | 'egreso', totalCentimos: aEntero(f.total) }));

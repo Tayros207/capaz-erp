@@ -1,5 +1,6 @@
 import type { CategoriaDto, CuentaDto, DeudaDto, MovimientoDto } from '@capaz/shared';
 import { codigoDeDeuda, codigoDeMovimiento } from '../domain/codigos.js';
+import { transferenciaDeReferencia } from '../domain/transferencia.js';
 import { estaVencida, type EstadoDeDeuda } from '../domain/deuda.js';
 import type { Categoria } from '../repositories/categorias.repository.js';
 import type { Cuenta } from '../repositories/cuentas.repository.js';
@@ -51,6 +52,7 @@ export const aMovimientoDto = (f: MovimientoConNombres): MovimientoDto => ({
   descripcion: f.descripcion,
   deudaId: f.deudaId,
   sucursalId: f.sucursalId,
+  transferenciaId: transferenciaDeReferencia(f.origenRef),
   origen: f.origen as MovimientoDto['origen'],
   estado: f.estado as MovimientoDto['estado'],
   anuladoEn: iso(f.anuladoEn),

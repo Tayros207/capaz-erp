@@ -14,6 +14,8 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { listarDeudas, POR_PAGINA, verResumen } from './api.ts';
+import { HojaDeDeudaNueva } from './hoja-deuda-nueva.tsx';
+import { usePuedeEditar } from './use-registro.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
 import {
   argumentosDeListadoDeDeudas, diaEnZona, ETIQUETA_DE_FILTRO_DE_DEUDAS, formatearDia, textoDeEstadoDeDeuda, TITULO_DE_DEUDAS, tonoDeEstadoDeDeuda,
@@ -54,6 +56,8 @@ function CifrasDeDeudas({ tipo }: { tipo: TipoDeDeuda }) {
 /** Por cobrar y por pagar: la misma pantalla con el tipo de deuda distinto. */
 export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
   const navegar = useNavigate();
+  const puedeEditar = usePuedeEditar('registro:editar');
+  const [nueva, setNueva] = useState(false);
   const [estado, setEstado] = useState<FiltroDeDeudas>('abiertas');
   const lista = useInfiniteQuery({
     queryKey: [...CLAVE_REGISTRO, 'deudas', tipo, estado],
@@ -66,7 +70,7 @@ export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <EncabezadoDePagina titulo={titulo} />
+      <EncabezadoDePagina titulo={titulo} accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNueva(true)}>Nueva deuda</Boton> : undefined} />
       <CifrasDeDeudas tipo={tipo} />
       <div className="max-w-xs">
         <CampoSelect etiqueta="Estado" value={estado} onChange={(e) => setEstado(e.target.value as FiltroDeDeudas)}>
@@ -94,6 +98,7 @@ export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
           <CargarMas cursor={lista.hasNextPage ? (lista.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={lista.isFetchingNextPage} onCargar={() => void lista.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
         </>
       )}
+      <HojaDeDeudaNueva abierto={nueva} tipo={tipo} alCerrar={() => setNueva(false)} />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { and, asc, eq, isNull, ne, sql, type SQL } from 'drizzle-orm';
+import { NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA } from '@capaz/shared';
 import { registroCategorias } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import { normalizarNombre } from '../domain/catalogos.js';
 
 // Repositorio de categorías de ingreso y de egreso. Mismas reglas que el de cuentas.
 
@@ -91,4 +93,24 @@ export async function archivarCategoria(tx: Transaccion, ctx: ContextoDeEmpresa,
     .where(and(deEmpresa(ctx), eq(registroCategorias.id, id)))
     .returning();
   return fila ?? null;
+}
+
+/**
+ * Las dos categorías reservadas «Transferencia» (de ingreso y de egreso). Se crean si faltan (empresas que ya tenían
+ * catálogo antes de existir las transferencias); segura ante dos transferencias a la vez por el índice único.
+ */
+export async function categoriasDeTransferencia(tx: Transaccion, ctx: ContextoDeEmpresa): Promise<{ ingreso: string; egreso: string }> {
+  const nombreNormalizado = normalizarNombre(NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA);
+  await tx
+    .insert(registroCategorias)
+    .values((['ingreso', 'egreso'] as const).map((tipo) => ({ tenantId: ctx.empresaId, nombre: NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, nombreNormalizado, tipo, creadoPor: ctx.usuarioId })))
+    .onConflictDoNothing();
+  const filas = await tx
+    .select({ id: registroCategorias.id, tipo: registroCategorias.tipo })
+    .from(registroCategorias)
+    .where(and(deEmpresa(ctx), eq(registroCategorias.nombreNormalizado, nombreNormalizado), isNull(registroCategorias.archivadoEn)));
+  const ingreso = filas.find((f) => f.tipo === 'ingreso');
+  const egreso = filas.find((f) => f.tipo === 'egreso');
+  if (!ingreso || !egreso) throw new Error('No se pudieron preparar las categorías de transferencia.');
+  return { ingreso: ingreso.id, egreso: egreso.id };
 }

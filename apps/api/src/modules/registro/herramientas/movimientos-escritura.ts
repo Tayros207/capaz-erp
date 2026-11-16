@@ -5,6 +5,7 @@ import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { revertirAbono, type EstadoDeDeuda } from '../domain/deuda.js';
 import { categoriaUtilizable, fechaDeMovimiento, puedeAnularseElMovimiento } from '../domain/movimiento.js';
+import { esNombreReservado, transferenciaDeReferencia, MENSAJE_DE_ORIGEN_RESERVADO, PREFIJO_DE_TRANSFERENCIA } from '../domain/transferencia.js';
 import { asegurarCatalogos } from '../repositories/catalogos.repository.js';
 import { verCategoria } from '../repositories/categorias.repository.js';
 import { existeSucursal } from '../repositories/cuentas.repository.js';
@@ -13,6 +14,7 @@ import { anularMovimiento, bloquearMovimiento, existeContacto, verMovimiento } f
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
 import { guardarMovimiento, resolverCuenta } from './guardar-movimiento.js';
 import { aMovimientoDto, codigoDe, codigoDeLaDeuda } from './mapeo.js';
+import { anularTransferencia, resumirAnulacionDeTransferencia } from './transferencias-anulacion.js';
 
 // Escrituras de movimientos: registrar (mueve dinero) y anular (crítica). Un movimiento nunca se edita ni se borra.
 
@@ -45,6 +47,7 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
   },
   auditar: (_a, d) => ({ entidadTipo: 'movimiento', entidadId: d?.id, resumen: d ? { codigo: d.codigo, tipo: d.tipo, montoCentimos: d.montoCentimos } : undefined }),
   async ejecutar(args, ctx, tx) {
+    if (args.origenRef?.startsWith(PREFIJO_DE_TRANSFERENCIA)) return rechazo('argumentos_invalidos', MENSAJE_DE_ORIGEN_RESERVADO);
     await asegurarCatalogos(tx, ctx);
     const hoy = await hoyDeLaEmpresa(tx);
     const fecha = fechaDeMovimiento(args.fecha, hoy.dia);
@@ -54,6 +57,7 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
     if (args.categoriaId) {
       const categoria = await verCategoria(tx, ctx, args.categoriaId);
       if (!categoria) return rechazo('no_encontrado', 'No existe esa categoría.');
+      if (esNombreReservado(categoria.nombre)) return rechazo('conflicto', 'La categoría «Transferencia» es solo de las transferencias entre cuentas: usa «Transferir entre cuentas».');
       const regla = categoriaUtilizable(args.tipo, categoria);
       if (!regla.ok) return rechazoDe(regla);
     }
@@ -99,6 +103,8 @@ export const movimientoAnular = definirHerramienta('movimiento_anular', {
     if (!mov) return { ok: false, error: { codigo: 'no_encontrado', mensaje: NO_EXISTE } };
     const regla = puedeAnularseElMovimiento(mov.estado);
     if (!regla.ok) return { ok: false, error: { codigo: regla.codigo, mensaje: regla.mensaje } };
+    const transferenciaId = transferenciaDeReferencia(mov.origenRef);
+    if (transferenciaId) return resumirAnulacionDeTransferencia(tx, ctx, transferenciaId);
     const deuda = mov.deudaId ? await verDeuda(tx, ctx, mov.deudaId, null) : null;
     let resumen = `Anularás el ${mov.tipo} ${codigoDe(mov)} de ${formatearSoles(mov.montoCentimos)}.`;
     if (deuda) {
@@ -111,6 +117,8 @@ export const movimientoAnular = definirHerramienta('movimiento_anular', {
     const propietario = propietarioDe(ctx);
     const previo = await verMovimiento(tx, ctx, args.id, propietario);
     if (!previo) return rechazo('no_encontrado', NO_EXISTE);
+    const transferenciaId = transferenciaDeReferencia(previo.origenRef);
+    if (transferenciaId) return anularTransferencia(tx, ctx, previo, transferenciaId, args.motivo);
     // Orden de bloqueo igual que al abonar (primero la deuda, después el movimiento): sin interbloqueos.
     const deuda = previo.deudaId ? await bloquearDeuda(tx, ctx, previo.deudaId, null) : null;
     if (previo.deudaId && !deuda) throw new Error('El abono apunta a una deuda que no existe.');

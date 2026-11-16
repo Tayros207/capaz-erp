@@ -12,22 +12,17 @@ import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { Lista } from '../../shared/ui/datos/lista.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
-import { Insignia } from '../../shared/ui/insignia.tsx';
 import { listarMovimientos, POR_PAGINA, verCajaDelDia } from './api.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
-import { argumentosDeListado, detalleDeMovimiento, diaEnZona, FILTROS_VACIOS } from './logica.ts';
+import { DetalleDeMovimiento } from './detalle-de-movimiento.tsx';
+import { argumentosDeListado, diaEnZona, FILTROS_VACIOS, textoDeTransferenciasNetas } from './logica.ts';
 import { Monto } from './pantalla-movimientos.tsx';
 
 const COLUMNAS: Array<Columna<MovimientoDto>> = [
   { id: 'codigo', titulo: 'Código', celda: (m) => m.codigo },
   {
     id: 'detalle', titulo: 'Detalle', principal: true,
-    celda: (m) => (
-      <span className="inline-flex flex-wrap items-center gap-2">
-        {detalleDeMovimiento(m)}
-        {m.estado === 'anulado' ? <Insignia tono="neutro">Anulado</Insignia> : null}
-      </span>
-    ),
+    celda: (m) => <DetalleDeMovimiento m={m} />,
   },
   { id: 'cuenta', titulo: 'Cuenta', celda: (m) => m.cuentaNombre },
   { id: 'monto', titulo: 'Monto', alinear: 'derecha', celda: (m) => <Monto m={m} /> },
@@ -83,6 +78,7 @@ export function PantallaCaja() {
                 <Cifra etiqueta="Saldo inicial" valor={formatearSoles(c.saldoInicialCentimos)} />
                 <Cifra etiqueta="Ingresos" valor={formatearSoles(c.ingresosCentimos)} tono="exito" />
                 <Cifra etiqueta="Egresos" valor={formatearSoles(c.egresosCentimos)} tono="peligro" />
+                {c.transferenciasNetasCentimos !== 0 ? <Cifra etiqueta="Transferencias (neto)" valor={textoDeTransferenciasNetas(c.transferenciasNetasCentimos)} ayuda="No cuentan como ingresos ni egresos" /> : null}
                 <Cifra etiqueta="Saldo final" valor={formatearSoles(c.saldoFinalCentimos)} />
               </GrupoDeCifras>
             </section>

@@ -1,7 +1,8 @@
 import { exito, rechazo } from '@capaz/shared';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { normalizarNombre } from '../domain/catalogos.js';
-import { archivarCategoria, crearCategoria, listarCategorias, renombrarCategoria, type Categoria } from '../repositories/categorias.repository.js';
+import { esNombreReservado, MENSAJE_DE_NOMBRE_RESERVADO } from '../domain/transferencia.js';
+import { archivarCategoria, crearCategoria, listarCategorias, renombrarCategoria, verCategoria, type Categoria } from '../repositories/categorias.repository.js';
 import { ID_DE_EJEMPLO, MODULO } from './comun.js';
 import { aCategoriaDto } from './mapeo.js';
 
@@ -9,6 +10,7 @@ import { aCategoriaDto } from './mapeo.js';
 
 const NO_EXISTE = 'No existe esa categoría.';
 const ID = { nombre: 'id', queSeAnota: 'Identificador de la categoría.', ejemplo: ID_DE_EJEMPLO };
+const reservada = () => rechazo('conflicto', 'La categoría «Transferencia» es del sistema: no se cambia ni se archiva.');
 const AUDITAR = (_a: unknown, d: { id: string } | null) => ({ entidadTipo: 'categoria', entidadId: d?.id });
 const repetida = (c: Categoria) => rechazo('conflicto', `Ya existe la categoría «${c.nombre}» de ${c.tipo}s.`, [{ id: c.id, nombre: c.nombre, detalle: c.tipo }]);
 
@@ -54,6 +56,7 @@ export const categoriaCrear = definirHerramienta('categoria_crear', {
   },
   auditar: AUDITAR,
   async ejecutar(args, ctx, tx) {
+    if (esNombreReservado(args.nombre)) return rechazo('conflicto', MENSAJE_DE_NOMBRE_RESERVADO);
     const r = await crearCategoria(tx, ctx, { nombre: args.nombre, nombreNormalizado: normalizarNombre(args.nombre), tipo: args.tipo });
     return r.creada ? exito(aCategoriaDto(r.categoria)) : repetida(r.existente);
   },
@@ -75,6 +78,9 @@ export const categoriaEditar = definirHerramienta('categoria_editar', {
   },
   auditar: (a) => ({ entidadTipo: 'categoria', entidadId: a.id }),
   async ejecutar(args, ctx, tx) {
+    if (esNombreReservado(args.nombre)) return rechazo('conflicto', MENSAJE_DE_NOMBRE_RESERVADO);
+    const actual = await verCategoria(tx, ctx, args.id);
+    if (actual && esNombreReservado(actual.nombre)) return reservada();
     const r = await renombrarCategoria(tx, ctx, args.id, { nombre: args.nombre, nombreNormalizado: normalizarNombre(args.nombre) });
     if (!r) return rechazo('no_encontrado', NO_EXISTE);
     return 'existente' in r ? repetida(r.existente) : exito(aCategoriaDto(r.categoria));
@@ -97,6 +103,8 @@ export const categoriaArchivar = definirHerramienta('categoria_archivar', {
   },
   auditar: AUDITAR,
   async ejecutar(args, ctx, tx) {
+    const actual = await verCategoria(tx, ctx, args.id);
+    if (actual && esNombreReservado(actual.nombre)) return reservada();
     const f = await archivarCategoria(tx, ctx, args.id);
     return f ? exito(aCategoriaDto(f)) : rechazo('no_encontrado', NO_EXISTE);
   },

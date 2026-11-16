@@ -58,10 +58,10 @@ describe('saldos (reglas 8 y 9)', () => {
 });
 
 describe('catálogos por defecto (regla 10)', () => {
-  it('una cuenta «Caja» y ocho categorías con su tipo', () => {
+  it('una cuenta «Caja» y diez categorías con su tipo (dos son la reservada «Transferencia»)', () => {
     expect(CUENTA_POR_DEFECTO).toEqual({ nombre: 'Caja', tipo: 'caja' });
-    expect(CATEGORIAS_POR_DEFECTO.filter((c) => c.tipo === 'ingreso').map((c) => c.nombre)).toEqual(['Ventas', 'Cobros', 'Otros ingresos']);
-    expect(CATEGORIAS_POR_DEFECTO.filter((c) => c.tipo === 'egreso').map((c) => c.nombre)).toEqual(['Compras', 'Pagos', 'Servicios', 'Sueldos', 'Otros egresos']);
+    expect(CATEGORIAS_POR_DEFECTO.filter((c) => c.tipo === 'ingreso').map((c) => c.nombre)).toEqual(['Ventas', 'Cobros', 'Otros ingresos', 'Transferencia']);
+    expect(CATEGORIAS_POR_DEFECTO.filter((c) => c.tipo === 'egreso').map((c) => c.nombre)).toEqual(['Compras', 'Pagos', 'Servicios', 'Sueldos', 'Otros egresos', 'Transferencia']);
   });
   it('un abono usa «Cobros» o «Pagos», que están entre las de su tipo', () => {
     expect(categoriaDeAbono('ingreso')).toBe('Cobros');
