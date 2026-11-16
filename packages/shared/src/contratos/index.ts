@@ -19,6 +19,7 @@ import { contratosDeInsumos, eventosDeInsumos } from './insumos.js';
 import { contratosDeCompras, eventosDeCompras } from './compras.js';
 import { contratosDePersonal, eventosDePersonal } from './personal.js';
 import { contratosDeReportes, eventosDeReportes } from './reportes.js';
+import { contratosDeCaptura, eventosDeCaptura } from './captura.js';
 import { contratosDeCotizador, eventosDeCotizador } from './cotizador.js';
 
 export * from './empresa.js';
@@ -40,6 +41,7 @@ export * from './insumos.js';
 export * from './compras.js';
 export * from './personal.js';
 export * from './reportes.js';
+export * from './captura.js';
 export * from './cotizador.js';
 
 // Cada área aporta sus contratos y sus eventos; agregar uno solo obliga a editar el archivo del área.
@@ -62,6 +64,7 @@ export const CONTRATOS = {
   ...contratosDeCompras,
   ...contratosDePersonal,
   ...contratosDeReportes,
+  ...contratosDeCaptura,
   ...contratosDeCotizador,
 } as const satisfies Record<string, ContratoDeHerramienta>;
 
@@ -88,6 +91,7 @@ export const EVENTOS = {
   ...eventosDeCompras,
   ...eventosDePersonal,
   ...eventosDeReportes,
+  ...eventosDeCaptura,
   ...eventosDeCotizador,
 } as const satisfies Record<string, z.ZodType>;
 

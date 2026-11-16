@@ -13,6 +13,7 @@ import { ProductosModule } from './core/productos/productos.module.js';
 import { SucursalesModule } from './core/sucursales/sucursales.module.js';
 import { MiembrosModule } from './core/miembros/miembros.module.js';
 import { BorradoresModule } from './core/borradores/borradores.module.js';
+import { CapturaModule } from './core/captura/captura.module.js';
 import { PlataformaModule } from './core/plataforma/plataforma.module.js';
 import { ConectoresModule } from './core/conectores/conectores.module.js';
 import { AutomatizacionesModule } from './core/automatizaciones/automatizaciones.module.js';
@@ -20,6 +21,7 @@ import { IntercambioModule } from './core/intercambio/intercambio.module.js';
 import { CrmModule } from './modules/crm/crm.module.js';
 import { manifiestoCrm } from './modules/crm/crm.manifest.js';
 import { OrdenesModule } from './modules/ordenes/ordenes.module.js';
+import { CotizadorModule } from './modules/cotizador/cotizador.module.js';
 import { manifiestoOrdenes } from './modules/ordenes/ordenes.manifest.js';
 import { ComprasModule } from './modules/compras/compras.module.js';
 import { manifiestoCompras } from './modules/compras/compras.manifest.js';
@@ -65,6 +67,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
     SucursalesModule,
     MiembrosModule,
     BorradoresModule,
+    CapturaModule,
     PlataformaModule,
     ConectoresModule,
     AutomatizacionesModule,
@@ -72,6 +75,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
     RegistroModule,
     CrmModule,
     OrdenesModule,
+    CotizadorModule,
     ComprasModule,
     InsumosModule,
     PersonalModule,
