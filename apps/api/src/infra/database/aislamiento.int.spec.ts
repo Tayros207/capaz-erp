@@ -33,8 +33,8 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   },
   'core.contadores': { sql: `insert into core.contadores (tenant_id, clave, serie, anio) values ($1, 'ejemplo', '', 2026)`, modo: 'completo' },
   'core.clientes': { sql: `insert into core.clientes (id, tenant_id, clase, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'cl')::uuid, $1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
-  'core.productos': { sql: `insert into core.productos (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
-  'core.sucursales': { sql: `insert into core.sucursales (tenant_id, codigo, nombre) values ($1, 'LIM', 'Lima')`, modo: 'completo' },
+  'core.productos': { sql: `insert into core.productos (id, tenant_id, nombre, nombre_normalizado, tipo, creado_por) values (md5($1::text || 'pr')::uuid, $1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
+  'core.sucursales': { sql: `insert into core.sucursales (id, tenant_id, codigo, nombre) values (md5($1::text || 'su')::uuid, $1, 'LIM', 'Lima')`, modo: 'completo' },
   'core.conexiones': { sql: `insert into core.conexiones (id, tenant_id, conector, creado_por) values (md5($1::text || 'c1')::uuid, $1, 'ejemplo', 'u1')`, modo: 'completo' },
   'core.referencias_externas': { sql: `insert into core.referencias_externas (tenant_id, conector, entidad, id_interno, id_externo) values ($1, 'ejemplo', 'cliente', 'i1', 'x1')`, modo: 'completo' },
   'core.sincronizaciones': {
@@ -109,6 +109,30 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into ordenes.pedido_eventos (tenant_id, pedido_id, tipo, usuario_id) values ($1, md5($1::text || 'o1')::uuid, 'creado', 'u1')`,
     modo: 'insercion',
   },
+  'insumos.articulos': {
+    sql: `insert into insumos.articulos (id, tenant_id, producto_id, creado_por) values (md5($1::text || 'i1')::uuid, $1, md5($1::text || 'pr')::uuid, 'u1')`,
+    modo: 'completo',
+  },
+  'insumos.existencias': {
+    sql: `insert into insumos.existencias (id, tenant_id, articulo_id, sucursal_id, cantidad_milesimas, creado_por) values (md5($1::text || 'i2')::uuid, $1, md5($1::text || 'i1')::uuid, md5($1::text || 'su')::uuid, 5000, 'u1')`,
+    modo: 'completo',
+  },
+  'insumos.movimientos': {
+    sql: `insert into insumos.movimientos (tenant_id, articulo_id, sucursal_id, tipo, cantidad_milesimas, existencia_resultante_milesimas, creado_por) values ($1, md5($1::text || 'i1')::uuid, md5($1::text || 'su')::uuid, 'entrada', 5000, 5000, 'u1')`,
+    modo: 'insercion',
+  },
+  'personal.colaboradores': {
+    sql: `insert into personal.colaboradores (id, tenant_id, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'p1')::uuid, $1, 'Luis', 'luis', 'u1')`,
+    modo: 'completo',
+  },
+  'personal.asistencias': {
+    sql: `insert into personal.asistencias (tenant_id, colaborador_id, fecha, creado_por) values ($1, md5($1::text || 'p1')::uuid, date '2026-01-01', 'u1')`,
+    modo: 'completo',
+  },
+  'personal.adelantos': {
+    sql: `insert into personal.adelantos (tenant_id, numero, anio, colaborador_id, monto_centimos, fecha, creado_por) values ($1, 1, 2026, md5($1::text || 'p1')::uuid, 5000, date '2026-01-01', 'u1')`,
+    modo: 'insercion',
+  },
   'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
 };
 
@@ -122,7 +146,7 @@ beforeAll(async () => {
   owner = abrirPool('owner');
   await owner.query(`insert into core.modulos (codigo, nombre) values ('ejemplo', 'Ejemplo') on conflict do nothing`);
   await owner.query(
-    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos') on conflict do nothing`,
+    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos'), ('insumos', 'Inventario'), ('compras', 'Compras'), ('personal', 'Personal') on conflict do nothing`,
   );
   await owner.query(`insert into core.conectores (codigo, nombre, autenticacion) values ('ejemplo', 'Ejemplo', 'ninguna') on conflict do nothing`);
   // empresa_modulos va antes que usuario_modulos (llave compuesta).
@@ -134,7 +158,7 @@ beforeAll(async () => {
       emp,
       (c) =>
         c.query(
-          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo') on conflict do nothing`,
+          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo'), ($1,'insumos','activo'), ($1,'compras','activo'), ($1,'personal','activo') on conflict do nothing`,
           [emp],
         ),
       { confirmar: true },
@@ -153,7 +177,7 @@ describe('toda tabla con tenant_id tiene su ejemplo aquí', () => {
   it('la lista de ejemplos cubre el catálogo', async () => {
     const { rows } = await owner.query<{ tabla: string }>(`
       select n.nspname || '.' || c.relname as tabla from pg_class c join pg_namespace n on n.oid = c.relnamespace
-      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador','crm','ordenes')
+      where c.relkind = 'r' and n.nspname in ('core','registro','cotizador','crm','ordenes','insumos','compras','personal')
         and exists (select 1 from pg_attribute a where a.attrelid = c.oid and a.attname = 'tenant_id')`);
     expect(rows.map((r) => r.tabla).sort()).toEqual(Object.keys(EJEMPLOS).sort());
   });
@@ -294,5 +318,138 @@ describe('crm: reglas propias de DB2b con capaz_app', () => {
         }),
       ).rejects.toThrow(/uq_crm_etapas_/);
     }
+  });
+});
+
+describe('insumos: reglas propias de DB3a con capaz_app', () => {
+  const art = `md5($1::text || 'i1')::uuid`;
+  const suc = `md5($1::text || 'su')::uuid`;
+  const mov = (tipo: string, cantidad: number, resultante: number, extra = '') =>
+    `insert into insumos.movimientos (tenant_id, articulo_id, sucursal_id, tipo, cantidad_milesimas, existencia_resultante_milesimas, creado_por${extra ? ', origen_tipo, origen_id' : ''}) values ($1, ${art}, ${suc}, '${tipo}', ${cantidad}, ${resultante}, 'u1'${extra})`;
+
+  it('los movimientos solo se insertan: ni update ni delete, ni siquiera el dueño', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update insumos.movimientos set motivo = 'x'`))).rejects.toThrow();
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from insumos.movimientos`))).rejects.toThrow();
+    await expect(comoEmpresa(owner, A, (c) => c.query(`update insumos.movimientos set motivo = 'x'`))).rejects.toThrow(/solo inserción/);
+  });
+
+  it('la existencia no puede ser negativa y es única por artículo y sucursal', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update insumos.existencias set cantidad_milesimas = -1`))).rejects.toThrow(/existencia_no_negativa/);
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into insumos.existencias (tenant_id, articulo_id, sucursal_id, creado_por) values ($1, ${art}, ${suc}, 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/insumos_existencias_articulo_sucursal/);
+  });
+
+  it('un movimiento respeta el signo de su tipo y la existencia resultante no es negativa', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(mov('entrada', -1000, 4000), [A]))).rejects.toThrow(/movimiento_signo/);
+    await expect(comoEmpresa(app, A, (c) => c.query(mov('salida', 1000, 4000), [A]))).rejects.toThrow(/movimiento_signo/);
+    await expect(comoEmpresa(app, A, (c) => c.query(mov('ajuste', 0, 5000), [A]))).rejects.toThrow(/movimiento_signo/);
+    await expect(comoEmpresa(app, A, (c) => c.query(mov('salida', -9000, -4000), [A]))).rejects.toThrow(/movimiento_existencia_resultante/);
+    await comoEmpresa(app, A, async (c) => {
+      await c.query(mov('salida', -1000, 4000), [A]);
+      await c.query(mov('ajuste', -500, 3500), [A]);
+    });
+  });
+
+  it('una recepción no suma dos veces: único por origen y artículo', async () => {
+    const con = `, 'compra', 'c-1'`;
+    await expect(
+      comoEmpresa(app, A, async (c) => {
+        await c.query(mov('entrada', 1000, 6000, con), [A]);
+        await c.query(mov('entrada', 1000, 7000, con), [A]);
+      }),
+    ).rejects.toThrow(/uq_insumos_movimientos_origen/);
+  });
+
+  it('origen_tipo y origen_id van juntos', async () => {
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into insumos.movimientos (tenant_id, articulo_id, sucursal_id, tipo, cantidad_milesimas, existencia_resultante_milesimas, origen_tipo, creado_por) values ($1, ${art}, ${suc}, 'entrada', 1000, 6000, 'compra', 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/movimiento_origen/);
+  });
+
+  it('con el módulo insumos en baja, un insert falla con «no está activo»', async () => {
+    const E = empresaDePrueba();
+    await comoEmpresa(
+      owner,
+      E,
+      async (c) => {
+        await c.query(`insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1, 'insumos', 'activo')`, [E]);
+        await c.query(`update core.empresa_modulos set estado = 'baja', baja_en = now() where tenant_id = $1 and modulo = 'insumos'`, [E]);
+      },
+      { confirmar: true },
+    );
+    await expect(
+      comoEmpresa(app, E, (c) => c.query(`insert into insumos.articulos (tenant_id, producto_id, creado_por) values ($1, gen_random_uuid(), 'u1')`, [E])),
+    ).rejects.toThrow(/no está activo/);
+  });
+});
+
+describe('personal: reglas propias de DB3a con capaz_app', () => {
+  const col = `md5($1::text || 'p1')::uuid`;
+
+  it('un adelanto no cambia de monto ni se borra, pero sí se anula', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update personal.adelantos set monto_centimos = 1`))).rejects.toThrow(/permission denied/);
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from personal.adelantos`))).rejects.toThrow(/permission denied/);
+    await comoEmpresa(app, A, async (c) => {
+      const r = await c.query(`update personal.adelantos set estado = 'anulado', anulado_en = now(), anulado_por = 'u1', motivo_anulacion = 'prueba'`);
+      expect(r.rowCount).toBeGreaterThan(0);
+    });
+  });
+
+  it('un adelanto exige monto positivo y coherencia entre estado y anulación', async () => {
+    const ins = (monto: number, estado = 'registrado') =>
+      `insert into personal.adelantos (tenant_id, numero, anio, colaborador_id, monto_centimos, fecha, estado, creado_por) values ($1, 2, 2026, ${col}, ${monto}, date '2026-01-01', '${estado}', 'u1')`;
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(0), [A]))).rejects.toThrow(/adelanto_monto/);
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(100, 'anulado'), [A]))).rejects.toThrow(/adelanto_anulacion/);
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(100, 'otro'), [A]))).rejects.toThrow(/adelanto_estado/);
+  });
+
+  it('una asistencia es única por colaborador y fecha, y la salida exige entrada', async () => {
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, creado_por) values ($1, ${col}, date '2026-01-01', 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/personal_asistencias_colaborador_fecha/);
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, salida, creado_por) values ($1, ${col}, date '2026-01-02', now(), 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/asistencia_salida/);
+    await comoEmpresa(app, A, (c) =>
+      c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, entrada, salida, creado_por) values ($1, ${col}, date '2026-01-02', now(), now(), 'u1')`, [A]),
+    );
+  });
+
+  it('el estado de una asistencia es uno de la lista', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update personal.asistencias set estado = 'otro'`))).rejects.toThrow(/asistencia_estado/);
+  });
+
+  it('el nombre de un colaborador activo es único, pero uno archivado libera el nombre', async () => {
+    const ins = `insert into personal.colaboradores (tenant_id, nombre, nombre_normalizado, creado_por) values ($1, 'Luis', 'luis', 'u1')`;
+    await expect(comoEmpresa(app, A, (c) => c.query(ins, [A]))).rejects.toThrow(/uq_personal_colaboradores_nombre/);
+    await comoEmpresa(app, A, async (c) => {
+      await c.query(`update personal.colaboradores set archivado_en = now()`);
+      await c.query(ins, [A]);
+    });
+  });
+
+  it('con el módulo personal en baja, un insert falla con «no está activo»', async () => {
+    const E = empresaDePrueba();
+    await comoEmpresa(
+      owner,
+      E,
+      async (c) => {
+        await c.query(`insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1, 'personal', 'activo')`, [E]);
+        await c.query(`update core.empresa_modulos set estado = 'baja', baja_en = now() where tenant_id = $1 and modulo = 'personal'`, [E]);
+      },
+      { confirmar: true },
+    );
+    await expect(
+      comoEmpresa(app, E, (c) => c.query(`insert into personal.colaboradores (tenant_id, nombre, nombre_normalizado, creado_por) values ($1, 'X', 'x', 'u1')`, [E])),
+    ).rejects.toThrow(/no está activo/);
   });
 });

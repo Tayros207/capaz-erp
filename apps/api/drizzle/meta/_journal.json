@@ -120,6 +120,27 @@
       "when": 1794788855687,
       "tag": "0016_ordenes",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794797766680,
+      "tag": "0017_modulos_clasicos_ii_base",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794797832364,
+      "tag": "0018_insumos",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794797894696,
+      "tag": "0019_personal",
+      "breakpoints": true
     }
   ]
 }
