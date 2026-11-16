@@ -108,3 +108,14 @@ Librerías añadidas en este bloque (autorizadas 2026-11-16): `@fontsource-varia
 - **Aprobada la fuente Inter** (`@fontsource-variable/inter` 5.3.0, OFL-1.1, local) y el conjunto de librerías de diseño ya registradas.
 - **Color de acción:** el verde esmeralda se cambia por un **índigo suave** (`--c-accion` ≈ oklch(0.5 0.13 268) en claro, oklch(0.74 0.11 268) en oscuro; barra lateral activa en el mismo tono). El acento «esmeralda» queda solo como color opcional de módulo. Cambio en `tokens.css`.
 - Pendiente de revisión visual del usuario a 390 y 1280 px, claro y oscuro.
+
+## 9. Segunda pasada de la consola del operador (2026-11-16)
+
+Autorización explícita del usuario para usar más librerías y «súper mejorar el rediseño de operador».
+
+- **Cabecera:** los indicadores solo aparecen en Empresas (en Planes, Solicitudes y la ficha la banda queda compacta); en móvil son una tira deslizable en lugar de seis filas. Se quitaron las migas, que repetían las secciones.
+- **Lista de empresas:** cabecera pegajosa, densidad conmutable (cómoda: nombre y código; compacta: solo nombre y punto de estado, con el código en el tooltip; se recuerda en el navegador), columnas fijas que ya no cortan «Usuarios», «Limpiar filtros» y atajos de teclado `j`/`k` (mover), `Enter` (abrir) y `/` (buscar).
+- **Ficha de empresa:** encabezado de perfil, pestañas Resumen · Módulos · Historial (la pestaña va en la dirección, `?pestana=`), datos clave y próximo vencimiento en un panel lateral fijo, historial filtrable por módulo y actor legible («Operador (cli)», «Sistema · alta de empresa»). Las tarjetas sin contrato muestran «Definir contrato» en vez de tres guiones.
+- **Activar módulo:** selector de módulos con nombre y código (los que la empresa ya tiene aparecen deshabilitados), pruebas rápidas (7, 15, 30 días o sin prueba) y una frase que resume el efecto antes de confirmar.
+- **Librería nueva:** `@radix-ui/react-tabs` 1.2.1 (MIT), en su propio commit con el lockfile.
+- **Pendiente:** hojas de contrato, plan y empresa nueva conservan su formulario anterior (ya con el estilo del sistema); planes sin tarjeta «destacada» porque no hay dato que la marque; barra de uso de usuarios por empresa y los elementos de la ronda 3 (pausar o dar de baja la cuenta, ficha comercial, límite de personas) esperan a que el servidor los entregue. El kit (`/kit`) no incluye aún estas piezas.
