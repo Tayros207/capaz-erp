@@ -18,5 +18,4 @@ export const manifiestoCompras: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'ambar',
   icono: 'compras',
-  enConstruccion: true,
 };

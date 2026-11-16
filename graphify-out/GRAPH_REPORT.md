@@ -1,17 +1,17 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 811 files · ~508,517 words
+- 849 files · ~530,438 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 1115 nodes · 1723 edges · 80 communities (61 shown, 19 thin omitted)
+- 1115 nodes · 1726 edges · 82 communities (64 shown, 18 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 71 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c7ab2553`
+- Built from commit: `573ccfaa`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -49,6 +49,7 @@
 - nest-cli.json
 - web/.oxlintrc.json
 - pnpm-workspace.yaml
+- pantalla-registro.tsx
 - config.d.ts
 - web/tsconfig.json
 - herramientas-de-intercambio.ts
@@ -81,10 +82,11 @@
 - main.ts
 - dependencies
 - barra-superior.tsx
-- rutaSiguiente
+- config.js
 - api/package.json
 - con-empresa.ts
-- react-router
+- devDependencies
+- scripts
 - @nestjs/schematics@^12.0.0
 - @nestjs/testing@^12.4.2
 - @types/express@^5.0.0
@@ -93,6 +95,7 @@
 - oxlint-tsgolint@^7.0.2001
 - prettier@^3.4.2
 - vite@^8.0.0
+- dependencies
 
 ## God Nodes (most connected - your core abstractions)
 1. `5. Carriles` - 30 edges
@@ -111,11 +114,11 @@
   docs/FICHAS-OLA-2.md → apps/api/src/core/herramientas/ejecutor.ts
 - `S1 · Herramientas` --references--> `EjecutorDeHerramientas`  [INFERRED]
   docs/PLAN-PARALELO.md → apps/api/src/core/herramientas/ejecutor.ts
-- `W1 · Base web` --references--> `destinoSegunSesion()`  [INFERRED]
-  docs/PLAN-PARALELO.md → apps/web/src/shared/sesion/guarda.ts
 - `1. Reglas comunes de todo módulo clásico` --references--> `lectura()`  [INFERRED]
   docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
 - `4.1 Manifiesto (lo edita M-registro-s1)` --references--> `lectura()`  [INFERRED]
+  docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
+- `5.1 Manifiesto (M-crm-s1)` --references--> `lectura()`  [INFERRED]
   docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
 
 ## Import Cycles
@@ -129,7 +132,7 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (80 total, 19 thin omitted)
+## Communities (82 total, 18 thin omitted)
 
 ### Community 0 - "AGENTS.md (reglas del constructor)"
 Cohesion: 0.06
@@ -144,8 +147,8 @@ Cohesion: 0.08
 Nodes (35): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), 8. N1 · Inicio y bandeja con pendientes, Codigo (+27 more)
 
 ### Community 3 - "web/package.json"
-Cohesion: 0.05
-Nodes (39): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query, devDependencies, oxlint (+31 more)
+Cohesion: 0.11
+Nodes (18): name, private, type, version, @capaz/shared, oxlint, react, react-dom (+10 more)
 
 ### Community 4 - "kit-ola-2.tsx"
 Cohesion: 0.07
@@ -156,8 +159,8 @@ Cohesion: 0.16
 Nodes (14): pg@^8.23.1, estadoDe(), A, B, EJEMPLOS, ESQUEMAS, ADR-0011, ADR-0012 (+6 more)
 
 ### Community 6 - "preparar-base.ts"
-Cohesion: 0.09
-Nodes (35): Credencial, cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES, urlDeAdmin(), urlDelDueno() (+27 more)
+Cohesion: 0.14
+Nodes (24): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+16 more)
 
 ### Community 7 - "compilerOptions"
 Cohesion: 0.09
@@ -228,8 +231,8 @@ Cohesion: 0.17
 Nodes (12): Roles de base capaz_owner, capaz_app, capaz_ro, ADR-010: Sin paquetes 0.x de NestJS en los cimientos, Paquetes @nestjs 0.x descartados (drizzle, idempotency, outbox, authentication, authorization), Salida de eventos e idempotencia propias sobre PostgreSQL, ADR-011: Cuatro roles de base, esquema auth y sin security definer sobre RLS, capaz_app (negocio, sin acceso a auth), capaz_auth (solo esquema auth), capaz_owner (migraciones, sin superusuario ni BYPASSRLS) (+4 more)
 
 ### Community 24 - "catalogo.spec.ts"
-Cohesion: 0.11
-Nodes (5): manifiestoCrm, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoWebhooks
+Cohesion: 0.12
+Nodes (6): manifiestoCrm, manifiestoInsumos, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoWebhooks
 
 ### Community 25 - "Monolito modular (una app, una base)"
 Cohesion: 0.25
@@ -263,6 +266,10 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
+### Community 33 - "pantalla-registro.tsx"
+Cohesion: 0.14
+Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
+
 ### Community 36 - "herramientas-de-intercambio.ts"
 Cohesion: 0.09
 Nodes (5): HERRAMIENTA_DE_ALTA, nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, resumenDe()
@@ -280,7 +287,7 @@ Cohesion: 0.27
 Nodes (4): CAMPOS_OCULTOS, crearLogger(), LOGGER, LoggerModule
 
 ### Community 41 - "pantalla-inicio.tsx"
-Cohesion: 0.12
+Cohesion: 0.14
 Nodes (4): solicitarModulo(), COLOR_ACENTO, PantallaInicio(), Tarjeta()
 
 ### Community 42 - "ejecutor.ts"
@@ -348,7 +355,7 @@ Cohesion: 0.50
 Nodes (4): 6.1 Lanzar un carril, 6.2 Lista de verificación de integración, 6.3 Puerta entre olas, 6. El integrador
 
 ### Community 64 - "carcasa.tsx"
-Cohesion: 0.13
+Cohesion: 0.11
 Nodes (3): BarraSuperior(), Carcasa(), salir()
 
 ### Community 65 - "main.ts"
@@ -359,9 +366,9 @@ Nodes (10): almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDe
 Cohesion: 0.12
 Nodes (17): dependencies, @capaz/shared@workspace:*, @nestjs/common@^12.4.2, @nestjs/core@^12.4.2, @nestjs/platform-express@^12.4.2, pino@^10.4.0, pino-http@^11.0.0, reflect-metadata@^0.2.2 (+9 more)
 
-### Community 68 - "rutaSiguiente"
-Cohesion: 0.60
-Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
+### Community 68 - "config.js"
+Cohesion: 0.26
+Nodes (11): cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES, urlDeAdmin(), urlDelDueno(), variable() (+3 more)
 
 ### Community 69 - "api/package.json"
 Cohesion: 0.20
@@ -371,14 +378,22 @@ Nodes (9): @nestjs/mau@^0.2.6, vitest@^4.1.2, vitest, license, name, private, ty
 Cohesion: 0.40
 Nodes (3): Activa, ContextoDeEmpresa, transaccionActual
 
-### Community 71 - "react-router"
-Cohesion: 0.40
-Nodes (3): react, react-dom, react-router
+### Community 71 - "devDependencies"
+Cohesion: 0.18
+Nodes (11): devDependencies, oxlint, tailwindcss, @tailwindcss/vite, @types/node, @types/react, @types/react-dom, typescript (+3 more)
+
+### Community 72 - "scripts"
+Cohesion: 0.29
+Nodes (7): scripts, build, dev, lint, preview, test, typecheck
+
+### Community 81 - "dependencies"
+Cohesion: 0.33
+Nodes (6): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query
 
 ## Knowledge Gaps
 - **347 isolated node(s):** `Traduccion`, `Credencial`, `Rol`, `Tarea`, `Fallo` (+342 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 533 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 531 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -391,9 +406,9 @@ _Questions this graph is uniquely positioned to answer:_
   _347 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
-- **Why does `pg` connect `base-de-pruebas.ts` to `database.service.ts`, `api/package.json`, `borradores.int.spec.ts`, `preparar-base.ts`, `con-empresa.int.spec.ts`?**
-  _High betweenness centrality (0.073) - this node is a cross-community bridge._
+- **Why does `pg` connect `base-de-pruebas.ts` to `database.service.ts`, `config.js`, `api/package.json`, `borradores.int.spec.ts`, `preparar-base.ts`, `con-empresa.int.spec.ts`?**
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.08315863032844165 - nodes in this community are weakly interconnected._
-- **Why does `5. Carriles` connect `5. Carriles` to `Plan de trabajo en paralelo de Capaz ERP`, `llamar`, `.ejecutarDentro`, `guarda.ts`?**
-  _High betweenness centrality (0.060) - this node is a cross-community bridge._
+- **Why does `@nestjs/common` connect `database.service.ts` to `dependencies`, `src/index.ts`, `herramientas-de-intercambio.ts`, `api/package.json`, `logger.ts`, `ejecutor.ts`, `config/config.ts`, `motor.ts`, `app.module.ts`, `validacion.ts`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._

@@ -936,9 +936,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.spec.ts": {
-    "mtime": 1794799866.140602,
-    "seen": 1794800138.8872023,
-    "ast_hash": "f833243613e53f97079d7b3879d79a9b",
+    "mtime": 1794800879.6436684,
+    "seen": 1794801195.8554742,
+    "ast_hash": "14786b22592ed12f5054faf8342dae5c",
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.ts": {
@@ -1068,15 +1068,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/insumos/insumos.manifest.ts": {
-    "mtime": 1794780380.3092184,
-    "seen": 1794781771.1045218,
-    "ast_hash": "dfa4270d7f91788c55e149c2f41ac4b6",
+    "mtime": 1794800879.6407037,
+    "seen": 1794801195.8559036,
+    "ast_hash": "0e07d6a7344763d59e31f882dfa66cde",
     "semantic_hash": ""
   },
   "apps/api/src/modules/insumos/insumos.module.ts": {
-    "mtime": 1794780380.309359,
-    "seen": 1794781771.1045244,
-    "ast_hash": "b206eaea7094526c84cdd140f5a3bf0f",
+    "mtime": 1794800879.623354,
+    "seen": 1794801195.8559084,
+    "ast_hash": "b8668646a22af6f561258bec8c7d2475",
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/ordenes.manifest.ts": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/insumos/rutas.tsx": {
-    "mtime": 1794780243.5865583,
-    "seen": 1794781771.1047406,
-    "ast_hash": "b112c72ace3a7f6d9b7dcfef114ef36e",
+    "mtime": 1794800879.6256087,
+    "seen": 1794801195.8570797,
+    "ast_hash": "9d5142ace710d8034a3bb6ec6780a1c2",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/rutas.tsx": {
@@ -1824,9 +1824,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/insumos.ts": {
-    "mtime": 1794798065.4269085,
-    "seen": 1794800138.8885665,
-    "ast_hash": "1cdf421f9d956c229899f80dc6ba6c95",
+    "mtime": 1794800879.625651,
+    "seen": 1794801195.8580236,
+    "ast_hash": "df52be7bb9b329836730347461a61256",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/intercambio.ts": {
@@ -4887,6 +4887,234 @@
     "mtime": 1794797942.9746408,
     "seen": 1794800138.8884883,
     "ast_hash": "4993a22aa041fae44c8f2a0b5a90dbe1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/consumidores.ts": {
+    "mtime": 1794800879.6199317,
+    "seen": 1794801195.855846,
+    "ast_hash": "56244d1c853ff9505feac7cd9e9f2e8a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/domain/cursor.ts": {
+    "mtime": 1794800879.6199317,
+    "seen": 1794801195.8558493,
+    "ast_hash": "99fbe103c185cec033e88fffb873f35d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/domain/existencia.spec.ts": {
+    "mtime": 1794800879.6202102,
+    "seen": 1794801195.8558526,
+    "ast_hash": "8f909e518041db683f30d1deaa718ebc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/domain/existencia.ts": {
+    "mtime": 1794800879.6202102,
+    "seen": 1794801195.8558567,
+    "ast_hash": "cdcffa3c3e50d55402b20138c23fbb78",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/domain/recepcion.spec.ts": {
+    "mtime": 1794800879.6202102,
+    "seen": 1794801195.8558595,
+    "ast_hash": "a9c03797f673ee8c2dfcf48f2949ce62",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/domain/recepcion.ts": {
+    "mtime": 1794800879.6202102,
+    "seen": 1794801195.8558624,
+    "ast_hash": "b100cf2d2702dd590103a1b71e9dd26f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/ajuste-y-recepcion.int.spec.ts": {
+    "mtime": 1794800879.6202102,
+    "seen": 1794801195.855865,
+    "ast_hash": "ca807f075a9f95b54732db6aad7cbc75",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/articulos-escritura.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.855868,
+    "ast_hash": "48477bab6811b2ac1ae2b52c44707b5a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/articulos-lectura.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.855871,
+    "ast_hash": "2fe9487c4ceecc673da1216945954300",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/comunes.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.8558736,
+    "ast_hash": "edefe3ac30a4906596174531fb624e12",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/existencias-escritura.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.8558767,
+    "ast_hash": "6a66db90db553094b1dbd4b57d1e41ed",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/existencias-lectura.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.855879,
+    "ast_hash": "afae357eb28440994c27c84b31dd4eb8",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/existencias-recibir.ts": {
+    "mtime": 1794800879.6208394,
+    "seen": 1794801195.8558822,
+    "ast_hash": "8d14a28098b8cb400f8af0739c036622",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/herramientas-de-insumos.ts": {
+    "mtime": 1794800879.6217082,
+    "seen": 1794801195.855885,
+    "ast_hash": "77df64a818887a3f8f1429b1677273bb",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/inventario.int.spec.ts": {
+    "mtime": 1794800879.6222496,
+    "seen": 1794801195.8558886,
+    "ast_hash": "cfe26a325ebf4ddf514f5b932e2049ff",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/mapeo.ts": {
+    "mtime": 1794800879.6225169,
+    "seen": 1794801195.8558915,
+    "ast_hash": "91a887a580a55a6e2a59c9bbd8cf1e9a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/pruebas-de-insumos.ts": {
+    "mtime": 1794800879.6227627,
+    "seen": 1794801195.855895,
+    "ast_hash": "d09180dce6e00f47e14a4a963d8c08c6",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/registrar-movimiento.ts": {
+    "mtime": 1794800879.623059,
+    "seen": 1794801195.8558974,
+    "ast_hash": "b4156944868568127cf93d9145723167",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/herramientas/respuestas.ts": {
+    "mtime": 1794800879.6231496,
+    "seen": 1794801195.8559,
+    "ast_hash": "0f46da71816b19050b78fb36f4220f35",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/repositories/articulos.repository.ts": {
+    "mtime": 1794800879.6234498,
+    "seen": 1794801195.8559117,
+    "ast_hash": "48a3dea45b5eb177b062ecef8ae3ea33",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/repositories/existencias.repository.ts": {
+    "mtime": 1794800879.623561,
+    "seen": 1794801195.8559148,
+    "ast_hash": "56a87a0e5097ea238216106876f552cc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/repositories/insumos.repository.int.spec.ts": {
+    "mtime": 1794800879.6237526,
+    "seen": 1794801195.855918,
+    "ast_hash": "8adf722bfab3d020b588a710da9f9159",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/repositories/movimientos.repository.ts": {
+    "mtime": 1794800879.6238542,
+    "seen": 1794801195.8559203,
+    "ast_hash": "836187bf26179a10d2c47e5126b65c35",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/insumos/repositories/resumen.repository.ts": {
+    "mtime": 1794800879.6239297,
+    "seen": 1794801195.855923,
+    "ast_hash": "07e9019552e92390d7ffc95ad70ec7d2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/api.ts": {
+    "mtime": 1794800879.6239297,
+    "seen": 1794801195.8570392,
+    "ast_hash": "88c37cf74192eec7526041894f00d14a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/columnas.tsx": {
+    "mtime": 1794800879.6239297,
+    "seen": 1794801195.857042,
+    "ast_hash": "ffde6e0bed8689c8262878071999e534",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/hoja-ajuste.tsx": {
+    "mtime": 1794800879.6239297,
+    "seen": 1794801195.8570452,
+    "ast_hash": "46e23b41f3712df71e54f4bcfec419b1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/hoja-articulo.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.8570483,
+    "ast_hash": "d7bf2009abbbb08acebffb9fa9ec20fe",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/hoja-movimiento.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.857051,
+    "ast_hash": "d3ae68ebba3de28d533905344055d4c0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/lista-paginada.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.8570535,
+    "ast_hash": "5ffbd789b68d6951287c64f0a7691e33",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/logica.spec.ts": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.857056,
+    "ast_hash": "b0d6a7cb1bb0c49f9152efde1e98d160",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/logica.ts": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.85706,
+    "ast_hash": "31539b5ba718a4a61bffd198c1c12de5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/marco.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.8570638,
+    "ast_hash": "8815a3b6f4715763a4cf6d3f9daeb064",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/pantalla-alertas.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.857067,
+    "ast_hash": "1eeb568397fa5240cdec63ded75c90bd",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/pantalla-articulo.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.8570707,
+    "ast_hash": "954a708b77e3ce012152053dc58724a3",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/pantalla-existencias.tsx": {
+    "mtime": 1794800879.6242251,
+    "seen": 1794801195.857073,
+    "ast_hash": "d9f3f887aa8d50561effab225046280f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/pantalla-movimientos.tsx": {
+    "mtime": 1794800879.6252546,
+    "seen": 1794801195.8570757,
+    "ast_hash": "5167f1eba046260bb6a6398058637fcc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/insumos/use-inventario.ts": {
+    "mtime": 1794800879.6256087,
+    "seen": 1794801195.8570824,
+    "ast_hash": "09a56b7ffc9c01557ac9391bd0d21c4f",
     "semantic_hash": ""
   }
 }
