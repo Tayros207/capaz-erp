@@ -1,7 +1,7 @@
 import type { Codigo } from '@capaz/shared';
 
 /** Dónde ocurrió el error: cambia el texto de algunos códigos. */
-export type Situacion = 'iniciar' | 'registro' | 'empresa' | 'salir';
+export type Situacion = 'iniciar' | 'registro' | 'empresa' | 'salir' | 'restablecer';
 
 const GENERALES: Partial<Record<Codigo, string>> = {
   sin_conexion: 'No hay conexión con el servidor. Revisa tu internet e inténtalo de nuevo.',
@@ -28,6 +28,10 @@ const POR_SITUACION: Record<Situacion, Partial<Record<Codigo, string>>> = {
     argumentos_invalidos: 'Escribe un nombre de empresa de 2 a 80 letras.',
     sin_permiso: 'Tu cuenta aún no tiene empresa: acepta una invitación o pide a Capaz que la cree.',
     conflicto: 'Ya existe una empresa con ese nombre. Prueba con otro.',
+  },
+  restablecer: {
+    solicitud_invalida: 'El enlace no sirve: ya se usó o venció. Pide a Capaz que te genere uno nuevo.',
+    argumentos_invalidos: 'La contraseña debe tener entre 10 y 128 caracteres.',
   },
   salir: {},
 };

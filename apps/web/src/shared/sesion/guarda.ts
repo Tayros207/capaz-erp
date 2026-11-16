@@ -8,6 +8,9 @@ export const RUTA_INICIAR_SESION = '/iniciar-sesion';
 export const RUTA_NUEVA_EMPRESA = '/nueva-empresa';
 export const RUTA_INICIO = '/inicio';
 
+/** Pública con o sin sesión: quien abre el enlace de restablecimiento puede estar logueado y no debe ser desviado. */
+const RUTA_RESTABLECER = '/restablecer-contrasena';
+
 const RUTAS_PUBLICAS = ['/registro', RUTA_INICIAR_SESION];
 
 const normalizar = (ruta: string) => (ruta.length > 1 ? ruta.replace(/\/+$/, '') : ruta);
@@ -15,7 +18,7 @@ const esRuta = (ruta: string, base: string) => ruta === base || ruta.startsWith(
 
 export function destinoSegunSesion(yo: Yo | null, ruta: string): string | null {
   const r = normalizar(ruta);
-  if (esRuta(r, '/kit')) return null;
+  if (esRuta(r, '/kit') || esRuta(r, RUTA_RESTABLECER)) return null;
   const publica = RUTAS_PUBLICAS.some((p) => esRuta(r, p));
 
   // Una invitación se puede abrir con sesión aunque aún no se tenga empresa; sin sesión, se vuelve a ella tras entrar.
