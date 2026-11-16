@@ -1,4 +1,4 @@
-import { formatearSoles, type CategoriaDto, type Centimos, type CuentaDto, type EntradaDe, type MovimientoDto } from '@capaz/shared';
+import { formatearSoles, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type MovimientoDto } from '@capaz/shared';
 
 // Lógica pura de las pantallas de `registro`: validación de formularios, armado de argumentos, signo y tono
 // de los montos, textos y mensajes. Sin React ni red: se prueba en `logica.spec.ts`.
@@ -104,6 +104,126 @@ export const errorDeRango = (f: Pick<FiltrosDeMovimientos, 'desde' | 'hasta'>): 
 
 /** Al entrar al módulo: si no hay cuentas y la persona puede editar, se preparan los catálogos una vez. */
 export const debeIniciar = (cuentas: readonly unknown[] | undefined, puedeEditar: boolean): boolean => puedeEditar && cuentas !== undefined && cuentas.length === 0;
+
+// ---- Deudas (por cobrar y por pagar) ----
+
+export type TipoDeDeuda = DeudaDto['tipo'];
+export type EstadoDeDeuda = DeudaDto['estado'];
+export type TonoDeEstado = 'neutro' | 'exito' | 'aviso' | 'peligro' | 'info';
+export type FiltroDeDeudas = EntradaDe<'deudas_listar'>['estado'] & string;
+
+export const ETIQUETA_DE_ESTADO_DE_DEUDA: Record<EstadoDeDeuda, string> = { pendiente: 'Pendiente', parcial: 'Parcial', pagada: 'Pagada', anulada: 'Anulada' };
+export const TONO_DE_ESTADO_DE_DEUDA: Record<EstadoDeDeuda, TonoDeEstado> = { pendiente: 'aviso', parcial: 'info', pagada: 'exito', anulada: 'neutro' };
+export const TITULO_DE_DEUDAS: Record<TipoDeDeuda, string> = { por_cobrar: 'Por cobrar', por_pagar: 'Por pagar' };
+export const ETIQUETA_DE_FILTRO_DE_DEUDAS: Record<FiltroDeDeudas, string> = {
+  abiertas: 'Abiertas', vencidas: 'Vencidas', pagadas: 'Pagadas', anuladas: 'Anuladas', todas: 'Todas',
+};
+
+/** Pasos de la barra de estado de una deuda; una deuda anulada no avanza por ellos. */
+export const PASOS_DE_DEUDA = ['Pendiente', 'Parcial', 'Pagada'] as const;
+export const pasoDeDeuda = (estado: EstadoDeDeuda): number => (estado === 'pendiente' ? 0 : estado === 'parcial' ? 1 : estado === 'pagada' ? 2 : -1);
+
+/** Texto del estado de una deuda; una abierta y vencida lo dice (el rojo solo no basta). */
+export const textoDeEstadoDeDeuda = (d: Pick<DeudaDto, 'estado' | 'vencida'>): string =>
+  d.vencida ? `${ETIQUETA_DE_ESTADO_DE_DEUDA[d.estado]} · Vencida` : ETIQUETA_DE_ESTADO_DE_DEUDA[d.estado];
+export const tonoDeEstadoDeDeuda = (d: Pick<DeudaDto, 'estado' | 'vencida'>): TonoDeEstado => (d.vencida ? 'peligro' : TONO_DE_ESTADO_DE_DEUDA[d.estado]);
+
+/** Una deuda abierta admite abonos, edición y anulación; una pagada o anulada ya no se abona. */
+export const estaAbierta = (d: Pick<DeudaDto, 'estado'>): boolean => d.estado === 'pendiente' || d.estado === 'parcial';
+
+export function argumentosDeListadoDeDeudas(tipo: TipoDeDeuda, estado: FiltroDeDeudas, limite: number, cursor?: string): EntradaDe<'deudas_listar'> {
+  const args: EntradaDe<'deudas_listar'> = { tipo, estado, limite };
+  if (cursor) args.cursor = cursor;
+  return args;
+}
+
+export type FormularioDeAbono = { monto: Centimos | null; fecha: string; cuentaId: string; medioDePago: MedioDePago; descripcion: string };
+export type ErroresDeAbono = Partial<Record<'monto' | 'fecha' | 'descripcion', string>>;
+
+/** Abono en blanco: el saldo precargado, hoy, la cuenta principal y efectivo. */
+export function abonoInicial(saldo: Centimos, hoy: string, cuentas: readonly CuentaDto[]): FormularioDeAbono {
+  const { cuentaId } = formularioInicial('ingreso', hoy, cuentas);
+  return { monto: saldo, fecha: hoy, cuentaId, medioDePago: 'efectivo', descripcion: '' };
+}
+
+export function validarAbono(f: FormularioDeAbono, saldo: number, hoy: string): ErroresDeAbono {
+  const e: ErroresDeAbono = {};
+  if (f.monto === null) e.monto = 'Escribe el monto del abono.';
+  else if (!Number.isSafeInteger(f.monto) || f.monto <= 0) e.monto = 'El monto debe ser mayor que cero.';
+  else if (f.monto > saldo) e.monto = `El abono no puede superar el saldo (${formatearSoles(saldo as Centimos)}).`;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(f.fecha)) e.fecha = 'Elige la fecha.';
+  else if (f.fecha > hoy) e.fecha = 'La fecha no puede ser futura.';
+  if (f.descripcion.trim().length > 500) e.descripcion = 'La descripción admite hasta 500 caracteres.';
+  return e;
+}
+
+export function argumentosDeAbono(id: string, f: FormularioDeAbono): EntradaDe<'deuda_abonar'> {
+  if (f.monto === null) throw new Error('No se arma un abono sin monto.');
+  const args: EntradaDe<'deuda_abonar'> = { id, montoCentimos: f.monto, fecha: f.fecha, medioDePago: f.medioDePago };
+  if (f.cuentaId) args.cuentaId = f.cuentaId;
+  const descripcion = f.descripcion.trim();
+  if (descripcion) args.descripcion = descripcion;
+  return args;
+}
+
+export type FormularioDeDeuda = { concepto: string; venceEn: string; notas: string };
+export type ErroresDeDeuda = Partial<Record<'concepto' | 'venceEn' | 'notas', string>>;
+
+export const formularioDeDeuda = (d: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas'>): FormularioDeDeuda => ({ concepto: d.concepto, venceEn: d.venceEn ?? '', notas: d.notas ?? '' });
+
+export function validarDeuda(f: FormularioDeDeuda): ErroresDeDeuda {
+  const e: ErroresDeDeuda = {};
+  if (!f.concepto.trim()) e.concepto = 'Indica el concepto.';
+  else if (f.concepto.trim().length > 200) e.concepto = 'El concepto admite hasta 200 caracteres.';
+  if (f.venceEn && !/^\d{4}-\d{2}-\d{2}$/.test(f.venceEn)) e.venceEn = 'Elige una fecha válida.';
+  if (f.notas.trim().length > 2000) e.notas = 'Las notas admiten hasta 2000 caracteres.';
+  return e;
+}
+
+/** Argumentos de `deuda_editar`: solo lo que cambió (vaciar el vencimiento o las notas viaja como `null`). `null` si nada cambió. */
+export function argumentosDeEdicionDeDeuda(id: string, f: FormularioDeDeuda, original: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas'>): EntradaDe<'deuda_editar'> | null {
+  const args: EntradaDe<'deuda_editar'> = { id };
+  let cambio = false;
+  if (f.concepto.trim() !== original.concepto) { args.concepto = f.concepto.trim(); cambio = true; }
+  if (f.venceEn !== (original.venceEn ?? '')) { args.venceEn = f.venceEn || null; cambio = true; }
+  if (f.notas.trim() !== (original.notas ?? '')) { args.notas = f.notas.trim() || null; cambio = true; }
+  return cambio ? args : null;
+}
+
+/** El motivo de una anulación es obligatorio y admite hasta 300 caracteres. */
+export function validarMotivo(texto: string): string | undefined {
+  if (!texto.trim()) return 'Indica el motivo.';
+  if (texto.trim().length > 300) return 'El motivo admite hasta 300 caracteres.';
+  return undefined;
+}
+
+// ---- Cuentas y categorías ----
+
+export type FormularioDeCuenta = { nombre: string; tipo: CuentaDto['tipo']; saldoInicial: Centimos | null };
+export type ErroresDeCuenta = Partial<Record<'nombre' | 'saldoInicial', string>>;
+
+export const cuentaEnBlanco = (): FormularioDeCuenta => ({ nombre: '', tipo: 'caja', saldoInicial: null });
+export const formularioDeCuenta = (c: CuentaDto): FormularioDeCuenta => ({ nombre: c.nombre, tipo: c.tipo, saldoInicial: c.saldoInicialCentimos as Centimos });
+
+/** Valida un nombre de cuenta o categoría (1 a 80 caracteres). */
+export function validarNombre(nombre: string): string | undefined {
+  if (!nombre.trim()) return 'El nombre es obligatorio.';
+  if (nombre.trim().length > 80) return 'El nombre admite hasta 80 caracteres.';
+  return undefined;
+}
+
+export function validarCuenta(f: FormularioDeCuenta): ErroresDeCuenta {
+  const e: ErroresDeCuenta = {};
+  const n = validarNombre(f.nombre);
+  if (n) e.nombre = n;
+  if (f.saldoInicial !== null && !Number.isSafeInteger(f.saldoInicial)) e.saldoInicial = 'Escribe un saldo válido.';
+  return e;
+}
+
+export const argumentosDeCuentaNueva = (f: FormularioDeCuenta): EntradaDe<'cuenta_crear'> => ({ nombre: f.nombre.trim(), tipo: f.tipo, saldoInicialCentimos: f.saldoInicial ?? 0 });
+
+/** El saldo inicial no se edita (lo mueven los movimientos): al editar solo viajan nombre y tipo. */
+export const argumentosDeCuentaEditada = (id: string, f: FormularioDeCuenta): EntradaDe<'cuenta_editar'> => ({ id, nombre: f.nombre.trim(), tipo: f.tipo });
 
 const MENSAJES: Record<string, string> = {
   modulo_solo_lectura: 'Tu acceso a Finanzas es de solo lectura: no puedes registrar ni cambiar datos.',
