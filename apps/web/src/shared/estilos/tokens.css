@@ -36,6 +36,14 @@
   --color-menu-texto: var(--c-menu-texto);
   --color-menu-activo: var(--c-menu-activo);
 
+  /* Barra lateral (clara en tema claro, oscura en tema oscuro) */
+  --color-lateral: var(--c-lateral);
+  --color-lateral-borde: var(--c-lateral-borde);
+  --color-lateral-texto: var(--c-lateral-texto);
+  --color-lateral-suave: var(--c-lateral-suave);
+  --color-lateral-activo: var(--c-lateral-activo);
+  --color-lateral-activo-texto: var(--c-lateral-activo-texto);
+
   /* Acento por módulo */
   --color-acento-esmeralda: var(--c-acento-esmeralda);
   --color-acento-cian: var(--c-acento-cian);
@@ -50,13 +58,15 @@
 
   /* Medidas */
   --radius-control: 0.5rem;
-  --radius-tarjeta: 0.75rem;
-  --shadow-tarjeta: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+  --radius-tarjeta: 0.875rem;
+  --radius-chip: 0.375rem;
+  --shadow-sutil: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow-tarjeta: 0 0 0 1px rgb(16 24 40 / 0.04), 0 1px 2px rgb(16 24 40 / 0.05), 0 2px 6px rgb(16 24 40 / 0.04);
   --shadow-elevada: 0 2px 4px rgb(16 24 40 / 0.06), 0 12px 28px rgb(16 24 40 / 0.14);
 }
 
 :root {
-  --alto-control: 2.75rem; /* 44 px: objetivo táctil mínimo propio */
+  --alto-control: 2.75rem; /* 44 px en táctil; 40 px desde tableta (abajo) */
 
   /* Tema claro (por defecto) */
   --c-fondo: oklch(0.982 0.003 250);
@@ -82,6 +92,12 @@
   --c-acento-ambar: oklch(0.7 0.15 75);
   --c-acento-rosa: oklch(0.62 0.18 355);
   --c-acento-gris: oklch(0.58 0.02 255);
+  --c-lateral: oklch(0.988 0.002 250);
+  --c-lateral-borde: oklch(0.92 0.006 250);
+  --c-lateral-texto: oklch(0.36 0.025 258);
+  --c-lateral-suave: oklch(0.58 0.02 258);
+  --c-lateral-activo: oklch(0.95 0.025 163);
+  --c-lateral-activo-texto: oklch(0.36 0.1 163);
   color-scheme: light;
 }
 
@@ -109,7 +125,19 @@
   --c-acento-ambar: oklch(0.8 0.14 80);
   --c-acento-rosa: oklch(0.74 0.15 355);
   --c-acento-gris: oklch(0.72 0.02 255);
+  --c-lateral: oklch(0.17 0.022 260);
+  --c-lateral-borde: oklch(0.27 0.025 260);
+  --c-lateral-texto: oklch(0.84 0.012 252);
+  --c-lateral-suave: oklch(0.64 0.02 255);
+  --c-lateral-activo: oklch(0.27 0.045 175);
+  --c-lateral-activo-texto: oklch(0.9 0.08 165);
   color-scheme: dark;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --alto-control: 2.5rem;
+  }
 }
 
 html {
@@ -147,6 +175,20 @@ h3 {
   outline-offset: 2px;
 }
 
+/* Controles: el foco es un anillo suave, no un recuadro duro */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-superficie), 0 0 0 4px color-mix(in oklab, var(--color-foco) 70%, transparent);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accion) 25%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -156,4 +198,14 @@ h3 {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
 }

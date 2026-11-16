@@ -1,32 +1,14 @@
+import { toast } from 'sonner';
+
 export type TipoDeAviso = 'exito' | 'info' | 'aviso' | 'error';
-export type DatosDeAviso = { id: number; tipo: TipoDeAviso; mensaje: string };
 
-const DURACION_MS = 5000;
-let lista: readonly DatosDeAviso[] = [];
-let siguiente = 1;
-const oyentes = new Set<() => void>();
-
-function emitir(nueva: readonly DatosDeAviso[]) {
-  lista = nueva;
-  oyentes.forEach((o) => o());
-}
-
-export function descartarAviso(id: number): void {
-  emitir(lista.filter((a) => a.id !== id));
-}
-
-/** Muestra un aviso breve. Lo dibuja `<Avisos />` (ya montado en los proveedores de la app). */
+/**
+ * Muestra un aviso breve. Fachada de Sonner: es el único sistema de avisos de la app, así que los
+ * módulos solo llaman a `notificar` (no a `toast`). Lo dibuja `<Avisos />`, montado una vez en `Proveedores`.
+ */
 export function notificar(mensaje: string, tipo: TipoDeAviso = 'info'): void {
-  const id = siguiente++;
-  emitir([...lista, { id, tipo, mensaje }]);
-  setTimeout(() => descartarAviso(id), DURACION_MS);
+  if (tipo === 'exito') toast.success(mensaje);
+  else if (tipo === 'error') toast.error(mensaje);
+  else if (tipo === 'aviso') toast.warning(mensaje);
+  else toast.info(mensaje);
 }
-
-/** Para `useSyncExternalStore` de `<Avisos />`. */
-export const almacenDeAvisos = {
-  suscribir(oyente: () => void) {
-    oyentes.add(oyente);
-    return () => void oyentes.delete(oyente);
-  },
-  leer: () => lista,
-};

@@ -19,16 +19,16 @@ export function Dialogo({ abierto, alCerrar, titulo, children, acciones }: Props
       ref={ref}
       aria-labelledby={idTitulo}
       onClick={(e) => e.target === e.currentTarget && alCerrar()}
-      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-tarjeta border border-borde bg-superficie p-0 text-texto shadow-elevada backdrop:bg-black/50"
+      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-tarjeta border border-borde bg-superficie p-0 text-texto shadow-elevada backdrop:bg-black/40 backdrop:backdrop-blur-[2px] open:animate-[aparecer_160ms_ease-out]"
     >
-      <div className="flex items-center justify-between gap-2 border-b border-borde px-4 py-2">
-        <h2 id={idTitulo} className="font-titulo text-lg font-semibold">
+      <div className="flex items-center justify-between gap-2 border-b border-borde px-5 py-3">
+        <h2 id={idTitulo} className="font-titulo text-base font-semibold tracking-tight">
           {titulo}
         </h2>
         <Boton variante="fantasma" icono="cerrar" aria-label="Cerrar" onClick={alCerrar} />
       </div>
-      <div className="px-4 py-4">{children}</div>
-      {acciones ? <div className="flex flex-wrap justify-end gap-2 border-t border-borde px-4 py-3">{acciones}</div> : null}
+      <div className="px-5 py-5">{children}</div>
+      {acciones ? <div className="flex flex-wrap justify-end gap-2 border-t border-borde bg-superficie-alta/60 px-5 py-3">{acciones}</div> : null}
     </dialog>
   );
 }

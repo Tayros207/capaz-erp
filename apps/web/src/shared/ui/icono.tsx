@@ -9,21 +9,15 @@ type Props = {
 };
 
 export function Icono({ nombre, etiqueta, className }: Props) {
+  const Glifo = ICONOS[nombre];
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={unir('size-5 shrink-0', className)}
+    <Glifo
+      strokeWidth={1.75}
+      className={unir('size-[1.125rem] shrink-0', className)}
       role={etiqueta ? 'img' : undefined}
       aria-label={etiqueta}
       aria-hidden={etiqueta ? undefined : true}
       focusable="false"
-    >
-      {ICONOS[nombre]}
-    </svg>
+    />
   );
 }

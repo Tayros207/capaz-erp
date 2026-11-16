@@ -6,13 +6,13 @@ import { unir } from './unir.ts';
 export type VarianteDeBoton = 'primario' | 'secundario' | 'fantasma' | 'peligro';
 
 const VARIANTES: Record<VarianteDeBoton, string> = {
-  primario: 'bg-accion text-accion-texto border-transparent hover:brightness-110',
-  secundario: 'bg-superficie text-texto border-borde-fuerte hover:bg-superficie-alta',
-  fantasma: 'bg-transparent text-texto border-transparent hover:bg-superficie-alta',
-  peligro: 'bg-peligro text-texto-inverso border-transparent hover:brightness-110',
+  primario: 'bg-accion text-accion-texto border-transparent shadow-sutil hover:brightness-110 active:brightness-95',
+  secundario: 'bg-superficie text-texto border-borde shadow-sutil hover:border-borde-fuerte hover:bg-superficie-alta active:bg-borde',
+  fantasma: 'bg-transparent text-texto-suave border-transparent hover:bg-superficie-alta hover:text-texto active:bg-borde',
+  peligro: 'bg-peligro text-texto-inverso border-transparent shadow-sutil hover:brightness-110 active:brightness-95',
 };
 
-const TAMANOS = { normal: 'px-4 text-[0.9375rem]', grande: 'px-6 text-base' } as const;
+const TAMANOS = { normal: 'px-3.5 text-sm', grande: 'px-5 text-base' } as const;
 
 type Comun = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
   variante?: VarianteDeBoton;
@@ -33,8 +33,8 @@ export function Boton({ variante = 'secundario', tamano = 'normal', cargando, ic
       disabled={disabled || cargando}
       aria-busy={cargando || undefined}
       className={unir(
-        'inline-flex min-h-(--alto-control) items-center justify-center gap-2 rounded-control border font-medium',
-        'cursor-pointer select-none transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex min-h-(--alto-control) items-center justify-center gap-2 rounded-control border font-medium tracking-[-0.005em]',
+        'cursor-pointer select-none transition-[color,background-color,border-color,filter,transform] duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50',
         soloIcono ? 'min-w-(--alto-control) px-2' : TAMANOS[tamano],
         VARIANTES[variante],
         className,

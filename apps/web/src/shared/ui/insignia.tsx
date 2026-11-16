@@ -5,18 +5,18 @@ export type TonoDeInsignia = 'neutro' | 'exito' | 'aviso' | 'peligro' | 'info';
 
 // Siempre lleva texto: el color solo nunca comunica un estado.
 const TONOS: Record<TonoDeInsignia, string> = {
-  neutro: 'bg-superficie-alta text-texto border-borde-fuerte',
-  exito: 'bg-exito/15 text-exito border-exito/40',
-  aviso: 'bg-aviso/15 text-aviso border-aviso/40',
-  peligro: 'bg-peligro/15 text-peligro border-peligro/40',
-  info: 'bg-info/15 text-info border-info/40',
+  neutro: 'bg-superficie-alta text-texto-suave border-borde',
+  exito: 'bg-exito/10 text-exito border-exito/25',
+  aviso: 'bg-aviso/10 text-aviso border-aviso/25',
+  peligro: 'bg-peligro/10 text-peligro border-peligro/25',
+  info: 'bg-info/10 text-info border-info/25',
 };
 
 export function Insignia({ tono = 'neutro', children }: { tono?: TonoDeInsignia; children: ReactNode }) {
   return (
     <span
       className={unir(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap',
+        'inline-flex items-center rounded-chip border px-2 py-0.5 text-xs font-medium whitespace-nowrap',
         TONOS[tono],
       )}
     >

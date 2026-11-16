@@ -30,9 +30,9 @@ export function Tablero<T>({ etiqueta, columnas, clave, tarjeta, vacio }: Props<
       <div className="flex gap-3 sm:overflow-x-auto sm:pb-2">
         {columnas.map((c) => (
           <div key={c.id} role="group" aria-labelledby={`${idBase}-${c.id}`}
-            className={unir('min-w-0 flex-1 flex-col gap-2 rounded-control bg-superficie-alta p-2 sm:flex sm:w-72 sm:min-w-72 sm:flex-none', c.id === visible ? 'flex' : 'hidden')}>
+            className={unir('min-w-0 flex-1 flex-col gap-2 rounded-tarjeta border border-borde bg-superficie-alta/70 p-2 sm:flex sm:w-72 sm:min-w-72 sm:flex-none', c.id === visible ? 'flex' : 'hidden')}>
             <header className="px-1 pt-1">
-              <h3 id={`${idBase}-${c.id}`} className="font-titulo font-semibold text-texto">{c.titulo} <span className="font-normal text-texto-suave">({c.filas.length})</span></h3>
+              <h3 id={`${idBase}-${c.id}`} className="font-titulo text-sm font-semibold text-texto">{c.titulo} <span className="font-normal text-texto-suave">({c.filas.length})</span></h3>
               {c.resumen ? <p className="text-sm text-texto-suave">{c.resumen}</p> : null}
             </header>
             {c.filas.length === 0 ? (
@@ -40,7 +40,7 @@ export function Tablero<T>({ etiqueta, columnas, clave, tarjeta, vacio }: Props<
             ) : (
               <ul className="flex flex-col gap-2">
                 {c.filas.map((f) => (
-                  <li key={clave(f)} className="rounded-control border border-borde bg-superficie p-3">{tarjeta(f)}</li>
+                  <li key={clave(f)} className="rounded-control border border-borde bg-superficie p-3 shadow-sutil transition-shadow hover:shadow-tarjeta">{tarjeta(f)}</li>
                 ))}
               </ul>
             )}

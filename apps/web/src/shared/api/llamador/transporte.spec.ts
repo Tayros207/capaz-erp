@@ -3,7 +3,7 @@ import { configuracionDeEmpresaSchema } from '@capaz/shared';
 import { enviarHerramienta } from './transporte.ts';
 
 const salida = configuracionDeEmpresaSchema;
-const datos = { zonaHoraria: 'America/Lima', moneda: 'PEN', locale: 'es-PE', actualizadoEn: '2026-11-15T10:00:00.000Z' };
+const datos = { zonaHoraria: 'America/Lima', moneda: 'PEN', locale: 'es-PE', razonSocial: null, ruc: null, direccionFiscal: null, telefono: null, correo: null, pieDeDocumento: null, logoDataUrl: null, actualizadoEn: '2026-11-15T10:00:00.000Z' };
 const json = (cuerpo: unknown, status = 200) => Promise.resolve(new Response(JSON.stringify(cuerpo), { status }));
 
 describe('enviarHerramienta', () => {
