@@ -113,6 +113,12 @@ describe('existencia_mover', () => {
     ]);
     // 3 → 1 con mínimo 5: ya estaba bajo al entrar (0 → 3 no cruza hacia abajo), así que no hay alerta.
     expect((await eventosDe(appPool, empresaA, 'existencia.bajo_minimo')).filter((c) => c.articuloId === a.id)).toEqual([]);
+    // R13: la auditoría guarda ids, tipo y cifras; nunca el motivo tecleado ni el nombre del producto.
+    const auditoria = await comoEmpresa(appPool, empresaA, async (c) =>
+      (await c.query(`select entidad_tipo, entidad_id, resumen from core.auditoria where herramienta = 'existencia_mover' and entidad_id = $1`, [e.movimiento.id])).rows,
+    );
+    expect(auditoria).toEqual([{ entidad_tipo: 'movimiento_de_inventario', entidad_id: e.movimiento.id, resumen: expect.objectContaining({ tipo: 'entrada', cantidadMilesimas: 25_000 }) }]);
+    expect(JSON.stringify(auditoria)).not.toMatch(/proveedor|Cartulina/);
   });
 
   it('una salida mayor a lo que hay se rechaza con el faltante y no deja rastro (ni movimiento ni evento)', async () => {

@@ -78,7 +78,7 @@ describe('artículos', () => {
 
   it('el listado va por nombre, pagina con cursor, filtra bajo mínimo y no cruza empresas', async () => {
     const marca = `Lista ${Date.now()}`;
-    const ids = [];
+    const ids: string[] = [];
     for (const n of ['C', 'A', 'B']) ids.push(await nuevoArticulo(ctxA, `${marca} ${n}`, n === 'B' ? 1_000 : 0));
     const sucursal = await principal(ctxA);
     await conEmpresa(ctxA, (tx) => tomarExistencia(tx, ctxA, ids[2]!, sucursal.id));
