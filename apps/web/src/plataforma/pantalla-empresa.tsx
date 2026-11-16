@@ -239,7 +239,7 @@ export function PantallaEmpresa() {
       </Tabs.Root>
 
       <HojaContrato empresa={e.id} modulo={contrato} alCerrar={() => setContrato(null)} alCambiar={recargar} />
-      <HojaActivar abierto={activando} empresa={e.id} conocidos={conocidos} alCerrar={() => setActivando(false)} alCambiar={recargar} />
+      <HojaActivar abierto={activando} empresa={e.id} conocidos={conocidos} yaTiene={e.modulos.filter((m) => m.estado !== 'baja').map((m) => m.modulo)} alCerrar={() => setActivando(false)} alCambiar={recargar} />
     </div>
   );
 }
