@@ -1,7 +1,15 @@
 import type { RouteObject } from 'react-router';
-import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { PantallaEntregas } from './pantalla-entregas.tsx';
+import { PantallaFichaPedido } from './pantalla-ficha.tsx';
+import { PantallaPedidos } from './pantalla-lista.tsx';
+import { PantallaNuevoPedido } from './pantalla-nuevo.tsx';
+import { PantallaTableroDePedidos } from './pantalla-tablero.tsx';
 
-// Pantallas de «ordenes»: las construye su carril. Mientras tanto, un marcador.
+// Pedidos: lista, tablero por estado, entregas, alta y ficha. Herramientas pedido_* y pedidos_listar.
 export const rutas: RouteObject[] = [
-  { path: 'm/ordenes/*', element: <EstadoVacio titulo="En construcción" descripcion="Esta pantalla todavía no está disponible." icono="caja" /> },
+  { path: 'm/ordenes', element: <PantallaPedidos /> },
+  { path: 'm/ordenes/tablero', element: <PantallaTableroDePedidos /> },
+  { path: 'm/ordenes/entregas', element: <PantallaEntregas /> },
+  { path: 'm/ordenes/nuevo', element: <PantallaNuevoPedido /> },
+  { path: 'm/ordenes/:id', element: <PantallaFichaPedido /> },
 ];

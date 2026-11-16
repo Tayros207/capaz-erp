@@ -1,8 +1,10 @@
-import type pg from 'pg';
-import { comoEmpresa } from '../../../pruebas/base-de-pruebas.js';
+import { comoEmpresa, type abrirPool } from '../../../pruebas/base-de-pruebas.js';
 import type { RespuestaHttp, Sesion } from '../../../core/herramientas/http-de-pruebas.js';
 
 // Ayudantes de las pruebas por HTTP de pedidos (solo los importan los `*.int.spec.ts` de esta carpeta).
+
+/** El pool lo abre `pruebas/base-de-pruebas`: aquí no se importa `pg` (regla de arquitectura). */
+type Pool = ReturnType<typeof abrirPool>;
 
 export const codigo = (r: RespuestaHttp): string | undefined => r.cuerpo?.error?.codigo;
 export const mensaje = (r: RespuestaHttp): string | undefined => r.cuerpo?.error?.mensaje;
@@ -13,7 +15,7 @@ export function datos(r: RespuestaHttp): any {
   return r.cuerpo.datos;
 }
 
-export const eventosDe = (pool: pg.Pool, empresaId: string, tipo?: string) =>
+export const eventosDe = (pool: Pool, empresaId: string, tipo?: string) =>
   comoEmpresa(pool, empresaId, async (c) => {
     const r = await c.query('select tipo, carga from core.eventos_salida order by creado_en, id');
     return (r.rows as { tipo: string; carga: any }[]).filter((e) => !tipo || e.tipo === tipo);
