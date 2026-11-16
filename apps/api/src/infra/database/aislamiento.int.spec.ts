@@ -99,6 +99,37 @@ describe('capaz_app no puede saltarse la RLS', () => {
   });
 });
 
+describe('core.empresa_config: datos de la empresa (0021)', () => {
+  it('capaz_app guarda los datos de su empresa y los checks rechazan lo inválido', async () => {
+    const png = 'data:image/png;base64,iVBORw0KGgo=';
+    await comoEmpresa(app, A, async (c) => {
+      await c.query(`update core.empresa_config set razon_social = 'Mi Empresa SAC', ruc = '20123456789', logo_data_url = $1`, [png]);
+      const r = await c.query('select ruc, logo_data_url from core.empresa_config');
+      expect(r.rows[0]).toEqual({ ruc: '20123456789', logo_data_url: png });
+    }, { confirmar: true });
+    const malos = [
+      [`ruc = '123'`, []],
+      [`ruc = '2012345678A'`, []],
+      [`logo_data_url = 'data:image/svg+xml;base64,AAAA'`, []],
+      [`logo_data_url = 'https://x/y.png'`, []],
+      [`logo_data_url = $1`, ['data:image/png;base64,' + 'A'.repeat(150000)]],
+      [`pie_de_documento = $1`, ['x'.repeat(1001)]],
+    ] as const;
+    for (const [set, params] of malos) {
+      await comoEmpresa(
+        app,
+        A,
+        async (c) => {
+          await c.query('savepoint s');
+          await expect(c.query(`update core.empresa_config set ${set}`, [...params])).rejects.toThrow(/check constraint/);
+          await c.query('rollback to savepoint s');
+        },
+        { confirmar: true },
+      );
+    }
+  });
+});
+
 describe('registro: reglas propias de DB2a con capaz_app', () => {
   it('no puede cambiar el monto de un movimiento, pero sí anularlo', async () => {
     await comoEmpresa(app, A, async (c) => {

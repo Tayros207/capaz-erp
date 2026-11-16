@@ -148,6 +148,13 @@
       "when": 1794798613388,
       "tag": "0020_compras",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1794844634412,
+      "tag": "0021_datos_de_empresa",
+      "breakpoints": true
     }
   ]
 }
