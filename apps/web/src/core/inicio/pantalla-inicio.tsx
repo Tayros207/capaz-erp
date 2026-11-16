@@ -17,7 +17,7 @@ function Tarjeta({ item }: { item: ItemDeMenu }) {
   const bloqueado = item.ruta === null;
   const cuerpo = (
     <>
-      <span className={unir('grid size-10 shrink-0 place-items-center rounded-control text-texto-inverso', COLOR_ACENTO[item.acento] ?? 'bg-acento-gris', bloqueado && 'opacity-50')}>
+      <span className={unir('grid size-11 shrink-0 place-items-center rounded-tarjeta text-texto-inverso shadow-tarjeta', COLOR_ACENTO[item.acento] ?? 'bg-acento-gris', bloqueado && 'opacity-50')}>
         <IconoMenu nombre={bloqueado ? 'candado' : item.icono} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-1">
@@ -29,8 +29,8 @@ function Tarjeta({ item }: { item: ItemDeMenu }) {
       </span>
     </>
   );
-  const base = 'flex items-start gap-3 rounded-tarjeta border border-borde bg-superficie p-3';
-  if (!bloqueado) return <Link to={item.ruta!} className={unir(base, 'hover:border-borde-fuerte hover:bg-superficie-alta')}>{cuerpo}</Link>;
+  const base = 'group flex items-start gap-3 rounded-tarjeta border border-borde bg-superficie p-4 shadow-tarjeta transition duration-150';
+  if (!bloqueado) return <Link to={item.ruta!} className={unir(base, 'hover:-translate-y-0.5 hover:border-borde-fuerte hover:shadow-elevada')}>{cuerpo}</Link>;
   return (
     <div className={base}>
       {cuerpo}
@@ -50,13 +50,13 @@ export function PantallaInicio() {
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <header>
-        <h1 className="font-titulo text-2xl font-bold text-texto">Hola, {primerNombre}</h1>
-        <p className="text-texto-suave">{yo.empresa.nombre}</p>
+        <p className="text-sm font-medium tracking-wide text-texto-suave uppercase">{yo.empresa.nombre}</p>
+        <h1 className="font-titulo text-3xl font-semibold text-texto">Hola, {primerNombre}</h1>
       </header>
       <Pendientes yo={yo} />
       {menu.familias.map((f) => (
         <section key={f.familia} aria-labelledby={`fam-${f.familia}`} className="flex flex-col gap-2">
-          <h2 id={`fam-${f.familia}`} className="font-titulo text-lg font-semibold text-texto">{f.nombre}</h2>
+          <h2 id={`fam-${f.familia}`} className="font-titulo text-sm font-semibold tracking-wide text-texto-suave uppercase">{f.nombre}</h2>
           {f.items.length === 0 ? (
             <p className="rounded-tarjeta border border-dashed border-borde-fuerte p-3 text-sm text-texto-suave">Sin módulos disponibles todavía.</p>
           ) : (

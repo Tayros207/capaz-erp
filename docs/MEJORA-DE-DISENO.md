@@ -52,3 +52,14 @@ Reglas: sin e2e (regla del usuario); las pruebas existentes de lógica siguen en
 - Los carriles de la ronda 1 editan pantallas de Finanzas y Pedidos; un rediseño por módulo (paso 5) en paralelo generaría conflictos. Por eso se limita a tokens y kit mientras tanto.
 - Cambiar tokens modifica cada pantalla a la vez: hace falta la revisión visual humana antes de dar por cerrado.
 - Presupuesto de uso de IA (límite de 5 horas): lanzar un carril a la vez.
+
+## 6. Registro de ejecución (2026-11-16)
+
+El usuario encargó el front-end a la sesión modules-ed («tú encárgate de mejorar el front end, más profesional, lo veo muy clásico»). Hecho en el paso 1 y parte del 3 y 4:
+
+- `shared/estilos/tokens.css`: Inter variable (local, sin CDN), paleta refinada con los mismos nombres de token, radios 8/12 px, `--shadow-tarjeta`, cifras tabulares en `table` y `.tabular`, títulos con tracking negativo.
+- `core/acceso/marco-acceso.tsx`: panel de marca en escritorio, degradado, tarjeta sobre fondo azul noche.
+- `core/inicio/pantalla-inicio.tsx`: encabezado, tarjetas con sombra y elevación al pasar el mouse.
+- `app/carcasa/lista-de-menu.tsx`: barra de acento en el ítem activo y transiciones.
+- **Dependencia nueva `@fontsource-variable/inter` 5.3.0 (OFL-1.1, versión exacta, servida localmente).** La fuente ya estaba propuesta en `FRONTEND-INVESTIGACION.md`; la regla 15 de `AGENTS.md` exige aprobación del usuario para dependencias y **esa aprobación específica está pendiente de confirmar**: el usuario aprobó el rediseño, no nombró la fuente. Si la rechaza, se quita el `@import` de `tokens.css` y la dependencia.
+- Pendiente: panel de cifras en Inicio, piezas de `shared/ui` y `/kit`, pulido por módulo, revisión de `shared/impresion` con los radios y las cifras tabulares nuevas, revisión visual humana.

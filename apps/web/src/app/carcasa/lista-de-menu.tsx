@@ -26,7 +26,7 @@ const OCULTO: Record<ModoDeMenu, string> = { completo: '', iconos: 'hidden', aut
 
 const SOBRE_ICONO: Record<ModoDeMenu, string> = { completo: '', iconos: 'absolute top-0.5 right-0.5', auto: 'md:max-lg:absolute md:max-lg:top-0.5 md:max-lg:right-0.5' };
 
-const base = 'relative flex min-h-(--alto-control) items-center gap-3 rounded-control px-3 text-menu-texto';
+const base = 'relative flex min-h-(--alto-control) items-center gap-3 rounded-control px-3 text-menu-texto transition-colors duration-150';
 
 function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: ModoDeMenu; alNavegar?: () => void; pendientes: number }) {
   const texto = unir('min-w-0 flex-1 truncate', SOLO_LECTORES[modo]);
@@ -34,7 +34,7 @@ function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: M
   if (item.ruta) {
     return (
       <NavLink to={item.ruta} onClick={alNavegar} title={conTitulo ? item.nombre : undefined}
-        className={({ isActive }) => unir(base, 'hover:bg-menu-activo', isActive && 'bg-menu-activo font-semibold')}>
+        className={({ isActive }) => unir(base, 'hover:bg-menu-activo', isActive && 'bg-menu-activo font-semibold before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accion')}>
         <IconoMenu nombre={item.icono} />
         <span className={unir('flex min-w-0 flex-1 flex-col', SOLO_LECTORES[modo])}>
           <span className="truncate">{item.nombre}</span>
