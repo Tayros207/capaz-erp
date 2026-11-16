@@ -10,13 +10,18 @@ import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.t
 import { MenuDeAcciones, type AccionDeMenu } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
+import { puedeEscribirEn } from '../../shared/sesion/acceso.ts';
+import { useYo } from '../../shared/sesion/use-yo.ts';
+import { sePuedeCobrarAdelanto, type MedioDePago } from './adelanto.ts';
+import { ejecutarAdelanto } from './flujo-adelanto.ts';
+import { HojaAdelanto } from './hoja-adelanto.tsx';
 import { anotar, aplicarPaso, cancelar, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { FormularioPedido } from './formulario-pedido.tsx';
 import { HojaTexto } from './hoja-texto.tsx';
 import { LineasDePedido } from './lineas-de-pedido.tsx';
-import { PASOS_DE_PEDIDO, formatearDia, formularioDesde, otrosPasos, pasoActual, sePuedeCancelar, siguientePaso, textoDeEvento, type Paso } from './logica.ts';
+import { PASOS_DE_PEDIDO, formatearDia, formularioDesde, otrosPasos, pasoActual, sePuedeCancelar, siguientePaso, textoDeEvento, totalesDe, type Paso } from './logica.ts';
 import { Cargando, InsigniasDePedido } from './marco.tsx';
 import { useBorrador } from './use-borrador.ts';
 
@@ -63,10 +68,11 @@ function Historial({ p }: { p: PedidoCompletoDto }) {
 
 function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
   const permisos = usePermisosDePedidos();
+  const yo = useYo();
   const editable = pedido.estado === 'borrador' && permisos.editar;
   const borrador = useBorrador(pedido, editable);
   const [ocupado, setOcupado] = useState(false);
-  const [hoja, setHoja] = useState<'nota' | 'cancelar' | null>(null);
+  const [hoja, setHoja] = useState<'nota' | 'cancelar' | 'adelanto' | null>(null);
   const principal = permisos.editar ? siguientePaso(pedido.estado) : null;
 
   async function conOcupado(fn: () => Promise<void>) {
@@ -87,8 +93,21 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
       if (!(await aplicarPaso(pedido.id, paso))) await refrescarPedidos();
     });
 
+  const totalActual = totalesDe(borrador.form.lineas, pedido.igvPorcentaje)?.totalCentimos ?? null;
+  const ofreceAdelanto = pedido.estado === 'borrador' && sePuedeCobrarAdelanto({ puedeEscribirEnRegistro: !!yo && puedeEscribirEn(yo, 'registro'), clienteId: pedido.clienteId, totalCentimos: totalActual });
+  // Con la casilla de adelanto, «Confirmar» abre la hoja; sin ella, el flujo de siempre.
+  const pulsarPrincipal = (paso: Paso) => (ofreceAdelanto && paso.tipo === 'confirmar' ? setHoja('adelanto') : void darPaso(paso));
+  const aceptarAdelanto = async (adelanto: { montoCentimos: number; medio: MedioDePago } | null) => {
+    if (!(await borrador.guardar())) return null;
+    if (!adelanto) {
+      await aplicarPaso(pedido.id, { tipo: 'confirmar', texto: 'Confirmar pedido' });
+      return null;
+    }
+    return ejecutarAdelanto(pedido.id, adelanto.montoCentimos, adelanto.medio);
+  };
+
   const acciones: AccionDeMenu[] = [
-    ...(permisos.editar ? otrosPasos(pedido.estado).map((paso) => ({ etiqueta: paso.texto, onSeleccionar: () => void darPaso(paso) })) : []),
+    ...(permisos.editar ? otrosPasos(pedido.estado).map((paso) => ({ etiqueta: paso.texto, onSeleccionar: () => pulsarPrincipal(paso) })) : []),
     ...(permisos.editar ? [{ etiqueta: 'Agregar nota', onSeleccionar: () => setHoja('nota') }] : []),
     ...(permisos.cancelar && sePuedeCancelar(pedido.estado) ? [{ etiqueta: 'Cancelar pedido', peligro: true, onSeleccionar: () => setHoja('cancelar') }] : []),
   ];
@@ -98,7 +117,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
       <EncabezadoDePagina
         titulo={pedido.numero === null ? `Pedido de ${pedido.clienteNombre}` : pedido.codigo}
         migas={[{ texto: 'Pedidos', a: '/m/ordenes' }, { texto: pedido.codigo }]}
-        accionPrincipal={principal ? <Boton variante="primario" cargando={ocupado} onClick={() => void darPaso(principal)}>{principal.texto}</Boton> : undefined}
+        accionPrincipal={principal ? <Boton variante="primario" cargando={ocupado} onClick={() => pulsarPrincipal(principal)}>{principal.texto}</Boton> : undefined}
         accionesSecundarias={
           <>
             <InsigniasDePedido pedido={pedido} />
@@ -115,6 +134,9 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
         <Lectura p={pedido} />
       )}
       <Historial p={pedido} />
+      {ofreceAdelanto && totalActual !== null ? (
+        <HojaAdelanto abierto={hoja === 'adelanto'} totalCentimos={totalActual} alAceptar={aceptarAdelanto} alCerrar={() => { setHoja(null); void refrescarPedidos(); }} />
+      ) : null}
       <HojaTexto abierto={hoja === 'nota'} titulo="Agregar nota" etiqueta="Nota" textoEnviar="Agregar nota" maximo={1000} alEnviar={(t) => anotar(pedido.id, t)} alCerrar={() => setHoja(null)} />
       <HojaTexto abierto={hoja === 'cancelar'} titulo="Cancelar pedido" etiqueta="Motivo de la cancelación" textoEnviar="Continuar" maximo={300} peligroso alEnviar={(t) => cancelar(pedido.id, t)} alCerrar={() => setHoja(null)} />
     </div>
