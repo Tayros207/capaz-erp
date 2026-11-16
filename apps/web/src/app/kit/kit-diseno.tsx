@@ -1,4 +1,3 @@
-import { MemoryRouter } from 'react-router';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { ChipDeCliente, EnlaceDeEntidad, InsigniaDeEstado } from '../../shared/ui/entidades.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
@@ -12,13 +11,11 @@ export function KitDiseno() {
         Los módulos usan estas piezas para verse y conectarse igual: <code>EnlaceDeEntidad</code>, <code>ChipDeCliente</code>,{' '}
         <code>InsigniaDeEstado</code> y <code>notificar</code> (único sistema de avisos, Sonner). Ctrl K abre la paleta de comandos.
       </p>
-      <MemoryRouter>
-        <div className="flex flex-wrap items-center gap-3">
-          <ChipDeCliente id="demo" nombre="Imprenta Los Andes" />
-          <EnlaceDeEntidad tipo="pedido" id="demo">Pedido P-0012</EnlaceDeEntidad>
-          <EnlaceDeEntidad tipo="deuda" id="demo">Deuda D-0007</EnlaceDeEntidad>
-        </div>
-      </MemoryRouter>
+      <div className="flex flex-wrap items-center gap-3">
+        <ChipDeCliente id="demo" nombre="Imprenta Los Andes" />
+        <EnlaceDeEntidad tipo="pedido" id="demo">Pedido P-0012</EnlaceDeEntidad>
+        <EnlaceDeEntidad tipo="deuda" id="demo">Deuda D-0007</EnlaceDeEntidad>
+      </div>
       <div className="flex flex-wrap gap-2">
         {['Pagada', 'Entregado', 'Vencida', 'Anulada', 'Pendiente', 'Borrador', 'En producción', 'Otro'].map((e) => <InsigniaDeEstado key={e} estado={e} />)}
       </div>
