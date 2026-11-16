@@ -62,7 +62,7 @@ describe('escribirCsv', () => {
   });
 
   it('prefija con comilla simple las celdas que parecen fórmulas', () => {
-    for (const f of ['=1+1', '+5', '-2', '@SUMA(A1)', '\tx', '\rx']) expect(protegerCelda(f)).toBe(`'${f}`);
+    for (const f of ['=1+1', '+5', '-2+3', '@SUMA(A1)', '\tx', '\rx']) expect(protegerCelda(f)).toBe(`'${f}`);
     expect(protegerCelda('normal=1')).toBe('normal=1');
     expect(escribirCsv([['=HYPERLINK("x")']], { separador: ',' })).toBe('"\'=HYPERLINK(""x"")"\r\n');
   });
@@ -73,5 +73,13 @@ describe('escribirCsv', () => {
       const r = leer(escribirCsv(filas, { separador, bom: true }), { separador: 'auto' });
       expect(r.filas.map((f) => f.celdas)).toEqual(filas);
     }
+  });
+});
+
+describe('protegerCelda: números puros', () => {
+  it('deja intacto un número negativo y protege lo que sí parece fórmula', () => {
+    expect(protegerCelda('-50.00')).toBe('-50.00');
+    expect(protegerCelda('-1+2')).toBe("'-1+2");
+    expect(protegerCelda('=1+1')).toBe("'=1+1");
   });
 });

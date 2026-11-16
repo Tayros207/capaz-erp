@@ -17,5 +17,4 @@ export const manifiestoReportes: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'cian',
   icono: 'reportes',
-  enConstruccion: true,
 };

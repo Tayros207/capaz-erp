@@ -94,6 +94,8 @@ export function leerCsv(entrada: string, opciones: OpcionesDeLectura): LecturaCs
 
 /** Una celda que empieza por `= + - @` (o tabulador / retorno) se leería como fórmula en una hoja de cálculo: se prefija con `'`. */
 export function protegerCelda(valor: string): string {
+  // Un número puro (p. ej. «-50.00») no es una fórmula: se deja tal cual para que la hoja lo lea como número.
+  if (/^-?\d+(\.\d+)?$/.test(valor)) return valor;
   return /^[=+\-@\t\r]/.test(valor) ? `'${valor}` : valor;
 }
 

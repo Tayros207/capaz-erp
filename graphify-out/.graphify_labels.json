@@ -70,8 +70,8 @@
   "68": "config.js",
   "69": "api/package.json",
   "70": "con-empresa.ts",
-  "71": "devDependencies",
-  "72": "scripts",
+  "71": "rutaSiguiente",
+  "72": "react-router",
   "73": "@nestjs/schematics@^12.0.0",
   "74": "@nestjs/testing@^12.4.2",
   "75": "@types/express@^5.0.0",
@@ -79,6 +79,5 @@
   "77": "oxlint@^1.58.0",
   "78": "oxlint-tsgolint@^7.0.2001",
   "79": "prettier@^3.4.2",
-  "80": "vite@^8.0.0",
-  "81": "dependencies"
+  "80": "vite@^8.0.0"
 }
