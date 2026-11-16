@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Centimos, ModuloDeEmpresaDto } from '@capaz/shared';
-import { accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO } from './logica.ts';
+import { etiquetaDeActor, accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO } from './logica.ts';
 
 const MODULO: ModuloDeEmpresaDto = {
   modulo: 'ventas', nombre: 'Ventas', estado: 'activo', altaEn: '2026-11-01T10:00:00.000Z', pruebaHasta: null, bajaEn: null, motivo: null,
@@ -56,5 +56,14 @@ describe('consola de plataforma: lógica', () => {
   it('sin_permiso se muestra como falta de acceso a la consola', () => {
     expect(mensajeDeRechazo('sin_permiso', 'x')).toBe('No tienes acceso a la consola.');
     expect(mensajeDeRechazo('otro', 'Falló.')).toBe('Falló.');
+  });
+});
+
+describe('etiquetaDeActor', () => {
+  it('traduce los orígenes conocidos y deja el resto igual', () => {
+    expect(etiquetaDeActor('plataforma:cli')).toBe('Operador (cli)');
+    expect(etiquetaDeActor('sistema:alta-de-empresa')).toBe('Sistema · alta de empresa');
+    expect(etiquetaDeActor('ana@x.pe')).toBe('ana@x.pe');
+    expect(etiquetaDeActor(null)).toBe('Sin registro');
   });
 });

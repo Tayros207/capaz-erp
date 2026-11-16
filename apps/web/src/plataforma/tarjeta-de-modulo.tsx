@@ -51,14 +51,18 @@ export function TarjetaDeModulo({ m, ahora, alContrato, alAccionar }: { m: Modul
         <Insignia tono={estado.tono}>{estado.texto}</Insignia>
       </div>
       <Cuenta m={m} ahora={ahora} />
-      <dl className="grid grid-cols-3 gap-3 border-t border-borde pt-3">
-        <Dato etiqueta="Plan">{m.plan ?? '—'}</Dato>
-        <Dato etiqueta="Precio">{m.precioAcordadoCentimos === null ? '—' : formatearSoles(m.precioAcordadoCentimos)}</Dato>
-        <Dato etiqueta="Máx. usuarios">{m.maxUsuarios ?? '—'}</Dato>
-      </dl>
+      {m.plan !== null || m.precioAcordadoCentimos !== null || m.maxUsuarios !== null ? (
+        <dl className="grid grid-cols-3 gap-3 border-t border-borde pt-3">
+          <Dato etiqueta="Plan">{m.plan ?? '—'}</Dato>
+          <Dato etiqueta="Precio">{m.precioAcordadoCentimos === null ? '—' : formatearSoles(m.precioAcordadoCentimos)}</Dato>
+          <Dato etiqueta="Máx. usuarios">{m.maxUsuarios ?? '—'}</Dato>
+        </dl>
+      ) : (
+        <p className="border-t border-borde pt-3 text-sm text-texto-suave">Sin plan, precio ni límite acordados.</p>
+      )}
       {m.motivo ? <p className="rounded-control bg-superficie-alta px-3 py-2 text-xs text-texto-suave">Motivo: {m.motivo}</p> : null}
       <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-        <Boton onClick={alContrato}>Contrato</Boton>
+        <Boton onClick={alContrato}>{m.plan !== null || m.precioAcordadoCentimos !== null || m.maxUsuarios !== null || m.vigenteHasta !== null ? 'Contrato' : 'Definir contrato'}</Boton>
         <MenuDeAcciones etiqueta={`Acciones de ${m.nombre || nombreDeModulo(m.modulo)}`} acciones={acciones} />
       </div>
     </li>

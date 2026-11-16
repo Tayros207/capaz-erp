@@ -312,3 +312,13 @@ export function busquedaDesdeFiltro(f: FiltroDeEmpresas): URLSearchParams {
   if (f.vencenEn !== null) p.set('vence', String(f.vencenEn));
   return p;
 }
+
+/** Quién hizo un cambio, en palabras: «plataforma:cli» → «Operador (cli)», «sistema:alta-de-empresa» → «Sistema · alta de empresa». */
+export function etiquetaDeActor(actor: string | null): string {
+  if (!actor) return 'Sin registro';
+  const [origen, ...resto] = actor.split(':');
+  const detalle = resto.join(':').replace(/[-_]/g, ' ').trim();
+  if (origen === 'plataforma') return detalle ? `Operador (${detalle})` : 'Operador';
+  if (origen === 'sistema') return detalle ? `Sistema · ${detalle}` : 'Sistema';
+  return actor;
+}

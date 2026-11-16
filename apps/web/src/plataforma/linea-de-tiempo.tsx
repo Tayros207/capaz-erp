@@ -1,7 +1,7 @@
 import { formatearFechaHora } from '../shared/formato/fechas.ts';
 import { unir } from '../shared/ui/unir.ts';
 import { CodigoDeModulo } from './chip-modulo.tsx';
-import { nombreDeModulo } from './logica.ts';
+import { etiquetaDeActor, nombreDeModulo } from './logica.ts';
 
 export type EventoDeContrato = { modulo: string; evento: string; estadoAnterior: string | null; estadoNuevo: string; motivo: string | null; actor: string | null; creadoEn: string };
 
@@ -26,7 +26,7 @@ export function LineaDeTiempo({ eventos }: { eventos: readonly EventoDeContrato[
             <p className="text-sm text-texto-suave">
               {v.estadoAnterior ?? '—'} → <span className="font-medium text-texto">{v.estadoNuevo}</span>
               {v.motivo ? ` · ${v.motivo}` : ''}
-              {v.actor ? ` · ${v.actor}` : ''}
+              <span className="text-xs"> · {etiquetaDeActor(v.actor)}</span>
             </p>
           </div>
         </li>

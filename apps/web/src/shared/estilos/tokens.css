@@ -212,3 +212,11 @@ a:focus-visible {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: none; }
 }
+
+/* Aparición breve del contenido de una pestaña: opacidad y un desplazamiento mínimo (respeta «reducir movimiento»). */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

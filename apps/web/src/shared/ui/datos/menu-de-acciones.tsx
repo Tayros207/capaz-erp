@@ -55,7 +55,7 @@ export function MenuDeAcciones({ acciones, etiqueta }: Props) {
   return (
     <>
       <span ref={disparador} className="inline-flex">
-        <Boton variante="secundario" icono="menu" aria-label={etiqueta} aria-haspopup="menu" popoverTarget={id} />
+        <Boton variante="secundario" icono="menu" aria-label={etiqueta} title={etiqueta} aria-haspopup="menu" popoverTarget={id} />
       </span>
       <div
         ref={menu}
