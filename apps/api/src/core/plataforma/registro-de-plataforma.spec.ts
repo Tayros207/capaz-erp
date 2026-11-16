@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { CONTRATOS_DE_PLATAFORMA } from '@capaz/shared';
 import { AYUDAS } from './ayudas.js';
 import { RegistroDePlataformaInvalido, validarHerramientasDePlataforma } from './registro-de-plataforma.js';
+import { herramientasDeCatalogo } from './herramientas-de-catalogo.js';
+import { herramientasDeCuenta } from './herramientas-de-cuenta.js';
 import { herramientasDeEmpresas } from './herramientas-de-empresas.js';
 import { herramientasDeModulos } from './herramientas-de-modulos.js';
 import { herramientasDePlanes, herramientasDeSolicitudes } from './herramientas-de-planes.js';
@@ -42,17 +44,19 @@ describe('validación del registro de plataforma', () => {
   });
 
   it('las herramientas reales cubren exactamente los contratos, y todo lo que cambia algo es crítico', () => {
-    const catalogo = { porDefecto: () => [] };
+    const catalogo = { porDefecto: () => [], porCodigo: () => undefined, contratables: () => [] };
     const todas = [
       ...herramientasDeEmpresas({ auth: {} as never, catalogo }),
       ...herramientasDeModulos(),
+      ...herramientasDeCuenta({} as never),
+      ...herramientasDeCatalogo(catalogo),
       ...herramientasDePlanes(),
       ...herramientasDeSolicitudes(),
     ];
     const nombres = todas.map((h) => h.nombre);
     // Falta solo la de contraseña, que necesita Better Auth y se prueba por HTTP.
     expect(Object.keys(CONTRATOS_DE_PLATAFORMA).filter((n) => !nombres.includes(n))).toEqual(['plataforma_restablecer_contrasena']);
-    const lecturas = ['plataforma_empresas_listar', 'plataforma_empresas_ver', 'plataforma_planes_listar', 'plataforma_solicitudes_listar'];
+    const lecturas = ['plataforma_empresas_listar', 'plataforma_empresas_ver', 'plataforma_planes_listar', 'plataforma_solicitudes_listar', 'plataforma_modulos_listar', 'plataforma_vencimientos_listar'];
     for (const h of todas) expect(h.criticidad, h.nombre).toBe(lecturas.includes(h.nombre) ? 'lectura' : 'critica');
   });
 });
