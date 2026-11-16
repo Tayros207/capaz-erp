@@ -1,17 +1,17 @@
 # Graph Report - capaz-erp  (2026-11-16)
 
 ## Corpus Check
-- 984 files · ~641,790 words
+- 1103 files · ~750,285 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 9 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 1552 nodes · 2711 edges · 94 communities (86 shown, 8 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 112 edges (avg confidence: 0.9)
+- 1975 nodes · 3638 edges · 114 communities (100 shown, 14 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 150 edges (avg confidence: 0.91)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2c98ae67`
+- Built from commit: `a656411b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -33,7 +33,7 @@
 - Registro de herramientas con ejecutar() unico
 - scripts
 - compilerOptions
-- logica.ts
+- pantalla-empresa.tsx
 - ADR-003: PostgreSQL y Drizzle; alojamiento en Neon
 - compilerOptions
 - devDependencies
@@ -57,14 +57,14 @@
 - borradores.int.spec.ts
 - Propuesta · Vender Capaz a otras empresas (SUNAT, exportación contable y ajuste de olas)
 - dependencies
-- lista-de-menu.tsx
+- contratos/index.ts
 - ejecutor.ts
 - favicon.svg (purple lightning-bolt logo, 48x46 favicon)
 - EjecutorDeHerramientas
 - motor.ts
 - 5. Carriles
-- Transaccion
-- main.ts
+- app/rutas.tsx
+- filtro-de-errores.ts
 - vitest
 - Propuesta de mejoras · Auditoría de brechas de Capaz ERP
 - api/package.json
@@ -72,66 +72,85 @@
 - proponer.ts
 - csv.ts
 - 2. Reglas anti-conflicto
-- logger.ts
+- config/config.ts
 - Plan de trabajo en paralelo de Capaz ERP
 - llamar
-- boton.tsx
+- cabecera-de-consola.tsx
 - 10. Lecciones de la ola 1
 - 6. El integrador
-- config/config.ts
-- filtro-de-errores.ts
-- con-empresa.ts
+- Plan de integración de Cotizín y Tairos.RC («SF») dentro de Capaz ERP
+- main.ts
+- core.ts
 - entidades.tsx
 - react
 - Procedimiento: llevar las migraciones de Capaz a Neon
+- barra-superior.tsx
 - carcasa.tsx
-- 4. Frente C · Módulo por módulo y piezas transversales
 - paleta-de-comandos.tsx
 - Ficha · Estado de cuenta de la empresa (pausar, dar de baja, quitar módulo)
-- Flujo entre módulos · que el trabajo sea fluido, rápido y sin volver a teclear
+- logica.ts
 - pendientes.tsx
-- config.js
-- core.ts
+- Transaccion
+- http/contexto.ts
 - Brechas frente a lo que piden las empresas en Perú (insumo del usuario, 2026-11-16)
 - Datos de prueba (demostración multiempresa)
 - Relevo: dónde quedó Capaz ERP y cómo seguir
 - dependencies
 - devDependencies
 - 4. Módulo `registro` · Finanzas ligeras (fase 14)
-- 2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)
 - scripts
 - lectura
-- pagina-kit.tsx
+- pantalla-inicio.tsx
 - 5. Módulo `crm` (fase 15)
-- 6. Módulo `ordenes` · Pedidos (fase 16)
-- KitOla2
-- tablero.tsx
+- 5. M-cotizador-s0 · Motor
+- Fichas congeladas de la ola 4 · Captura por voz y texto, y Cotizador (corte B1)
+- pantalla-empresas.tsx
+- Ficha · Crear empresa con módulos, editarla y ajustar su cantidad de usuarios (consola del operador)
+- guarda.ts
 - campo-comun.ts
+- lista-de-menu.tsx
+- ADR-017: Captura como capa del núcleo y Cotizador por cortes
+- main.tsx
+- avatar-de-empresa.tsx
+- KitOla2
+- react-router
+- 4. Frente C · Módulo por módulo y piezas transversales
+- pagina-kit.tsx
+- 2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)
+- pantalla-solicitudes.tsx
+- 4. M-registro-s5a · Reglas de dictado
+- tablero.tsx
+- transporte.spec.ts
+- rutaSiguiente
+- 10. Tanda 3 (esquema; arquitectura fijada)
 - cifra.tsx
+- CapturaModule
+- cotizador.module.ts
+- captura.ts
 
 ## God Nodes (most connected - your core abstractions)
-1. `5. Carriles` - 30 edges
-2. `vitest` - 27 edges
-3. `EjecutorDeHerramientas` - 26 edges
-4. `sembrarEmpresa()` - 25 edges
-5. `compilerOptions` - 22 edges
-6. `scripts` - 19 edges
-7. `react` - 19 edges
-8. `compilerOptions` - 18 edges
-9. `AGENTS.md (reglas del constructor)` - 18 edges
-10. `Sesion` - 17 edges
+1. `react` - 34 edges
+2. `Boton()` - 30 edges
+3. `5. Carriles` - 30 edges
+4. `EjecutorDeHerramientas` - 28 edges
+5. `vitest` - 28 edges
+6. `sembrarEmpresa()` - 25 edges
+7. `Insignia()` - 23 edges
+8. `PantallaEmpresa()` - 22 edges
+9. `compilerOptions` - 22 edges
+10. `react-router` - 22 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `6. Qué hacer ahora, en orden` --references--> `main()`  [INFERRED]
-  docs/RELEVO.md → apps/api/scripts/sembrar-demo.ts
-- `2. C1 · Paso previo de servidor` --references--> `comoEmpresa()`  [INFERRED]
-  docs/FICHAS-OLA-2.md → apps/api/src/pruebas/base-de-pruebas.ts
-- `3. Qué falta, por valor para el trabajo diario` --references--> `ChipDeCliente()`  [INFERRED]
-  docs/FLUJO-ENTRE-MODULOS.md → apps/web/src/shared/ui/entidades.tsx
-- `5.1 Manifiesto (M-crm-s1)` --references--> `lectura()`  [INFERRED]
-  docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
-- `6.1 Manifiesto (M-ordenes-s1)` --references--> `lectura()`  [INFERRED]
-  docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
+- `9.3 Reglas (dominio; cada una con prueba unitaria)` --references--> `resumir()`  [INFERRED]
+  docs/FICHAS-OLA-4.md → apps/api/scripts/demo/resumen.ts
+- `0.1 Mapa de carriles y qué arranca primero` --references--> `main()`  [INFERRED]
+  docs/FICHAS-OLA-4.md → apps/api/scripts/sembrar-demo.ts
+- `2. C4 · Paso previo (integrador)` --references--> `main()`  [INFERRED]
+  docs/FICHAS-OLA-4.md → apps/api/scripts/sembrar-demo.ts
+- `4.4 Carriles, tandas y costos` --references--> `main()`  [INFERRED]
+  docs/PLAN-INTEGRACION-COTIZIN-Y-SF.md → apps/api/scripts/sembrar-demo.ts
+- `6.4 «Hecho cuando», medible` --references--> `main()`  [INFERRED]
+  docs/PLAN-INTEGRACION-COTIZIN-Y-SF.md → apps/api/scripts/sembrar-demo.ts
 
 ## Import Cycles
 - None detected.
@@ -144,7 +163,7 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (94 total, 8 thin omitted)
+## Communities (114 total, 14 thin omitted)
 
 ### Community 0 - "AGENTS.md (reglas del constructor)"
 Cohesion: 0.06
@@ -152,15 +171,15 @@ Nodes (48): ADR 001 a 012, Agente: instrucciones, conocimiento, herramientas, di
 
 ### Community 1 - "sembrar-demo.ts"
 Cohesion: 0.05
-Nodes (77): APELLIDOS, Azar, crearAzar(), diasAtras(), digitoRuc(), digitos(), dniFicticio(), nombreDePersona() (+69 more)
+Nodes (79): APELLIDOS, Azar, crearAzar(), diasAtras(), digitoRuc(), digitos(), dniFicticio(), nombreDePersona() (+71 more)
 
 ### Community 2 - "src/index.ts"
-Cohesion: 0.13
-Nodes (26): 8. N1 · Inicio y bandeja con pendientes, CODIGOS, esCodigo(), estadoHttp(), aCentimos(), Centimos, centimosSchema, formatearSoles() (+18 more)
+Cohesion: 0.12
+Nodes (27): 8. N1 · Inicio y bandeja con pendientes, codigoDeEstado(), CODIGOS, esCodigo(), estadoHttp(), aCentimos(), Centimos, centimosSchema (+19 more)
 
 ### Community 3 - "web/package.json"
 Cohesion: 0.10
-Nodes (20): name, private, type, version, @capaz/shared, cmdk, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono (+12 more)
+Nodes (19): name, private, type, version, @capaz/shared, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono, motion (+11 more)
 
 ### Community 4 - "kit-ola-2.tsx"
 Cohesion: 0.10
@@ -168,11 +187,11 @@ Nodes (3): COLUMNAS, PERSONAS, Tarea
 
 ### Community 5 - "automatizaciones.int.spec.ts"
 Cohesion: 0.07
-Nodes (15): AHORA, borradores(), candidatos, datos(), def(), DIA_DE_LIMA, disparar(), ejecuciones() (+7 more)
+Nodes (16): AHORA, borradores(), candidatos, datos(), def(), DIA_DE_LIMA, disparar(), ejecuciones() (+8 more)
 
 ### Community 6 - "preparar-base.ts"
-Cohesion: 0.16
-Nodes (24): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+16 more)
+Cohesion: 0.09
+Nodes (35): Credencial, cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES, urlDeAdmin(), urlDelDueno() (+27 more)
 
 ### Community 7 - "compilerOptions"
 Cohesion: 0.09
@@ -195,8 +214,8 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+11 more)
 
 ### Community 12 - "database.service.ts"
-Cohesion: 0.10
-Nodes (13): Config, BaseDeDatos, ConEmpresa, DatabaseModule, DatabaseService, DatabaseStatus, HealthController, HealthModule (+5 more)
+Cohesion: 0.12
+Nodes (10): BaseDeDatos, ConEmpresa, DatabaseModule, DatabaseService, DatabaseStatus, HealthController, HealthModule, ADR-0011 (+2 more)
 
 ### Community 13 - "FORCE ROW LEVEL SECURITY con politica unica"
 Cohesion: 0.14
@@ -214,9 +233,9 @@ Nodes (19): scripts, build, db:generar, db:migrar, db:migrar:test, db:preparar, 
 Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+8 more)
 
-### Community 17 - "logica.ts"
-Cohesion: 0.06
-Nodes (37): AccionDeModulo, argumentosDeContrato, busquedaDesdeFiltro(), ClaveDeOrden, diaAIso(), diasHasta(), EmpresaResumen, Estado (+29 more)
+### Community 17 - "pantalla-empresa.tsx"
+Cohesion: 0.10
+Nodes (31): ChipDeModulo(), CodigoDeModulo(), Estado, PUNTO, TEXTO_DE_ESTADO, iconoDeModulo(), EventoDeContrato, LineaDeTiempo() (+23 more)
 
 ### Community 18 - "ADR-003: PostgreSQL y Drizzle; alojamiento en Neon"
 Cohesion: 0.14
@@ -228,7 +247,7 @@ Nodes (13): compilerOptions, declaration, isolatedModules, module, moduleResolut
 
 ### Community 20 - "devDependencies"
 Cohesion: 0.12
-Nodes (16): devDependencies, drizzle-kit, @nestjs/cli, @nestjs/schematics, @nestjs/testing, oxlint, oxlint-tsgolint, prettier (+8 more)
+Nodes (17): devDependencies, drizzle-kit, @nestjs/cli, @nestjs/schematics, @nestjs/testing, oxlint, oxlint-tsgolint, prettier (+9 more)
 
 ### Community 21 - "Fase 8: eventos entre modulos y correlativos (outbox)"
 Cohesion: 0.17
@@ -243,8 +262,8 @@ Cohesion: 0.17
 Nodes (12): Roles de base capaz_owner, capaz_app, capaz_ro, ADR-010: Sin paquetes 0.x de NestJS en los cimientos, Paquetes @nestjs 0.x descartados (drizzle, idempotency, outbox, authentication, authorization), Salida de eventos e idempotencia propias sobre PostgreSQL, ADR-011: Cuatro roles de base, esquema auth y sin security definer sobre RLS, capaz_app (negocio, sin acceso a auth), capaz_auth (solo esquema auth), capaz_owner (migraciones, sin superusuario ni BYPASSRLS) (+4 more)
 
 ### Community 24 - "catalogo.spec.ts"
-Cohesion: 0.10
-Nodes (9): manifiestoCompras, manifiestoCrm, manifiestoInsumos, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoReportes, manifiestoWebhooks (+1 more)
+Cohesion: 0.13
+Nodes (8): manifiestoCompras, manifiestoCrm, manifiestoInsumos, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoReportes, manifiestoWebhooks
 
 ### Community 25 - "Monolito modular (una app, una base)"
 Cohesion: 0.25
@@ -279,64 +298,68 @@ Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
 ### Community 33 - "pantalla-registro.tsx"
-Cohesion: 0.09
-Nodes (20): AlertaDeError(), ENLACE, ENLACE_EN_MENU, MarcoAcceso(), PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar() (+12 more)
+Cohesion: 0.17
+Nodes (4): AlertaDeError(), ENLACE, ENLACE_EN_MENU, MarcoAcceso()
 
 ### Community 36 - "herramientas-de-intercambio.ts"
 Cohesion: 0.07
-Nodes (9): crear(), crearHerramientasDeIntercambio(), HERRAMIENTA_DE_ALTA, HerramientasDeIntercambio, nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, resumenDe() (+1 more)
+Nodes (10): crear(), crearHerramientasDeIntercambio(), HERRAMIENTA_DE_ALTA, HerramientasDeIntercambio, nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, resumenDe() (+2 more)
 
 ### Community 37 - "Fichas congeladas de la ola 2 · Clásicos I (Finanzas ligeras, CRM, Pedidos)"
-Cohesion: 0.22
-Nodes (7): 0. Cómo leerlo, 2. C1 · Paso previo de servidor, 3.1 Tanda DB2a, 3.2 Tanda DB2b, 3. Datos de la ola 2 (DB2a y DB2b), 7. K1 · Kit y base web de la ola, Fichas congeladas de la ola 2 · Clásicos I (Finanzas ligeras, CRM, Pedidos)
+Cohesion: 0.14
+Nodes (12): 0. Cómo leerlo, 3.1 Tanda DB2a, 3.2 Tanda DB2b, 3. Datos de la ola 2 (DB2a y DB2b), 6.1 Manifiesto (M-ordenes-s1), 6.2 Reglas (dominio), 6.3 Contratos (`contratos/ordenes.ts`), 6.4 Carriles (+4 more)
 
 ### Community 38 - "borradores.int.spec.ts"
-Cohesion: 0.11
-Nodes (4): CATALOGO, estadoDe(), PERMISOS, comoEmpresa()
+Cohesion: 0.10
+Nodes (5): CATALOGO, estadoDe(), PERMISOS, comoEmpresa(), 2. C1 · Paso previo de servidor
 
 ### Community 39 - "Propuesta · Vender Capaz a otras empresas (SUNAT, exportación contable y ajuste de olas)"
 Cohesion: 0.25
 Nodes (7): 1. Lo que sigue vigente, 2. Qué cambia al vender a terceros, 3. SUNAT: preparar sin adelantar, 4. Ficha · Exportación al contador (propuesta, sin construir), 5. Dónde encaja en las olas, 6. Decisiones que necesita el usuario, Propuesta · Vender Capaz a otras empresas (SUNAT, exportación contable y ajuste de olas)
 
 ### Community 40 - "dependencies"
-Cohesion: 0.15
-Nodes (13): dependencies, better-auth, @capaz/shared, drizzle-orm, @nestjs/common, @nestjs/core, @nestjs/platform-express, pg (+5 more)
+Cohesion: 0.14
+Nodes (14): dependencies, better-auth, big.js, @capaz/shared, drizzle-orm, @nestjs/common, @nestjs/core, @nestjs/platform-express (+6 more)
 
-### Community 41 - "lista-de-menu.tsx"
-Cohesion: 0.12
-Nodes (18): BarraInferior(), IconoMenu(), Fila(), Grupo(), ListaDeMenu(), ModoDeMenu, OCULTO, Props (+10 more)
+### Community 41 - "contratos/index.ts"
+Cohesion: 0.03
+Nodes (9): ArgsDe, CargaDe, CONTRATOS, CONTRATOS_DE_PLATAFORMA, EntradaDe, EVENTOS, NombreDeHerramienta, SalidaDe (+1 more)
 
 ### Community 42 - "ejecutor.ts"
 Cohesion: 0.08
-Nodes (3): Fallo, OpcionesDeEjecucion, Previo
+Nodes (4): Fallo, filtrarPorPermisos(), OpcionesDeEjecucion, Previo
 
 ### Community 46 - "EjecutorDeHerramientas"
-Cohesion: 0.15
-Nodes (12): comoObjeto(), EjecutorDeHerramientas, falloDe(), filtrarPorPermisos(), rechazar(), Revertir, segundos(), conPuntoDeGuardado() (+4 more)
+Cohesion: 0.13
+Nodes (14): AccionRechazada, comoObjeto(), EjecutorDeHerramientas, falloDe(), rechazar(), Revertir, segundos(), conPuntoDeGuardado() (+6 more)
 
 ### Community 47 - "motor.ts"
-Cohesion: 0.10
-Nodes (6): AccionRechazada, AccionResuelta, Entrada, Opciones, Resultado, Salida
+Cohesion: 0.11
+Nodes (5): AccionResuelta, Entrada, Opciones, Resultado, Salida
 
 ### Community 48 - "5. Carriles"
 Cohesion: 0.08
-Nodes (24): 5. Carriles, C0 · Andamiaje y contratos, C1 · Paso previo de servidor, Carriles de la ola 2 (módulos clásicos I), Carriles de la ola 3 (módulos clásicos II), DB1 · Datos de la ola 1, DB2 · Datos de la ola 2, K1 · Kit y base web de la ola 2, en dos partes (+16 more)
+Nodes (25): 5. Carriles, C0 · Andamiaje y contratos, C1 · Paso previo de servidor, Carriles de la ola 2 (módulos clásicos I), Carriles de la ola 3 (módulos clásicos II), DB1 · Datos de la ola 1, DB2 · Datos de la ola 2, K1 · Kit y base web de la ola 2, en dos partes (+17 more)
 
-### Community 50 - "main.ts"
-Cohesion: 0.13
-Nodes (9): AppModule, ErrorDeNegocio, crearPipeDeValidacion(), mensajeDeValidacion(), Problema, crearRegistroHttp(), LoggerDeNest, bootstrap() (+1 more)
+### Community 49 - "app/rutas.tsx"
+Cohesion: 0.04
+Nodes (4): DE_AREAS, router, rutas, rutas
+
+### Community 50 - "filtro-de-errores.ts"
+Cohesion: 0.15
+Nodes (11): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, HttpModule, crearPipeDeValidacion(), mensajeDeValidacion() (+3 more)
 
 ### Community 51 - "vitest"
-Cohesion: 0.15
-Nodes (14): A, B, EJEMPLOS, ESQUEMAS, ADR-0011, ADR-0012, abrirPool(), empresaDePrueba() (+6 more)
+Cohesion: 0.13
+Nodes (18): A, B, EJEMPLOS, ESQUEMAS, ADR-0011, ADR-0012, Activa, CambioDeEmpresa (+10 more)
 
 ### Community 52 - "Propuesta de mejoras · Auditoría de brechas de Capaz ERP"
 Cohesion: 0.20
 Nodes (9): 1. Resumen para el dueño, 3.1 Qué hay hoy (verificado), 3.2 Hallazgos del frente B, 3. Frente B · Ficha de cliente y datos maestros, 5. Hoja de ruta sugerida (cuatro rondas), 6. Decisiones que necesito del dueño, 7. Riesgos, Propuesta de mejoras · Auditoría de brechas de Capaz ERP (+1 more)
 
 ### Community 53 - "api/package.json"
-Cohesion: 0.10
-Nodes (19): license, name, private, type, version, better-auth, drizzle-kit, @nestjs/cli (+11 more)
+Cohesion: 0.09
+Nodes (20): license, name, private, type, version, better-auth, big.js, drizzle-kit (+12 more)
 
 ### Community 54 - "Fichas de la ola 3 · Clásicos II (Inventario, Compras, Personal, Reportes)"
 Cohesion: 0.14
@@ -344,7 +367,7 @@ Nodes (13): 0. Lo que ya está decidido (no se reabre en la puerta), 1.1 `insumo
 
 ### Community 55 - "proponer.ts"
 Cohesion: 0.10
-Nodes (11): HerramientaConSecretos, HerramientaDeBorradorDesconocida, HERRAMIENTAS_CON_SECRETOS, proponerBorrador(), PropuestaDeBorrador, ADR-016: Reglas de datos y de conducta de los módulos clásicos, Alternativas descartadas, Consecuencias (+3 more)
+Nodes (11): proponer(), HerramientaConSecretos, HerramientaDeBorradorDesconocida, HERRAMIENTAS_CON_SECRETOS, proponerBorrador(), PropuestaDeBorrador, ADR-016: Reglas de datos y de conducta de los módulos clásicos, Alternativas descartadas (+3 more)
 
 ### Community 56 - "csv.ts"
 Cohesion: 0.26
@@ -354,21 +377,21 @@ Nodes (11): detectarSeparador(), escribirCelda(), escribirCsv(), FilaCsv, Lectur
 Cohesion: 0.22
 Nodes (9): 2.1 Propiedad exclusiva, 2.2 Archivos compartidos: dueño único, 2.3 Migraciones: un solo escritor, numeración en serie, 2.4 Dependencias, 2.5 Dónde trabaja cada carril, 2.6 Base de pruebas por carril, 2.7 Orden de integración y suite completa, 2.8 Ante un conflicto (+1 more)
 
-### Community 58 - "logger.ts"
-Cohesion: 0.27
-Nodes (4): CAMPOS_OCULTOS, crearLogger(), LOGGER, LoggerModule
+### Community 58 - "config/config.ts"
+Cohesion: 0.13
+Nodes (9): Config, CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), ConfigModule, secreto, base (+1 more)
 
 ### Community 59 - "Plan de trabajo en paralelo de Capaz ERP"
 Cohesion: 0.29
 Nodes (6): 0. Cómo leer este documento (y gastar pocos tokens), 1. Papeles, 7. Plantilla de brief, 8. Reglas para ahorrar tokens (agente de carril), 9. Decisiones abiertas y qué carriles esperan, Plan de trabajo en paralelo de Capaz ERP
 
 ### Community 60 - "llamar"
-Cohesion: 0.33
-Nodes (6): llamar(), 4.1 Ola 2 · grafo y rondas, 4. Grafo de dependencias y qué arranca ya, M-registro-w · M-crm-w · M-ordenes-w · Pantallas de los módulos, W5 · Herramientas en pantalla, W6 a W10 · Pantallas de la ola 1
+Cohesion: 0.29
+Nodes (7): llamar(), 8. W11 · Pantalla de dictado, 4.1 Ola 2 · grafo y rondas, 4. Grafo de dependencias y qué arranca ya, M-registro-w · M-crm-w · M-ordenes-w · Pantallas de los módulos, W5 · Herramientas en pantalla, W6 a W10 · Pantallas de la ola 1
 
-### Community 61 - "boton.tsx"
-Cohesion: 0.17
-Nodes (13): GLIFOS, Comun, Props, TAMANOS, VarianteDeBoton, VARIANTES, EstadoVacio(), Props (+5 more)
+### Community 61 - "cabecera-de-consola.tsx"
+Cohesion: 0.13
+Nodes (21): BarraDeDistribucion(), CabeceraDeConsola(), Indicadores(), SECCIONES, Tarjeta, TarjetaDeKpi(), tarjetasDe(), CifraAnimada() (+13 more)
 
 ### Community 62 - "10. Lecciones de la ola 1"
 Cohesion: 0.50
@@ -378,61 +401,57 @@ Nodes (4): 10.1 Qué salió bien (se mantiene), 10.2 Qué se corrige en el méto
 Cohesion: 0.50
 Nodes (4): 6.1 Lanzar un carril, 6.2 Lista de verificación de integración, 6.3 Puerta entre olas, 6. El integrador
 
-### Community 64 - "config/config.ts"
-Cohesion: 0.19
-Nodes (9): CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), leerConfigDelEntorno(), ConfigModule, secreto, base (+1 more)
+### Community 64 - "Plan de integración de Cotizín y Tairos.RC («SF») dentro de Capaz ERP"
+Cohesion: 0.08
+Nodes (25): 1. Resumen para el dueño, 2.1 Capaz: lo que ya existe y sirve a esta integración, 2.2 Tairos.RC («SF»), 2.3 Cotizín, 2. Qué hay hoy en cada producto (con evidencia), 3.1 Tairos.RC frente a Capaz, 3.2 Cotizín frente a Capaz, 3. Mapa de encaje (+17 more)
 
-### Community 65 - "filtro-de-errores.ts"
-Cohesion: 0.12
-Nodes (16): almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto(), idDePeticion(), middlewareDeContexto() (+8 more)
+### Community 65 - "main.ts"
+Cohesion: 0.11
+Nodes (10): AppModule, leerConfigDelEntorno(), crearRegistroHttp(), CAMPOS_OCULTOS, crearLogger(), LOGGER, LoggerDeNest, LoggerModule (+2 more)
 
-### Community 66 - "con-empresa.ts"
-Cohesion: 0.25
-Nodes (7): proponer(), Activa, CambioDeEmpresa, ContextoDeEmpresa, crearConEmpresa(), transaccionActual, conEmpresaDePruebas()
+### Community 66 - "core.ts"
+Cohesion: 0.40
+Nodes (3): core, empresaConfig, ADR-0012
 
 ### Community 67 - "entidades.tsx"
-Cohesion: 0.23
-Nodes (14): KitDiseno(), ChipDeCliente(), EnlaceDeEntidad(), InsigniaDeEstado(), inicialesDe(), rutaDeEntidad(), RUTAS, TipoDeEntidad (+6 more)
+Cohesion: 0.10
+Nodes (27): KitDiseno(), ChipDeCliente(), EnlaceDeEntidad(), InsigniaDeEstado(), inicialesDe(), rutaDeEntidad(), RUTAS, TipoDeEntidad (+19 more)
 
 ### Community 68 - "react"
-Cohesion: 0.29
-Nodes (6): Boton(), Rueda(), Dialogo(), Props, Props, react
+Cohesion: 0.08
+Nodes (29): Contenido(), enviar(), HojaActivar(), Props, PRUEBAS, mensajeDeRechazo(), parsearDiasDePrueba(), Boton() (+21 more)
 
 ### Community 69 - "Procedimiento: llevar las migraciones de Capaz a Neon"
+Cohesion: 0.17
+Nodes (11): 0. Reparto de trabajo (para no pisarse), 1. Reglas que no se rompen, 2. Preparación, 3. Ensayo en una rama, 4. Roles y base, 5. Migrar, 6. Verificación (solo lectura, como `capaz_owner` salvo donde se indica), 7. Lo que NO debes hacer al terminar (+3 more)
+
+### Community 70 - "barra-superior.tsx"
+Cohesion: 0.17
+Nodes (10): BarraInferior(), BarraSuperior(), iniciales(), Props, GLIFOS, IconoMenu(), SelectorDeEmpresa(), Icono() (+2 more)
+
+### Community 71 - "carcasa.tsx"
 Cohesion: 0.18
-Nodes (10): 0. Reparto de trabajo (para no pisarse), 1. Reglas que no se rompen, 2. Preparación, 3. Ensayo en una rama, 4. Roles y base, 5. Migrar, 7. Lo que NO debes hacer al terminar, 8. Registro de ejecución (lo llena el agente de Neon) (+2 more)
-
-### Community 70 - "carcasa.tsx"
-Cohesion: 0.08
-Nodes (16): BarraSuperior(), iniciales(), Props, Carcasa(), salir(), MenuLateral(), fijarEmpresaActiva(), Props (+8 more)
-
-### Community 71 - "4. Frente C · Módulo por módulo y piezas transversales"
-Cohesion: 0.20
-Nodes (10): 4.1 Finanzas ligeras (`registro`), 4.2 CRM, 4.3 Pedidos (`ordenes`), 4.4 Inventario (`insumos`), 4.5 Compras, 4.6 Personal, 4.7 Reportes, 4.8 Piezas transversales (+2 more)
+Nodes (3): Carcasa(), salir(), MenuLateral()
 
 ### Community 72 - "paleta-de-comandos.tsx"
 Cohesion: 0.15
-Nodes (7): buscarClientes(), Cliente, PaletaDeComandos(), accionesRapidas(), AccionRapida, normalizar(), POR_MODULO
+Nodes (8): buscarClientes(), Cliente, PaletaDeComandos(), accionesRapidas(), AccionRapida, normalizar(), POR_MODULO, cmdk
 
 ### Community 73 - "Ficha · Estado de cuenta de la empresa (pausar, dar de baja, quitar módulo)"
 Cohesion: 0.22
 Nodes (8): 1. Problema, 2. Reglas de producto, 4. Herramientas (plataforma, `definirHerramientaDePlataforma`), 5. Pantalla (consola, solo operadores), 6. Pruebas de referencia (integración, sin e2e), 7. Fuera de alcance, 8. Esfuerzo y riesgo, Ficha · Estado de cuenta de la empresa (pausar, dar de baja, quitar módulo)
 
-### Community 74 - "Flujo entre módulos · que el trabajo sea fluido, rápido y sin volver a teclear"
-Cohesion: 0.12
-Nodes (13): 1. Principio, 2. Qué ya se comunica (verificado en el código), 3. Qué falta, por valor para el trabajo diario, 5. Orden recomendado, 6. Reglas para construirlo, Flujo entre módulos · que el trabajo sea fluido, rápido y sin volver a teclear, 1. Qué se ve hoy (capturas del kit y del acceso, 1280 px, claro), 2. Dirección propuesta (+5 more)
+### Community 74 - "logica.ts"
+Cohesion: 0.09
+Nodes (29): accionesPosibles(), argumentosDeContrato, busquedaDesdeFiltro(), ClaveDeOrden, diaAIso(), EmpresaResumen, Estado, ESTADOS (+21 more)
 
 ### Community 75 - "pendientes.tsx"
-Cohesion: 0.10
-Nodes (10): PantallaInicio(), Dato, DESTINOS, Estado, ICONO_DE, Pendientes(), TITULOS, useActividades() (+2 more)
+Cohesion: 0.11
+Nodes (10): Dato, DESTINOS, Estado, ICONO_DE, Pendientes(), Tarjeta(), TITULOS, useActividades() (+2 more)
 
-### Community 76 - "config.js"
-Cohesion: 0.24
-Nodes (11): cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES, urlDeAdmin(), urlDelDueno(), variable() (+3 more)
-
-### Community 77 - "core.ts"
-Cohesion: 0.40
-Nodes (3): core, empresaConfig, ADR-0012
+### Community 77 - "http/contexto.ts"
+Cohesion: 0.17
+Nodes (11): almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto(), idDePeticion(), middlewareDeContexto() (+3 more)
 
 ### Community 78 - "Brechas frente a lo que piden las empresas en Perú (insumo del usuario, 2026-11-16)"
 Cohesion: 0.40
@@ -447,8 +466,8 @@ Cohesion: 0.25
 Nodes (8): 1. En una frase, 2. Estado exacto, 3. Cómo arrancar el entorno, 4. Mapa del código, 6. Qué hacer ahora, en orden, 7. Documentación, 8. Decisiones del usuario que siguen abiertas, Relevo: dónde quedó Capaz ERP y cómo seguir
 
 ### Community 81 - "dependencies"
-Cohesion: 0.14
-Nodes (14): dependencies, @capaz/shared, cmdk, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono, lucide-react, motion, @radix-ui/react-dropdown-menu (+6 more)
+Cohesion: 0.13
+Nodes (15): dependencies, @capaz/shared, cmdk, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono, lucide-react, motion, @radix-ui/react-dropdown-menu (+7 more)
 
 ### Community 82 - "devDependencies"
 Cohesion: 0.18
@@ -458,57 +477,113 @@ Nodes (11): devDependencies, oxlint, tailwindcss, @tailwindcss/vite, @types/node
 Cohesion: 0.29
 Nodes (7): 4.2 Reglas de dinero (dominio; cada una con su prueba unitaria), 4.3 Contratos (`packages/shared/src/contratos/registro.ts`), 4.4 Herramientas: permiso, criticidad y marcas, 4.5 Consumidores y fuente de tiempo (s3), 4.6 Carriles de servidor, 4.7 Pantallas (`apps/web/src/modules/registro/`), 4. Módulo `registro` · Finanzas ligeras (fase 14)
 
-### Community 84 - "2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)"
-Cohesion: 0.29
-Nodes (7): 2.1 Qué hay hoy (verificado), 2.2 Tres diseños posibles, 2.3 Modelo de datos mínimo (diseño 3), 2.4 Permisos de los operadores, 2.5 Soporte: entrar a la empresa del cliente, 2.6 Hallazgos del frente A, 2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)
-
 ### Community 85 - "scripts"
 Cohesion: 0.29
 Nodes (7): scripts, build, dev, lint, preview, test, typecheck
 
 ### Community 86 - "lectura"
-Cohesion: 0.40
-Nodes (5): lectura(), recortar(), 4.1 Manifiesto (lo edita M-registro-s1), 9. X2 · Cierre de la ola 2 (integrador), 5. Cosas que no son obvias (trampas ya pisadas)
+Cohesion: 0.15
+Nodes (14): lectura(), recortar(), 4.1 Manifiesto (lo edita M-registro-s1), 7.1 Contrato (agregar a `contratos/registro.ts`), 7.2 Herramienta `deuda_crear_con_adelanto` (`herramientas/deudas-con-adelanto.ts`), 7.3 Intérprete (`dictado/interprete.ts` y `dictado/resolver.ts`), 7.4 Pruebas exigidas, 7. M-registro-s5b · Intérprete de Finanzas y `deuda_crear_con_adelanto` (+6 more)
+
+### Community 87 - "pantalla-inicio.tsx"
+Cohesion: 0.25
+Nodes (4): TONO_DE_ESTADO, COLOR_ACENTO, PantallaInicio(), Tarjeta()
 
 ### Community 88 - "5. Módulo `crm` (fase 15)"
 Cohesion: 0.40
 Nodes (5): 5.1 Manifiesto (M-crm-s1), 5.2 Reglas (dominio), 5.3 Contratos (`contratos/crm.ts`), 5.4 Carriles, 5. Módulo `crm` (fase 15)
 
-### Community 89 - "6. Módulo `ordenes` · Pedidos (fase 16)"
-Cohesion: 0.40
-Nodes (5): 6.1 Manifiesto (M-ordenes-s1), 6.2 Reglas (dominio), 6.3 Contratos (`contratos/ordenes.ts`), 6.4 Carriles, 6. Módulo `ordenes` · Pedidos (fase 16)
+### Community 89 - "5. M-cotizador-s0 · Motor"
+Cohesion: 0.33
+Nodes (6): 5.1 Qué se copia (archivos enteros, sin recortar), 5.2 Casos de referencia (ya están en las pruebas copiadas; valores exactos de Cotizín), 5.3 Adaptador único · `domain/adaptador-de-dinero.ts` (nuevo), 5.4 `domain/frontera-del-motor.spec.ts` (nueva; vigila R22 para siempre), 5.5 Pasos, 5. M-cotizador-s0 · Motor
 
-### Community 90 - "KitOla2"
+### Community 90 - "Fichas congeladas de la ola 4 · Captura por voz y texto, y Cotizador (corte B1)"
+Cohesion: 0.12
+Nodes (15): 0.1 Mapa de carriles y qué arranca primero, 0. Cómo leerlo, 12. Decisiones abiertas del dueño y de Keny, 13. Riesgos, 14. Lo no verificado, 2. C4 · Paso previo (integrador), 3.1 Contrato `captura.ts` (copiar tal cual), 3.2 Agregar a `contratos/borradores.ts` (+7 more)
+
+### Community 91 - "pantalla-empresas.tsx"
+Cohesion: 0.10
+Nodes (21): useAtajosDeLista(), EmpresaDeLista, DensidadDeLista, leer(), useDensidad(), FiltrosDeEmpresas(), ORDEN_DE_ESTADOS, BotonDeOrden() (+13 more)
+
+### Community 92 - "Ficha · Crear empresa con módulos, editarla y ajustar su cantidad de usuarios (consola del operador)"
+Cohesion: 0.25
+Nodes (7): 1. Qué hay hoy (verificado), 2. Decisiones de producto propuestas, 3. Servidor (modules-5a), 4. Pantallas (modules-ed, tras integrar el servidor), 5. Fuera de alcance, 6. Decisiones que necesita el usuario, Ficha · Crear empresa con módulos, editarla y ajustar su cantidad de usuarios (consola del operador)
+
+### Community 93 - "guarda.ts"
+Cohesion: 0.17
+Nodes (12): cargadorRaiz(), destinoSegunSesion(), esRuta(), normalizar(), RUTA_CONSOLA, RUTA_INICIAR_SESION, RUTA_INICIO, RUTA_NUEVA_EMPRESA (+4 more)
+
+### Community 95 - "lista-de-menu.tsx"
+Cohesion: 0.18
+Nodes (9): Fila(), Grupo(), ListaDeMenu(), ModoDeMenu, OCULTO, Props, SOBRE_ICONO, SOLO_LECTORES (+1 more)
+
+### Community 96 - "ADR-017: Captura como capa del núcleo y Cotizador por cortes"
+Cohesion: 0.17
+Nodes (11): 1. La captura es una capa del núcleo, no un módulo de dinero, 2. La voz arranca sin modelo de pago (fase A1), 3. Excepción a la regla 9: el interior del motor del Cotizador, 4. El Cotizador es un módulo de Capaz y se construye por cortes, 5. Reglas del porte, ADR-017: Captura como capa del núcleo y Cotizador por cortes, Alternativas descartadas, Consecuencias (+3 more)
+
+### Community 98 - "avatar-de-empresa.tsx"
+Cohesion: 0.60
+Nodes (4): AvatarDeEmpresa(), colorDe(), COLORES, inicialesDeEmpresa()
+
+### Community 99 - "KitOla2"
 Cohesion: 0.20
 Nodes (10): buscarEn(), Cantidades(), Cifras(), KitOla2(), Navegacion(), Retardo(), Seccion(), Selectores() (+2 more)
 
-### Community 91 - "tablero.tsx"
+### Community 100 - "react-router"
+Cohesion: 0.20
+Nodes (9): fijarEmpresaActiva(), Props, cambiar(), copiar(), accionar(), resolver(), notificar(), TipoDeAviso (+1 more)
+
+### Community 101 - "4. Frente C · Módulo por módulo y piezas transversales"
+Cohesion: 0.20
+Nodes (10): 4.1 Finanzas ligeras (`registro`), 4.2 CRM, 4.3 Pedidos (`ordenes`), 4.4 Inventario (`insumos`), 4.5 Compras, 4.6 Personal, 4.7 Reportes, 4.8 Piezas transversales (+2 more)
+
+### Community 103 - "2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)"
+Cohesion: 0.29
+Nodes (7): 2.1 Qué hay hoy (verificado), 2.2 Tres diseños posibles, 2.3 Modelo de datos mínimo (diseño 3), 2.4 Permisos de los operadores, 2.5 Soporte: entrar a la empresa del cliente, 2.6 Hallazgos del frente A, 2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes)
+
+### Community 104 - "pantalla-solicitudes.tsx"
+Cohesion: 0.12
+Nodes (11): Cargando(), ErrorDeConsulta(), PantallaEmpresas(), PantallaPlanes(), Filtro, FILTROS, PantallaSolicitudes(), Solicitud (+3 more)
+
+### Community 105 - "4. M-registro-s5a · Reglas de dictado"
+Cohesion: 0.33
+Nodes (6): R, 4.1 Qué se copia y con qué nombre, 4.2 Casos de referencia (ya están en las pruebas copiadas; **no cambian**), 4.3 Reglas nuevas (no existen en Tairos.RC; archivos nuevos en `dictado/`, con su prueba), 4.4 Pasos, 4. M-registro-s5a · Reglas de dictado
+
+### Community 106 - "tablero.tsx"
 Cohesion: 0.25
 Nodes (3): ColumnaDeTablero, Props, Tablero()
 
-### Community 95 - "cifra.tsx"
+### Community 108 - "rutaSiguiente"
+Cohesion: 0.60
+Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
+
+### Community 109 - "10. Tanda 3 (esquema; arquitectura fijada)"
+Cohesion: 0.40
+Nodes (5): 10.1 Eventos del Cotizador (congelados ya; los copia s1 al contrato), 10.3 M-ordenes-s3 · Puente cotización → pedido, 10.4 M-cotizador-w1 · Pantallas del corte B1 (dos sesiones), 10.5 X4 · Cierre de la ola (integrador), 10. Tanda 3 (esquema; arquitectura fijada)
+
+### Community 110 - "cifra.tsx"
 Cohesion: 0.40
 Nodes (4): Cifra(), GrupoDeCifras(), TonoDeCifra, TONOS
 
 ## Knowledge Gaps
-- **529 isolated node(s):** `Estado`, `ESTADOS`, `AccionDeModulo`, `ETIQUETA_DE_ACCION`, `FormularioDePlan` (+524 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 761 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **619 isolated node(s):** `DE_AREAS`, `router`, `CONTRATOS`, `CONTRATOS_DE_PLATAFORMA`, `EVENTOS` (+614 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1018 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `pg` connect `vitest` to `sembrar-demo.ts`, `automatizaciones.int.spec.ts`, `preparar-base.ts`, `borradores.int.spec.ts`, `config.js`, `database.service.ts`, `api/package.json`?**
-  _High betweenness centrality (0.152) - this node is a cross-community bridge._
-- **Are the 2 inferred relationships involving `EjecutorDeHerramientas` (e.g. with `1. Reglas comunes de todo módulo clásico` and `S1 · Herramientas`) actually correct?**
-  _`EjecutorDeHerramientas` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Estado`, `ESTADOS`, `AccionDeModulo` to the rest of the system?**
-  _529 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `pg` connect `vitest` to `sembrar-demo.ts`, `automatizaciones.int.spec.ts`, `borradores.int.spec.ts`, `preparar-base.ts`, `database.service.ts`, `api/package.json`?**
+  _High betweenness centrality (0.096) - this node is a cross-community bridge._
+- **Are the 4 inferred relationships involving `EjecutorDeHerramientas` (e.g. with `1. Reglas comunes de todo módulo clásico` and `1. Reglas comunes de la ola 4`) actually correct?**
+  _`EjecutorDeHerramientas` has 4 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `DE_AREAS`, `router`, `CONTRATOS` to the rest of the system?**
+  _619 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
-- **Why does `vitest` connect `vitest` to `config/config.ts`, `filtro-de-errores.ts`, `pantalla-registro.tsx`, `web/package.json`, `entidades.tsx`, `automatizaciones.int.spec.ts`, `borradores.int.spec.ts`, `src/index.ts`, `paleta-de-comandos.tsx`, `reglas.ts`, `database.service.ts`, `logica.ts`, `main.ts`, `api/package.json`, `csv.ts`, `catalogo.spec.ts`, `logger.ts`?**
-  _High betweenness centrality (0.096) - this node is a cross-community bridge._
-- **Are the 11 inferred relationships involving `sembrarEmpresa()` (e.g. with `sembrarCrm()` and `sembrarFinanzas()`) actually correct?**
-  _`sembrarEmpresa()` has 11 INFERRED edges - model-reasoned connections that need verification._
+- **Why does `vitest` connect `vitest` to `main.ts`, `src/index.ts`, `web/package.json`, `entidades.tsx`, `automatizaciones.int.spec.ts`, `borradores.int.spec.ts`, `paleta-de-comandos.tsx`, `reglas.ts`, `logica.ts`, `transporte.spec.ts`, `database.service.ts`, `http/contexto.ts`, `filtro-de-errores.ts`, `api/package.json`, `csv.ts`, `catalogo.spec.ts`, `config/config.ts`, `guarda.ts`?**
+  _High betweenness centrality (0.094) - this node is a cross-community bridge._
 - **Should `sembrar-demo.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.05309734513274336 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05217391304347826 - nodes in this community are weakly interconnected._
+- **Why does `zod` connect `src/index.ts` to `automatizaciones.int.spec.ts`, `borradores.int.spec.ts`, `contratos/index.ts`, `filtro-de-errores.ts`, `api/package.json`, `config/config.ts`?**
+  _High betweenness centrality (0.056) - this node is a cross-community bridge._
