@@ -3,6 +3,7 @@ import { KitDatos } from './kit-datos.tsx';
 import { KitOla2 } from './kit-ola-2.tsx';
 import { KitOla3 } from './kit-ola-3.tsx';
 import { KitImpresion } from './kit-impresion.tsx';
+import { KitDiseno } from './kit-diseno.tsx';
 
 /** Página `/kit` (solo en desarrollo): cada pieza del kit en todos sus estados. */
 export function PaginaKit() {
@@ -13,6 +14,7 @@ export function PaginaKit() {
       <KitOla2 />
       <KitOla3 />
       <KitImpresion />
+      <KitDiseno />
     </div>
   );
 }

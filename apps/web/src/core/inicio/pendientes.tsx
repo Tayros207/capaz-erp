@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router';
+import { IconoMenu } from '../../app/carcasa/iconos-menu.tsx';
 import { formatearSoles, type Yo } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { llamar } from '../../shared/api/herramientas.ts';
@@ -65,19 +67,28 @@ function useActividades(activa: boolean, mes: { desde: string; hasta: string }):
   return { cargando: activa && q.isPending, error: q.isError, dato };
 }
 
+const ICONO_DE: Record<CodigoDeTarjeta, string> = { borradores: 'bandeja', deudas: 'finanzas', entregas: 'ordenes', actividades: 'crm' };
+
 function Tarjeta({ codigo, estado }: { codigo: CodigoDeTarjeta; estado: Estado }) {
   const { dato } = estado;
-  const tono: TonoDeInsignia = dato && dato.cuenta > 0 ? 'aviso' : 'exito';
+  const pendiente = dato !== null && dato.cuenta > 0;
+  const tono: TonoDeInsignia = pendiente ? 'aviso' : 'exito';
   return (
-    <Link to={DESTINOS[codigo]} className={unir('flex min-h-11 flex-col gap-1 rounded-tarjeta border border-borde bg-superficie p-3', 'hover:border-borde-fuerte hover:bg-superficie-alta')}>
-      <span className="flex items-center justify-between gap-2 text-sm text-texto-suave">
-        {TITULOS[codigo]}
-        {dato ? <Insignia tono={tono}>{dato.cuenta > 0 ? 'Pendiente' : 'Al día'}</Insignia> : null}
+    <Link to={DESTINOS[codigo]} className="group flex min-h-11 flex-col gap-2 rounded-tarjeta border border-borde bg-superficie p-4 shadow-tarjeta transition duration-150 hover:-translate-y-0.5 hover:border-borde-fuerte hover:shadow-elevada">
+      <span className="flex items-center gap-2 text-sm font-medium text-texto-suave">
+        <span className={unir('grid size-7 place-items-center rounded-control', pendiente ? 'bg-aviso/10 text-aviso' : 'bg-superficie-alta text-texto-suave')}>
+          <IconoMenu nombre={ICONO_DE[codigo]} className="size-4" />
+        </span>
+        <span className="flex-1">{TITULOS[codigo]}</span>
+        {dato ? <Insignia tono={tono}>{pendiente ? 'Pendiente' : 'Al día'}</Insignia> : null}
       </span>
       {estado.cargando ? <Esqueleto className="h-7 w-2/3" /> : null}
       {estado.error ? <span className="text-sm text-texto-suave">No se pudo cargar. Toca para abrir la pantalla.</span> : null}
-      {dato ? <span className="font-titulo text-xl font-semibold text-texto">{dato.texto}</span> : null}
-      {dato?.detalle ? <span className="text-sm text-texto-suave">{dato.detalle}</span> : null}
+      {dato ? <span className="font-titulo text-xl font-semibold tracking-tight text-texto tabular-nums">{dato.texto}</span> : null}
+      {dato?.detalle ? <span className="text-sm text-texto-suave tabular-nums">{dato.detalle}</span> : null}
+      <span className="mt-auto flex items-center gap-1 pt-1 text-xs font-medium text-accion opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+        Abrir <ArrowUpRight aria-hidden className="size-3.5" />
+      </span>
     </Link>
   );
 }
@@ -96,8 +107,8 @@ export function Pendientes({ yo }: { yo: Yo }) {
   if (visibles.length === 0) return null;
   return (
     <section aria-labelledby="pendientes" className="flex flex-col gap-2">
-      <h2 id="pendientes" className="font-titulo text-lg font-semibold text-texto">Pendientes</h2>
-      <ul className="grid list-none gap-2 p-0 sm:grid-cols-2 lg:grid-cols-4">
+      <h2 id="pendientes" className="font-titulo text-sm font-semibold tracking-wide text-texto-suave uppercase">Pendientes</h2>
+      <ul className="grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-4">
         {visibles.map((c) => <li key={c} className="flex *:flex-1"><Tarjeta codigo={c} estado={estados[c]} /></li>)}
       </ul>
     </section>

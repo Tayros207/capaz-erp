@@ -26,7 +26,7 @@ const OCULTO: Record<ModoDeMenu, string> = { completo: '', iconos: 'hidden', aut
 
 const SOBRE_ICONO: Record<ModoDeMenu, string> = { completo: '', iconos: 'absolute top-0.5 right-0.5', auto: 'md:max-lg:absolute md:max-lg:top-0.5 md:max-lg:right-0.5' };
 
-const base = 'relative flex min-h-(--alto-control) items-center gap-3 rounded-control px-3 text-menu-texto transition-colors duration-150';
+const base = 'relative flex min-h-9 items-center gap-3 rounded-control px-2.5 text-sm text-lateral-texto transition-colors duration-150';
 
 function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: ModoDeMenu; alNavegar?: () => void; pendientes: number }) {
   const texto = unir('min-w-0 flex-1 truncate', SOLO_LECTORES[modo]);
@@ -34,11 +34,11 @@ function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: M
   if (item.ruta) {
     return (
       <NavLink to={item.ruta} onClick={alNavegar} title={conTitulo ? item.nombre : undefined}
-        className={({ isActive }) => unir(base, 'hover:bg-menu-activo', isActive && 'bg-menu-activo font-semibold before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-accion')}>
+        className={({ isActive }) => unir(base, 'hover:bg-lateral-activo/60', isActive && 'bg-lateral-activo font-medium text-lateral-activo-texto')}>
         <IconoMenu nombre={item.icono} />
         <span className={unir('flex min-w-0 flex-1 flex-col', SOLO_LECTORES[modo])}>
           <span className="truncate">{item.nombre}</span>
-          {item.etiqueta ? <span className="truncate text-xs font-normal text-menu-texto/80">{item.etiqueta}</span> : null}
+          {item.etiqueta ? <span className="truncate text-xs font-normal text-lateral-suave">{item.etiqueta}</span> : null}
         </span>
         {item.clave === 'bandeja' ? <InsigniaDePendientes cantidad={pendientes} className={SOBRE_ICONO[modo]} /> : null}
       </NavLink>
@@ -49,9 +49,9 @@ function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: M
       <IconoMenu nombre="candado" />
       <span className={texto}>{item.nombre}</span>
       <div className={unir('flex w-full flex-wrap items-center gap-2', OCULTO[modo])}>
-          <span className="w-full pl-8 text-xs text-menu-texto/80">{item.nota}</span>
+          <span className="w-full pl-8 text-xs text-lateral-suave">{item.nota}</span>
           {item.accion ? (
-            <button type="button" className="ml-8 cursor-pointer rounded-control border border-menu-texto/50 px-3 py-1 text-xs font-semibold hover:bg-menu-activo"
+            <button type="button" className="ml-8 cursor-pointer rounded-control border border-lateral-borde px-3 py-1 text-xs font-medium hover:bg-lateral-activo/60"
               onClick={() => void solicitarModulo(item.accion!.codigo, item.nombre)}>
               Solicitar
             </button>
@@ -66,9 +66,9 @@ function Fila({ item, modo, alNavegar, pendientes }: { item: ItemDeMenu; modo: M
 function Grupo({ titulo, items, modo, alNavegar, pendientes }: { titulo?: string; items: ItemDeMenu[]; modo: ModoDeMenu; alNavegar?: () => void; pendientes: number }) {
   return (
     <section aria-label={titulo} className="flex flex-col gap-0.5">
-      {titulo ? <h2 className={unir('px-3 pt-3 pb-1 text-xs font-semibold tracking-wide text-menu-texto/70 uppercase', SOLO_LECTORES[modo])}>{titulo}</h2> : null}
+      {titulo ? <h2 className={unir('px-2.5 pt-4 pb-1 text-[0.6875rem] font-medium tracking-wider text-lateral-suave uppercase', SOLO_LECTORES[modo])}>{titulo}</h2> : null}
       {items.map((i) => <Fila key={i.clave} item={i} modo={modo} alNavegar={alNavegar} pendientes={pendientes} />)}
-      {items.length === 0 ? <p className={unir('px-3 pb-1 text-xs text-menu-texto/70', SOLO_LECTORES[modo])}>Sin módulos disponibles todavía.</p> : null}
+      {items.length === 0 ? <p className={unir('px-3 pb-1 text-xs text-lateral-suave', SOLO_LECTORES[modo])}>Sin módulos disponibles todavía.</p> : null}
     </section>
   );
 }

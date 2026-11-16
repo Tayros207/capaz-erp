@@ -60,7 +60,7 @@ export function PantallaInicio() {
           {f.items.length === 0 ? (
             <p className="rounded-tarjeta border border-dashed border-borde-fuerte p-3 text-sm text-texto-suave">Sin módulos disponibles todavía.</p>
           ) : (
-            <ul className="grid list-none gap-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid list-none gap-3 p-0 sm:grid-cols-2 xl:grid-cols-3">
               {f.items.map((i) => <li key={i.clave} className="flex *:flex-1"><Tarjeta item={i} /></li>)}
             </ul>
           )}

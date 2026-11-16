@@ -59,7 +59,7 @@ export function PaletaDeComandos({ menu, abierta, alCambiar, puedeVerClientes }:
       <div className="flex items-center gap-3 border-b border-borde px-4">
         <Search aria-hidden className="size-4 shrink-0 text-texto-suave" strokeWidth={1.75} />
         <Command.Input value={texto} onValueChange={setTexto} placeholder="Busca una pantalla o un cliente…"
-          className="h-12 w-full bg-transparent text-sm text-texto outline-none placeholder:text-texto-suave" />
+          className="h-12 w-full bg-transparent text-sm text-texto outline-none focus-visible:!shadow-none placeholder:text-texto-suave" />
         <kbd className="hidden shrink-0 rounded-chip border border-borde px-1.5 py-0.5 text-[0.6875rem] text-texto-suave sm:block">Esc</kbd>
       </div>
       <Command.List className="max-h-[min(24rem,60dvh)] overflow-y-auto p-2">

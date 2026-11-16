@@ -7,6 +7,7 @@ import { notificar } from '../../shared/ui/notificar.ts';
 import { BarraInferior } from './barra-inferior.tsx';
 import { BarraSuperior } from './barra-superior.tsx';
 import { MenuLateral } from './menu-lateral.tsx';
+import { PaletaDeComandos } from './paleta-de-comandos.tsx';
 import { avisoDeAccesoDenegado, menuDesdeYo } from './menu.ts';
 import { migasDeRuta } from './migas.ts';
 import { leerPlegado, guardarPlegado } from './plegado.ts';
@@ -23,6 +24,7 @@ export function Carcasa() {
   const { pathname } = useLocation();
   const navegar = useNavigate();
   const [plegado, setPlegado] = useState(leerPlegado);
+  const [paleta, setPaleta] = useState(false);
   const menu = useMemo(() => (yo?.empresa ? menuDesdeYo(yo) : null), [yo]);
   const { pendientes } = usePendientes(Boolean(yo?.empresa) && (yo?.permisos.includes('borradores:ver') ?? false));
   const aviso = yo?.empresa ? avisoDeAccesoDenegado(yo, pathname) : null;
@@ -32,6 +34,17 @@ export function Carcasa() {
     notificar(aviso, 'aviso');
     void navegar('/inicio', { replace: true });
   }, [aviso, navegar]);
+
+  useEffect(() => {
+    const alTeclear = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaleta((a) => !a);
+      }
+    };
+    window.addEventListener('keydown', alTeclear);
+    return () => window.removeEventListener('keydown', alTeclear);
+  }, []);
 
   if (!yo || !yo.empresa || !menu) {
     return (
@@ -47,13 +60,14 @@ export function Carcasa() {
         Saltar al contenido
       </a>
       <BarraSuperior yo={yo} migas={migasDeRuta(menu, pathname)} plegado={plegado}
-        alPlegar={() => { guardarPlegado(!plegado); setPlegado(!plegado); }} alSalir={() => void salir()} />
+        alPlegar={() => { guardarPlegado(!plegado); setPlegado(!plegado); }} alSalir={() => void salir()} alBuscar={() => setPaleta(true)} />
       <div className="flex">
         <MenuLateral menu={menu} plegado={plegado} pendientes={pendientes} />
         <main id="contenido" className="min-w-0 flex-1 px-4 pt-4 pb-24 md:px-6 md:pb-8">
           {aviso ? null : <Outlet />}
         </main>
       </div>
+      <PaletaDeComandos menu={menu} abierta={paleta} alCambiar={setPaleta} puedeVerClientes={menu.nucleo.some((i) => i.clave === 'clientes' && i.ruta !== null)} />
       <BarraInferior menu={menu} alSalir={() => void salir()} pendientes={pendientes} />
     </div>
   );

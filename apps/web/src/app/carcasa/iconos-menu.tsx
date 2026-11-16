@@ -1,5 +1,5 @@
 import {
-  BriefcaseBusiness, Building2, ChartColumn, Clock3, Inbox, Link2, Lock, LogOut, MapPin, Network, PanelLeft, Package, ShieldCheck,
+  BriefcaseBusiness, Building2, Calculator, ClipboardList, Handshake, ChartColumn, Clock3, Inbox, Link2, Lock, LogOut, MapPin, Network, PanelLeft, Package, ShieldCheck,
   ShoppingCart, UserRound, Users, Wallet, Warehouse, Zap, Factory, type LucideIcon,
 } from 'lucide-react';
 import { Icono } from '../../shared/ui/icono.tsx';
@@ -29,6 +29,12 @@ const GLIFOS: Record<string, LucideIcon> = {
   salir: LogOut,
   'panel-izquierda': PanelLeft,
   trabajo: BriefcaseBusiness,
+  crm: Handshake,
+  ordenes: ClipboardList,
+  registro: Wallet,
+  insumos: Warehouse,
+  reportes: ChartColumn,
+  cotizador: Calculator,
 };
 
 export function IconoMenu({ nombre, className }: { nombre: string; className?: string }) {
