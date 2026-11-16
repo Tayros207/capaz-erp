@@ -133,3 +133,125 @@ export function mensajeDeRechazo(codigo: string, mensaje: string): string {
   if (codigo === 'sin_conexion') return mensaje;
   return mensaje || 'No se pudo completar la operación.';
 }
+
+// ───────────────────────── Nombres y códigos de módulo ─────────────────────────
+
+/** Nombre legible por código técnico. Salen de los manifiestos del servidor; si aparece un módulo nuevo, se muestra su código capitalizado. */
+export const NOMBRES_DE_MODULO: Readonly<Record<string, string>> = {
+  registro: 'Registro',
+  crm: 'CRM',
+  ordenes: 'Pedidos',
+  insumos: 'Inventario',
+  compras: 'Compras',
+  personal: 'Personal',
+  reportes: 'Reportes',
+  webhooks: 'Webhooks y claves',
+  cotizador: 'Cotizador',
+};
+
+export function nombreDeModulo(codigo: string): string {
+  return NOMBRES_DE_MODULO[codigo] ?? (codigo ? codigo[0]!.toUpperCase() + codigo.slice(1) : codigo);
+}
+
+// ───────────────────────── Resumen de la cartera de empresas ─────────────────────────
+
+type ModuloResumido = { modulo: string; estado: Estado; pruebaHasta: string | null; vigenteHasta: string | null };
+export type EmpresaResumen = { id: string; nombre: string; altaEn: string; miembros: number; modulos: ReadonlyArray<ModuloResumido> };
+
+/** Estado de la empresa deducido de sus módulos (la cuenta como tal aún no tiene estado propio; ver FICHA-ESTADO-DE-CUENTA.md). */
+export type EstadoDeEmpresa = 'sin_modulos' | 'activa' | 'prueba' | 'suspendida' | 'baja';
+
+export function estadoDeEmpresa(e: Pick<EmpresaResumen, 'modulos'>): EstadoDeEmpresa {
+  if (e.modulos.length === 0) return 'sin_modulos';
+  if (e.modulos.every((m) => m.estado === 'baja')) return 'baja';
+  if (e.modulos.some((m) => m.estado === 'suspendido')) return 'suspendida';
+  if (e.modulos.some((m) => m.estado === 'activo')) return 'activa';
+  return 'prueba';
+}
+
+export const ESTADO_DE_EMPRESA: Record<EstadoDeEmpresa, { texto: string; tono: TonoDeInsignia }> = {
+  sin_modulos: { texto: 'Sin módulos', tono: 'neutro' },
+  activa: { texto: 'Activa', tono: 'exito' },
+  prueba: { texto: 'En prueba', tono: 'info' },
+  suspendida: { texto: 'Con suspensión', tono: 'aviso' },
+  baja: { texto: 'De baja', tono: 'peligro' },
+};
+
+const DIA_MS = 86_400_000;
+
+/** Días enteros que faltan (hacia arriba) hasta una fecha ISO; negativo si ya pasó; nulo si no es fecha. */
+export function diasHasta(iso: string | null, ahora: Date): number | null {
+  if (!iso) return null;
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return null;
+  return Math.ceil((t - ahora.getTime()) / DIA_MS);
+}
+
+export type Vencimiento = { modulo: string; dias: number; tipo: 'prueba' | 'vigencia' };
+
+/** El vencimiento más cercano entre sus módulos con prueba o vigencia (los dados de baja no cuentan). */
+export function proximoVencimiento(e: Pick<EmpresaResumen, 'modulos'>, ahora: Date): Vencimiento | null {
+  let mejor: Vencimiento | null = null;
+  for (const m of e.modulos) {
+    if (m.estado === 'baja') continue;
+    const candidatos: Vencimiento[] = [];
+    const p = m.estado === 'prueba' ? diasHasta(m.pruebaHasta, ahora) : null;
+    if (p !== null) candidatos.push({ modulo: m.modulo, dias: p, tipo: 'prueba' });
+    const v = diasHasta(m.vigenteHasta, ahora);
+    if (v !== null) candidatos.push({ modulo: m.modulo, dias: v, tipo: 'vigencia' });
+    for (const c of candidatos) if (!mejor || c.dias < mejor.dias) mejor = c;
+  }
+  return mejor;
+}
+
+/** «Vence hoy», «Vence en 3 días», «Venció hace 2 días». */
+export function textoDeVencimiento(dias: number): string {
+  if (dias === 0) return 'Vence hoy';
+  if (dias > 0) return `Vence en ${dias} ${dias === 1 ? 'día' : 'días'}`;
+  return `Venció hace ${-dias} ${dias === -1 ? 'día' : 'días'}`;
+}
+
+export type Kpis = { total: number; activas: number; enPrueba: number; conProblema: number; vencenPronto: number; solicitudes: number; miembros: number };
+
+/** Cifras de la cabecera. `conProblema` = suspendidas o de baja. `vencenPronto` = empresas con algo que vence en `ventanaDias` o ya vencido. */
+export function kpisDeEmpresas(empresas: readonly EmpresaResumen[], ahora: Date, solicitudes: number, ventanaDias = 7): Kpis {
+  const k: Kpis = { total: empresas.length, activas: 0, enPrueba: 0, conProblema: 0, vencenPronto: 0, solicitudes, miembros: 0 };
+  for (const e of empresas) {
+    const s = estadoDeEmpresa(e);
+    if (s === 'activa') k.activas++;
+    else if (s === 'prueba') k.enPrueba++;
+    else if (s === 'suspendida' || s === 'baja') k.conProblema++;
+    k.miembros += e.miembros;
+    const v = proximoVencimiento(e, ahora);
+    if (v && v.dias <= ventanaDias) k.vencenPronto++;
+  }
+  return k;
+}
+
+const sinTildes = (t: string) => t.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+
+export type FiltroDeEmpresas = { texto: string; estado: EstadoDeEmpresa | 'todas'; modulo: string | 'todos' };
+export const FILTRO_VACIO: FiltroDeEmpresas = { texto: '', estado: 'todas', modulo: 'todos' };
+
+/** Busca por nombre, id, código o nombre de módulo; filtra por estado de la empresa y por módulo contratado (no dado de baja). */
+export function filtrarEmpresas<T extends EmpresaResumen>(empresas: readonly T[], f: FiltroDeEmpresas): T[] {
+  const q = sinTildes(f.texto.trim());
+  return empresas.filter((e) => {
+    if (f.estado !== 'todas' && estadoDeEmpresa(e) !== f.estado) return false;
+    if (f.modulo !== 'todos' && !e.modulos.some((m) => m.modulo === f.modulo && m.estado !== 'baja')) return false;
+    if (!q) return true;
+    const pajar = sinTildes([e.nombre, e.id, ...e.modulos.flatMap((m) => [m.modulo, nombreDeModulo(m.modulo)])].join(' '));
+    return pajar.includes(q);
+  });
+}
+
+/** Códigos de módulo presentes en la cartera, ordenados (para el filtro). */
+export function modulosPresentes(empresas: readonly EmpresaResumen[]): string[] {
+  return [...new Set(empresas.flatMap((e) => e.modulos.map((m) => m.modulo)))].sort();
+}
+
+export function inicialesDeEmpresa(nombre: string): string {
+  const p = nombre.trim().split(/\s+/).filter(Boolean);
+  if (p.length === 0) return '?';
+  return ((p[0]![0] ?? '') + (p.length > 1 ? (p[1]![0] ?? '') : '')).toUpperCase();
+}
