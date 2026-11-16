@@ -85,6 +85,30 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into registro.movimientos (tenant_id, numero, anio, tipo, fecha, monto_centimos, cuenta_id, creado_por) values ($1, 1, 2026, 'ingreso', date '2026-01-01', 500, md5($1::text || 'r1')::uuid, 'u1')`,
     modo: 'insercion',
   },
+  'crm.etapas': {
+    sql: `insert into crm.etapas (id, tenant_id, nombre, nombre_normalizado, orden, creado_por) values (md5($1::text || 'c1')::uuid, $1, 'Nuevo', 'nuevo', 0, 'u1')`,
+    modo: 'completo',
+  },
+  'crm.oportunidades': {
+    sql: `insert into crm.oportunidades (id, tenant_id, numero, anio, titulo, cliente_id, etapa_id, creado_por) values (md5($1::text || 'c2')::uuid, $1, 1, 2026, 'Oportunidad', md5($1::text || 'cl')::uuid, md5($1::text || 'c1')::uuid, 'u1')`,
+    modo: 'completo',
+  },
+  'crm.actividades': {
+    sql: `insert into crm.actividades (tenant_id, oportunidad_id, tipo, asunto, creado_por) values ($1, md5($1::text || 'c2')::uuid, 'nota', 'Llamar', 'u1')`,
+    modo: 'completo',
+  },
+  'ordenes.pedidos': {
+    sql: `insert into ordenes.pedidos (id, tenant_id, cliente_id, fecha, creado_por) values (md5($1::text || 'o1')::uuid, $1, md5($1::text || 'cl')::uuid, date '2026-01-01', 'u1')`,
+    modo: 'completo',
+  },
+  'ordenes.pedido_lineas': {
+    sql: `insert into ordenes.pedido_lineas (tenant_id, pedido_id, posicion, descripcion, cantidad_milesimas, precio_unitario_milesimas, importe_centimos) values ($1, md5($1::text || 'o1')::uuid, 0, 'Línea', 1000, 1000, 1)`,
+    modo: 'completo',
+  },
+  'ordenes.pedido_eventos': {
+    sql: `insert into ordenes.pedido_eventos (tenant_id, pedido_id, tipo, usuario_id) values ($1, md5($1::text || 'o1')::uuid, 'creado', 'u1')`,
+    modo: 'insercion',
+  },
   'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
 };
 
@@ -212,5 +236,63 @@ describe('registro: reglas propias de DB2a con capaz_app', () => {
         c.query(`insert into registro.categorias (tenant_id, nombre, nombre_normalizado, tipo, creado_por) values ($1, 'X', 'x', 'egreso', 'u1')`, [E]),
       ),
     ).rejects.toThrow(/no está activo/);
+  });
+});
+
+describe('ordenes: reglas propias de DB2b con capaz_app', () => {
+  it('el historial de un pedido no admite update ni delete (permisos y disparador)', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update ordenes.pedido_eventos set nota = 'x'`))).rejects.toThrow();
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from ordenes.pedido_eventos`))).rejects.toThrow();
+    // Ni siquiera el dueño (con la empresa fijada) puede cambiarlo: lo frena el disparador.
+    await expect(comoEmpresa(owner, A, (c) => c.query(`update ordenes.pedido_eventos set nota = 'x'`))).rejects.toThrow(/solo inserción/);
+  });
+
+  it('no puede borrar un pedido (disparador)', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from ordenes.pedidos`))).rejects.toThrow();
+  });
+
+  it('un pedido confirmado exige número, y el total debe ser subtotal más IGV', async () => {
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into ordenes.pedidos (tenant_id, cliente_id, fecha, estado, creado_por) values ($1, md5($1::text || 'cl')::uuid, date '2026-01-01', 'confirmado', 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/pedido_estado_numero/);
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into ordenes.pedidos (tenant_id, cliente_id, fecha, subtotal_centimos, igv_centimos, total_centimos, creado_por) values ($1, md5($1::text || 'cl')::uuid, date '2026-01-01', 100, 18, 100, 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/pedido_total/);
+  });
+});
+
+describe('crm: reglas propias de DB2b con capaz_app', () => {
+  it('con el módulo crm en baja, un insert falla con «no está activo»', async () => {
+    const E = empresaDePrueba();
+    await comoEmpresa(
+      owner,
+      E,
+      async (c) => {
+        await c.query(`insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1, 'crm', 'activo')`, [E]);
+        await c.query(`update core.empresa_modulos set estado = 'baja', baja_en = now() where tenant_id = $1 and modulo = 'crm'`, [E]);
+      },
+      { confirmar: true },
+    );
+    await expect(
+      comoEmpresa(app, E, (c) =>
+        c.query(`insert into crm.etapas (tenant_id, nombre, nombre_normalizado, orden, creado_por) values ($1, 'X', 'x', 0, 'u1')`, [E]),
+      ),
+    ).rejects.toThrow(/no está activo/);
+  });
+
+  it('solo una etapa ganada y una perdida activas por empresa', async () => {
+    for (const tipo of ['ganada', 'perdida']) {
+      await expect(
+        comoEmpresa(app, A, async (c) => {
+          const ins = `insert into crm.etapas (tenant_id, nombre, nombre_normalizado, orden, tipo, creado_por) values ($1, $2, $2, 9, $3, 'u1')`;
+          await c.query(ins, [A, tipo, tipo]);
+          await c.query(ins, [A, `${tipo}2`, tipo]);
+        }),
+      ).rejects.toThrow(/uq_crm_etapas_/);
+    }
   });
 });
