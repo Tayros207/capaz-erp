@@ -112,6 +112,7 @@ Si quieres automatizar 1 a 6, escribe `apps/api/scripts/verificar-neon.ts` (solo
 | 2026-11-14 | ensayo-migraciones | 5 (migrar, 2 veces) | OK | 6 migraciones (0000-0005); segunda corrida idempotente |
 | 2026-11-14 | ensayo-migraciones | 6 (verificaciones 1-8) | OK | Todas pasan |
 | 2026-11-14 | production | 4, 5 (2 veces) y 6 | OK | Mismo resultado que el ensayo |
+| 2026-11-16 | production | 5 (migraciones 0006–0020, autorizado por el usuario; sin ensayo en rama porque production no tenía datos y el migrador corre en una transacción) | OK | `core.migraciones` = 21 = archivos `.sql`; roles `capaz_*` sin superusuario ni BYPASSRLS; 0 tablas con `tenant_id` sin RLS forzada. Rama `ensayo-migraciones` sigue sin decidir |
 
 **Informe de cierre** (en este documento, debajo de la tabla): qué se hizo · resultado de cada verificación de la sección 6 · vía que funcionó para el dueño de la base · latencias medidas · qué no se hizo y por qué · qué necesita el usuario.
 
