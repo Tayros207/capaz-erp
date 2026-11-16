@@ -1,27 +1,27 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 907 files · ~558,246 words
+- 908 files · ~559,985 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 1115 nodes · 1729 edges · 81 communities (62 shown, 19 thin omitted)
+- 1139 nodes · 1781 edges · 75 communities (62 shown, 13 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 71 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9029e863`
+- Built from commit: `e8473e49`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - AGENTS.md (reglas del constructor)
-- database.service.ts
+- health.controller.ts
 - src/index.ts
 - web/package.json
 - kit-ola-2.tsx
-- base-de-pruebas.ts
+- aislamiento.int.spec.ts
 - preparar-base.ts
 - compilerOptions
 - scripts
@@ -33,7 +33,7 @@
 - Registro de herramientas con ejecutar() unico
 - scripts
 - compilerOptions
-- app.module.ts
+- @nestjs/common
 - ADR-003: PostgreSQL y Drizzle; alojamiento en Neon
 - compilerOptions
 - devDependencies
@@ -49,6 +49,7 @@
 - nest-cli.json
 - web/.oxlintrc.json
 - pnpm-workspace.yaml
+- pantalla-registro.tsx
 - config.d.ts
 - web/tsconfig.json
 - herramientas-de-intercambio.ts
@@ -56,25 +57,24 @@
 - borradores.int.spec.ts
 - guarda.ts
 - logger.ts
-- pantalla-inicio.tsx
+- lista-de-menu.tsx
 - ejecutor.ts
 - favicon.svg (purple lightning-bolt logo, 48x46 favicon)
 - EjecutorDeHerramientas
 - motor.ts
 - 5. Carriles
 - Transaccion
-- con-empresa.int.spec.ts
-- proponer.ts
-- .ejecutarDentro
+- con-empresa.ts
+- base-de-pruebas.ts
 - drizzle-orm
 - Fichas de la ola 3 · Clásicos II (Inventario, Compras, Personal, Reportes)
 - proponerBorrador
-- LoggerDeNest
+- csv.ts
 - 2. Reglas anti-conflicto
-- validacion.ts
+- drizzle-kit
 - Plan de trabajo en paralelo de Capaz ERP
 - llamar
-- Invocador
+- LoggerDeNest
 - 10. Lecciones de la ola 1
 - 6. El integrador
 - carcasa.tsx
@@ -83,40 +83,34 @@
 - barra-superior.tsx
 - config.js
 - api/package.json
-- con-empresa.ts
-- rutaSiguiente
-- react-router
-- @nestjs/schematics@^12.0.0
-- @nestjs/testing@^12.4.2
+- pg
 - @types/express@^5.0.0
 - @types/node@^24.0.0
-- oxlint@^1.58.0
-- oxlint-tsgolint@^7.0.2001
-- prettier@^3.4.2
-- vite@^8.0.0
+- @nestjs/mau@^0.2.6
+- typescript@^6.0.3
 
 ## God Nodes (most connected - your core abstractions)
 1. `5. Carriles` - 30 edges
 2. `EjecutorDeHerramientas` - 25 edges
 3. `compilerOptions` - 22 edges
-4. `vitest` - 20 edges
+4. `vitest` - 21 edges
 5. `compilerOptions` - 18 edges
 6. `AGENTS.md (reglas del constructor)` - 18 edges
-7. `@nestjs/common` - 17 edges
-8. `scripts` - 17 edges
+7. `scripts` - 17 edges
+8. `@nestjs/common` - 17 edges
 9. `Transaccion` - 16 edges
 10. `compilerOptions` - 15 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `1. Reglas comunes de todo módulo clásico` --references--> `EjecutorDeHerramientas`  [INFERRED]
-  docs/FICHAS-OLA-2.md → apps/api/src/core/herramientas/ejecutor.ts
-- `S1 · Herramientas` --references--> `EjecutorDeHerramientas`  [INFERRED]
-  docs/PLAN-PARALELO.md → apps/api/src/core/herramientas/ejecutor.ts
 - `1. Reglas comunes de todo módulo clásico` --references--> `lectura()`  [INFERRED]
   docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
 - `4.1 Manifiesto (lo edita M-registro-s1)` --references--> `lectura()`  [INFERRED]
   docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
 - `5.1 Manifiesto (M-crm-s1)` --references--> `lectura()`  [INFERRED]
+  docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
+- `6.1 Manifiesto (M-ordenes-s1)` --references--> `lectura()`  [INFERRED]
+  docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
+- `9. X2 · Cierre de la ola 2 (integrador)` --references--> `lectura()`  [INFERRED]
   docs/FICHAS-OLA-2.md → apps/api/src/core/intercambio/herramientas-de-intercambio.ts
 
 ## Import Cycles
@@ -130,19 +124,19 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (81 total, 19 thin omitted)
+## Communities (75 total, 13 thin omitted)
 
 ### Community 0 - "AGENTS.md (reglas del constructor)"
 Cohesion: 0.06
 Nodes (48): ADR 001 a 012, Agente: instrucciones, conocimiento, herramientas, disparadores, AGENTS.md (reglas del constructor), apps/api AGENTS.md (ESM, Vitest), apps/api README (plantilla NestJS), apps/web index.html (entrada de la SPA), apps/web README (plantilla React Vite), Atlantisgraf (cliente piloto) (+40 more)
 
-### Community 1 - "database.service.ts"
-Cohesion: 0.17
-Nodes (8): BaseDeDatos, ConEmpresa, DatabaseService, DatabaseStatus, HealthController, ADR-0011, HealthResponse, @nestjs/common
+### Community 1 - "health.controller.ts"
+Cohesion: 0.16
+Nodes (4): DatabaseStatus, HealthController, HealthModule, HealthResponse
 
 ### Community 2 - "src/index.ts"
 Cohesion: 0.08
-Nodes (35): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), 8. N1 · Inicio y bandeja con pendientes, Codigo (+27 more)
+Nodes (38): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), crearPipeDeValidacion(), mensajeDeValidacion() (+30 more)
 
 ### Community 3 - "web/package.json"
 Cohesion: 0.05
@@ -152,13 +146,13 @@ Nodes (39): dependencies, @capaz/shared, react, react-dom, react-router, @tansta
 Cohesion: 0.07
 Nodes (13): buscarEn(), Cantidades(), Cifras(), COLUMNAS, KitOla2(), Navegacion(), PERSONAS, Retardo() (+5 more)
 
-### Community 5 - "base-de-pruebas.ts"
-Cohesion: 0.16
-Nodes (14): pg@^8.23.1, estadoDe(), A, B, EJEMPLOS, ESQUEMAS, ADR-0011, ADR-0012 (+6 more)
+### Community 5 - "aislamiento.int.spec.ts"
+Cohesion: 0.29
+Nodes (6): estadoDe(), A, B, EJEMPLOS, comoEmpresa(), 2. C1 · Paso previo de servidor
 
 ### Community 6 - "preparar-base.ts"
-Cohesion: 0.14
-Nodes (24): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+16 more)
+Cohesion: 0.16
+Nodes (22): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+14 more)
 
 ### Community 7 - "compilerOptions"
 Cohesion: 0.09
@@ -200,9 +194,9 @@ Nodes (17): scripts, build, db:generar, db:migrar, db:migrar:test, db:preparar, 
 Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+8 more)
 
-### Community 17 - "app.module.ts"
-Cohesion: 0.15
-Nodes (5): AppModule, ConfigModule, DatabaseModule, HealthModule, HttpModule
+### Community 17 - "@nestjs/common"
+Cohesion: 0.16
+Nodes (7): @nestjs/core@^12.4.2, AppModule, ConfigModule, DatabaseModule, HttpModule, @nestjs/common, @nestjs/core
 
 ### Community 18 - "ADR-003: PostgreSQL y Drizzle; alojamiento en Neon"
 Cohesion: 0.14
@@ -213,8 +207,8 @@ Cohesion: 0.14
 Nodes (13): compilerOptions, declaration, isolatedModules, module, moduleResolution, outDir, rootDir, skipLibCheck (+5 more)
 
 ### Community 20 - "devDependencies"
-Cohesion: 0.14
-Nodes (13): devDependencies, drizzle-kit@^0.31.11, @nestjs/cli@^12.0.12, source-map-support@^0.5.21, @types/pg@^8.15.0, typescript@^6.0.3, @vitest/coverage-v8@^4.1.2, typescript (+5 more)
+Cohesion: 0.12
+Nodes (17): devDependencies, @nestjs/cli@^12.0.12, @nestjs/schematics@^12.0.0, oxlint@^1.58.0, prettier@^3.4.2, source-map-support@^0.5.21, @types/pg@^8.15.0, vite@^8.0.0 (+9 more)
 
 ### Community 21 - "Fase 8: eventos entre modulos y correlativos (outbox)"
 Cohesion: 0.17
@@ -230,7 +224,7 @@ Nodes (12): Roles de base capaz_owner, capaz_app, capaz_ro, ADR-010: Sin paquete
 
 ### Community 24 - "catalogo.spec.ts"
 Cohesion: 0.13
-Nodes (7): manifiestoCompras, manifiestoCrm, manifiestoInsumos, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoWebhooks
+Nodes (8): manifiestoCompras, manifiestoCrm, manifiestoInsumos, manifiestoOrdenes, manifiestoPersonal, manifiestoRegistro, manifiestoReportes, manifiestoWebhooks
 
 ### Community 25 - "Monolito modular (una app, una base)"
 Cohesion: 0.25
@@ -264,33 +258,41 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
+### Community 33 - "pantalla-registro.tsx"
+Cohesion: 0.13
+Nodes (3): react, react-dom, react-router
+
 ### Community 36 - "herramientas-de-intercambio.ts"
-Cohesion: 0.09
-Nodes (5): HERRAMIENTA_DE_ALTA, nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, resumenDe()
+Cohesion: 0.08
+Nodes (8): crear(), crearHerramientasDeIntercambio(), HERRAMIENTA_DE_ALTA, nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, resumenDe(), Invocador
 
 ### Community 37 - "Fichas congeladas de la ola 2 · Clásicos I (Finanzas ligeras, CRM, Pedidos)"
 Cohesion: 0.06
 Nodes (36): lectura(), recortar(), 0. Cómo leerlo, 3.1 Tanda DB2a, 3.2 Tanda DB2b, 3. Datos de la ola 2 (DB2a y DB2b), 4.1 Manifiesto (lo edita M-registro-s1), 4.2 Reglas de dinero (dominio; cada una con su prueba unitaria) (+28 more)
 
+### Community 38 - "borradores.int.spec.ts"
+Cohesion: 0.10
+Nodes (4): CATALOGO, PERMISOS, HERRAMIENTAS_CON_SECRETOS, PropuestaDeBorrador
+
 ### Community 39 - "guarda.ts"
-Cohesion: 0.21
-Nodes (10): destinoSegunSesion(), esRuta(), normalizar(), RUTA_INICIAR_SESION, RUTA_INICIO, RUTA_NUEVA_EMPRESA, RUTAS_PUBLICAS, base (+2 more)
+Cohesion: 0.16
+Nodes (15): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), destinoSegunSesion(), esRuta(), normalizar(), RUTA_INICIAR_SESION (+7 more)
 
 ### Community 40 - "logger.ts"
 Cohesion: 0.27
 Nodes (4): CAMPOS_OCULTOS, crearLogger(), LOGGER, LoggerModule
 
-### Community 41 - "pantalla-inicio.tsx"
-Cohesion: 0.12
-Nodes (4): solicitarModulo(), COLOR_ACENTO, PantallaInicio(), Tarjeta()
+### Community 41 - "lista-de-menu.tsx"
+Cohesion: 0.11
+Nodes (13): Fila(), Grupo(), ListaDeMenu(), ModoDeMenu, OCULTO, Props, SOBRE_ICONO, SOLO_LECTORES (+5 more)
 
 ### Community 42 - "ejecutor.ts"
-Cohesion: 0.08
-Nodes (3): Fallo, OpcionesDeEjecucion, Previo
+Cohesion: 0.07
+Nodes (6): comoObjeto(), Fallo, filtrarPorPermisos(), OpcionesDeEjecucion, Previo, transaccionEnCurso()
 
 ### Community 46 - "EjecutorDeHerramientas"
-Cohesion: 0.28
-Nodes (5): EjecutorDeHerramientas, filtrarPorPermisos(), rechazar(), Revertir, segundos()
+Cohesion: 0.19
+Nodes (8): EjecutorDeHerramientas, falloDe(), rechazar(), Revertir, segundos(), 1. Reglas comunes de todo módulo clásico, S1 · Herramientas, S5 · Borradores
 
 ### Community 47 - "motor.ts"
 Cohesion: 0.10
@@ -298,15 +300,19 @@ Nodes (6): AccionRechazada, AccionResuelta, Entrada, Opciones, Resultado, Salida
 
 ### Community 48 - "5. Carriles"
 Cohesion: 0.08
-Nodes (25): 5. Carriles, C0 · Andamiaje y contratos, C1 · Paso previo de servidor, Carriles de la ola 2 (módulos clásicos I), Carriles de la ola 3 (módulos clásicos II), DB1 · Datos de la ola 1, DB2 · Datos de la ola 2, K1 · Kit y base web de la ola 2, en dos partes (+17 more)
+Nodes (24): 5. Carriles, C0 · Andamiaje y contratos, C1 · Paso previo de servidor, Carriles de la ola 2 (módulos clásicos I), Carriles de la ola 3 (módulos clásicos II), DB1 · Datos de la ola 1, DB2 · Datos de la ola 2, K1 · Kit y base web de la ola 2, en dos partes (+16 more)
 
-### Community 50 - "con-empresa.int.spec.ts"
+### Community 49 - "Transaccion"
 Cohesion: 0.29
-Nodes (4): proponer(), CambioDeEmpresa, crearConEmpresa(), conEmpresaDePruebas()
+Nodes (3): MotorDeReglas, conPuntoDeGuardado(), Transaccion
 
-### Community 52 - ".ejecutarDentro"
-Cohesion: 0.23
-Nodes (7): comoObjeto(), falloDe(), conPuntoDeGuardado(), transaccionEnCurso(), 1. Reglas comunes de todo módulo clásico, 3. Contratos congelados, S1 · Herramientas
+### Community 50 - "con-empresa.ts"
+Cohesion: 0.16
+Nodes (10): HerramientasDeIntercambio, Activa, BaseDeDatos, CambioDeEmpresa, ConEmpresa, ContextoDeEmpresa, crearConEmpresa(), transaccionActual (+2 more)
+
+### Community 51 - "base-de-pruebas.ts"
+Cohesion: 0.27
+Nodes (7): proponer(), abrirPool(), conEmpresaDePruebas(), empresaDePrueba(), esLocal(), urlDePruebas(), preparar()
 
 ### Community 53 - "drizzle-orm"
 Cohesion: 0.29
@@ -320,25 +326,21 @@ Nodes (13): 0. Lo que ya está decidido (no se reabre en la puerta), 1.1 `insumo
 Cohesion: 0.20
 Nodes (8): HerramientaConSecretos, HerramientaDeBorradorDesconocida, proponerBorrador(), ADR-016: Reglas de datos y de conducta de los módulos clásicos, Alternativas descartadas, Consecuencias, Contexto, Decisión propuesta
 
+### Community 56 - "csv.ts"
+Cohesion: 0.26
+Nodes (11): detectarSeparador(), escribirCelda(), escribirCsv(), FilaCsv, LecturaCsv, leerCsv(), OpcionesDeLectura, protegerCelda() (+3 more)
+
 ### Community 57 - "2. Reglas anti-conflicto"
 Cohesion: 0.22
 Nodes (9): 2.1 Propiedad exclusiva, 2.2 Archivos compartidos: dueño único, 2.3 Migraciones: un solo escritor, numeración en serie, 2.4 Dependencias, 2.5 Dónde trabaja cada carril, 2.6 Base de pruebas por carril, 2.7 Orden de integración y suite completa, 2.8 Ante un conflicto (+1 more)
-
-### Community 58 - "validacion.ts"
-Cohesion: 0.60
-Nodes (3): crearPipeDeValidacion(), mensajeDeValidacion(), Problema
 
 ### Community 59 - "Plan de trabajo en paralelo de Capaz ERP"
 Cohesion: 0.29
 Nodes (6): 0. Cómo leer este documento (y gastar pocos tokens), 1. Papeles, 7. Plantilla de brief, 8. Reglas para ahorrar tokens (agente de carril), 9. Decisiones abiertas y qué carriles esperan, Plan de trabajo en paralelo de Capaz ERP
 
 ### Community 60 - "llamar"
-Cohesion: 0.33
-Nodes (6): llamar(), 4.1 Ola 2 · grafo y rondas, 4. Grafo de dependencias y qué arranca ya, M-registro-w · M-crm-w · M-ordenes-w · Pantallas de los módulos, W5 · Herramientas en pantalla, W6 a W10 · Pantallas de la ola 1
-
-### Community 61 - "Invocador"
-Cohesion: 0.18
-Nodes (4): crear(), crearHerramientasDeIntercambio(), HerramientasDeIntercambio, Invocador
+Cohesion: 0.29
+Nodes (7): llamar(), 3. Contratos congelados, 4.1 Ola 2 · grafo y rondas, 4. Grafo de dependencias y qué arranca ya, M-registro-w · M-crm-w · M-ordenes-w · Pantallas de los módulos, W5 · Herramientas en pantalla, W6 a W10 · Pantallas de la ola 1
 
 ### Community 62 - "10. Lecciones de la ola 1"
 Cohesion: 0.50
@@ -349,56 +351,48 @@ Cohesion: 0.50
 Nodes (4): 6.1 Lanzar un carril, 6.2 Lista de verificación de integración, 6.3 Puerta entre olas, 6. El integrador
 
 ### Community 64 - "carcasa.tsx"
-Cohesion: 0.13
+Cohesion: 0.10
 Nodes (3): BarraSuperior(), Carcasa(), salir()
 
 ### Community 65 - "main.ts"
-Cohesion: 0.24
+Cohesion: 0.21
 Nodes (10): almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto(), idDePeticion(), middlewareDeContexto() (+2 more)
 
 ### Community 66 - "dependencies"
-Cohesion: 0.12
-Nodes (17): dependencies, @capaz/shared@workspace:*, @nestjs/common@^12.4.2, @nestjs/core@^12.4.2, @nestjs/platform-express@^12.4.2, pino@^10.4.0, pino-http@^11.0.0, reflect-metadata@^0.2.2 (+9 more)
+Cohesion: 0.13
+Nodes (15): dependencies, @capaz/shared@workspace:*, @nestjs/common@^12.4.2, @nestjs/platform-express@^12.4.2, pino@^10.4.0, pino-http@^11.0.0, reflect-metadata@^0.2.2, rxjs@^7.8.1 (+7 more)
 
 ### Community 68 - "config.js"
 Cohesion: 0.26
 Nodes (11): cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES, urlDeAdmin(), urlDelDueno(), variable() (+3 more)
 
 ### Community 69 - "api/package.json"
-Cohesion: 0.20
-Nodes (9): @nestjs/mau@^0.2.6, vitest@^4.1.2, vitest, license, name, private, type, version (+1 more)
+Cohesion: 0.17
+Nodes (11): @nestjs/testing@^12.4.2, oxlint-tsgolint@^7.0.2001, vitest@^4.1.2, vitest, license, name, private, type (+3 more)
 
-### Community 70 - "con-empresa.ts"
-Cohesion: 0.40
-Nodes (3): Activa, ContextoDeEmpresa, transaccionActual
-
-### Community 71 - "rutaSiguiente"
-Cohesion: 0.60
-Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
-
-### Community 72 - "react-router"
-Cohesion: 0.40
-Nodes (3): react, react-dom, react-router
+### Community 70 - "pg"
+Cohesion: 0.33
+Nodes (5): pg@^8.23.1, ESQUEMAS, ADR-0011, ADR-0012, pg
 
 ## Knowledge Gaps
-- **347 isolated node(s):** `Traduccion`, `Credencial`, `Rol`, `Tarea`, `Fallo` (+342 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 529 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **357 isolated node(s):** `Props`, `ModoDeMenu`, `Props`, `SOLO_LECTORES`, `OCULTO` (+352 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 535 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `vitest` connect `src/index.ts` to `database.service.ts`, `main.ts`, `web/package.json`, `base-de-pruebas.ts`, `borradores.int.spec.ts`, `guarda.ts`, `logger.ts`, `reglas.ts`, `config/config.ts`, `con-empresa.int.spec.ts`, `catalogo.spec.ts`, `validacion.ts`?**
-  _High betweenness centrality (0.157) - this node is a cross-community bridge._
+- **Why does `vitest` connect `src/index.ts` to `health.controller.ts`, `main.ts`, `web/package.json`, `aislamiento.int.spec.ts`, `borradores.int.spec.ts`, `pg`, `logger.ts`, `reglas.ts`, `guarda.ts`, `config/config.ts`, `base-de-pruebas.ts`, `ejecutar-dentro-correlativos.int.spec.ts`, `csv.ts`, `catalogo.spec.ts`?**
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `EjecutorDeHerramientas` (e.g. with `1. Reglas comunes de todo módulo clásico` and `S1 · Herramientas`) actually correct?**
   _`EjecutorDeHerramientas` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Traduccion`, `Credencial`, `Rol` to the rest of the system?**
-  _347 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Props`, `ModoDeMenu`, `Props` to the rest of the system?**
+  _357 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
-- **Why does `pg` connect `base-de-pruebas.ts` to `database.service.ts`, `config.js`, `api/package.json`, `borradores.int.spec.ts`, `preparar-base.ts`, `con-empresa.int.spec.ts`?**
-  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+- **Why does `pg` connect `pg` to `config.js`, `api/package.json`, `borradores.int.spec.ts`, `preparar-base.ts`, `aislamiento.int.spec.ts`, `con-empresa.ts`, `base-de-pruebas.ts`, `ejecutar-dentro-correlativos.int.spec.ts`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08315863032844165 - nodes in this community are weakly interconnected._
-- **Why does `5. Carriles` connect `5. Carriles` to `Plan de trabajo en paralelo de Capaz ERP`, `llamar`, `.ejecutarDentro`, `guarda.ts`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
+  _Cohesion score 0.07539450613676213 - nodes in this community are weakly interconnected._
+- **Why does `@nestjs/common` connect `@nestjs/common` to `health.controller.ts`, `dependencies`, `src/index.ts`, `herramientas-de-intercambio.ts`, `api/package.json`, `logger.ts`, `ejecutor.ts`, `config/config.ts`, `motor.ts`, `con-empresa.ts`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._

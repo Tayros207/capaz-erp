@@ -1152,9 +1152,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/barra-superior.tsx": {
-    "mtime": 1794782831.610344,
-    "seen": 1794782872.746047,
-    "ast_hash": "4fe958dfcfc7ece2b93a538e051380ae",
+    "mtime": 1794803286.5158124,
+    "seen": 1794803425.3291442,
+    "ast_hash": "77d038fb56ee33a9f17d721d11169aa8",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/carcasa.tsx": {
@@ -1170,9 +1170,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/lista-de-menu.tsx": {
-    "mtime": 1794797430.1621592,
-    "seen": 1794797683.2523084,
-    "ast_hash": "3c765a0192609ddffbef547c79b7771c",
+    "mtime": 1794803335.8510995,
+    "seen": 1794803425.329157,
+    "ast_hash": "ab1064d3568903d5c31c4c75ee39fdc8",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/menu-lateral.tsx": {
@@ -1956,9 +1956,9 @@
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794787775.9703567,
-    "seen": 1794787882.525308,
-    "ast_hash": "f736615678a926d62e7d5bcef715c4e0",
+    "mtime": 1794803421.2534957,
+    "seen": 1794803425.330823,
+    "ast_hash": "4a8fcaffea47d75076dd71e34e39188d",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -5463,6 +5463,18 @@
     "mtime": 1794802014.1528823,
     "seen": 1794802018.1386445,
     "ast_hash": "ec7a83a0c41bf1e3f854d1b788aaf8ad",
+    "semantic_hash": ""
+  },
+  "apps/api/src/pruebas/recorridos/ola-3.int.spec.ts": {
+    "mtime": 1794802857.5680568,
+    "seen": 1794803425.329115,
+    "ast_hash": "32f7c5e98b17d95a1ba2934c039fb84c",
+    "semantic_hash": ""
+  },
+  "docs/PROPUESTA-DE-MEJORAS.md": {
+    "mtime": 1794841396.9236414,
+    "seen": 1794841557.6161196,
+    "ast_hash": "71e8ca37828e8f0ad8bd32b5ac7d464a",
     "semantic_hash": ""
   }
 }
