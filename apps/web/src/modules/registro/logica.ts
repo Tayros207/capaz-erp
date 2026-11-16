@@ -238,3 +238,38 @@ export function mensajeDeRechazo(codigo: string, mensaje: string): string {
   if (codigo === 'sin_permiso' && mensaje.startsWith('Tu acceso')) return mensaje;
   return MENSAJES[codigo] ?? mensaje;
 }
+
+// ---- Nueva deuda a mano (por cobrar o por pagar) ----
+
+export type FormularioDeDeudaNueva = { contacto: { id: string; nombre: string } | null; concepto: string; total: Centimos | null; venceEn: string; notas: string };
+export type ErroresDeDeudaNueva = Partial<Record<'contacto' | 'concepto' | 'total' | 'venceEn' | 'notas', string>>;
+
+export const deudaNuevaEnBlanco = (): FormularioDeDeudaNueva => ({ contacto: null, concepto: '', total: null, venceEn: '', notas: '' });
+
+/** El vencimiento no puede ser anterior a hoy (la deuda se anota con la fecha de hoy). */
+export function validarDeudaNueva(f: FormularioDeDeudaNueva, hoy: string): ErroresDeDeudaNueva {
+  const e: ErroresDeDeudaNueva = {};
+  if (!f.contacto) e.contacto = 'Elige el cliente o proveedor.';
+  if (!f.concepto.trim()) e.concepto = 'Indica el concepto.';
+  else if (f.concepto.trim().length > 200) e.concepto = 'El concepto admite hasta 200 caracteres.';
+  if (f.total === null) e.total = 'Escribe el total.';
+  else if (!Number.isSafeInteger(f.total) || f.total <= 0) e.total = 'El total debe ser mayor que cero.';
+  if (f.venceEn && !/^\d{4}-\d{2}-\d{2}$/.test(f.venceEn)) e.venceEn = 'Elige una fecha válida.';
+  else if (f.venceEn && f.venceEn < hoy) e.venceEn = 'El vencimiento no puede ser anterior a hoy.';
+  if (f.notas.trim().length > 2000) e.notas = 'Las notas admiten hasta 2000 caracteres.';
+  return e;
+}
+
+/** Argumentos de `deuda_crear`: lo vacío no viaja. La fecha la fija el servidor (hoy de la empresa). */
+export function argumentosDeDeudaNueva(tipo: TipoDeDeuda, f: FormularioDeDeudaNueva): EntradaDe<'deuda_crear'> {
+  if (!f.contacto || f.total === null) throw new Error('No se arma una deuda sin contacto ni total.');
+  const args: EntradaDe<'deuda_crear'> = { tipo, contactoId: f.contacto.id, concepto: f.concepto.trim(), totalCentimos: f.total };
+  if (f.venceEn) args.venceEn = f.venceEn;
+  const notas = f.notas.trim();
+  if (notas) args.notas = notas;
+  return args;
+}
+
+/** Título de la hoja de nueva deuda, según el tipo. */
+export const TITULO_DE_DEUDA_NUEVA: Record<TipoDeDeuda, string> = { por_cobrar: 'Nueva deuda por cobrar', por_pagar: 'Nueva deuda por pagar' };
+export const ETIQUETA_DE_CONTACTO_DE_DEUDA: Record<TipoDeDeuda, string> = { por_cobrar: 'Cliente', por_pagar: 'Proveedor' };

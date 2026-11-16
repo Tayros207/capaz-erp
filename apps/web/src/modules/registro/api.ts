@@ -30,6 +30,7 @@ export const crearCategoria = (args: EntradaDe<'categoria_crear'>) => llamar('ca
 export const editarCategoria = (id: string, nombre: string) => llamar('categoria_editar', { id, nombre });
 export const archivarCategoria = (id: string) => llamar('categoria_archivar', { id });
 export const listarDeudas = (args: EntradaDe<'deudas_listar'>) => llamar('deudas_listar', args);
+export const crearDeuda = (args: EntradaDe<'deuda_crear'>) => llamar('deuda_crear', args);
 export const verDeuda = (id: string) => llamar('deuda_ver', { id });
 export const editarDeuda = (args: EntradaDe<'deuda_editar'>) => llamar('deuda_editar', args);
 export const abonarDeuda = (args: EntradaDe<'deuda_abonar'>) => llamar('deuda_abonar', args);

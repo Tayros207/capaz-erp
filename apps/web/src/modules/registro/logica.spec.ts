@@ -5,6 +5,7 @@ import {
   estaAbierta, formularioDeCuenta, formularioDeDeuda, pasoDeDeuda, textoDeEstadoDeDeuda, tonoDeEstadoDeDeuda, validarAbono, validarCuenta, validarDeuda, validarMotivo, validarNombre,
   argumentosDeListado, argumentosDeMovimiento, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
   formularioInicial, mensajeDeRechazo, montoConSigno, siguienteFormulario, validarMovimiento,
+  argumentosDeDeudaNueva, deudaNuevaEnBlanco, validarDeudaNueva,
 } from './logica.ts';
 
 const c = (n: number) => n as Centimos;
@@ -172,5 +173,27 @@ describe('cuentas y categorías', () => {
     expect(argumentosDeCuentaNueva(cuentaEnBlanco()).saldoInicialCentimos).toBe(0);
     expect(argumentosDeCuentaEditada('c', { nombre: 'Yape', tipo: 'billetera', saldoInicial: c(5) })).toEqual({ id: 'c', nombre: 'Yape', tipo: 'billetera' });
     expect(formularioDeCuenta(cuenta('z', { saldoInicialCentimos: 700 })).saldoInicial).toBe(700);
+  });
+});
+
+describe('nueva deuda a mano', () => {
+  const completa = { ...deudaNuevaEnBlanco(), contacto: { id: 'c1', nombre: 'Juan' }, concepto: ' Volantes ', total: c(20_000) };
+
+  it('pide contacto, concepto y total', () => {
+    expect(validarDeudaNueva(deudaNuevaEnBlanco(), HOY)).toEqual({ contacto: 'Elige el cliente o proveedor.', concepto: 'Indica el concepto.', total: 'Escribe el total.' });
+    expect(validarDeudaNueva({ ...completa, total: c(0) }, HOY)).toEqual({ total: 'El total debe ser mayor que cero.' });
+    expect(validarDeudaNueva(completa, HOY)).toEqual({});
+  });
+  it('el vencimiento es opcional pero no puede ser anterior a hoy', () => {
+    expect(validarDeudaNueva({ ...completa, venceEn: '2026-03-09' }, HOY)).toEqual({ venceEn: 'El vencimiento no puede ser anterior a hoy.' });
+    expect(validarDeudaNueva({ ...completa, venceEn: HOY }, HOY)).toEqual({});
+    expect(validarDeudaNueva({ ...completa, venceEn: 'mañana' }, HOY)).toHaveProperty('venceEn');
+  });
+  it('arma los argumentos sin lo vacío y con el tipo de la pantalla', () => {
+    expect(argumentosDeDeudaNueva('por_cobrar', completa)).toEqual({ tipo: 'por_cobrar', contactoId: 'c1', concepto: 'Volantes', totalCentimos: 20_000 });
+    expect(argumentosDeDeudaNueva('por_pagar', { ...completa, venceEn: '2026-04-01', notas: ' x ' })).toEqual({
+      tipo: 'por_pagar', contactoId: 'c1', concepto: 'Volantes', totalCentimos: 20_000, venceEn: '2026-04-01', notas: 'x',
+    });
+    expect(() => argumentosDeDeudaNueva('por_cobrar', deudaNuevaEnBlanco())).toThrow();
   });
 });
