@@ -1,15 +1,17 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from 'lucide-react';
-import { Fragment } from 'react';
-import { Link } from 'react-router';
+import { Fragment, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { formatearFecha } from '../shared/formato/fechas.ts';
 import { Insignia } from '../shared/ui/insignia.tsx';
 import { unir } from '../shared/ui/unir.ts';
 import { AvatarDeEmpresa } from './avatar-de-empresa.tsx';
 import { ChipDeModulo, CodigoDeModulo } from './chip-modulo.tsx';
+import { useAtajosDeLista } from './atajos-de-lista.ts';
 import type { EmpresaDeLista } from './consultas.ts';
+import type { DensidadDeLista } from './densidad.ts';
 import { ESTADO_DE_EMPRESA, estadoDeEmpresa, proximoVencimiento, textoDeVencimiento, type ClaveDeOrden, type OrdenDeEmpresas } from './logica.ts';
 
-const MAXIMO_DE_CHIPS = 3;
+const MAXIMO_DE_CHIPS = { comoda: 3, compacta: 3 } as const;
 const ruta = (e: EmpresaDeLista) => `/plataforma/empresas/${encodeURIComponent(e.id)}`;
 
 function Vencimiento({ e, ahora }: { e: EmpresaDeLista; ahora: Date }) {
@@ -24,15 +26,16 @@ function Vencimiento({ e, ahora }: { e: EmpresaDeLista; ahora: Date }) {
   );
 }
 
-function Modulos({ e }: { e: EmpresaDeLista }) {
+function Modulos({ e, densidad }: { e: EmpresaDeLista; densidad: DensidadDeLista }) {
   if (e.modulos.length === 0) return <span className="text-sm text-texto-suave">Sin módulos</span>;
-  const visibles = e.modulos.slice(0, MAXIMO_DE_CHIPS);
+  const maximo = MAXIMO_DE_CHIPS[densidad];
+  const visibles = e.modulos.slice(0, maximo);
   const resto = e.modulos.length - visibles.length;
   return (
-    <span className="flex flex-wrap items-center gap-1">
-      {visibles.map((m) => <ChipDeModulo key={m.modulo} codigo={m.modulo} estado={m.estado} />)}
+    <span className={unir('flex items-center gap-1', densidad === 'comoda' ? 'flex-wrap' : 'flex-nowrap')}>
+      {visibles.map((m) => <ChipDeModulo key={m.modulo} codigo={m.modulo} estado={m.estado} compacto={densidad === 'compacta'} />)}
       {resto > 0 ? (
-        <span title={e.modulos.slice(MAXIMO_DE_CHIPS).map((m) => m.modulo).join(', ')} className="rounded-chip bg-superficie-alta px-1.5 py-0.5 text-xs font-medium text-texto-suave">+{resto}</span>
+        <span title={e.modulos.slice(maximo).map((m) => `${m.modulo} (${m.estado})`).join(', ')} className="rounded-chip bg-superficie-alta px-1.5 py-0.5 text-xs font-medium text-texto-suave">+{resto}</span>
       ) : null}
     </span>
   );
@@ -66,14 +69,28 @@ function BotonDeOrden({ c, orden, alOrdenar }: { c: Cabecera; orden: OrdenDeEmpr
   );
 }
 
-export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresas: readonly EmpresaDeLista[]; orden: OrdenDeEmpresas; alOrdenar: (o: OrdenDeEmpresas) => void; ahora: Date }) {
+export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora, densidad, enfocarBusqueda }: { empresas: readonly EmpresaDeLista[]; orden: OrdenDeEmpresas; alOrdenar: (o: OrdenDeEmpresas) => void; ahora: Date; densidad: DensidadDeLista; enfocarBusqueda: () => void }) {
+  const navegar = useNavigate();
+  const [activa] = useAtajosDeLista(empresas.length, (i) => { const e = empresas[i]; if (e) void navegar(ruta(e)); }, enfocarBusqueda);
+  const cuerpo = useRef<HTMLTableSectionElement>(null);
+  useEffect(() => {
+    if (activa >= 0) cuerpo.current?.querySelectorAll('tr')[activa]?.scrollIntoView({ block: 'nearest' });
+  }, [activa]);
   const sentido = (c: ClaveDeOrden) => (orden.clave === c ? (orden.direccion === 'asc' ? 'ascending' : 'descending') : 'none');
   return (
     <>
-      <div className="hidden overflow-hidden rounded-tarjeta border border-borde bg-superficie shadow-tarjeta md:block">
-        <table className="w-full border-collapse text-left">
+      <div className="hidden overflow-clip rounded-tarjeta border border-borde bg-superficie shadow-tarjeta md:block">
+        <table className="w-full table-fixed border-collapse text-left">
           <caption className="sr-only">Empresas de la plataforma. Usa los encabezados para ordenar.</caption>
-          <thead className="bg-superficie-alta/70">
+          <colgroup>
+            <col className="w-[27%]" />
+            <col className="w-[31%]" />
+            <col className="w-[13%]" />
+            <col className="w-[15%]" />
+            <col className="w-[9%]" />
+            <col className="w-10" />
+          </colgroup>
+          <thead className="sticky top-0 z-20 bg-superficie-alta backdrop-blur">
             <tr className="border-b border-borde">
               {CABECERAS.map((c) => (
                 <Fragment key={c.clave}>
@@ -86,10 +103,10 @@ export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresa
               <th scope="col" className="w-10"><span className="sr-only">Abrir</span></th>
             </tr>
           </thead>
-          <tbody>
-            {empresas.map((e) => (
-              <tr key={e.id} className="group border-b border-borde last:border-b-0 transition-colors hover:bg-superficie-alta/60 has-[a:focus-visible]:bg-superficie-alta/60">
-                <th scope="row" className="px-4 py-3 text-left font-normal">
+          <tbody ref={cuerpo}>
+            {empresas.map((e, i) => (
+              <tr key={e.id} aria-selected={activa === i ? true : undefined} className={unir('group relative border-b border-borde last:border-b-0 transition-colors hover:bg-superficie-alta/60 has-[a:focus-visible]:bg-superficie-alta/60', activa === i && 'bg-accion/[0.07] shadow-[inset_2px_0_0_var(--color-accion)]')}>
+                <th scope="row" className={unir('px-4 text-left font-normal', densidad === 'comoda' ? 'py-3' : 'py-1.5')}>
                   <Link to={ruta(e)} className="flex items-center gap-3 rounded-control after:absolute after:inset-0 after:content-['']">
                     <AvatarDeEmpresa nombre={e.nombre} />
                     <span className="flex min-w-0 flex-col leading-tight">
@@ -98,10 +115,10 @@ export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresa
                     </span>
                   </Link>
                 </th>
-                <td className="relative z-10 min-w-72 px-4 py-3"><Modulos e={e} /></td>
-                <td className="px-4 py-3"><Estado e={e} /></td>
-                <td className="px-4 py-3"><Vencimiento e={e} ahora={ahora} /></td>
-                <td className="px-4 py-3 text-right tabular-nums">{e.miembros}</td>
+                <td className={unir('relative z-10 px-4', densidad === 'comoda' ? 'py-3' : 'overflow-hidden py-1.5')}><Modulos e={e} densidad={densidad} /></td>
+                <td className={unir('px-4', densidad === 'comoda' ? 'py-3' : 'py-1.5')}><Estado e={e} /></td>
+                <td className={unir('px-4', densidad === 'comoda' ? 'py-3' : 'py-1.5')}><Vencimiento e={e} ahora={ahora} /></td>
+                <td className={unir('px-4 text-right tabular-nums', densidad === 'comoda' ? 'py-3' : 'py-1.5')}>{e.miembros}</td>
                 <td className="pr-3"><ChevronRight aria-hidden className="size-4 text-texto-suave transition-transform group-hover:translate-x-0.5 group-hover:text-texto" /></td>
               </tr>
             ))}
@@ -120,7 +137,7 @@ export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresa
               </span>
               <Estado e={e} />
             </Link>
-            <div className="relative z-10 flex flex-col gap-2"><Modulos e={e} /><Vencimiento e={e} ahora={ahora} /></div>
+            <div className="relative z-10 flex flex-col gap-2"><Modulos e={e} densidad="comoda" /><Vencimiento e={e} ahora={ahora} /></div>
           </li>
         ))}
       </ul>

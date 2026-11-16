@@ -42,7 +42,7 @@ export function PantallaSolicitudes() {
 
   return (
     <div className="flex flex-col gap-4">
-      <EncabezadoDePagina titulo="Solicitudes de módulos" migas={[{ texto: 'Plataforma' }, { texto: 'Solicitudes' }]} />
+      <EncabezadoDePagina titulo="Solicitudes de módulos" />
       <p className="text-sm text-texto-suave">Marcar una solicitud como atendida no activa el módulo: actívalo desde la ficha de la empresa.</p>
       <div role="group" aria-label="Filtrar solicitudes" className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
         {FILTROS.map((f) => (

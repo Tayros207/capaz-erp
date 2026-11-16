@@ -9,6 +9,6 @@ import { PantallaSolicitudes } from './pantalla-solicitudes.tsx';
 export const rutas: RouteObject[] = [
   { path: 'plataforma', element: <Marco><PantallaEmpresas /></Marco> },
   { path: 'plataforma/empresas/:id', element: <Marco conIndicadores={false}><PantallaEmpresa /></Marco> },
-  { path: 'plataforma/planes', element: <Marco><PantallaPlanes /></Marco> },
-  { path: 'plataforma/solicitudes', element: <Marco><PantallaSolicitudes /></Marco> },
+  { path: 'plataforma/planes', element: <Marco conIndicadores={false}><PantallaPlanes /></Marco> },
+  { path: 'plataforma/solicitudes', element: <Marco conIndicadores={false}><PantallaSolicitudes /></Marco> },
 ];

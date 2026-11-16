@@ -96,7 +96,6 @@ export function PantallaPlanes() {
     <div className="flex flex-col gap-5">
       <EncabezadoDePagina
         titulo="Planes y precios"
-        migas={[{ texto: 'Plataforma' }, { texto: 'Planes' }]}
         accionPrincipal={<Boton variante="primario" icono="mas" onClick={() => setAbierto({ plan: null })}>Plan nuevo</Boton>}
       />
       {consulta.isPending ? (

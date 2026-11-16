@@ -42,9 +42,9 @@ export function CodigoDeModulo({ codigo, className }: { codigo: string; classNam
 }
 
 /** Módulo con icono, nombre legible, punto de estado y código copiable. */
-export function ChipDeModulo({ codigo, estado, className }: { codigo: string; estado?: Estado; className?: string }) {
+export function ChipDeModulo({ codigo, estado, className, compacto = false }: { codigo: string; estado?: Estado; className?: string; compacto?: boolean }) {
   return (
-    <span className={unir('inline-flex items-center gap-1.5 rounded-control border border-borde bg-superficie py-0.5 pr-1 pl-1.5 text-xs shadow-sutil', className)}>
+    <span title={compacto ? `${nombreDeModulo(codigo)} · ${codigo}${estado ? ` · ${TEXTO_DE_ESTADO[estado]}` : ''}` : undefined} className={unir('inline-flex items-center gap-1.5 rounded-control border border-borde bg-superficie py-0.5 pl-1.5 text-xs shadow-sutil', compacto ? 'pr-1.5' : 'pr-1', className)}>
       {createElement(iconoDeModulo(codigo), { 'aria-hidden': true, className: 'size-3.5 shrink-0 text-texto-suave', strokeWidth: 1.75 })}
       <span className="font-medium text-texto">{nombreDeModulo(codigo)}</span>
       {estado ? (
@@ -53,7 +53,7 @@ export function ChipDeModulo({ codigo, estado, className }: { codigo: string; es
           <span className="sr-only">{TEXTO_DE_ESTADO[estado]}</span>
         </span>
       ) : null}
-      <CodigoDeModulo codigo={codigo} />
+      {compacto ? null : <CodigoDeModulo codigo={codigo} />}
     </span>
   );
 }

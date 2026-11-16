@@ -31,7 +31,7 @@ function TarjetaDeKpi({ t }: { t: Tarjeta }) {
   return (
     <Link
       to={t.a}
-      className="group flex flex-col gap-1 rounded-control border border-white/10 bg-white/[0.04] p-3 transition-[background-color,border-color,transform] duration-150 hover:border-white/25 hover:bg-white/[0.09] active:scale-[0.99]"
+      className="group flex min-w-36 shrink-0 snap-start flex-col gap-1 rounded-control border border-white/10 md:min-w-0 md:shrink bg-white/[0.04] p-3 transition-[background-color,border-color,transform] duration-150 hover:border-white/25 hover:bg-white/[0.09] active:scale-[0.99]"
     >
       <span className="flex items-center gap-2 text-xs font-medium text-menu-texto/75">
         <t.icono aria-hidden className="size-3.5" strokeWidth={1.75} />
@@ -79,15 +79,15 @@ function Indicadores() {
   if (empresas.isError) return null;
   if (!empresas.data) {
     return (
-      <div aria-busy="true" aria-label="Cargando indicadores" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
-        {Array.from({ length: 6 }, (_, i) => <Esqueleto key={i} className="h-[5.25rem] rounded-control bg-white/10" />)}
+      <div aria-busy="true" aria-label="Cargando indicadores" className="flex gap-2 overflow-hidden md:grid md:grid-cols-3 xl:grid-cols-6">
+        {Array.from({ length: 6 }, (_, i) => <Esqueleto key={i} className="h-[5.25rem] min-w-36 shrink-0 rounded-control bg-white/10 md:min-w-0" />)}
       </div>
     );
   }
   const k = kpisDeEmpresas(empresas.data, ahora, solicitudes.data?.length ?? 0);
   return (
     <>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+      <div className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-6 [&::-webkit-scrollbar]:hidden">
         {tarjetasDe(k).map((t) => <TarjetaDeKpi key={t.id} t={t} />)}
       </div>
       <BarraDeDistribucion k={k} />
