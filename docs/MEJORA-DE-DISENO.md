@@ -83,3 +83,22 @@ El usuario encargó el front-end a la sesión modules-ed («tú encárgate de me
 **Cómo se conectan los módulos:** los pendientes de Inicio llevan a Bandeja, Por cobrar, Entregas y Actividades; la paleta lleva a cualquier pantalla del menú y a la ficha de un cliente; los módulos pueden adoptar `EnlaceDeEntidad`/`ChipDeCliente`/`InsigniaDeEstado` (rutas centralizadas en `entidades-logica.ts`). **Los módulos aún no las usan:** no se editó `modules/*`.
 
 **Pendiente:** adoptar las piezas compartidas dentro de `modules/*` (lo hace quien integre esos carriles); búsqueda por pedido o deuda en la paleta (no hay herramienta de búsqueda por texto para ellos: se pidió no inventar endpoints); tablas con cabecera pegajosa (las tablas viven en los módulos); transiciones con `motion`; revisión visual humana a 390 y 1280 px, claro y oscuro.
+
+## 7. Consola del operador rediseñada (2026-11-16)
+
+El usuario pidió un rediseño «más brutal y actual» de la interfaz del operador y que el **código de cada módulo se vea junto a su nombre**. Autorización explícita de librerías: mismo día, en la conversación.
+
+- **Centro de control** (`plataforma/cabecera-de-consola.tsx`): banda oscura con identidad propia, buscador Ctrl+K, secciones en píldoras (con contador de solicitudes pendientes) e indicadores que enlazan a la lista ya filtrada (`?estado=`, `?vence=7`): empresas, activas, en prueba, con alertas, vencen en 7 días, solicitudes; barra de distribución; cifras animadas con `motion` (sin movimiento si la persona lo pidió).
+- **Empresas**: tabla densa en escritorio y tarjetas en móvil; búsqueda por nombre, id, código o nombre de módulo (sin tildes); filtro por estado (con conteos) y por módulo; orden por nombre, estado, vencimiento y usuarios; el filtro vive en la dirección (`?q=&estado=&modulo=&vence=`). Sin TanStack Table: v9 trae una API nueva y para decenas de filas bastan las funciones puras de `logica.ts` (probadas).
+- **Ficha de empresa**: resumen con avatar, estado deducido, id copiable; módulos como tarjetas (icono, nombre + código, estado, cuenta regresiva de prueba o vigencia, plan, precio, máx. usuarios, acciones); historial como línea de tiempo. Reusa las hojas y herramientas existentes sin cambiar contratos.
+- **Planes**: tarjetas con precio y módulos, y comparativa por módulo. **Solicitudes**: tarjetas con empresa, módulo pedido, nota y acciones.
+- **Paleta de operador** (`paleta-de-operador.tsx`): salta a una empresa o a las empresas de un módulo por nombre o código.
+- **Nombre + código de módulo en todas partes** (`chip-modulo.tsx`: `ChipDeModulo`, `CodigoDeModulo`): el código técnico va en chip mono y se copia con un clic. El mapa de nombres vive en `NOMBRES_DE_MODULO` (`logica.ts`), tomado de los manifiestos del servidor; la ficha usa el nombre que ya manda el servidor.
+- **Estado de cuenta**: la consola deduce un estado de empresa a partir de sus módulos (`estadoDeEmpresa`). Cuando exista el estado de cuenta real (`docs/FICHA-ESTADO-DE-CUENTA.md`, sin construir), reemplaza esa deducción; no se dejaron botones falsos.
+- **Operador sin empresa** ve una barra mínima con «Cerrar sesión» (`carcasa.tsx`).
+
+Librerías añadidas en este bloque (autorizadas 2026-11-16): `@fontsource-variable/jetbrains-mono` 5.3.0 (OFL-1.1), para los códigos. Se probó e **descartó** `@tanstack/react-table` 9.3.1 (revertida en el historial). Tokens: se definieron `--color-white` y `--color-black` (con `--color-*: initial` las clases `bg-white/10` no existían).
+
+**Datos de prueba locales** añadidos solo para ver la consola: 4 planes `demo_*` y 4 solicitudes pendientes en la base local (no en Neon).
+
+**No verificado / pendiente:** pantallas internas de cada módulo (no se tocaron); revisión visual humana a 390 y 1280 px en claro y oscuro; hojas (contrato, activar, plan) conservan su estilo anterior; sin cuenta de operador, las pruebas de pantalla son manuales.

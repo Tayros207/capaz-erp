@@ -1,30 +1,31 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { ShieldCheck } from 'lucide-react';
 import { useParams } from 'react-router';
 import type { ModuloDeEmpresaDto } from '@capaz/shared';
-import { formatearFecha, formatearFechaHora } from '../shared/formato/fechas.ts';
-import { formatearSoles } from '../shared/formato/soles.ts';
+import { formatearFecha } from '../shared/formato/fechas.ts';
 import { Boton } from '../shared/ui/boton.tsx';
 import { EncabezadoDePagina } from '../shared/ui/datos/encabezado-de-pagina.tsx';
-import { Lista } from '../shared/ui/datos/lista.tsx';
-import type { Columna } from '../shared/ui/datos/lista-tipos.ts';
 import { EstadoVacio } from '../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../shared/ui/insignia.tsx';
 import { notificar } from '../shared/ui/notificar.ts';
-import { darDeBajaModulo, datosOError, listarPlanes, reactivarModulo, suspenderModulo, verEmpresa, type SalidaDePlataforma } from './api.ts';
+import { darDeBajaModulo, datosOError, listarPlanes, reactivarModulo, suspenderModulo, verEmpresa } from './api.ts';
 import { HojaActivar } from './hoja-activar.tsx';
 import { HojaContrato } from './hoja-contrato.tsx';
-import { accionesPosibles, ETIQUETA_DE_ACCION, estadoDeModulo, mensajeDeRechazo, type AccionDeModulo } from './logica.ts';
+import { ESTADO_DE_EMPRESA, estadoDeEmpresa, mensajeDeRechazo, type AccionDeModulo } from './logica.ts';
+import { AvatarDeEmpresa } from './avatar-de-empresa.tsx';
+import { CodigoDeModulo } from './chip-modulo.tsx';
+import { LineaDeTiempo } from './linea-de-tiempo.tsx';
+import { TarjetaDeModulo } from './tarjeta-de-modulo.tsx';
 import { CLAVE_EMPRESAS, CLAVE_PLANES } from './claves.ts';
 import { Cargando, ErrorDeConsulta } from './marco.tsx';
-
-type Evento = SalidaDePlataforma<'plataforma_empresas_ver'>['historial'][number];
 
 export function PantallaEmpresa() {
   const { id = '' } = useParams();
   const cliente = useQueryClient();
   const [contrato, setContrato] = useState<ModuloDeEmpresaDto | null>(null);
   const [activando, setActivando] = useState(false);
+  const [ahora] = useState(() => new Date());
   const consulta = useQuery({ queryKey: [...CLAVE_EMPRESAS, 'ficha', id], queryFn: async () => datosOError(await verEmpresa(id)) });
   const planes = useQuery({ queryKey: CLAVE_PLANES, queryFn: async () => datosOError(await listarPlanes()).items });
   const recargar = () => void cliente.invalidateQueries({ queryKey: CLAVE_EMPRESAS });
@@ -52,64 +53,57 @@ export function PantallaEmpresa() {
     } else if ('error' in r) notificar(mensajeDeRechazo(r.error.codigo, r.error.mensaje), 'error');
   }
 
-  const columnas: Array<Columna<ModuloDeEmpresaDto>> = [
-    { id: 'modulo', titulo: 'Módulo', principal: true, celda: (m) => m.nombre },
-    { id: 'estado', titulo: 'Estado', celda: (m) => { const s = estadoDeModulo(m.estado); return <Insignia tono={s.tono}>{s.texto}</Insignia>; } },
-    { id: 'prueba', titulo: 'Prueba hasta', celda: (m) => (m.pruebaHasta ? formatearFecha(m.pruebaHasta) : '—') },
-    { id: 'baja', titulo: 'Baja', celda: (m) => (m.bajaEn ? formatearFecha(m.bajaEn) : '—') },
-    { id: 'plan', titulo: 'Plan', celda: (m) => m.plan ?? '—' },
-    { id: 'precio', titulo: 'Precio acordado', alinear: 'derecha', celda: (m) => (m.precioAcordadoCentimos === null ? '—' : formatearSoles(m.precioAcordadoCentimos)) },
-    { id: 'vigencia', titulo: 'Vigente hasta', celda: (m) => (m.vigenteHasta ? formatearFecha(m.vigenteHasta) : '—') },
-    { id: 'usuarios', titulo: 'Máx. usuarios', alinear: 'derecha', celda: (m) => m.maxUsuarios ?? '—' },
-    { id: 'acciones', titulo: 'Acciones', celda: (m) => (
-      <span className="inline-flex flex-wrap gap-2">
-        <Boton onClick={() => setContrato(m)}>Contrato</Boton>
-        {accionesPosibles(m.estado).map((a) => (
-          <Boton key={a} variante={a === 'reactivar' ? 'secundario' : 'peligro'} onClick={() => void accionar(m, a)}>{ETIQUETA_DE_ACCION[a]}</Boton>
-        ))}
-      </span>
-    ) },
-  ];
-  const historial: Array<Columna<Evento>> = [
-    { id: 'cuando', titulo: 'Cuándo', principal: true, celda: (v) => formatearFechaHora(v.creadoEn) },
-    { id: 'modulo', titulo: 'Módulo', celda: (v) => v.modulo },
-    { id: 'evento', titulo: 'Evento', celda: (v) => v.evento },
-    { id: 'cambio', titulo: 'Estado', celda: (v) => `${v.estadoAnterior ?? '—'} → ${v.estadoNuevo}` },
-    { id: 'motivo', titulo: 'Motivo', celda: (v) => v.motivo ?? '—' },
-  ];
+  const estadoGeneral = ESTADO_DE_EMPRESA[estadoDeEmpresa(e)];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <EncabezadoDePagina
-        titulo={e.nombre}
+        titulo="Empresa"
         migas={migas}
         accionPrincipal={<Boton variante="primario" icono="mas" onClick={() => setActivando(true)}>Activar módulo</Boton>}
       />
-      <dl className="grid gap-3 rounded-tarjeta border border-borde bg-superficie p-4 sm:grid-cols-3">
-        <div><dt className="text-sm text-texto-suave">Alta</dt><dd>{formatearFecha(e.altaEn)}</dd></div>
-        <div><dt className="text-sm text-texto-suave">Miembros</dt><dd>{e.miembros}</dd></div>
-        <div><dt className="text-sm text-texto-suave">Última actividad</dt><dd>{e.ultimaActividadEn ? formatearFecha(e.ultimaActividadEn) : 'Sin actividad'}</dd></div>
-      </dl>
-      <p className="text-sm text-texto-suave">Aquí solo se ven contratos y cifras de uso: nunca los datos de negocio de la empresa.</p>
-      <section className="flex flex-col gap-2" aria-label="Módulos">
-        <h2 className="font-titulo text-lg font-semibold">Módulos y contratos</h2>
-        <Lista
-          etiqueta="Módulos de la empresa"
-          columnas={columnas}
-          filas={e.modulos}
-          clave={(m) => m.modulo}
-          vacio={<EstadoVacio titulo="Sin módulos" descripcion="Activa el primer módulo de esta empresa." icono="caja" />}
-        />
+      <section aria-label="Resumen de la empresa" className="flex flex-col gap-4 rounded-tarjeta border border-borde bg-superficie p-4 shadow-tarjeta md:flex-row md:items-center md:p-5">
+        <div className="flex min-w-0 flex-1 items-center gap-4">
+          <AvatarDeEmpresa nombre={e.nombre} tamano="grande" />
+          <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="truncate font-titulo text-xl font-semibold text-texto">{e.nombre}</h2>
+              <Insignia tono={estadoGeneral.tono}>{estadoGeneral.texto}</Insignia>
+            </div>
+            <CodigoDeModulo codigo={e.id} className="self-start" />
+          </div>
+        </div>
+        <dl className="grid grid-cols-3 gap-4 md:gap-8">
+          <div><dt className="text-[0.6875rem] font-medium tracking-wide text-texto-suave uppercase">Alta</dt><dd className="font-medium tabular-nums">{formatearFecha(e.altaEn)}</dd></div>
+          <div><dt className="text-[0.6875rem] font-medium tracking-wide text-texto-suave uppercase">Usuarios</dt><dd className="font-medium tabular-nums">{e.miembros}</dd></div>
+          <div><dt className="text-[0.6875rem] font-medium tracking-wide text-texto-suave uppercase">Actividad</dt><dd className="font-medium tabular-nums">{e.ultimaActividadEn ? formatearFecha(e.ultimaActividadEn) : 'Sin actividad'}</dd></div>
+        </dl>
       </section>
-      <section className="flex flex-col gap-2" aria-label="Historial">
-        <h2 className="font-titulo text-lg font-semibold">Historial de contratos</h2>
-        <Lista
-          etiqueta="Historial de contratos"
-          columnas={historial}
-          filas={e.historial}
-          clave={(v) => `${v.creadoEn}-${v.modulo}-${v.evento}`}
-          vacio={<EstadoVacio titulo="Sin historial" descripcion="Los cambios de contrato aparecen aquí." icono="carpeta" />}
-        />
+      <p className="flex items-center gap-2 text-sm text-texto-suave">
+        <ShieldCheck aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+        Aquí solo se ven contratos y cifras de uso: nunca los datos de negocio de la empresa.
+      </p>
+      <section className="flex flex-col gap-3" aria-labelledby="titulo-modulos">
+        <h2 id="titulo-modulos" className="font-titulo text-lg font-semibold">Módulos y contratos <span className="ml-1 text-sm font-normal text-texto-suave tabular-nums">{e.modulos.length}</span></h2>
+        {e.modulos.length === 0 ? (
+          <EstadoVacio titulo="Sin módulos" descripcion="Activa el primer módulo de esta empresa." icono="caja" accion={<Boton variante="primario" icono="mas" onClick={() => setActivando(true)}>Activar módulo</Boton>} />
+        ) : (
+          <ul className="grid list-none gap-3 p-0 sm:grid-cols-2 xl:grid-cols-3">
+            {e.modulos.map((m) => (
+              <TarjetaDeModulo key={m.modulo} m={m} ahora={ahora} alContrato={() => setContrato(m)} alAccionar={(a) => void accionar(m, a)} />
+            ))}
+          </ul>
+        )}
+      </section>
+      <section className="flex flex-col gap-3" aria-labelledby="titulo-historial">
+        <h2 id="titulo-historial" className="font-titulo text-lg font-semibold">Historial de contratos</h2>
+        {e.historial.length === 0 ? (
+          <EstadoVacio titulo="Sin historial" descripcion="Los cambios de contrato aparecen aquí." icono="carpeta" />
+        ) : (
+          <div className="rounded-tarjeta border border-borde bg-superficie p-4 shadow-tarjeta md:p-5">
+            <LineaDeTiempo eventos={e.historial} />
+          </div>
+        )}
       </section>
       <HojaContrato empresa={e.id} modulo={contrato} alCerrar={() => setContrato(null)} alCambiar={recargar} />
       <HojaActivar abierto={activando} empresa={e.id} conocidos={conocidos} alCerrar={() => setActivando(false)} alCambiar={recargar} />

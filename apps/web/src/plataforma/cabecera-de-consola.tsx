@@ -1,7 +1,7 @@
 import { AlertTriangle, Building2, CheckCircle2, Clock, FlaskConical, Inbox, Radar, Search, type LucideIcon } from 'lucide-react';
 
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { Esqueleto } from '../shared/ui/esqueleto.tsx';
 import { unir } from '../shared/ui/unir.ts';
 import { CifraAnimada } from './cifra-animada.tsx';
@@ -9,9 +9,9 @@ import { useEmpresas, useSolicitudesPendientes } from './consultas.ts';
 import { kpisDeEmpresas, type Kpis } from './logica.ts';
 
 const SECCIONES = [
-  { a: '/plataforma', texto: 'Empresas', fin: false },
-  { a: '/plataforma/planes', texto: 'Planes', fin: true },
-  { a: '/plataforma/solicitudes', texto: 'Solicitudes', fin: true },
+  { a: '/plataforma', texto: 'Empresas', activa: (r: string) => r === '/plataforma' || r.startsWith('/plataforma/empresas') },
+  { a: '/plataforma/planes', texto: 'Planes', activa: (r: string) => r.startsWith('/plataforma/planes') },
+  { a: '/plataforma/solicitudes', texto: 'Solicitudes', activa: (r: string) => r.startsWith('/plataforma/solicitudes') },
 ] as const;
 
 type Tarjeta = { id: string; etiqueta: string; valor: number; nota: string; icono: LucideIcon; punto: string; a: string };
@@ -98,6 +98,7 @@ function Indicadores() {
 /** Banda superior de la consola: identidad de «centro de control», búsqueda global, secciones e indicadores. */
 export function CabeceraDeConsola({ conIndicadores, alBuscar }: { conIndicadores: boolean; alBuscar: () => void }) {
   const pendientes = useSolicitudesPendientes().data?.length ?? 0;
+  const ruta = useLocation().pathname.replace(/\/+$/, '') || '/';
   return (
     <section aria-label="Centro de control" className="relative isolate overflow-hidden rounded-tarjeta bg-menu p-4 text-menu-texto shadow-elevada md:p-6">
       <div aria-hidden className="pointer-events-none absolute -top-28 -left-20 -z-10 size-72 rounded-full bg-accion/30 blur-3xl" />
@@ -116,25 +117,23 @@ export function CabeceraDeConsola({ conIndicadores, alBuscar }: { conIndicadores
           <button
             type="button"
             onClick={alBuscar}
-            className="flex min-h-10 min-w-0 cursor-pointer items-center gap-2 rounded-control border border-white/15 bg-white/[0.06] px-3 text-sm text-menu-texto/80 transition-colors hover:border-white/30 hover:bg-white/10 sm:min-w-64"
+            className="flex min-h-10 w-full min-w-0 cursor-pointer items-center gap-2 rounded-control border border-white/15 bg-white/[0.06] px-3 text-sm text-menu-texto/80 transition-colors hover:border-white/30 hover:bg-white/10 sm:w-80"
           >
             <Search aria-hidden className="size-4" strokeWidth={1.75} />
-            <span className="flex-1 text-left">Buscar empresa o módulo…</span>
+            <span className="flex-1 truncate text-left">Buscar empresa o módulo…</span>
             <kbd className="hidden rounded-chip border border-white/20 px-1.5 py-0.5 font-mono text-[0.625rem] text-menu-texto/70 sm:block">Ctrl K</kbd>
           </button>
         </div>
         <nav aria-label="Secciones de la consola" className="-mx-1 flex gap-1 overflow-x-auto px-1">
           {SECCIONES.map((s) => (
-            <NavLink
+            <Link
               key={s.a}
               to={s.a}
-              end={s.fin}
-              className={({ isActive }) =>
-                unir(
-                  'inline-flex min-h-9 items-center gap-2 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-colors',
-                  isActive ? 'bg-white text-menu shadow-sutil' : 'text-menu-texto/80 hover:bg-white/10 hover:text-white',
-                )
-              }
+              aria-current={s.activa(ruta) ? 'page' : undefined}
+              className={unir(
+                'inline-flex min-h-9 items-center gap-2 rounded-full px-4 text-sm font-medium whitespace-nowrap transition-colors',
+                s.activa(ruta) ? 'bg-white text-menu shadow-sutil' : 'text-menu-texto/80 hover:bg-white/10 hover:text-white',
+              )}
             >
               {s.texto}
               {s.texto === 'Solicitudes' && pendientes > 0 ? (
@@ -143,7 +142,7 @@ export function CabeceraDeConsola({ conIndicadores, alBuscar }: { conIndicadores
                   <span className="sr-only"> pendientes</span>
                 </span>
               ) : null}
-            </NavLink>
+            </Link>
           ))}
         </nav>
         {conIndicadores ? <Indicadores /> : null}

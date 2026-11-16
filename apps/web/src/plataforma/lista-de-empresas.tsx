@@ -49,7 +49,6 @@ const CABECERAS: Cabecera[] = [
   { clave: 'estado', texto: 'Estado' },
   { clave: 'vence', texto: 'Vence' },
   { clave: 'miembros', texto: 'Usuarios', derecha: true },
-  { clave: 'alta', texto: 'Alta' },
 ];
 
 function BotonDeOrden({ c, orden, alOrdenar }: { c: Cabecera; orden: OrdenDeEmpresas; alOrdenar: (o: OrdenDeEmpresas) => void }) {
@@ -95,7 +94,7 @@ export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresa
                     <AvatarDeEmpresa nombre={e.nombre} />
                     <span className="flex min-w-0 flex-col leading-tight">
                       <span className="truncate font-semibold text-texto">{e.nombre}</span>
-                      <span className="font-mono text-[0.6875rem] text-texto-suave">{e.id.slice(0, 8)}</span>
+                      <span className="text-[0.6875rem] text-texto-suave"><span className="font-mono">{e.id.slice(0, 8)}</span> · alta {formatearFecha(e.altaEn)}</span>
                     </span>
                   </Link>
                 </th>
@@ -103,7 +102,6 @@ export function ListaDeEmpresas({ empresas, orden, alOrdenar, ahora }: { empresa
                 <td className="px-4 py-3"><Estado e={e} /></td>
                 <td className="px-4 py-3"><Vencimiento e={e} ahora={ahora} /></td>
                 <td className="px-4 py-3 text-right tabular-nums">{e.miembros}</td>
-                <td className="px-4 py-3 text-sm text-texto-suave tabular-nums">{formatearFecha(e.altaEn)}</td>
                 <td className="pr-3"><ChevronRight aria-hidden className="size-4 text-texto-suave transition-transform group-hover:translate-x-0.5 group-hover:text-texto" /></td>
               </tr>
             ))}

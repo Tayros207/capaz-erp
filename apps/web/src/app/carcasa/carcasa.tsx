@@ -50,9 +50,9 @@ export function Carcasa() {
     return (
       <div className="min-h-dvh bg-fondo">
         <header className="flex items-center justify-between border-b border-borde bg-superficie px-4 py-3 md:px-6">
-          <span className="font-titulo text-lg font-semibold">Capaz · Consola de plataforma</span>
-          <span className="flex items-center gap-3 text-sm text-texto-suave">
-            {yo.usuario.correo}
+          <span className="truncate font-titulo text-lg font-semibold">Capaz<span className="hidden sm:inline"> · Consola de plataforma</span></span>
+          <span className="flex shrink-0 items-center gap-3 text-sm text-texto-suave">
+            <span className="hidden sm:inline">{yo.usuario.correo}</span>
             <button type="button" onClick={() => void salir()} className="cursor-pointer font-semibold text-accion underline underline-offset-2">Cerrar sesión</button>
           </span>
         </header>
