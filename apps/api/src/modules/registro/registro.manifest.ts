@@ -1,19 +1,25 @@
 import type { ManifiestoDeEntrada } from '@capaz/shared';
 
-// Módulo base del ERP: caja, ingresos, egresos, deudas y abonos, con voz y bandeja de revisión.
-// Por ahora solo el manifiesto (fase 4); sus pantallas y herramientas llegan con el plan del Registro.
+// Finanzas ligeras (fase 14): caja, movimientos, cuentas por cobrar y por pagar, abonos.
+// La captura es tecleada; la voz llegará sobre estas mismas herramientas.
 export const manifiestoRegistro: ManifiestoDeEntrada = {
   codigo: 'registro',
   nombre: 'Registro',
-  descripcion: 'Ingresos, egresos, deudas y abonos. Se dicta por voz y se aprueba con un clic.',
+  descripcion: 'Caja, ingresos, egresos y cuentas por cobrar y por pagar.',
   version: '0.1.0',
   dependeDe: [],
-  permisos: ['registro:ver', 'registro:editar', 'registro:aprobar', 'registro:reportes'],
+  permisos: ['registro:ver', 'registro:editar', 'registro:anular', 'registro:configurar', 'registro:reportes'],
   permisosPorNivel: {
-    completo: ['registro:ver', 'registro:editar', 'registro:aprobar', 'registro:reportes'],
+    completo: ['registro:ver', 'registro:editar', 'registro:anular', 'registro:configurar', 'registro:reportes'],
     lectura: ['registro:ver', 'registro:reportes'],
   },
-  secciones: [],
+  secciones: [
+    { id: 'movimientos', nombre: 'Movimientos', ruta: '/m/registro/movimientos', construida: true },
+    { id: 'por-cobrar', nombre: 'Por cobrar', ruta: '/m/registro/por-cobrar', construida: true },
+    { id: 'por-pagar', nombre: 'Por pagar', ruta: '/m/registro/por-pagar', construida: true },
+    { id: 'caja', nombre: 'Caja del día', ruta: '/m/registro/caja', construida: true },
+    { id: 'ajustes', nombre: 'Cuentas y categorías', ruta: '/m/registro/ajustes', construida: true },
+  ],
   familia: 'finanzas',
   orden: 1,
   acento: 'esmeralda',
