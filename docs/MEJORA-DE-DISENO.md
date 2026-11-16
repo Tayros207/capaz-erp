@@ -63,3 +63,23 @@ El usuario encargó el front-end a la sesión modules-ed («tú encárgate de me
 - `app/carcasa/lista-de-menu.tsx`: barra de acento en el ítem activo y transiciones.
 - **Dependencia nueva `@fontsource-variable/inter` 5.3.0 (OFL-1.1, versión exacta, servida localmente).** La fuente ya estaba propuesta en `FRONTEND-INVESTIGACION.md`; la regla 15 de `AGENTS.md` exige aprobación del usuario para dependencias y **esa aprobación específica está pendiente de confirmar**: el usuario aprobó el rediseño, no nombró la fuente. Si la rechaza, se quita el `@import` de `tokens.css` y la dependencia.
 - Pendiente: panel de cifras en Inicio, piezas de `shared/ui` y `/kit`, pulido por módulo, revisión de `shared/impresion` con los radios y las cifras tabulares nuevas, revisión visual humana.
+
+### 6.1 Rediseño con librerías (2026-11-16, segunda pasada)
+
+**2026-11-16: el usuario autorizó explícitamente en la conversación usar librerías para el rediseño** («usando mejoras y librerías… quiero que sea un rediseño más actual»). Librerías, con versión exacta (sin `^`) y licencia, todas servidas desde el bundle (sin CDN):
+
+| Librería | Versión | Licencia | Uso |
+|---|---|---|---|
+| `@fontsource-variable/inter` | 5.3.0 | OFL-1.1 | Tipografía |
+| `lucide-react` | 1.73.0 | ISC | Iconos (`shared/ui/iconos.tsx`, `app/carcasa/iconos-menu.tsx`; la API `Icono`/`IconoMenu` no cambió) |
+| `sonner` | 2.0.8 | MIT | Único sistema de avisos; `notificar()` es su fachada |
+| `cmdk` | 1.1.1 | MIT | Paleta de comandos (Ctrl/Cmd + K) |
+| `motion` | 14.14.0 | MIT | Instalada para transiciones; **aún sin uso** (las animaciones actuales son CSS) |
+| `@radix-ui/react-dropdown-menu` | 2.2.1 | MIT | Menú de usuario y selector de empresa |
+| `@radix-ui/react-tooltip` | 1.4.1 | MIT | Instalada; **aún sin uso** |
+
+**Hecho:** tokens (barra lateral clara con tokens `lateral-*`, sombras, radios 8/14 px, foco con anillo, alto de control 40 px en escritorio y 44 px en táctil); botón, campos, insignia, diálogo, hoja inferior, esqueleto, estado vacío, cifra y tablero; carcasa (menú lateral claro con icono Lucide, barra superior con buscador y menús desplegables, barra inferior móvil); paleta de comandos (pantallas de todos los módulos con acceso, accesos rápidos verificados en `modules/*/rutas.tsx` y clientes con `clientes_buscar`); Inicio con tarjetas de pendientes enlazadas al módulo (`Pendientes`); piezas compartidas en `shared/ui/entidades.tsx` (`EnlaceDeEntidad`, `ChipDeCliente`, `InsigniaDeEstado`), visibles en `/kit` («Diseño compartido»).
+
+**Cómo se conectan los módulos:** los pendientes de Inicio llevan a Bandeja, Por cobrar, Entregas y Actividades; la paleta lleva a cualquier pantalla del menú y a la ficha de un cliente; los módulos pueden adoptar `EnlaceDeEntidad`/`ChipDeCliente`/`InsigniaDeEstado` (rutas centralizadas en `entidades-logica.ts`). **Los módulos aún no las usan:** no se editó `modules/*`.
+
+**Pendiente:** adoptar las piezas compartidas dentro de `modules/*` (lo hace quien integre esos carriles); búsqueda por pedido o deuda en la paleta (no hay herramienta de búsqueda por texto para ellos: se pidió no inventar endpoints); tablas con cabecera pegajosa (las tablas viven en los módulos); transiciones con `motion`; revisión visual humana a 390 y 1280 px, claro y oscuro.
