@@ -21,5 +21,4 @@ export const manifiestoOrdenes: ManifiestoDeEntrada = {
   orden: 2,
   acento: 'esmeralda',
   icono: 'ordenes',
-  enConstruccion: true,
 };

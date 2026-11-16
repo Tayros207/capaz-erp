@@ -60,7 +60,7 @@ describe('los nueve manifiestos', () => {
   });
   it('los ocho nuevos (menos webhooks) están en construcción y solo «registro» es por defecto', () => {
     const c = new CatalogoDeModulos(todos);
-    expect(c.contratables().filter((m) => m.enConstruccion)).toHaveLength(8);
+    expect(c.contratables().filter((m) => m.enConstruccion)).toHaveLength(7);
     expect(c.porDefecto().map((m) => m.codigo)).toEqual(['registro']);
   });
 });

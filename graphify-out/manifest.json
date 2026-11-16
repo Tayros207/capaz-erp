@@ -516,9 +516,9 @@
     "semantic_hash": "19cf6670edd363cff2f7de732abd4066"
   },
   "docs/PLAN-DE-CONSTRUCCION.md": {
-    "mtime": 1794787835.4066842,
-    "seen": 1794787882.5252986,
-    "ast_hash": "2d35ea89dc6e4150022880c5473587ee",
+    "mtime": 1794787892.105072,
+    "seen": 1794787897.1208496,
+    "ast_hash": "de7aaa1ec68f1b13d812c6f84d37f51c",
     "semantic_hash": ""
   },
   "docs/PLATAFORMA-Y-PLANES.md": {
@@ -3498,9 +3498,9 @@
     "semantic_hash": ""
   },
   "docs/adr/ADR-016-reglas-de-los-modulos-clasicos.md": {
-    "mtime": 1794787530.4590564,
-    "seen": 1794787882.525345,
-    "ast_hash": "e384d9b95e9f0f10016bc176d99ddcb2",
+    "mtime": 1794787892.1053991,
+    "seen": 1794787897.1209252,
+    "ast_hash": "0c6fa41bc3790c93fda64bd31e59d3e2",
     "semantic_hash": ""
   }
 }
