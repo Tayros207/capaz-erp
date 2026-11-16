@@ -1158,9 +1158,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/carcasa.tsx": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.104578,
-    "ast_hash": "13f30e27bacc2af9b7378aadd29bdfa3",
+    "mtime": 1794796584.9957442,
+    "seen": 1794796669.3002658,
+    "ast_hash": "8b1c2b95b181345cafbb154f087b9855",
     "semantic_hash": ""
   },
   "apps/web/src/app/carcasa/iconos-menu.tsx": {
@@ -1368,9 +1368,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/inicio/pantalla-inicio.tsx": {
-    "mtime": 1794780700.665023,
-    "seen": 1794781771.1047223,
-    "ast_hash": "f2f2e67d98fd0a2bdf0d3f4bfaa4228e",
+    "mtime": 1794796585.0028987,
+    "seen": 1794796669.300593,
+    "ast_hash": "c3448a178cdf06d59600874f467e5b12",
     "semantic_hash": ""
   },
   "apps/web/src/core/inicio/rutas.tsx": {

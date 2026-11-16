@@ -936,8 +936,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.spec.ts": {
-    "mtime": 1794795308.407083,
-    "seen": 1794795534.103211,
+    "mtime": 1794796288.840199,
+    "seen": 1794796293.8661044,
     "ast_hash": "f667c10474072899de2dd2410f120e84",
     "semantic_hash": ""
   },
@@ -1056,8 +1056,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/crm/crm.manifest.ts": {
-    "mtime": 1794794784.6089258,
-    "seen": 1794795023.2502701,
+    "mtime": 1794796288.8406749,
+    "seen": 1794796293.8663049,
     "ast_hash": "c71fa81f3d7111e26b42305201ede30b",
     "semantic_hash": ""
   },
@@ -1080,8 +1080,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/ordenes.manifest.ts": {
-    "mtime": 1794794262.0635564,
-    "seen": 1794794523.3439887,
+    "mtime": 1794796288.840791,
+    "seen": 1794796293.8664114,
     "ast_hash": "3f452fa94b30002e3a5baab35a4592e6",
     "semantic_hash": ""
   },
@@ -3930,9 +3930,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/kit/kit-ola-2.tsx": {
-    "mtime": 1794788868.2322483,
-    "seen": 1794794523.3442554,
-    "ast_hash": "fbb61e210b1dee59d6e0eda54092be84",
+    "mtime": 1794795720.8840828,
+    "seen": 1794796293.8666134,
+    "ast_hash": "a1867065594321e2244019230c262c37",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/acciones.ts": {

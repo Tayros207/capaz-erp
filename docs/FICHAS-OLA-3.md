@@ -126,6 +126,13 @@ Familia `personal`. Permisos: `personal:ver`, `personal:editar`, `personal:adela
 | P3-11 | ¿Qué significa «avisar»? (D24) | Un «aviso interno» mínimo del núcleo, o esperar a WhatsApp (ola 5) | núcleo |
 | P3-12 | Editor de líneas: ¿se promueve al kit tal como quedó en Pedidos? | Sí, tras la revisión visual de Pedidos | K2 |
 
+
+## 6.1 Decisiones tomadas el 2026-11-16 (agente principal, por delegación del usuario; Keny las revisa)
+
+P3-1 **No** hay existencia negativa (`CHECK >= 0`; la salida mayor se rechaza con el faltante). P3-2 solo último costo informativo. P3-3 **borrador único** `existencias_recibir` al recibir una compra (R5 se mantiene). P3-4 la cuenta por pagar nace **al recibir, por lo recibido**. P3-5 los costos de compra **incluyen IGV 18 %** (como Pedidos, D17). P3-6 `compras` exige `insumos`; las líneas admiten productos sin artículo. P3-7 asistencia la marca el **encargado**. P3-8 los `_resumen` ganan el campo opcional `serie` solo si el carril de reportes lo pide. P3-9 (`clientes_fusionar`), P3-10 (oportunidad ganada → pedido), P3-11 (avisos) y P3-12 (editor de líneas al kit) **se aplazan**: no entran en la ola 3. Con esto la puerta queda pasada para C2, K2 y DB3a; los contratos de herramientas de cada módulo los cierra su constructor (como en la ola 2), dentro de la arquitectura de §0 y §1.
+
+**Eventos fijados por C2** (nombres y cargas mínimas; sin datos personales): `compra.enviada {ordenId, numero, proveedorId, totalCentimos}`, `compra.recibida {ordenId, recepcionId, numero, proveedorId, totalRecibidoCentimos, lineas:[{productoId|null, cantidadMilesimas, costoUnitarioMilesimas}]}`, `compra.cancelada {ordenId, numero}`; `existencia.bajo_minimo {articuloId, sucursalId, cantidadMilesimas, minimoMilesimas}`, `existencia.movida {articuloId, sucursalId, tipo, cantidadMilesimas}`; `adelanto.registrado {adelantoId, colaboradorId, montoCentimos, fecha}`, `adelanto.anulado {adelantoId, colaboradorId, montoCentimos}`.
+
 ## 7. Rondas previstas (se confirman en la puerta)
 
 | Ronda | En paralelo (máximo 4) | Se puede lanzar cuando |
