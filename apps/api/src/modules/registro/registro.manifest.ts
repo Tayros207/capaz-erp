@@ -26,5 +26,4 @@ export const manifiestoRegistro: ManifiestoDeEntrada = {
   icono: 'registro',
   // Decisión comercial provisional, editable como dato: toda empresa nueva recibe 30 días de prueba.
   porDefecto: { pruebaDias: 30 },
-  enConstruccion: true,
 };
