@@ -54,6 +54,7 @@ export class EmpresasController {
         where m.user_id = $1 order by m.created_at`,
       [ctx.usuarioId],
     );
+    const { rowCount: filasDeOperador } = await this.db.sistema.query('select 1 from core.plataforma_admins where usuario_id = $1', [ctx.usuarioId]);
     const u = usuario[0];
     if (!u) throw new ErrorDeNegocio('no_autenticado');
     return exito(
@@ -69,6 +70,7 @@ export class EmpresasController {
             : [];
         }),
         permisos: [...ctx.permisos],
+        operador: (filasDeOperador ?? 0) > 0,
       }),
     );
   }

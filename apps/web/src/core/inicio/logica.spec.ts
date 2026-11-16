@@ -7,7 +7,7 @@ const modulo = (codigo: string, acceso: Partial<AccesoDeModulo> = {}): ModuloDeY
   acceso: { codigo, motivo: 'activo', visible: true, puedeEntrar: true, puedeEscribir: true, nivel: 'completo', alcance: 'todos', diasDePrueba: null, ...acceso },
 });
 const yoCon = (modulos: ModuloDeYo[], permisos: string[] = ['borradores:ver']): Yo => ({
-  usuario: { id: 'u', nombre: 'Ana', correo: 'a@b.pe' }, empresa: { id: 'e', nombre: 'Imprenta', rol: 'admin' }, empresas: [], puedeCrearEmpresas: false, modulos, permisos,
+  usuario: { id: 'u', nombre: 'Ana', correo: 'a@b.pe' }, empresa: { id: 'e', nombre: 'Imprenta', rol: 'admin' }, empresas: [], puedeCrearEmpresas: false, modulos, permisos, operador: false,
 });
 
 describe('tarjetas de pendientes', () => {

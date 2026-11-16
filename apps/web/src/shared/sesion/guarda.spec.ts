@@ -9,6 +9,7 @@ const base: Yo = {
   puedeCrearEmpresas: true,
   modulos: [],
   permisos: [],
+  operador: false,
 };
 const conEmpresa: Yo = { ...base, empresa: { id: 'e1', nombre: 'Gráfica Sur', rol: 'owner' } };
 

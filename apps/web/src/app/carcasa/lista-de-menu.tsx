@@ -80,6 +80,7 @@ export function ListaDeMenu({ menu, modo, alNavegar, pendientes = 0 }: Props) {
       <Grupo items={menu.nucleo} modo={modo} alNavegar={alNavegar} pendientes={pendientes} />
       {menu.familias.map((f) => <Grupo key={f.familia} titulo={f.nombre} items={f.items} modo={modo} alNavegar={alNavegar} pendientes={pendientes} />)}
       <Grupo titulo="Ajustes" items={menu.ajustes} modo={modo} alNavegar={alNavegar} pendientes={pendientes} />
+      {menu.operador?.length ? <Grupo titulo="Operador" items={menu.operador} modo={modo} alNavegar={alNavegar} pendientes={pendientes} /> : null}
     </>
   );
 }

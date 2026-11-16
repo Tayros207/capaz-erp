@@ -9,6 +9,7 @@ const yo = {
   puedeCrearEmpresas: true,
   modulos: [],
   permisos: [],
+  operador: false,
 };
 
 function simular(estado: number, cuerpo: string) {
