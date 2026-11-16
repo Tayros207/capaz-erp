@@ -31,7 +31,7 @@ export const borradores = core.table(
     entidadId: text('entidad_id'),
   },
   (t) => [
-    check('borrador_origen', sql`${t.origen} IN ('voz', 'texto', 'agente', 'regla', 'conector', 'importacion')`),
+    check('borrador_origen', sql`${t.origen} IN ('voz', 'texto', 'agente', 'regla', 'conector', 'importacion', 'modulo')`),
     check('borrador_prioridad', sql`${t.prioridad} IN ('normal', 'alta')`),
     check('borrador_estado', sql`${t.estado} IN ('pendiente', 'aprobado', 'descartado')`),
     index('idx_borradores_estado').on(t.tenantId, t.estado, t.propuestoEn.desc()),

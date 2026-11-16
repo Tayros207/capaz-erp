@@ -79,6 +79,7 @@ export const productos = core.table(
     actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    unique('productos_empresa_id').on(t.tenantId, t.id),
     check('producto_tipo', sql`${t.tipo} IN ('producto', 'servicio')`),
     check('producto_precio', sql`${t.precioUnitarioMilesimas} >= 0`),
     uniqueIndex('uq_productos_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
@@ -105,6 +106,7 @@ export const sucursales = core.table(
     actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    unique('sucursales_empresa_id').on(t.tenantId, t.id),
     check('sucursal_codigo', sql`${t.codigo} ~ '^[A-Z0-9]{2,6}$'`),
     unique('sucursales_empresa_codigo').on(t.tenantId, t.codigo),
     uniqueIndex('uq_sucursales_principal').on(t.tenantId).where(sql`${t.esPrincipal}`),
