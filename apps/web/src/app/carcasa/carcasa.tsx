@@ -48,7 +48,7 @@ export function Carcasa() {
         alPlegar={() => { guardarPlegado(!plegado); setPlegado(!plegado); }} alSalir={() => void salir()} />
       <div className="flex">
         <MenuLateral menu={menu} plegado={plegado} />
-        <main id="contenido" className="min-w-0 flex-1 pb-20 md:pb-0">
+        <main id="contenido" className="min-w-0 flex-1 px-4 pt-4 pb-24 md:px-6 md:pb-8">
           {aviso ? null : <Outlet />}
         </main>
       </div>

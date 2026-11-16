@@ -47,7 +47,7 @@ export function PantallaInicio() {
   const menu = menuDesdeYo(yo);
   const primerNombre = yo.usuario.nombre.trim().split(/\s+/)[0] ?? '';
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <header>
         <h1 className="font-titulo text-2xl font-bold text-texto">Hola, {primerNombre}</h1>
         <p className="text-texto-suave">{yo.empresa.nombre}</p>
