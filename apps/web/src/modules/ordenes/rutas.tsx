@@ -1,4 +1,5 @@
 import type { RouteObject } from 'react-router';
+import { PantallaDocumentoDePedido } from './pantalla-documento.tsx';
 import { PantallaEntregas } from './pantalla-entregas.tsx';
 import { PantallaFichaPedido } from './pantalla-ficha.tsx';
 import { PantallaPedidos } from './pantalla-lista.tsx';
@@ -11,5 +12,8 @@ export const rutas: RouteObject[] = [
   { path: 'm/ordenes/tablero', element: <PantallaTableroDePedidos /> },
   { path: 'm/ordenes/entregas', element: <PantallaEntregas /> },
   { path: 'm/ordenes/nuevo', element: <PantallaNuevoPedido /> },
+  { path: 'm/ordenes/:id/proforma', element: <PantallaDocumentoDePedido tipo="proforma" /> },
+  { path: 'm/ordenes/:id/nota', element: <PantallaDocumentoDePedido tipo="nota" /> },
+  { path: 'm/ordenes/:id/orden-de-trabajo', element: <PantallaDocumentoDePedido tipo="orden-de-trabajo" /> },
   { path: 'm/ordenes/:id', element: <PantallaFichaPedido /> },
 ];
