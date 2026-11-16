@@ -25,14 +25,17 @@ const columnas = {
 };
 const conCliente = and(eq(clientes.tenantId, ordenesPedidos.tenantId), eq(clientes.id, ordenesPedidos.clienteId));
 
-/** `bloquear` toma la fila del pedido con `for update`: dos cambios a la vez se turnan. */
+/**
+ * `bloquear` toma primero la fila del pedido con `for update` (dos cambios a la vez se turnan) y después
+ * la lee: así lo leído es lo último confirmado. El bloqueo va en una consulta sin `join` a propósito.
+ */
 export async function verPedido(tx: Transaccion, ctx: ContextoDeEmpresa, id: string, opciones: { alcance: Alcance; bloquear?: boolean }): Promise<Pedido | null> {
-  const q = tx
-    .select(columnas)
-    .from(ordenesPedidos)
-    .innerJoin(clientes, conCliente)
-    .where(and(deEmpresa(ctx), eq(ordenesPedidos.id, id), deAlcance(ctx, opciones.alcance)));
-  const [fila] = await (opciones.bloquear ? q.for('update', { of: ordenesPedidos }) : q);
+  const donde = and(deEmpresa(ctx), eq(ordenesPedidos.id, id), deAlcance(ctx, opciones.alcance));
+  if (opciones.bloquear) {
+    const tomada = await tx.select({ id: ordenesPedidos.id }).from(ordenesPedidos).where(donde).for('update');
+    if (tomada.length === 0) return null;
+  }
+  const [fila] = await tx.select(columnas).from(ordenesPedidos).innerJoin(clientes, conCliente).where(donde);
   return fila ?? null;
 }
 
