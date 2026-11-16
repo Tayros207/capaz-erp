@@ -10,6 +10,8 @@
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
+  --color-white: #fff;
+  --color-black: #000;
 
   /* Superficies */
   --color-fondo: var(--c-fondo);

@@ -1,46 +1,34 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { formatearFecha } from '../shared/formato/fechas.ts';
+import { useQueryClient } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { Boton } from '../shared/ui/boton.tsx';
-import { BarraDeBusqueda } from '../shared/ui/datos/barra-de-busqueda.tsx';
 import { EncabezadoDePagina } from '../shared/ui/datos/encabezado-de-pagina.tsx';
-import { Lista } from '../shared/ui/datos/lista.tsx';
-import type { Columna } from '../shared/ui/datos/lista-tipos.ts';
 import { EstadoVacio } from '../shared/ui/estado-vacio.tsx';
-import { Insignia } from '../shared/ui/insignia.tsx';
-import { datosOError, listarEmpresas, type SalidaDePlataforma } from './api.ts';
+import { useEmpresas } from './consultas.ts';
+import { FiltrosDeEmpresas } from './filtros-de-empresas.tsx';
 import { HojaEmpresaNueva } from './hoja-empresa-nueva.tsx';
 import { HojaRestablecer } from './hoja-restablecer.tsx';
-import { estadoDeModulo } from './logica.ts';
+import { ListaDeEmpresas } from './lista-de-empresas.tsx';
+import { busquedaDesdeFiltro, filtrarEmpresas, filtroDesdeBusqueda, FILTRO_VACIO, ordenarEmpresas, type FiltroDeEmpresas, type OrdenDeEmpresas } from './logica.ts';
 import { CLAVE_EMPRESAS } from './claves.ts';
 import { Cargando, ErrorDeConsulta } from './marco.tsx';
 
-type Empresa = SalidaDePlataforma<'plataforma_empresas_listar'>['items'][number];
-
 export function PantallaEmpresas() {
-  const navegar = useNavigate();
   const cliente = useQueryClient();
-  const [texto, setTexto] = useState('');
+  const [params, setParams] = useSearchParams();
+  const filtro = useMemo(() => filtroDesdeBusqueda(params), [params]);
+  const [orden, setOrden] = useState<OrdenDeEmpresas>({ clave: 'estado', direccion: 'asc' });
   const [creando, setCreando] = useState(false);
   const [restableciendo, setRestableciendo] = useState(false);
-  const consulta = useQuery({ queryKey: [...CLAVE_EMPRESAS, 'lista', texto.trim()], queryFn: async () => datosOError(await listarEmpresas(texto.trim())).items });
+  const [ahora] = useState(() => new Date());
+  const consulta = useEmpresas();
 
-  const columnas: Array<Columna<Empresa>> = [
-    { id: 'nombre', titulo: 'Empresa', principal: true, celda: (e) => e.nombre },
-    { id: 'modulos', titulo: 'Módulos', celda: (e) => (
-      e.modulos.length === 0 ? 'Sin módulos' : (
-        <span className="inline-flex flex-wrap gap-1">
-          {e.modulos.map((m) => {
-            const est = estadoDeModulo(m.estado);
-            return <Insignia key={m.modulo} tono={est.tono}>{`${m.modulo}: ${est.texto}`}</Insignia>;
-          })}
-        </span>
-      )
-    ) },
-    { id: 'miembros', titulo: 'Miembros', alinear: 'derecha', celda: (e) => e.miembros },
-    { id: 'alta', titulo: 'Alta', celda: (e) => formatearFecha(e.altaEn) },
-  ];
+  const cambiarFiltro = (f: FiltroDeEmpresas) => setParams(busquedaDesdeFiltro(f), { replace: true });
+  const visibles = useMemo(
+    () => (consulta.data ? ordenarEmpresas(filtrarEmpresas(consulta.data, filtro, ahora), orden, ahora) : []),
+    [consulta.data, filtro, orden, ahora],
+  );
+  const hayFiltro = JSON.stringify(filtro) !== JSON.stringify(FILTRO_VACIO);
 
   return (
     <div className="flex flex-col gap-4">
@@ -50,20 +38,27 @@ export function PantallaEmpresas() {
         accionPrincipal={<Boton variante="primario" icono="mas" onClick={() => setCreando(true)}>Crear empresa</Boton>}
         accionesSecundarias={<Boton onClick={() => setRestableciendo(true)}>Restablecer contraseña</Boton>}
       />
-      <BarraDeBusqueda valor={texto} onCambio={setTexto} etiqueta="Buscar empresa" placeholder="Buscar empresa…" />
       {consulta.isPending ? (
         <Cargando />
       ) : consulta.isError ? (
         <ErrorDeConsulta error={consulta.error} />
       ) : (
-        <Lista
-          etiqueta="Empresas de la plataforma"
-          columnas={columnas}
-          filas={consulta.data}
-          clave={(e) => e.id}
-          onAbrir={(e) => void navegar(`/plataforma/empresas/${encodeURIComponent(e.id)}`)}
-          vacio={<EstadoVacio titulo="Sin empresas" descripcion="Crea la primera empresa de la plataforma." icono="carpeta" />}
-        />
+        <>
+          <FiltrosDeEmpresas empresas={consulta.data} filtro={filtro} alCambiar={cambiarFiltro} />
+          <p role="status" className="text-sm text-texto-suave">
+            {visibles.length === consulta.data.length ? `${visibles.length} ${visibles.length === 1 ? 'empresa' : 'empresas'}` : `${visibles.length} de ${consulta.data.length} empresas`}
+          </p>
+          {visibles.length === 0 ? (
+            <EstadoVacio
+              titulo={hayFiltro ? 'Ninguna empresa coincide' : 'Sin empresas'}
+              descripcion={hayFiltro ? 'Prueba con otro texto, estado o módulo.' : 'Crea la primera empresa de la plataforma.'}
+              icono={hayFiltro ? 'buscar' : 'carpeta'}
+              accion={hayFiltro ? <Boton onClick={() => cambiarFiltro(FILTRO_VACIO)}>Quitar filtros</Boton> : <Boton variante="primario" icono="mas" onClick={() => setCreando(true)}>Crear empresa</Boton>}
+            />
+          ) : (
+            <ListaDeEmpresas empresas={visibles} orden={orden} alOrdenar={setOrden} ahora={ahora} />
+          )}
+        </>
       )}
       <HojaEmpresaNueva abierto={creando} alCerrar={() => setCreando(false)} alCambiar={() => void cliente.invalidateQueries({ queryKey: CLAVE_EMPRESAS })} />
       <HojaRestablecer abierto={restableciendo} alCerrar={() => setRestableciendo(false)} />
