@@ -7,6 +7,13 @@ export const aConfiguracion = (f: typeof empresaConfig.$inferSelect): Configurac
   zonaHoraria: f.zonaHoraria,
   moneda: f.moneda,
   locale: f.locale,
+  razonSocial: f.razonSocial,
+  ruc: f.ruc,
+  direccionFiscal: f.direccionFiscal,
+  telefono: f.telefono,
+  correo: f.correo,
+  pieDeDocumento: f.pieDeDocumento,
+  logoDataUrl: f.logoDataUrl,
   actualizadoEn: f.actualizadoEn.toISOString(),
 });
 
@@ -16,8 +23,8 @@ export const empresaVerConfiguracion = definirHerramienta('empresa_ver_configura
   criticidad: 'lectura',
   ayuda: {
     titulo: 'Ver la configuración de la empresa',
-    paraQueSirve: 'Muestra la zona horaria, la moneda y el idioma con que trabaja tu empresa.',
-    cuandoUsarla: 'Cuando quieras saber con qué formato se muestran las fechas y los montos.',
+    paraQueSirve: 'Muestra la zona horaria, la moneda y el idioma de tu empresa, y sus datos para los documentos: razón social, RUC, dirección fiscal, teléfono, correo, pie de documento y logo.',
+    cuandoUsarla: 'Cuando quieras saber con qué formato se muestran las fechas y los montos, o con qué datos salen tus proformas y recibos.',
     campos: [],
     ejemploTecleado: 'ver configuración de la empresa',
     ejemploHablado: 'muéstrame la configuración de la empresa',
