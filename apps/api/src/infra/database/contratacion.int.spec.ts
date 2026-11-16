@@ -125,6 +125,44 @@ describe('solicitudes de módulo', () => {
   });
 });
 
+describe('ficha de cuenta (0023)', () => {
+  const T = `emp-ficha-${Date.now()}`;
+  afterAll(async () => { await owner.query('delete from core.empresa_ficha where tenant_id = $1', [T]); });
+  it('la plataforma crea y edita la ficha; los CHECK rechazan RUC malo, estado inválido y enlace sin https; no se borra', async () => {
+    await sistema.query(`insert into core.empresa_ficha (tenant_id, actualizado_por) values ($1, 'op1')`, [T]);
+    const { rows } = await sistema.query(`select estado_comercial from core.empresa_ficha where tenant_id = $1`, [T]);
+    expect(rows[0].estado_comercial).toBe('prospecto');
+    await sistema.query(`update core.empresa_ficha set ruc = '20123456789', estado_comercial = 'cliente', enlace_crm = 'https://crm.ejemplo.pe/x', actualizado_por = 'op2' where tenant_id = $1`, [T]);
+    const malos = [`ruc = '123'`, `ruc = '2012345678A'`, `estado_comercial = 'otro'`, `enlace_crm = 'http://x.pe'`, `enlace_crm = 'ftp://x.pe'`, `nota = repeat('x', 4001)`, `contacto_nombre = repeat('x', 201)`, `direccion = repeat('x', 301)`, `ciudad = repeat('x', 101)`];
+    for (const set of malos) await expect(sistema.query(`update core.empresa_ficha set ${set} where tenant_id = $1`, [T]), set).rejects.toThrow(/check constraint/);
+    await expect(sistema.query(`update core.empresa_ficha set enlace_crm = $2 where tenant_id = $1`, [T, 'https://' + 'a'.repeat(493)])).rejects.toThrow(/check constraint/);
+    await expect(sistema.query(`update core.empresa_ficha set tenant_id = 'otra' where tenant_id = $1`, [T])).rejects.toThrow(/permission denied/);
+    await expect(sistema.query(`delete from core.empresa_ficha`)).rejects.toThrow(/permission denied/);
+    await expect(app.query('select * from core.empresa_ficha')).rejects.toThrow(/permission denied/);
+    await sistema.query(`update core.empresa_ficha set ruc = null, enlace_crm = null where tenant_id = $1`, [T]);
+  });
+});
+
+describe('límite de usuarios en core.empresa_cuenta (0023)', () => {
+  const T = `emp-limite-${Date.now()}`;
+  afterAll(async () => {
+    await owner.query('delete from core.empresa_cuenta_eventos where tenant_id = $1', [T]);
+    await owner.query('delete from core.empresa_cuenta where tenant_id = $1', [T]);
+  });
+  it('capaz_sistema fija max_usuarios; capaz_app no; los CHECK rechazan 0 y negativos; las funciones de cuenta siguen sirviendo', async () => {
+    await sistema.query(`insert into core.empresa_cuenta (tenant_id) values ($1)`, [T]);
+    expect((await sistema.query(`select max_usuarios from core.empresa_cuenta where tenant_id = $1`, [T])).rows[0].max_usuarios).toBeNull();
+    await sistema.query(`update core.empresa_cuenta set max_usuarios = 5 where tenant_id = $1`, [T]);
+    await sistema.query(`update core.empresa_cuenta set max_usuarios = null where tenant_id = $1`, [T]);
+    for (const v of ['0', '-1']) await expect(sistema.query(`update core.empresa_cuenta set max_usuarios = ${v} where tenant_id = $1`, [T])).rejects.toThrow(/empresa_cuenta_max_usuarios/);
+    await expect(comoEmpresa(app, T, (c) => c.query(`update core.empresa_cuenta set max_usuarios = 3`))).rejects.toThrow(/permission denied/);
+    await expect(comoEmpresa(app, T, (c) => c.query(`insert into core.empresa_cuenta (tenant_id, max_usuarios) values ($1, 3)`, [T]))).rejects.toThrow(/permission denied/);
+    await sistema.query(`select core.pausar_cuenta($1, 'motivo de prueba', 'op1')`, [T]);
+    await sistema.query(`select core.reactivar_cuenta($1, null, 'op1')`, [T]);
+    expect((await sistema.query(`select estado from core.empresa_cuenta where tenant_id = $1`, [T])).rows[0].estado).toBe('activa');
+  });
+});
+
 describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () => {
   // Cada fase que abra algo a la plataforma lo agrega aquí; todo lo demás debe seguir cerrado.
   const PERMITIDO: Record<string, string[]> = {
@@ -135,6 +173,7 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.empresa_modulos_eventos': ['select', 'insert'],
     'core.empresa_cuenta': ['select', 'insert', 'update'],
     'core.empresa_cuenta_eventos': ['select', 'insert'],
+    'core.empresa_ficha': ['select', 'insert'],
     'core.solicitudes_modulo': ['select'],
     'core.plataforma_admins': ['select', 'insert', 'delete'],
     'core.confirmaciones_usadas': ['delete'],
@@ -160,6 +199,9 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
 
   // Permisos SOLO por columna (no se ven con has_table_privilege): tabla -> privilegio -> columnas.
   const PERMITIDO_POR_COLUMNA: Record<string, Record<string, string[]>> = {
+    'core.empresa_ficha': {
+      update: ['actualizado_por', 'contacto_correo', 'contacto_nombre', 'ciudad', 'contacto_telefono', 'direccion', 'enlace_crm', 'estado_comercial', 'nota', 'responsable', 'ruc'],
+    },
     'core.solicitudes_modulo': { update: ['atendido_en', 'estado'] },
     'core.confirmaciones_usadas': { select: ['tenant_id', 'usado_en'] },
     'core.idempotencia': { select: ['creado_en', 'tenant_id'] },

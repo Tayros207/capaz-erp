@@ -162,6 +162,13 @@
       "when": 1794845422039,
       "tag": "0022_estado_de_cuenta",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794851431886,
+      "tag": "0023_ficha_de_cuenta",
+      "breakpoints": true
     }
   ]
 }

@@ -95,6 +95,21 @@ describe('catálogo: estado de cuenta (0022)', () => {
   });
 });
 
+describe('catálogo: ficha de cuenta (0023)', () => {
+  it('capaz_app no tiene ningún permiso sobre core.empresa_ficha; capaz_sistema lee, inserta y edita solo columnas, sin borrar', async () => {
+    const { rows } = await owner.query<{ priv: string; app: boolean; sis: boolean }>(`
+      select p.priv, has_table_privilege('capaz_app', 'core.empresa_ficha', p.priv) as app,
+             has_table_privilege('capaz_sistema', 'core.empresa_ficha', p.priv) as sis
+      from (values ('select'), ('insert'), ('update'), ('delete')) p(priv)`);
+    expect(Object.fromEntries(rows.map((r) => [r.priv, r.app]))).toEqual({ select: false, insert: false, update: false, delete: false });
+    expect(Object.fromEntries(rows.map((r) => [r.priv, r.sis]))).toEqual({ select: true, insert: true, update: false, delete: false });
+    const cols = await owner.query<{ a: number }>(`
+      select count(*)::int as a from information_schema.column_privileges
+      where grantee = 'capaz_app' and table_schema = 'core' and table_name = 'empresa_ficha'`);
+    expect(cols.rows[0]!.a).toBe(0);
+  });
+});
+
 describe('catálogo: roles', () => {
   it('ningún rol de Capaz tiene SUPERUSER, BYPASSRLS ni CREATEROLE', async () => {
     const { rows } = await owner.query<{ rolname: string }>(

@@ -55,7 +55,7 @@ describe('toda tabla con tenant_id tiene su ejemplo aquí', () => {
   });
 });
 
-describe.each(Object.entries(EJEMPLOS))('%s con capaz_app', (tabla, { sql, modo }) => {
+describe.each(Object.entries(EJEMPLOS).filter(([, e]) => e.modo !== 'plataforma'))('%s con capaz_app', (tabla, { sql, modo }) => {
   it('la empresa A solo ve lo suyo', async () => {
     await comoEmpresa(app, A, async (c) => {
       const { rows } = await c.query(`select tenant_id from ${tabla}`);
@@ -88,6 +88,17 @@ describe.each(Object.entries(EJEMPLOS))('%s con capaz_app', (tabla, { sql, modo 
       }
     });
   }
+});
+
+describe.each(Object.entries(EJEMPLOS).filter(([, e]) => e.modo === 'plataforma'))('%s (solo plataforma)', (tabla) => {
+  it('capaz_app no puede leer, escribir ni borrar, ni con su empresa fijada', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`select tenant_id from ${tabla}`))).rejects.toThrow(/permission denied/);
+    await expect(comoEmpresa(app, A, (c) => c.query(`update ${tabla} set tenant_id = tenant_id`))).rejects.toThrow(/permission denied/);
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from ${tabla}`))).rejects.toThrow(/permission denied/);
+  });
+  it('sin empresa fijada el dueño no ve nada (la RLS está forzada)', async () => {
+    expect((await owner.query(`select count(*)::int as n from ${tabla}`)).rows[0].n).toBe(0);
+  });
 });
 
 describe('capaz_app no puede saltarse la RLS', () => {
