@@ -13,3 +13,4 @@ export * from './registro.js';
 export * from './crm.js';
 export * from './ordenes.js';
 export * from './insumos.js';
+export * from './personal.js';

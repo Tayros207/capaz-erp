@@ -121,6 +121,18 @@ const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into insumos.movimientos (tenant_id, articulo_id, sucursal_id, tipo, cantidad_milesimas, existencia_resultante_milesimas, creado_por) values ($1, md5($1::text || 'i1')::uuid, md5($1::text || 'su')::uuid, 'entrada', 5000, 5000, 'u1')`,
     modo: 'insercion',
   },
+  'personal.colaboradores': {
+    sql: `insert into personal.colaboradores (id, tenant_id, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'p1')::uuid, $1, 'Luis', 'luis', 'u1')`,
+    modo: 'completo',
+  },
+  'personal.asistencias': {
+    sql: `insert into personal.asistencias (tenant_id, colaborador_id, fecha, creado_por) values ($1, md5($1::text || 'p1')::uuid, date '2026-01-01', 'u1')`,
+    modo: 'completo',
+  },
+  'personal.adelantos': {
+    sql: `insert into personal.adelantos (tenant_id, numero, anio, colaborador_id, monto_centimos, fecha, creado_por) values ($1, 1, 2026, md5($1::text || 'p1')::uuid, 5000, date '2026-01-01', 'u1')`,
+    modo: 'insercion',
+  },
   'core.reglas_disparos': { sql: `insert into core.reglas_disparos (tenant_id, regla_id, clave) values ($1, md5($1::text || 'd1')::uuid, 'k1')`, modo: 'insercion' },
 };
 
@@ -372,6 +384,72 @@ describe('insumos: reglas propias de DB3a con capaz_app', () => {
     );
     await expect(
       comoEmpresa(app, E, (c) => c.query(`insert into insumos.articulos (tenant_id, producto_id, creado_por) values ($1, gen_random_uuid(), 'u1')`, [E])),
+    ).rejects.toThrow(/no está activo/);
+  });
+});
+
+describe('personal: reglas propias de DB3a con capaz_app', () => {
+  const col = `md5($1::text || 'p1')::uuid`;
+
+  it('un adelanto no cambia de monto ni se borra, pero sí se anula', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update personal.adelantos set monto_centimos = 1`))).rejects.toThrow(/permission denied/);
+    await expect(comoEmpresa(app, A, (c) => c.query(`delete from personal.adelantos`))).rejects.toThrow(/permission denied/);
+    await comoEmpresa(app, A, async (c) => {
+      const r = await c.query(`update personal.adelantos set estado = 'anulado', anulado_en = now(), anulado_por = 'u1', motivo_anulacion = 'prueba'`);
+      expect(r.rowCount).toBeGreaterThan(0);
+    });
+  });
+
+  it('un adelanto exige monto positivo y coherencia entre estado y anulación', async () => {
+    const ins = (monto: number, estado = 'registrado') =>
+      `insert into personal.adelantos (tenant_id, numero, anio, colaborador_id, monto_centimos, fecha, estado, creado_por) values ($1, 2, 2026, ${col}, ${monto}, date '2026-01-01', '${estado}', 'u1')`;
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(0), [A]))).rejects.toThrow(/adelanto_monto/);
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(100, 'anulado'), [A]))).rejects.toThrow(/adelanto_anulacion/);
+    await expect(comoEmpresa(app, A, (c) => c.query(ins(100, 'otro'), [A]))).rejects.toThrow(/adelanto_estado/);
+  });
+
+  it('una asistencia es única por colaborador y fecha, y la salida exige entrada', async () => {
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, creado_por) values ($1, ${col}, date '2026-01-01', 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/personal_asistencias_colaborador_fecha/);
+    await expect(
+      comoEmpresa(app, A, (c) =>
+        c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, salida, creado_por) values ($1, ${col}, date '2026-01-02', now(), 'u1')`, [A]),
+      ),
+    ).rejects.toThrow(/asistencia_salida/);
+    await comoEmpresa(app, A, (c) =>
+      c.query(`insert into personal.asistencias (tenant_id, colaborador_id, fecha, entrada, salida, creado_por) values ($1, ${col}, date '2026-01-02', now(), now(), 'u1')`, [A]),
+    );
+  });
+
+  it('el estado de una asistencia es uno de la lista', async () => {
+    await expect(comoEmpresa(app, A, (c) => c.query(`update personal.asistencias set estado = 'otro'`))).rejects.toThrow(/asistencia_estado/);
+  });
+
+  it('el nombre de un colaborador activo es único, pero uno archivado libera el nombre', async () => {
+    const ins = `insert into personal.colaboradores (tenant_id, nombre, nombre_normalizado, creado_por) values ($1, 'Luis', 'luis', 'u1')`;
+    await expect(comoEmpresa(app, A, (c) => c.query(ins, [A]))).rejects.toThrow(/uq_personal_colaboradores_nombre/);
+    await comoEmpresa(app, A, async (c) => {
+      await c.query(`update personal.colaboradores set archivado_en = now()`);
+      await c.query(ins, [A]);
+    });
+  });
+
+  it('con el módulo personal en baja, un insert falla con «no está activo»', async () => {
+    const E = empresaDePrueba();
+    await comoEmpresa(
+      owner,
+      E,
+      async (c) => {
+        await c.query(`insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1, 'personal', 'activo')`, [E]);
+        await c.query(`update core.empresa_modulos set estado = 'baja', baja_en = now() where tenant_id = $1 and modulo = 'personal'`, [E]);
+      },
+      { confirmar: true },
+    );
+    await expect(
+      comoEmpresa(app, E, (c) => c.query(`insert into personal.colaboradores (tenant_id, nombre, nombre_normalizado, creado_por) values ($1, 'X', 'x', 'u1')`, [E])),
     ).rejects.toThrow(/no está activo/);
   });
 });
