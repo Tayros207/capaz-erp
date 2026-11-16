@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type { PedidoCompletoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
@@ -17,6 +17,7 @@ import { ejecutarAdelanto } from './flujo-adelanto.ts';
 import { HojaAdelanto } from './hoja-adelanto.tsx';
 import { anotar, aplicarPaso, cancelar, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
+import { accionesDeImpresion, enviarPorWhatsApp } from './acciones-documentos.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { FormularioPedido } from './formulario-pedido.tsx';
 import { HojaTexto } from './hoja-texto.tsx';
@@ -73,6 +74,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
   const borrador = useBorrador(pedido, editable);
   const [ocupado, setOcupado] = useState(false);
   const [hoja, setHoja] = useState<'nota' | 'cancelar' | 'adelanto' | null>(null);
+  const navegar = useNavigate();
   const principal = permisos.editar ? siguientePaso(pedido.estado) : null;
 
   async function conOcupado(fn: () => Promise<void>) {
@@ -107,6 +109,8 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
   };
 
   const acciones: AccionDeMenu[] = [
+    ...accionesDeImpresion(pedido, (ruta) => void navegar(ruta)),
+    ...(pedido.estado === 'cancelado' ? [] : [{ etiqueta: 'Enviar por WhatsApp', onSeleccionar: () => void enviarPorWhatsApp(pedido) }]),
     ...(permisos.editar ? otrosPasos(pedido.estado).map((paso) => ({ etiqueta: paso.texto, onSeleccionar: () => pulsarPrincipal(paso) })) : []),
     ...(permisos.editar ? [{ etiqueta: 'Agregar nota', onSeleccionar: () => setHoja('nota') }] : []),
     ...(permisos.cancelar && sePuedeCancelar(pedido.estado) ? [{ etiqueta: 'Cancelar pedido', peligro: true, onSeleccionar: () => setHoja('cancelar') }] : []),
