@@ -1,12 +1,14 @@
 # Plan de trabajo en paralelo de Capaz ERP
 
-**Versión 1 · 2026-11-15 · Para: el integrador (agente principal) y los agentes de carril (Sonnet, esfuerzo medio).**
+**Versión 2 · 2026-11-15 (puerta entre la ola 1 y la ola 2) · Para: el integrador (agente principal) y los agentes de carril (Sonnet, esfuerzo medio).**
+
+> **Estado:** la ola 1 está integrada en `main` salvo X1 (despliegue). Las secciones 4 y 5 traen ya las rondas y los carriles de la **ola 2**; el detalle congelado de cada módulo está en `docs/FICHAS-OLA-2.md` y el casi congelado de la ola 3 en `docs/FICHAS-OLA-3.md`. Lo aprendido en la ola 1 está en la sección 10.
 
 `PLAN-DE-CONSTRUCCION.md` dice **qué** se construye y con qué especificación. Este documento dice **cómo lo construyen varios agentes a la vez sin pisarse**: carriles con propiedad exclusiva de archivos, contratos congelados, un solo escritor de migraciones, un integrador y una plantilla de brief. En lo que toca al trabajo simultáneo, **manda este documento** (también sobre «una fase por sesión» de `AGENTS.md`).
 
 ## 0. Cómo leer este documento (y gastar pocos tokens)
 
-- **Agente de carril:** lee `AGENTS.md`, las secciones 2 y 8 de este documento, **tu ficha** de la sección 5 y lo que tu ficha diga en «Lee». Nada más. Para encontrar tu ficha: `grep -n '^### ' docs/PLAN-PARALELO.md` y lee solo ese tramo.
+- **Agente de carril:** lee `AGENTS.md`, las secciones 2 y 8 de este documento, **tu ficha** de la sección 5 y lo que tu ficha diga en «Lee». Nada más. Para encontrar tu ficha: `grep -n '^### ' docs/PLAN-PARALELO.md` y lee solo ese tramo. En las olas 2 y 3 la ficha de la sección 5 es corta (propiedad, dependencias, verificación) y te manda a **una sección** de `docs/FICHAS-OLA-2.md`: lee esa sección y la §1 de ese documento, no el documento entero.
 - **Integrador:** secciones 1 a 4, 6 y 7.
 - Idea central: **dos carriles nunca editan el mismo archivo.** Por eso integrar no produce conflictos: si aparece uno, alguien se salió de su carril.
 
@@ -43,7 +45,11 @@
 | `apps/api/src/core/auth/**`, `core/modulos/**` | Integrador | Solicitud de cambio |
 | `apps/web/src/app/rutas.tsx`, `app/proveedores.tsx`, `main.tsx`, `index.html`, `vite.config.ts`, `shared/estilos/tokens.css` | W1 mientras está abierto; después el integrador | Solicitud de cambio. Cada área tiene su propio `rutas.tsx` ya registrado |
 | `apps/web/src/shared/ui/**` | W1 y W2 (cada uno sus archivos) | Una pieza nueva la pide el carril que la necesita; la hace el integrador o un carril de kit |
-| `AGENTS.md`, `docs/PLAN-*.md`, `docs/RELEVO.md`, `docs/adr/**` | Integrador y arquitecto | — |
+| `AGENTS.md`, `docs/PLAN-*.md`, `docs/FICHAS-OLA-*.md`, `docs/RELEVO.md`, `docs/adr/**` | Integrador y arquitecto | — |
+| Pruebas con listas que cambian al tocar un manifiesto: `core/modulos/catalogo.spec.ts` (cuántos módulos hay, cuántos «en construcción», cuáles por defecto, familia y orden) | Integrador | La cambia el integrador en el mismo commit en que cambia `enConstruccion`, `porDefecto`, `familia` u `orden` de un manifiesto. Agregar herramientas o permisos a un módulo **no** obliga a tocar ninguna lista (`registro-agregar.spec.ts` y `registro.spec.ts` usan manifiestos propios) |
+| `enConstruccion` y `porDefecto` de un manifiesto | Integrador | Los carriles `M-*-s` editan permisos, descripción y secciones de su manifiesto, **nunca** esas dos banderas |
+| `apps/web/src/app/proveedores.tsx`, `apps/web/src/app/kit/**`, `apps/web/src/shared/**` | El carril de kit de la ola (K1, K2) mientras está abierto; después el integrador | Una pieza o un ayudante que falte: solicitud de cambio; no se crea dentro del módulo |
+| `apps/api/src/pruebas/**`, `apps/api/src/core/herramientas/http-de-pruebas.ts` | Integrador (C1 los amplía) | Un ayudante de prueba que falte: solicitud de cambio |
 | `graphify-out/**` | Integrador | Los carriles **no** ejecutan `graphify update`; el integrador lo hace en `main` tras integrar |
 
 ### 2.3 Migraciones: un solo escritor, numeración en serie
@@ -114,6 +120,21 @@ Las pruebas de integración migran y usan la base que diga `CAPAZ_TEST_DB` (C0 l
 | Kit de datos | `apps/web/src/shared/ui/datos/` | W2 | Plan §6.3 |
 | `llamar` | `apps/web/src/shared/api/herramientas.ts` | W5 | Plan §6.3 |
 
+**Contratos que se congelan para la ola 2** (los crea C1 o DB2; detalle en `FICHAS-OLA-2.md`):
+
+| Contrato | Dónde | Lo crea |
+|---|---|---|
+| Eventos de `registro`, `crm` y `ordenes` | `packages/shared/src/contratos/{registro,crm,ordenes}.ts` (`eventosDe…`) | C1 |
+| Origen `modulo` de un borrador | `contratos/borradores.ts`, `core/borradores/proponer.ts` | C1 (+ `CHECK` en DB2a) |
+| `alcanceDe(ctx, modulo)` | `apps/api/src/core/modulos/alcance.ts` | C1 |
+| `hoyDeLaEmpresa(tx)`, `instanteDeDia(dia)` | `apps/api/src/core/empresas/hoy.ts` | C1 |
+| `activarModulo`, `darDeBajaModulo`, `agregarMiembro`, `AppDePruebas.obtener` | `core/herramientas/http-de-pruebas.ts`, `pruebas/app-de-pruebas.ts` | C1 |
+| `core.exigir_modulo_en_escritura()`, esquemas `crm` y `ordenes`, tablas de la ola | `apps/api/drizzle/0013` a `0016` | DB2a, DB2b |
+| Proveedor global de consultas, `datosOError`, `puedeEscribirEn`, piezas `CampoTextarea`, `CampoCantidad`, `CampoPrecio`, `NavegacionDeSeccion`, `Cifra`, `SelectorDeRegistro`, `Tablero` | `apps/web/src/shared/**`, `app/proveedores.tsx` | K1a, K1b |
+| `calcularTotalesDePedido` | `packages/shared/src/contratos/ordenes.ts` | M-ordenes-s1 |
+
+Correcciones al contrato de la ola 1, ya en el código (el plan decía otra cosa): `siguienteNumero` **exige** `anio`; `ejecutarDentro` permite `emitir` y `siguienteNumero` (punto de guardado registrado como transacción en curso); el módulo `core` está eximido de `puedeEscribir` en el ejecutor (un módulo que no es `core`, no); `regla_activar` es siempre crítica; las herramientas con secretos no se pueden proponer como borrador (`HERRAMIENTAS_CON_SECRETOS`).
+
 Un carril puede programar contra una firma aunque su implementación aún no esté integrada **solo si su ficha lo dice**. Los contratos de las áreas (`contratos/<area>.ts`) no están congelados para su dueño mientras su carril está abierto; al integrarse, sí.
 
 ## 4. Grafo de dependencias y qué arranca ya
@@ -148,6 +169,37 @@ X1 ──► necesita D7 (host) y al menos W4
 | 6 | W9 · W10 · X1 | S6 · S7, S8, S9 · host decidido | D3 para W9 y W10 · D7 para X1 |
 
 Reglas de la tabla: no más de **cuatro** carriles abiertos a la vez (lo que un integrador revisa bien y lo que cuesta en tokens una ronda); **un solo carril de datos abierto**; si falta D3, todo lo demás sigue y solo esperan W6 a W10 (o se hacen con cargadores de ruta si el usuario la rechaza). Antes de lanzar S3b, S4, S5, S6, S7 se confirma que S1 no pidió cambios de contrato.
+
+**Estado al 2026-11-15:** rondas 0 a 6 integradas, salvo X1 (espera el host, D7).
+
+### 4.1 Ola 2 · grafo y rondas
+
+```
+C1 ──────────────┬──► M-registro-s1 ──► M-registro-s2 ──► M-registro-s3 ──┐
+DB2a ──┬─────────┘         │                                              ├──► N1 ──► X2
+       └──► DB2b ──┬──► M-crm-s1 ──► M-crm-s2 ────────────────────────────┤
+                   └──► M-ordenes-s1 ──► M-ordenes-s2 ────────────────────┘
+        (M-crm-s1 y M-ordenes-s1 esperan además a que M-registro-s1 diga «camino de módulo no núcleo validado»)
+
+K1a ──► K1b ──┬──► M-registro-w1 (s1) ──► M-registro-w2 (s3)
+              ├──► M-crm-w (crm-s2)
+              └──► M-ordenes-w (ordenes-s2)
+```
+
+**Arrancan ya, en paralelo, sin ninguna decisión pendiente: C1, K1a y DB2a.** C1 trabaja en `packages/shared` y en archivos sueltos de `apps/api/src/{core,modules,pruebas}`; DB2a en `drizzle/`, `db/esquema/` y las tres pruebas de catálogo; K1a solo en `apps/web`. No comparten ningún archivo.
+
+| Ronda | En paralelo (máximo 4) | Se puede lanzar cuando | Decisión que necesita |
+|---|---|---|---|
+| 7 | **C1 · K1a · DB2a** | ahora | ninguna |
+| 8 | DB2b · M-registro-s1 · K1b | DB2a integrado (DB2b) · C1 y DB2a integrados (s1) · K1a integrado (K1b) | — |
+| 9 | M-registro-s2 · M-crm-s1 · M-ordenes-s1 · M-registro-w1 | M-registro-s1 integrado **y validado** · DB2b integrado (crm, ordenes) · K1b integrado (w1) | **D17** antes de M-ordenes-s1 (precios con IGV) |
+| 10 | M-registro-s3 · M-crm-s2 · M-ordenes-s2 | su parte anterior integrada · C1 integrado (eventos) | — |
+| 11 | M-registro-w2 · M-crm-w · M-ordenes-w · N1 | M-registro-s3 · M-crm-s2 · M-ordenes-s2 · los tres `_resumen` integrados (N1) | — |
+| 12 | X2 (cierre, integrador) | todo lo anterior integrado | revisión visual del usuario; X1 si se quiere uso real |
+
+Reglas: **máximo cuatro carriles abiertos a la vez** (se mantiene: en la ola 1 el integrador pudo con cuatro y las correcciones propias que hizo vinieron de contratos, no de la cantidad); **un solo carril de datos abierto**; un carril partido (s1, s2, s3) **se integra parte por parte** y la parte siguiente se lanza en un directorio recién preparado desde `main`; un carril web no se lanza hasta que su servidor está integrado (los tipos de `llamar` salen de los contratos). Si M-registro-s1 informa que R2 o R3 de `FICHAS-OLA-2.md` no funcionan como están escritas, **no se lanzan** M-crm-s1 ni M-ordenes-s1 hasta que el integrador lo resuelva.
+
+Las rondas 13 a 18 (ola 3) están en `FICHAS-OLA-3.md` §7 y se confirman en su puerta.
 
 ## 5. Carriles
 
@@ -362,16 +414,66 @@ Necesitan D3 (`@tanstack/react-query`, para listas con caché); si el usuario la
 ### X1 · Despliegue
 - **Fase:** 10a · **Esfuerzo:** M · **Depende de:** D7 (host) y W4 integrado · **Propiedad exclusiva:** `Dockerfile`, `.dockerignore`, `docs/DESPLIEGUE.md`. Servir la web desde la API toca `configurar-app.ts`: es una solicitud de cambio al integrador. **Parar y preguntar si:** hay que crear cuentas, dominios o cualquier recurso de pago.
 
-### Carriles de las olas 2 y 3 (módulos clásicos)
-No se lanzan sin ADR-015 aprobado (D2) ni sin pasar la puerta de revisión del arquitecto. Forma fija por módulo:
+### Carriles de la ola 2 (módulos clásicos I)
 
-| Carril | Propiedad exclusiva | Depende de | Sigue |
-|---|---|---|---|
-| **DB2 / DB3** (datos de la ola) | la del carril de datos | puerta de revisión | Fichas 14 a 19 del plan; crea los esquemas nuevos y los agrega a `schemaFilter` y a las tres pruebas |
-| **M-`<codigo>`-s** | `apps/api/src/modules/<codigo>/**` · `packages/shared/src/contratos/<codigo>.ts` | su tanda de datos | `docs/COMO-CREAR-UN-MODULO.md` y la ficha del módulo |
-| **M-`<codigo>`-w** | `apps/web/src/modules/<codigo>/**` | su `-s` integrado | La ficha del módulo y el kit |
+Forma común. **Lee siempre:** `docs/FICHAS-OLA-2.md` §1 y la sección que diga tu ficha; `docs/COMO-CREAR-UN-MODULO.md` (carriles `M-*-s`). **Verificación:** VERIF-SERVIDOR, VERIF-WEB o VERIF-DATOS según el tipo. **Parar y preguntar si:** lo que diga tu sección de las fichas; el código y la ficha se contradicen; hace falta tocar un archivo fuera de tu propiedad.
 
-En paralelo dentro de la ola 2: `registro`, `crm` y `ordenes` (no se importan entre sí). En la ola 3: `insumos`, `personal` y `reportes`; `compras` después de `insumos`.
+Modelos de código que un carril `M-*-s` abre (y ningún otro): `apps/api/src/core/clientes/herramientas/{clientes-escritura,clientes-lectura,cliente-mapeo,herramientas-de-clientes}.ts` (herramientas y proveedor), `core/clientes/repositories/clientes.repository.ts` (repositorio), `core/borradores/repositorio.ts` (cursor por instante), `core/sucursales/herramientas/sucursales-herramientas.ts` (crítica con `resumir`), `core/clientes/herramientas/datos-maestros.int.spec.ts` (prueba por HTTP), `core/herramientas/http-de-pruebas.ts`, `core/modulos/alcance.ts`, `core/empresas/hoy.ts` y el archivo de esquema de su módulo. Un carril `M-*-w` abre `apps/web/src/core/clientes/` (modelo de pantallas), `/kit` (`app/kit/*.tsx`) y los contratos de su módulo.
+
+### C1 · Paso previo de servidor
+- **Fase:** puerta · **Esfuerzo:** S · **Depende de:** nada · **Quién:** el integrador o un solo Sonnet.
+- **Propiedad exclusiva:** `packages/shared/src/contratos/{registro,crm,ordenes,borradores}.ts` · `apps/api/src/app.module.ts` · `apps/api/src/modules/registro/registro.module.ts` · `apps/api/src/core/modulos/alcance.ts` (+ su prueba) · `apps/api/src/core/empresas/hoy.ts` (+ su prueba) · `apps/api/src/core/borradores/proponer.ts` · `apps/api/src/core/conectores/enviar.ts` (+ su prueba) · `apps/api/src/pruebas/app-de-pruebas.ts` · `apps/api/src/core/herramientas/http-de-pruebas.ts` · `apps/web/src/core/bandeja/logica.ts` (una línea).
+- **Sigue:** `FICHAS-OLA-2.md` §2. Al integrarse, los archivos de contratos de `registro`, `crm` y `ordenes` pasan a ser de sus carriles `M-*-s`.
+
+### DB2 · Datos de la ola 2
+- **Fase:** D (tandas DB2a y DB2b) · **Esfuerzo:** M + M · **Depende de:** nada (DB2a) · DB2a integrado (DB2b).
+- **Propiedad exclusiva:** la del carril de datos (`apps/api/drizzle/**`, `drizzle.config.ts`, `src/db/esquema/**`, las tres pruebas `aislamiento`, `catalogo` y `contratacion`).
+- **Lee:** `FICHAS-OLA-2.md` §3 (solo su tanda) · `docs/MODULOS-Y-MERCADO.md` §8 · `apps/api/drizzle/0008_datos_maestros.sql` (modelo) · `src/db/esquema/core-maestros.ts` · las tres pruebas.
+- **DB2a:** `0013_modulos_clasicos_base`, `0014_registro`. **DB2b:** `0015_crm`, `0016_ordenes`.
+- **Verificación:** VERIF-DATOS. **Hecho cuando:** lo de §3, la comprobación manual de la red de seguridad (quitar un `aplicar_aislamiento` y ver fallar la prueba) y la lista de migraciones para la sesión de Neon.
+
+### M-registro-s · Finanzas ligeras (servidor), en tres partes
+- **Fase:** 14 · **Esfuerzo:** M + M + S · **Depende de:** s1: C1 y DB2a · s2: s1 integrado · s3: s2 integrado.
+- **Propiedad exclusiva:** `apps/api/src/modules/registro/**` (menos `enConstruccion` y `porDefecto` del manifiesto) · `packages/shared/src/contratos/registro.ts` (sin cambiar `eventosDeRegistro`).
+- **Sigue:** `FICHAS-OLA-2.md` §4.1 a §4.6. s1 debe cerrar su informe con **«camino de módulo no núcleo validado»** o con la lista de lo que falló.
+
+### M-crm-s · CRM (servidor), en dos partes
+- **Fase:** 15 · **Esfuerzo:** M + M · **Depende de:** s1: C1, DB2b y M-registro-s1 validado · s2: s1 integrado.
+- **Propiedad exclusiva:** `apps/api/src/modules/crm/**` · `packages/shared/src/contratos/crm.ts` (sin cambiar `eventosDeCrm`).
+- **Sigue:** `FICHAS-OLA-2.md` §5.1 a §5.4.
+
+### M-ordenes-s · Pedidos (servidor), en dos partes
+- **Fase:** 16 · **Esfuerzo:** M + M · **Depende de:** s1: C1, DB2b, M-registro-s1 validado y D17 · s2: s1 integrado.
+- **Propiedad exclusiva:** `apps/api/src/modules/ordenes/**` · `packages/shared/src/contratos/{ordenes.ts,ordenes.spec.ts}` (sin cambiar `eventosDeOrdenes`).
+- **Sigue:** `FICHAS-OLA-2.md` §6.1 a §6.4.
+
+### K1 · Kit y base web de la ola 2, en dos partes
+- **Fase:** 6a (ampliación) · **Esfuerzo:** M + M · **Depende de:** nada (K1a) · K1a integrado (K1b). Sin dependencias nuevas.
+- **Propiedad exclusiva:** `apps/web/src/app/proveedores.tsx` · `apps/web/src/app/kit/{kit-ola-2.tsx,pagina-kit.tsx}` · archivos **nuevos** en `apps/web/src/shared/{api,ui,formato,sesion}/` (no se edita ninguna pieza existente).
+- **Lee:** `FICHAS-OLA-2.md` §7 · `apps/web/src/shared/ui/{campo,campo-monto,campo-comun}.tsx` · `apps/web/src/plataforma/marco.tsx` (navegación) · `apps/web/src/core/clientes/{api.ts,consultas.tsx,use-retardo.ts}` y `core/productos/logica.ts` (lo que se sube a `shared`, sin tocar los originales).
+- **Verificación:** VERIF-WEB.
+
+### M-registro-w · M-crm-w · M-ordenes-w · Pantallas de los módulos
+
+| Carril | Esfuerzo | Depende de (integrados) | Propiedad exclusiva (`apps/web/src/`) | Sigue |
+|---|---|---|---|---|
+| **M-registro-w1** | M | M-registro-s1, K1b | `modules/registro/**` | `FICHAS-OLA-2.md` §4.7 (w1) |
+| **M-registro-w2** | M | M-registro-s3, M-registro-w1 | `modules/registro/**` | §4.7 (w2) |
+| **M-crm-w** | M | M-crm-s2, K1b | `modules/crm/**` | §5.4 |
+| **M-ordenes-w** | L (dos sesiones) | M-ordenes-s2, K1b | `modules/ordenes/**` | §6.4 |
+
+Común: `api.ts` con `llamar`, `claves.ts`, `logica.ts` con pruebas unitarias, pantallas y hojas con piezas del kit, rutas en su `rutas.tsx`. **No** crean `QueryClient`, **no** copian `datosOError` ni `use-retardo` (están en `shared`). Verificación: VERIF-WEB. El módulo sigue «Próximamente» en el menú hasta que el integrador quite `enConstruccion` al integrar el carril: para revisarlo antes, el integrador lo quita en el directorio de revisión, no el carril.
+
+### N1 · Inicio y bandeja con pendientes
+- **Esfuerzo:** S · **Depende de:** M-registro-s3, M-crm-s2 y M-ordenes-s2 integrados.
+- **Propiedad exclusiva:** `apps/api/src/core/borradores/**` · `packages/shared/src/contratos/borradores.ts` · `apps/web/src/app/carcasa/**` · `apps/web/src/core/inicio/**` · `apps/web/src/core/bandeja/**`.
+- **Sigue:** `FICHAS-OLA-2.md` §8. Verificación: VERIF-SERVIDOR y VERIF-WEB.
+
+### X2 · Cierre de la ola 2
+- **Quién:** el integrador. **Sigue:** `FICHAS-OLA-2.md` §9. Propiedad: `apps/api/src/pruebas/recorridos/**`, las banderas de los manifiestos y `core/modulos/catalogo.spec.ts`.
+
+### Carriles de la ola 3 (módulos clásicos II)
+No se lanzan hasta pasar la puerta de la ola 3. Misma forma que la ola 2: C2 (eventos y ayudantes), DB3a y DB3b (datos), K2 (kit: gráficos y editor de líneas), `M-insumos-s/-w`, `M-compras-s/-w` (después de `insumos`), `M-personal-s/-w`, `M-reportes-s/-w`, `M-registro-s4` (consumidores nuevos) y X3. Alcance, tablas, herramientas, rondas y la lista de lo que falta decidir: `docs/FICHAS-OLA-3.md`.
 
 ## 6. El integrador
 
@@ -395,8 +497,18 @@ En paralelo dentro de la ola 2: `registro`, `crm` y `ordenes` (no se importan en
 11. Solicitudes de cambio del informe: resolverlas o encolarlas. Revisión visual pendiente: sumarla a la lista del usuario.
 12. Cerrar: quitar el worktree o la copia y borrar la base `capaz_test_<id>`. Liberar los carriles que dependían de este.
 
+Añadidos tras la ola 1 (sección 10):
+
+13. **El plan se corrige en la misma integración.** Si el carril se desvió con motivo (un nombre de herramienta, un parámetro obligatorio, una exención), el integrador corrige la ficha o el contrato escrito **en ese commit**. Una desviación que solo vive en el informe se pierde.
+14. **Módulos (olas 2 y 3):** toda herramienta del carril declara `modulo: '<codigo>'` (nunca `'core'`); `consumidores.ts` no importa el ejecutor ni escribe en tablas (R5); ninguna herramienta nueva maneja secretos sin estar en `HERRAMIENTAS_CON_SECRETOS`; toda herramienta que crea un ingreso, un egreso o un abono lleva `mueveDinero: true`.
+15. **Tamaño:** ninguna función nueva pasa de 50 líneas ni un componente de 150 (la prueba de arquitectura solo vigila las 500 líneas por archivo: esto se mira a mano, abriendo los dos archivos más largos del diff).
+16. **Pruebas con servidores simulados:** al menos un caso usa un **nombre de host**, no solo `127.0.0.1` (un literal de IP se salta la resolución de nombres y dejó pasar un fallo en la ola 1).
+17. **Banderas y listas:** al integrar un `M-*-w`, quitar `enConstruccion` de su manifiesto y ajustar `core/modulos/catalogo.spec.ts` en el mismo commit.
+
 ### 6.3 Puerta entre olas
 Antes de la ola 2 y de la ola 3: informe al usuario (qué quedó, qué se usa de verdad, decisiones abiertas), revisión del arquitecto de las fichas siguientes contra lo aprendido, y confirmación del usuario de que la ola siguiente sigue siendo la prioridad.
+
+**Puerta de la ola 2: pasada por el arquitecto el 2026-11-15.** Entregas: `docs/FICHAS-OLA-2.md` (congelada), `docs/FICHAS-OLA-3.md` (casi congelada), `docs/adr/ADR-016` (propuesto), secciones 4.1, 5 y 10 de este documento. Falta del lado del usuario: D17 (antes de la ronda 9) y lo demás de la sección 9. **Puerta de la ola 3:** además de lo anterior, resolver la tabla de `FICHAS-OLA-3.md` §6 y cerrar sus tablas columna por columna.
 
 ## 7. Plantilla de brief
 
@@ -409,7 +521,7 @@ Modelo: Sonnet, esfuerzo medio. Escribe en español.
 Lee, en este orden y nada más:
 1. AGENTS.md
 2. docs/PLAN-PARALELO.md: secciones 2 y 8, y tu ficha «<ID> · <nombre>» (búscala con grep -n '^### ' docs/PLAN-PARALELO.md)
-3. Lo que tu ficha diga en «Lee».
+3. Lo que tu ficha diga en «Lee». <Olas 2 y 3: docs/FICHAS-OLA-2.md §1 y §<n> (búscalas con grep -n '^## \|^### ' docs/FICHAS-OLA-2.md); no leas las demás secciones.>
 
 Tu trabajo es ejecutar los pasos de tu ficha, <todos | la parte <a|b>>, tal como están escritos.
 - Solo puedes crear o modificar archivos de tu «Propiedad exclusiva». Todo lo demás es de solo lectura.
@@ -419,6 +531,7 @@ Tu trabajo es ejecutar los pasos de tu ficha, <todos | la parte <a|b>>, tal como
 - Las versiones instaladas son más nuevas que tu memoria: lee la API en node_modules antes de usarla.
 
 Estado de partida: <dependencias ya integradas; p. ej. «C0 y DB1a integrados; S1 aún no»>.
+<Carril partido: «Haces SOLO la parte s2. La parte s1 ya está integrada: sus archivos existen; puedes editarlos porque son de tu propiedad, sin cambiar lo que ya hace.»>
 Base de pruebas: <CAPAZ_TEST_DB ya está en tu .env | no aplica>.
 
 Termina cuando el comando de verificación de tu ficha esté en verde. Entrega un informe con este formato:
@@ -440,15 +553,56 @@ solicitudes de cambio a archivos ajenos (archivo · qué · por qué · qué pas
 
 ## 9. Decisiones abiertas y qué carriles esperan
 
-La lista completa, con recomendación, está en `PLAN-DE-CONSTRUCCION.md` §9. Resumen de bloqueos:
+La lista completa, con recomendación, está en `PLAN-DE-CONSTRUCCION.md` §9. D1 a D6, D9, D10 y D13 quedaron resueltas el 2026-11-15. Bloqueos vigentes:
 
 | Decisión | Carriles que esperan | Mientras tanto |
 |---|---|---|
-| D1 · permiso de commits | ninguno | Modo B (copias) |
-| D2 · ADR-015 | DB2, DB3 y todos los `M-*` (olas 2 y 3) | Toda la ola 1 avanza |
-| D3 · `@tanstack/react-query` | W6 a W10 | Todo lo demás avanza; rechazada, se hacen con cargadores de ruta |
-| D4 · pruebas de componentes | ninguno | Solo pruebas de lógica pura |
-| D5 · identidad visual | ninguno | Tokens con valores provisionales; el cierre visual espera |
-| D7 · host | X1 | — |
-| D10 · Excel | ninguno | Solo CSV |
-| D11, D12 · voz y proveedores | fases 21 y 22, WhatsApp, pagos | — |
+| D7 · host (con Keny) | X1 y, con él, el uso real al cierre de cada ola | Todo se prueba en local |
+| D15 · equivalencia con Tairos.RC por casos de referencia | ninguno (M-registro-s2 se construye así) | Rechazada: se añade un carril de equivalencia por SQL después de s2 |
+| D16 · anular una deuda exige anular antes sus abonos | ninguno (así está en la ficha) | — |
+| **D17 · los precios de un pedido incluyen IGV** | **M-ordenes-s1** (ronda 9) | Las rondas 7 y 8 no dependen de ella |
+| D18 · estado «Listo» en los pedidos | ninguno (así está en la ficha) | — |
+| D19 · `registro` por defecto con 30 días de prueba | X2 | Se deja como está |
+| D20 · nombre visible del módulo `registro` | ninguno (una línea del manifiesto) | Sigue «Registro» |
+| D21 · ADR-016 | ninguno si se aprueba como está | — |
+| D22 · arreglar ya el envío de webhooks a nombres de host | ninguno (va dentro de C1) | — |
+| D23 · revisión visual por tandas de la ola 1 | M-*-w conviene lanzarlos con el kit ya revisado | Se lanzan igual; el riesgo es rehacer |
+| D24 · qué significa «avisar» | ninguno en la ola 2 (N1 muestra pendientes) | — |
+| D11, D12, D14 | fases 21 y 22, WhatsApp, pagos, ola 5 | — |
+
+## 10. Lecciones de la ola 1
+
+Sacadas del código, de los commits del integrador (los que no son «carril …» ni «Integrar carril …») y de las notas de `RELEVO.md`.
+
+### 10.1 Qué salió bien (se mantiene)
+
+1. **Propiedad exclusiva de archivos.** Veinticuatro carriles o partes de carril integrados sin que el historial muestre un conflicto de fusión. De 73 commits, el integrador escribió código propio en siete.
+2. **Un solo escritor de migraciones.** `0006` a `0012` en serie, con el diario y las instantáneas de `drizzle-kit` intactos. Las pruebas de catálogo cumplieron su papel de red.
+3. **Una base de pruebas por carril** (`CAPAZ_TEST_DB`): cuatro carriles de servidor probando a la vez sin pisarse.
+4. **Validar el contrato con un carril antes de abrir el abanico** (S1 antes de S3b a S9): los cambios de contrato que aparecieron fueron dos, no diez.
+5. **Carriles L partidos en a y b** con corte limpio: ninguna sesión se quedó sin contexto a medias.
+6. **La receta escrita desde el código real** (`COMO-CREAR-UN-MODULO.md`, por S3b), no desde el plan.
+7. **Pruebas por HTTP real** con dos empresas y un `member` de solo lectura como plantilla fija.
+
+### 10.2 Qué se corrige en el método
+
+| # | Qué pasó | Evidencia | Corrección para la ola 2 |
+|---|---|---|---|
+| 1 | **Contratos congelados leyendo, no usando.** `ejecutarDentro` no dejaba emitir eventos ni pedir correlativos; `borrador_aprobar` no podía aprobar herramientas críticas | commits `65150ad`, `a73e172` (S5b) | El primer carril de módulo (M-registro-s1) valida el camino «módulo no núcleo» antes de lanzar `crm` y `ordenes`; los contratos nuevos (eventos, ayudantes) los pone C1 **copiados de la ficha** |
+| 2 | **Archivos compartidos sin dueño previsto** que obligaron al integrador a meterse: una lista en `catalogo.spec.ts`, el cableado de «Solicitar» en la carcasa, la guarda de `/invitacion/:id`, `.env.example`, el tamaño del grupo de conexiones de sistema | commits `1e3e004`, `de1874a`, `1887629`, `f9ffeb1` | Dueño escrito para cada lista y bandera (§2.2); pasos previos C1 y K1 que dejan hecho lo compartido antes de abrir carriles |
+| 3 | **Seis áreas web crearon su propio `QueryClient`** y copiaron `datosOError`, `ErrorDeApi` y `use-retardo` | `core/{clientes,productos,bandeja,conecta,automatizaciones}/consultas.tsx`, `plataforma/marco.tsx` | K1a: proveedor global y ayudantes en `shared`; los carriles `M-*-w` tienen prohibido duplicarlos |
+| 4 | **Piezas del kit que faltaban** se descubrieron al construir pantallas (`CampoTextarea`) | nota de `RELEVO.md` | K1 va antes que cualquier pantalla de módulo; la lista de piezas sale de las fichas de pantallas |
+| 5 | **Desviaciones del plan que solo quedaron en informes:** `plataforma_empresas_ver/crear` (el plan decía `empresa_ver/crear`), `siguienteNumero` con `anio` obligatorio, `core` eximido de `puedeEscribir`, las herramientas de `webhooks` declaradas como `core` | código frente a `PLAN-DE-CONSTRUCCION.md` §6.2 y fases 5a, 9a y 11a | Punto 13 de la lista de integración: el plan se corrige en la misma integración |
+| 6 | **Un permiso de infraestructura que el plan no vio:** `pg_trgm` vive en `public` y `capaz_app` no tenía `usage` | migración `0012` | El carril de datos prueba con `capaz_app` **una consulta real** de cada capacidad nueva, no solo el catálogo |
+| 7 | **Límites de tamaño que ninguna prueba vigila:** componentes de más de 50 líneas (W10), avisos de lint corregidos en un commit aparte (S8) | nota de `RELEVO.md`, commit `e05d274` | Punto 15 de la lista de integración; tope de 13 herramientas por sesión (R15) |
+| 8 | **Pruebas que solo usan `127.0.0.1`:** el envío de webhooks falla con cualquier nombre de host en Node 24 (`ERR_INVALID_IP_ADDRESS` en el `lookup` propio) y ninguna prueba lo vio. Falla cerrado, pero la función no sirve en producción | `core/conectores/enviar.ts`; comprobado con un guion aparte | Arreglo dentro de C1 (paso 8) y punto 16 de la lista de integración |
+| 9 | **Listas de seguridad escritas a mano** (`HERRAMIENTAS_CON_SECRETOS`) | `core/borradores/proponer.ts` | Punto 14 de la lista de integración; candidata a ser un campo del contrato de herramienta en la puerta de la ola 3 |
+| 10 | **Nada revisado en navegador ni contra Neon.** Más de veinte pantallas (y sus hojas) esperan revisión visual y siete migraciones esperan a Neon | `RELEVO.md` | Revisión visual por tandas antes de la ronda 11 (D23); la sesión de Neon aplica `0006`–`0012` antes de recibir `0013` |
+| 11 | **`RELEVO.md` creció como bitácora:** su cuerpo (secciones 1 a 6) describe el estado anterior a la ola 1 y contradice las notas de arriba | `RELEVO.md` | El integrador reescribe el cuerpo en X2; mientras tanto mandan las notas fechadas del principio |
+| 12 | **Sonnet y el contexto.** Dos carriles de una sola sesión salieron con más de 2 000 líneas nuevas (S7: 13 herramientas, 25 archivos, 2 479 líneas; W10: 32 archivos, 2 086), el doble que el resto; W10 es justo el que dejó componentes por dividir. El repositorio no guarda cuánto contexto gastó cada sesión: es una inferencia por tamaño | `git show --shortstat` de cada carril | Fichas cortas que apuntan a **una** sección; ayudantes de prueba ya hechos (C1); lista de modelos de código cerrada (§5) |
+
+### 10.3 Lo que no cambia aunque tiente
+
+- Cuatro carriles a la vez, no más: lo que limitó la ola 1 fueron los contratos, y subir el paralelismo multiplica justo eso.
+- Un carril no «arregla de paso» un archivo ajeno, aunque el arreglo sea de una línea.
+- Ningún carril de módulo escribe migraciones, ni siquiera «solo un índice».

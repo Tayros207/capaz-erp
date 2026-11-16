@@ -1,6 +1,8 @@
 # Plan de construcción de Capaz ERP
 
-**Versión 3 · 2026-11-15 · Para: los agentes que construyen (Sonnet, esfuerzo medio), el integrador y quien supervisa.**
+**Versión 3.1 · 2026-11-15 (puerta entre la ola 1 y la ola 2) · Para: los agentes que construyen (Sonnet, esfuerzo medio), el integrador y quien supervisa.**
+
+> **Qué cambió en la 3.1:** la ola 1 está construida e integrada (tablero, §8). Las fichas de las fases 14 a 16 quedaron **congeladas** en `docs/FICHAS-OLA-2.md` y las de las fases 17 a 20 **casi congeladas** en `docs/FICHAS-OLA-3.md`: esos dos documentos mandan sobre la tabla resumen de este (sección 7). Se corrigieron tres firmas de §6.2 que el código cambió con motivo, y se agregaron decisiones (D15 a D24) y riesgos nuevos (§10.1). Las secciones 3 y 7 conservan, como historial, la especificación con la que se construyó la ola 1.
 
 Este documento dice **qué se construye, en qué orden y con qué especificación**. **Cómo se reparte entre varios agentes a la vez** (carriles, propiedad de archivos, integración, plantilla de brief) está en `PLAN-PARALELO.md`. El porqué está en `PLAN-CIMIENTOS.md`, `ARQUITECTURA-DE-MODULOS.md`, `ARQUITECTURA-DE-IA.md`, `PLATAFORMA-Y-PLANES.md`, `MODULOS-Y-MERCADO.md` y `docs/adr/`. Si algo choca, **manda este documento**; en lo que toca al trabajo simultáneo, manda `PLAN-PARALELO.md`. Las versiones 1 y 2 están en `docs/archivo/` solo como historial: no se siguen.
 
@@ -62,7 +64,7 @@ Cambios de fondo frente a la versión 2:
 | «Ruta al piloto»: cimientos mínimos → Registro por voz → piloto; eventos, consola y conectores después | Estructura completa (olas 1 a 3) → Registro por voz y Cotizador (ola 4) → piloto |
 | Una fase por sesión, en serie | Carriles en paralelo con propiedad exclusiva de archivos, contratos congelados y un integrador |
 | Cada fase escribía sus migraciones | **Un solo carril de datos** escribe todas las migraciones, por tandas (fase D) |
-| Manifiesto sin familia; tres esquemas | Familias en el manifiesto y un esquema por módulo clásico (ADR-015, **propuesto**) |
+| Manifiesto sin familia; tres esquemas | Familias en el manifiesto y un esquema por módulo clásico (ADR-015, aceptado el 2026-11-15) |
 | Borradores solo en el plan del Registro | **Bandeja de borradores en el núcleo** (fase 13): es lo que hace «trabajador digital» a todo el ERP |
 | Tokens «Pliego» y fuentes fijadas en la fase 6a | Tokens **semánticos** con valores provisionales; la identidad visual se decide después sin rehacer nada (decisión D5) |
 | Fase 3b con el cliente de React de Better Auth | Sin esa dependencia: la web llama por `fetch` a las rutas de la lista blanca (como ya hacen las pruebas de integración) |
@@ -71,6 +73,8 @@ Cambios de fondo frente a la versión 2:
 Se conserva de la versión 2 (y sigue vigente): las 20 reglas, el formato de informe, los «Hecho cuando» y «Parar y preguntar», el diseño de seguridad (cuatro roles, política sin `TO`, cero `security definer`, llaves compuestas, lista de plataforma por permitidos), el orden de comprobaciones de `ejecutar()`, la transacción única por llamada, el relevo sin sondeo fijo, la consola sin ver datos de negocio y el despliegue con restauración probada. El detalle histórico de por qué (errores de la versión 1, huecos cerrados, hallazgos verificados) está en `docs/archivo/PLAN-DE-CONSTRUCCION-v2.md`, sección 2.
 
 ## 3. Estado verificado (2026-11-15)
+
+> **Al cerrar la ola 1 (misma fecha, noche):** integrados C0, DB1a, DB1b, S1 a S9 (con S5b), W1 a W10; falta X1. Migraciones `0000` a `0012`. Suite en `main` según el integrador: 437 de integración, 229 unitarias de `api`, 180 de `web`, 76 de `shared`; el arquitecto **no** la ejecutó en la puerta (solo leyó código). Nada probado en navegador ni contra Neon. Módulos: `registro`, `crm`, `ordenes`, `insumos`, `compras`, `personal`, `reportes` y `cotizador` siguen siendo solo manifiesto (`registro` ni siquiera tiene `registro.module.ts`); `webhooks` es el único con código. La tabla de abajo es el estado **anterior** a la ola 1.
 
 Comprobado leyendo el código y las migraciones, no solo los documentos:
 
@@ -101,7 +105,8 @@ OLA 1 · ESTRUCTURA DEL ERP
                              └─ 6a-3 carcasa ──────┴─ 5b herramientas en pantalla ─ 6b usuarios
   Cierre    uso interno en Atlantisgraf (clientes y productos importados) · puerta de revisión
 
-OLA 2 · CLÁSICOS I        DB2 → 14 Finanzas (registro, base clásica) · 15 CRM · 16 Pedidos
+OLA 2 · CLÁSICOS I        C1 · K1 · DB2a (0013, 0014) → 14 Finanzas (registro, tecleado) → DB2b (0015, 0016) → 15 CRM · 16 Pedidos
+                          → pantallas de los tres · N1 (Inicio y bandeja con pendientes) · X2 (recorrido pedido → cobro)
 OLA 3 · CLÁSICOS II       DB3 → 17 Inventario (insumos) · 18 Compras · 19 Personal · 20 Reportes
 OLA 4 · ADAPTACIÓN        10a despliegue → 21 Registro por voz · 22 Cotizador · 23 puente → piloto de 30 días
 OLA 5 · CRECER            10b endurecer · WhatsApp · pagos · Producción · Portal · Archivos · Mostrador · MCP
@@ -110,10 +115,11 @@ FINAL                     12 Facturación SUNAT (conector OSE/PSE). Contabilidad
 Pista V   en paralelo desde hoy; la hace el usuario; sin código (ver abajo).
 ```
 
-- **Puerta de revisión entre olas:** al cerrar cada ola, el arquitecto (Fable) revisa lo aprendido, corrige las fichas de la ola siguiente y las congela antes de lanzar carriles. Las fichas de las fases 14 a 20 de este documento son la versión 1 de esas fichas.
+- **Puerta de revisión entre olas:** al cerrar cada ola, el arquitecto (Fable) revisa lo aprendido, corrige las fichas de la ola siguiente y las congela antes de lanzar carriles. **Puerta de la ola 2 pasada el 2026-11-15:** fichas en `docs/FICHAS-OLA-2.md` (congelada) y `docs/FICHAS-OLA-3.md` (casi congelada); rondas en `PLAN-PARALELO.md` §4.1.
+- **Olas 2 y 3 en una línea:** primero los módulos clásicos con captura tecleada; los micro-productos Registro por voz y Cotizador se suben después (ola 4) y solo si encajan.
 - **Cada ola termina con uso real**, aunque sea interno: ola 1, la empresa de Atlantisgraf con sus clientes y productos importados y sus usuarios; ola 2, caja y cuentas por cobrar a mano junto a Tairos.RC; ola 4, el piloto de voz medido (70 % sin corregir, 30 s por registro).
 - **La fase 10a puede adelantarse** en cuanto el usuario decida el alojamiento (D7): sirve para revisar pantallas desde el celular por HTTPS. Es obligatoria antes de datos reales y antes de probar la voz.
-- **Olas 2 y 3 necesitan ADR-015 aprobado** (D2). La ola 1 no.
+- **ADR-015 quedó aprobado el 2026-11-15** (D2): las olas 2 y 3 ya no esperan por él. ADR-016 (reglas de los módulos clásicos) está propuesto (D21).
 
 **Pista V · Validar la voz con audios reales (usuario, en paralelo, sin código).** Sigue siendo el mayor riesgo del producto y ahora tiene más tiempo:
 1. Cronometrar 10 registros reales con el método actual: es la línea base de los 30 segundos.
@@ -283,12 +289,12 @@ export function emitir<T extends TipoDeEvento>(tx: Transaccion, tipo: T, carga: 
 @Injectable() export class RegistroDeConsumidores { agregar(c: readonly Consumidor[]): void }
 @Injectable() export class RegistroDeTareas { agregar(t: TareaPeriodica): void }
 // core/correlativos/siguiente-numero.ts  (fase 8)
-export function siguienteNumero(tx: Transaccion, clave: string, opciones?: { serie?: string; anio?: number }): Promise<number>;
+export function siguienteNumero(tx: Transaccion, clave: string, opciones: { serie?: string; anio: number }): Promise<number>;   // `anio` obligatorio (así quedó en S2)
 
 // core/borradores/proponer.ts  (fase 13)
 export function proponerBorrador(tx: Transaccion, b: {
   herramienta: NombreDeHerramienta; args: unknown; resumen: string;
-  origen: 'voz' | 'texto' | 'agente' | 'regla' | 'conector' | 'importacion'; origenRef?: string;
+  origen: 'voz' | 'texto' | 'agente' | 'regla' | 'conector' | 'importacion' /* + 'modulo' desde C1, ola 2 */; origenRef?: string;
   prioridad?: 'normal' | 'alta'; propuestoPor: string; capturaIniciadaEn?: Date;
 }): Promise<{ id: string }>;
 
@@ -299,6 +305,8 @@ export type FuenteDeTiempo = {              // «N días después de una fecha»
 };
 @Injectable() export class RegistroDeFuentesDeTiempo { agregar(f: readonly FuenteDeTiempo[]): void }
 ```
+
+**Cómo quedó tras la ola 1 (manda el código):** `ejecutarDentro` corre la herramienta en un punto de guardado registrado como transacción en curso, así que dentro de ella valen `emitir` y `siguienteNumero`; el ejecutor reenvía la petición de confirmación de una herramienta crítica propuesta (borradores); `proponerBorrador` rechaza las herramientas de `HERRAMIENTAS_CON_SECRETOS`; el relevo entrega a los consumidores un contexto de sistema calculado **como administrador** de la empresa (`usuarioId: 'sistema'`, `canal: 'sistema'`), por lo que un consumidor de módulo solo propone borradores (`FICHAS-OLA-2.md` R5); en la comprobación de módulo, `core` está **eximido** de `puedeEscribir` (lo que un `member` escribe en el núcleo lo decide el permiso) y cualquier otro módulo no. Ayudantes nuevos de la ola 2 (los crea C1): `alcanceDe` y `hoyDeLaEmpresa`.
 
 Variables de entorno nuevas (P las agrega a `infra/config/config.ts` y a `.env.example`; nadie más toca ese archivo): `RELEVO_ACTIVO` (booleano, por defecto `true`; las pruebas lo ponen en `false`), `RELEVO_BARRIDO_SEGUNDOS` (60), `CONEXIONES_CLAVE` (32 bytes en base64; opcional hasta la fase 11a, entonces obligatoria en producción), `CONEXIONES_CLAVE_VERSION` (entero, 1), `PERMITIR_DESTINOS_LOCALES` (booleano, `false`; solo las pruebas lo activan para el servidor simulado).
 
@@ -442,7 +450,7 @@ Repositorio y reglas (0), infraestructura del servidor (1), base, roles y aislam
 **Fuentes para portar (con sus pruebas):** `cotizin/src/shared/herramientas/` entero y `cotizin/src/app/api/herramientas/route.ts` (origen y tamaño).
 
 **Especificación**
-1. `EjecutorDeHerramientas.ejecutar()` con este orden de comprobaciones: existe la herramienta → argumentos reservados (`ARGUMENTOS_DE_CONTEXTO`) → módulo (las de `criticidad: 'lectura'` piden `puedeEntrar`; las demás `puedeEscribir`, y si no responden `modulo_solo_lectura`) → permiso → esquema de entrada → idempotencia → confirmación (si es crítica) → ejecución → esquema de salida → auditoría.
+1. `EjecutorDeHerramientas.ejecutar()` con este orden de comprobaciones: existe la herramienta → argumentos reservados (`ARGUMENTOS_DE_CONTEXTO`) → módulo (las de `criticidad: 'lectura'` piden `puedeEntrar`; las demás `puedeEscribir`, y si no responden `modulo_solo_lectura`; **como quedó construido, esta exigencia no se aplica al módulo `core`**) → permiso → esquema de entrada → idempotencia → confirmación (si es crítica) → ejecución → esquema de salida → auditoría.
 2. **Una transacción por llamada:** idempotencia, reserva de la confirmación, ejecución y auditoría del éxito ocurren en el mismo `conEmpresa`. Si la herramienta rechaza o lanza, la transacción se revierte **entera** y la auditoría del rechazo va en una transacción propia. No existe un cambio sin auditar ni una auditoría de algo que no ocurrió.
 3. Confirmación: token firmado con `CONFIRMACION_SECRET`, vigencia 120 s, ligado a usuario, empresa, herramienta, hash canónico de los argumentos y huella de `resumir`; **solo vale con `canal: 'ui'`**; su `jti` se inserta en `core.confirmaciones_usadas` dentro de la transacción (si ya existe: `confirmacion_ya_usada`).
 4. Idempotencia (herramientas con `idempotente: true` y cabecera `Idempotency-Key`): la clave se inserta al empezar (`on conflict do nothing`); si ya existía con los mismos argumentos se devuelve la respuesta guardada; con otros, `conflicto`. Dos peticiones simultáneas con la misma clave: la segunda espera y recibe la respuesta de la primera.
@@ -611,21 +619,23 @@ Repositorio y reglas (0), infraestructura del servidor (1), base, roles y aislam
 
 ---
 
-### Fases 14 a 20 · Módulos clásicos (olas 2 y 3) · fichas versión 1
+### Fases 14 a 20 · Módulos clásicos (olas 2 y 3)
 
-Requieren ADR-015 aprobado (D2). Cada módulo sigue `docs/COMO-CREAR-UN-MODULO.md` y tiene dos carriles: servidor (`M-<codigo>-s`) y web (`M-<codigo>-w`); sus tablas las escribe la tanda de datos de su ola a partir de esta ficha. Reglas comunes: un módulo no importa a otro (se hablan por eventos y por las entidades del núcleo); todo documento lleva `sucursal_id` opcional, `creado_por`, marcas de tiempo y `datos_extra`; todo disparador de escritura llama a `core.exigir_modulo('<codigo>')`; cada módulo ofrece una herramienta `<codigo>_resumen` de lectura por período para Reportes; lo que otro módulo debería registrar llega como **borrador** a la bandeja, no como escritura directa.
+**La especificación ya no vive aquí.** Fases 14, 15 y 16: `docs/FICHAS-OLA-2.md` (**congelada**: tablas columna por columna, contratos Zod, permisos, eventos, correlativos, pantallas, pruebas y «hecho cuando»). Fases 17 a 20: `docs/FICHAS-OLA-3.md` (**casi congelada**; se cierra en la puerta de la ola 3). Carriles y rondas: `PLAN-PARALELO.md` §4.1 y §5. Reglas de fondo: `docs/adr/ADR-015` (aceptado) y `ADR-016` (propuesto).
 
-| Fase · módulo · familia | Depende de | Tablas (esquema propio) | Herramientas principales | Eventos y fuentes de tiempo | Pantallas |
+Reglas comunes (resumen; el texto que manda es `FICHAS-OLA-2.md` §1): cada módulo en `modules/<codigo>/` con su esquema de base; herramientas con `modulo: '<codigo>'`; todo disparador de escritura llama a `core.exigir_modulo` a través de `core.exigir_modulo_en_escritura('<codigo>')`; un módulo no importa a otro ni le pone llaves foráneas (se hablan por eventos, por la bandeja y por las entidades del núcleo); **un consumidor de eventos solo propone borradores**; alcance «propios» por `creado_por` o responsable; cada módulo ofrece `<codigo>_resumen` para Reportes y para Inicio; captura tecleada (la voz, en la ola 4).
+
+| Fase · módulo · familia | Carriles | Tablas (esquema propio) | Herramientas | Eventos y fuentes de tiempo | Pantallas |
 |---|---|---|---|---|---|
-| **14 · `registro` · Finanzas** (base clásica; L) | — | `cuentas` (caja, banco, billetera), `categorias` (ingreso o egreso), `movimientos` (número, tipo, fecha, `monto_centimos`, cuenta, categoría, contacto, medio de pago, `deuda_id`, origen; **se anulan, no se editan ni se borran**), `deudas` (por cobrar o por pagar, contacto, total, vencimiento, estado, documento de origen) | `movimiento_registrar` (idempotente, `mueveDinero`), `movimiento_anular` (crítica), `movimientos_listar`, `deuda_crear`, `deuda_abonar` (idempotente, `mueveDinero`), `deuda_anular` (crítica), `deudas_listar`, `caja_del_dia`, `clientes_fusionar` (crítica), catálogos | `movimiento.registrado`, `deuda.creada`, `deuda.abonada`, `deuda.pagada` · fuente `registro.deuda_vence` | Movimientos, Por cobrar, Por pagar, ficha de deuda con abonos, Caja del día, categorías y cuentas |
-| **15 · `crm` · Ventas** (M) | — | `etapas` (orden, ganada, perdida), `oportunidades` (cliente, etapa, monto estimado, fecha esperada, responsable, motivo de pérdida), `actividades` (tipo, vence, hecha, nota) | `oportunidad_crear / editar / mover / ganar / perder`, `oportunidades_listar`, `actividad_crear / completar`, `etapas_guardar` | `oportunidad.ganada`, `oportunidad.perdida` · fuentes `crm.actividad_vence`, `crm.oportunidad_sin_movimiento` | Tablero por etapa (con «Mover a…»; sin arrastre), lista, ficha con actividades |
-| **16 · `ordenes` · Ventas** (L) | — | `pedidos` (número con serie, cliente, estado `borrador / confirmado / en_proceso / entregado / cancelado`, entrega, responsable, subtotal, IGV, total), `pedido_lineas` (producto, descripción, `cantidad_milesimas`, `precio_unitario_milesimas`, `afecto_igv`, subtotal), `pedido_eventos` | `pedido_crear / editar` (solo borrador), `pedido_confirmar` (asigna número), `pedido_cambiar_estado`, `pedido_cancelar` (crítica), `pedidos_listar` | `pedido.confirmado` (→ `registro` propone la deuda por cobrar), `pedido.entregado`, `pedido.cancelado` · fuente `ordenes.entrega_vence` | Lista, ficha con líneas y totales, tablero por estado, entregas por fecha |
-| **17 · `insumos` · Inventario** (M) | — | `articulos` (producto del núcleo, mínimo), `movimientos` (entrada, salida, ajuste; solo inserción), `existencias` (artículo, sucursal, cantidad) | `articulo_activar / editar`, `existencias_listar`, `existencia_mover` (idempotente), `existencia_ajustar` (crítica), `alertas_de_minimo` | `existencia.bajo_minimo` · consume `compra.recibida` | Existencias, movimientos, ficha de artículo, alertas |
-| **18 · `compras` · Compras** (M) | `insumos` | `ordenes` (número, proveedor, estado `borrador / enviada / recibida_parcial / recibida / cancelada`, totales), `orden_lineas`, `recepciones`, `recepcion_lineas` | `compra_crear / editar / enviar / cancelar`, `compra_recibir` (idempotente), `compras_listar` | `compra.enviada`, `compra.recibida` (→ `insumos` suma existencias; `registro` propone la cuenta por pagar) · fuente `compras.entrega_vence` | Lista, ficha, recepción |
-| **19 · `personal` · Personal** (M) | — | `colaboradores`, `asistencias` (fecha, entrada, salida, estado), `adelantos` (monto, motivo, estado) | `colaborador_crear / editar / archivar`, `asistencia_marcar / corregir`, `asistencias_listar`, `adelanto_registrar` (`mueveDinero`), `adelanto_anular` (crítica) | `adelanto.registrado` (→ `registro` propone el egreso) | Colaboradores, asistencia del día, adelantos. **Sin planilla** |
-| **20 · `reportes` · Análisis** (M) | — | ninguna | `reportes_listar` y la composición de los `<codigo>_resumen` de los módulos contratados; exportar CSV | — | Indicadores por período con gráficos en SVG propio |
+| **14 · `registro` · Finanzas** | M-registro-s1, s2, s3 · w1, w2 | `cuentas`, `categorias`, `movimientos` (inmutables salvo anular), `deudas` | 22: `registro_iniciar`, cuentas (5), categorías (4), `movimiento_registrar / ver / anular`, `movimientos_listar`, `deuda_crear / ver / editar / abonar / anular`, `deudas_listar`, `caja_del_dia`, `registro_resumen` | emite `movimiento.registrado / anulado`, `deuda.creada / abonada / pagada / anulada` · consume `pedido.confirmado` y `pedido.cancelado` (→ borrador) · fuente `registro.deuda_vence` | Movimientos, Por cobrar, Por pagar, ficha de deuda con abonos, Caja del día, Cuentas y categorías |
+| **15 · `crm` · Ventas** | M-crm-s1, s2 · w | `etapas`, `oportunidades`, `actividades` | 18: `crm_iniciar`, etapas (5), `oportunidad_crear / ver / editar / mover / ganar / perder / reabrir`, `oportunidades_listar`, `actividad_crear / completar`, `actividades_listar`, `crm_resumen` | emite `oportunidad.creada / movida / ganada / perdida` · fuentes `crm.actividad_vence`, `crm.oportunidad_sin_movimiento` | Tablero por etapa (con «Mover a…», sin arrastre), lista, ficha con actividades, actividades, etapas |
+| **16 · `ordenes` · Ventas** («Pedidos») | M-ordenes-s1, s2 · w | `pedidos`, `pedido_lineas`, `pedido_eventos` | 9: `pedido_crear / editar / ver / anotar / confirmar / cambiar_estado / cancelar`, `pedidos_listar`, `ordenes_resumen` | emite `pedido.confirmado / entregado / cancelado` · fuente `ordenes.entrega_vence` | Lista, nuevo y ficha con líneas y totales, tablero por estado, entregas |
+| **17 · `insumos` · Inventario** | M-insumos-s · w | `articulos`, `existencias`, `movimientos` (solo inserción) | `articulo_activar / editar / archivar`, `existencias_listar`, `existencia_mover`, `existencias_recibir`, `existencia_ajustar` (crítica), `insumos_resumen` | emite `existencia.bajo_minimo` · consume `compra.recibida` (→ borrador) | Existencias, movimientos, ficha de artículo, alertas |
+| **18 · `compras` · Compras** | M-compras-s · w (tras `insumos`) | `ordenes`, `orden_lineas`, `recepciones`, `recepcion_lineas` | `compra_crear / editar / enviar / recibir / cancelar`, `compras_listar`, `compras_resumen` | emite `compra.enviada / recibida / cancelada` · fuente `compras.entrega_vence` | Lista, ficha, recepción |
+| **19 · `personal` · Personal** | M-personal-s · w | `colaboradores`, `asistencias`, `adelantos` | `colaborador_*`, `asistencia_marcar / corregir`, `adelanto_registrar` (`mueveDinero`) `/ anular`, `personal_resumen` | emite `adelanto.registrado / anulado` (→ `registro` propone el egreso) | Colaboradores, asistencia del día, adelantos. **Sin planilla** |
+| **20 · `reportes` · Análisis** | M-reportes-s · w | ninguna | `reportes_panel` (compone los `_resumen`), `reportes_exportar_csv` | — | Indicadores por período con gráficos en SVG propio |
 
-Pruebas mínimas de todo módulo: dominio (unitarias); herramientas por HTTP con dos empresas; aislamiento; alcance `propios`; módulo en baja = solo lectura, también saltándose la API (el disparador de la base lo impide); eventos emitidos y consumidos una sola vez. La fase 14 lleva además las **pruebas de equivalencia** contra las funciones SQL de Tairos.RC (ADR-008, `INTEGRACION-DE-MODULOS.md` §5).
+Cambios frente a la versión 1 de estas fichas, y por qué: `clientes_fusionar` **sale** de la fase 14 (cruza módulos: pasa al núcleo y se decide en la puerta de la ola 3); `etapas_guardar` se parte en cuatro herramientas simples; `alertas_de_minimo` es un filtro de `existencias_listar`; los pedidos ganan el estado «Listo»; las «pruebas de equivalencia contra el SQL de Tairos.RC» pasan a ser casos de referencia escritos (D15, ADR-016); se agregan `<codigo>_iniciar` para los catálogos por defecto, y los carriles C1, K1, N1 y X2 que no existían.
 
 ---
 
@@ -657,28 +667,37 @@ Conector de un proveedor OSE/PSE sobre el marco de la fase 11a, con todo lo ante
 
 ## 8. Tablero de avance
 
+Actualizado en la puerta de la ola 2 (2026-11-15). «Integrado» = en `main` con la suite en verde según el integrador; **nada de la ola 1 tiene todavía revisión visual ni se probó contra Neon.**
+
 | Ola | Fase | Entrega | Carril | Tamaño | Estado |
 |---|---|---|---|---|---|
-| — | 0, 1, 2, 3a, 4 | Reglas, infraestructura, base y roles, identidad, módulos y contratación | — | — | **hechas 2026-11-14** (sin commit) |
-| 1 | P | Andamiaje y contratos | C0 | M | pendiente · **primero** |
-| 1 | D | Datos de la ola 1 (DB1a, DB1b) | DB1 | M + M | pendiente |
-| 1 | 5a | Herramientas, auditoría, idempotencia | S1 | L | pendiente |
-| 1 | 8 | Eventos y correlativos | S2 | M | pendiente |
-| 1 | 7 | Clientes, Productos, Sucursales | S3 · W7 | L · M | pendiente |
-| 1 | 6b | Usuarios y accesos | S4 · W6 | M · M | pendiente |
-| 1 | 13 | Bandeja de borradores | S5 · W8 | M · S | pendiente |
-| 1 | 9a · 9b | Consola de plataforma | S6 · W9 | M · M | pendiente |
-| 1 | 11a | Conexiones · Automatizaciones | S7 · S8 | M · M | pendiente |
-| 1 | 11b · 11c | Importar y exportar · pantallas | S9 · W10 | M · M | pendiente |
-| 1 | 6a | Base web · kit de datos · carcasa | W1 · W2 · W4 | M · M · M | pendiente |
-| 1 | 3b · 5b | Acceso · herramientas en pantalla | W3 · W5 | M · S | pendiente |
-| 2 | 14, 15, 16 | Finanzas (registro), CRM, Pedidos | DB2 · M-* | L, M, L | pendiente · necesita ADR-015 |
-| 3 | 17, 18, 19, 20 | Inventario, Compras, Personal, Reportes | DB3 · M-* | M cada una | pendiente · necesita ADR-015 |
-| 4 | 10a | Despliegue | X1 | M | pendiente · necesita D7 |
-| 4 | 21, 22, 23 | Registro por voz, Cotizador, puente | plan propio | L | pendiente · necesita D11, D12 |
+| — | 0, 1, 2, 3a, 4 | Reglas, infraestructura, base y roles, identidad, módulos y contratación | — | — | hechas 2026-11-14 |
+| 1 | P | Andamiaje y contratos | C0 | M | **integrado** |
+| 1 | D | Datos de la ola 1 (`0006` a `0012`) | DB1a · DB1b | M + M | **integrado** · falta aplicarlas en Neon |
+| 1 | 5a | Herramientas, auditoría, idempotencia | S1 | L | **integrado** |
+| 1 | 8 | Eventos y correlativos | S2 | M | **integrado** |
+| 1 | 7 | Clientes, Productos, Sucursales | S3a · S3b · W7 | L · M | **integrado** · falta revisión visual |
+| 1 | 6b | Usuarios y accesos | S4 · W6 | M · M | **integrado** · falta revisión visual |
+| 1 | 13 | Bandeja de borradores | S5 · S5b · W8 | M · S | **integrado** · falta revisión visual |
+| 1 | 9a · 9b | Consola de plataforma | S6 · W9 | M · M | **integrado** · falta revisión visual |
+| 1 | 11a | Conexiones · Automatizaciones | S7 · S8 | M · M | **integrado** · envío de webhooks a nombres de host por arreglar (C1) |
+| 1 | 11b · 11c | Importar y exportar · pantallas | S9 · W10 | M · M | **integrado** · falta revisión visual |
+| 1 | 6a | Base web · kit de datos · carcasa | W1 · W2 · W4 | M · M · M | **integrado** · falta revisión visual |
+| 1 | 3b · 5b | Acceso · herramientas en pantalla | W3 · W5 | M · S | **integrado** · falta revisión visual |
+| 1 | 10a | Despliegue | X1 | M | pendiente · necesita D7 (host, con Keny) |
+| 2 | puerta | Paso previo de servidor (eventos, ayudantes, arreglo de webhooks) | C1 | S | **por lanzar · ronda 7** |
+| 2 | 6a+ | Kit y base web de la ola 2 | K1a · K1b | M + M | **por lanzar · ronda 7** (K1a) |
+| 2 | D | Datos de la ola 2 (`0013` a `0016`) | DB2a · DB2b | M + M | **por lanzar · ronda 7** (DB2a) |
+| 2 | 14 | Finanzas ligeras (`registro`, tecleado) | M-registro-s1, s2, s3 · w1, w2 | M, M, S · M, M | pendiente · rondas 8 a 11 |
+| 2 | 15 | CRM | M-crm-s1, s2 · w | M, M · M | pendiente · rondas 9 a 11 |
+| 2 | 16 | Pedidos (`ordenes`) | M-ordenes-s1, s2 · w | M, M · L | pendiente · rondas 9 a 11 · necesita D17 |
+| 2 | 13+ | Inicio y bandeja con pendientes | N1 | S | pendiente · ronda 11 |
+| 2 | cierre | Recorrido pedido → cobro, banderas, puerta de la ola 3 | X2 | S | pendiente · ronda 12 |
+| 3 | 17, 18, 19, 20 | Inventario, Compras, Personal, Reportes | C2 · K2 · DB3 · M-* · X3 | ver `FICHAS-OLA-3.md` | pendiente · necesita su puerta |
+| 4 | 21, 22, 23 | Registro por voz, Cotizador, puente | plan propio | L | pendiente · solo si encajan · necesita D11, D12 |
 | 5 | 10b | Endurecer | — | M | pendiente |
 | Final | 12 | Facturación SUNAT | — | M | pendiente |
-| — | V | Audios reales y línea base (usuario) | — | — | pendiente · en paralelo |
+| — | V | Audios reales y línea base (usuario) | — | — | pospuesta por el usuario (voz más adelante) |
 
 ## 9. Decisiones del usuario
 
@@ -699,7 +718,25 @@ Conector de un proveedor OSE/PSE sobre el marco de la fase 11a, con todo lo ante
 | D13 | `@nestjs/mau` se quita ahora. **Neon (resetear contraseña, rama `ensayo-migraciones`) lo ve Keny:** el agente principal debe recordarlo; no se toca Neon hoy. |
 | Bandeja | `core.borradores` (S5 y W8) **aprobada** en la ola 1. |
 
-Las decisiones que siguen abiertas son las de la tabla de abajo (D11, D12, D14).
+Las decisiones de la tabla original que siguen abiertas son D11, D12 y D14 (y D7, que se decide con Keny).
+
+### Decisiones nuevas de la puerta de la ola 2 (2026-11-15) · ABIERTAS
+
+Cada una trae la recomendación con la que quedó escrita la ficha: **si no hay respuesta, se construye lo recomendado**, salvo D17, que debe confirmarse antes de la ronda 9.
+
+| # | Decisión | Recomendación | Bloquea |
+|---|---|---|---|
+| D15 | Equivalencia con Tairos.RC: ¿casos de referencia escritos, o ejecutar el SQL antiguo? | Casos de referencia (ocho, en `FICHAS-OLA-2.md` §4.2). El modelo ya no es el de Tairos.RC; cambia una frase de ADR-008 (ADR-016 §7) | Nada. Rechazada: un carril más después de M-registro-s2 |
+| D16 | Anular una deuda que ya tiene abonos | Exigir anular antes sus abonos. Tairos.RC preguntaba «devuelto o retenido»; se revisa al adaptar el Registro por voz | Nada |
+| **D17** | **¿Los precios de un pedido incluyen IGV?** | **Sí, 18 %**, guardando el porcentaje en cada pedido. Es como cotiza un taller al público | **M-ordenes-s1 (ronda 9)**, la tabla `ordenes.pedidos` y la pantalla de líneas |
+| D18 | Estados del pedido | `borrador`, `confirmado`, `en_proceso`, `listo`, `entregado`, `cancelado` (se agrega «Listo»: terminado y esperando recojo) | Nada |
+| D19 | `registro` por defecto con prueba de 30 días (era D9) | Mantener, y quitar «en construcción» al integrar sus pantallas | X2 |
+| D20 | Nombre visible del módulo `registro` | «Caja y cuentas» mientras el Registro por voz no exista; el código sigue siendo `registro`. ADR-015 decía «Registro» | Nada: una línea del manifiesto |
+| D21 | Aprobar ADR-016 (reglas de los módulos clásicos) | Aprobar, con revisión de Keny de los puntos 1 a 3 | Nada si se aprueba como está |
+| D22 | Arreglar ya el envío de webhooks a nombres de host (fallo de la ola 1) | Sí, dentro de C1 | Nada; sin el arreglo, los webhooks de salida no funcionan en producción |
+| D23 | Revisión visual de la ola 1 por tandas (kit, acceso y carcasa primero) antes de lanzar las pantallas de la ola 2 | Hacerla durante las rondas 7 a 10 | Nada; sin ella, las pantallas nuevas heredan lo que haya que corregir |
+| D24 | Qué significa «las deudas vencidas avisan solas» sin mensajería | En la ola 2: tarjetas de pendientes en Inicio y lista «Vencidas» (N1). Un aviso que salga del sistema (WhatsApp, correo) llega con sus conectores | Nada en la ola 2 |
+| D25 | Uso real al cerrar la ola 2 | Necesita X1 (host), las migraciones `0006` a `0016` en Neon y `CONEXIONES_CLAVE` de producción. Decidir con Keny si X1 se adelanta a la ronda 9 | El «uso real» de la ola, no su construcción |
 
 ### Tabla original (para consulta)
 
@@ -730,7 +767,19 @@ Ninguna se inventó en este plan: cada una trae una recomendación y lo que bloq
 4. **Calidad de interfaz sin e2e, sin pruebas de componentes y sin identidad decidida.** Diez carriles web dejan decenas de pantallas para una sola persona que revisa a mano; y «apariencia tradicional» empuja a parecerse a productos existentes (regla 12). *Mitigación:* tokens semánticos y un solo kit (ninguna pantalla trae estilos propios), página `/kit` para revisar piezas una vez, revisión visual por tandas (al integrar W2, W4 y W7), y un punto de la lista del integrador dedicado a la regla 12.
 5. **Agentes de esfuerzo medio con una pila más nueva que su memoria, sobre código de seguridad.** NestJS 12, Better Auth 1.7, Zod 4, Drizzle 0.45, React Router 8 y Tailwind 4 invitan a escribir API que ya no existen; y un permiso por columna mal puesto no lo ve hoy ninguna prueba. *Mitigación:* ningún carril salvo el de datos toca migraciones ni permisos; ninguno toca el guardia ni `infra/`; «parar y preguntar» en cada fase; la fase D cierra el hueco de permisos por columna; el integrador revisa a mano todo diff de `core/auth`, `core/herramientas` y `drizzle/`.
 
-**Lo que no encaja de la arquitectura existente con el nuevo orden** (comprobado en el código): el manifiesto no tiene familia; solo hay tres esquemas, fijados en dos ADR, en `drizzle.config.ts` y en tres pruebas; `registro` nace como módulo base por defecto con prueba de 30 días; el cálculo de acceso vive privado dentro del guardia HTTP y no sirve para el relevo ni para las reglas; la base de pruebas tiene nombre fijo, así que dos carriles no pueden probar a la vez; la prueba de la lista de plataforma no ve permisos por columna; el índice de parecido de Cotizín no cumple la regla de índices por `tenant_id`; `EmpresasService` guarda en memoria qué empresas ya aprovisionó (inofensivo con varias instancias porque es idempotente, pero roza la regla de servidor sin estado de ADR-013). Las fases P y D lo corrigen, salvo los esquemas (ADR-015).
+### 10.1 Riesgos nuevos (puerta de la ola 2)
+
+1. **Primer uso real del camino «módulo que no es el núcleo».** `puedeEscribir`, los permisos de manifiesto de módulo y el disparador de solo lectura solo se han ejercido con herramientas de prueba: las de `webhooks` se declararon como `core`. *Mitigación:* M-registro-s1 lo valida antes de abrir `crm` y `ordenes`; pruebas R17.4 y R17.6.
+2. **El disparador de escritura frente a las pruebas de catálogo.** Sembrar ejemplos exige activar antes el módulo de cada empresa de prueba; si DB2a tropieza ahí, se detiene toda la ola. *Mitigación:* el paso está escrito (`FICHAS-OLA-2.md` §3.1, paso 6) y DB2a va primero y solo.
+3. **Reglas de dinero nuevas sin el SQL de Tairos.RC como juez.** *Mitigación:* ocho casos de referencia, las dos desviaciones deliberadas conservadas, inmutabilidad por permisos de columna y `CHECK` de coherencia en la base.
+4. **Consumidores con contexto de administrador.** Un consumidor que ejecutara una herramienta movería dinero sin persona. *Mitigación:* regla R5, punto 14 de la lista de integración y, propuesto para Keny, un contexto de sistema sin permisos.
+5. **La bandeja genérica muestra identificadores y céntimos crudos.** Los borradores que vienen de otro módulo se leen mal hasta N1. *Mitigación:* el `resumen` del borrador va en lenguaje claro desde el primer día; N1 formatea montos.
+6. **«Uso real» sin despliegue.** La ola 2 puede cerrarse sin que nadie la use: X1 espera el host, hay más de veinte pantallas sin revisión visual y siete migraciones sin aplicar en Neon (once al terminar la ola). *Mitigación:* D23 y D25.
+7. **Redondeo del IGV por línea.** Con precios que incluyen IGV, la suma de bases redondeadas puede diferir en céntimos de la base del total. *Mitigación:* la regla está fijada (se redondea por línea; el total es la suma de importes) y probada; se revisa al llegar a SUNAT.
+8. **Nombres que chocan entre módulos:** «movimientos» y «órdenes» existen en dos módulos. *Mitigación:* prefijo de módulo en las constantes de Drizzle (R16), nombres de herramienta distintos y la prueba que ya impide repetirlos.
+9. **Pendientes de seguridad de la ola 1** que la ola 2 hereda: envío de webhooks roto con nombres de host; rotación de la clave de cifrado sin camino (se carga una sola clave); limitador de la entrada pública por `req.ip` sin `trust proxy`; todo `member` lee el historial completo de la empresa (`auditoria:ver` en el nivel de lectura del núcleo). *Mitigación:* lista para Keny en `RELEVO.md`.
+
+**Lo que no encaja de la arquitectura existente con el nuevo orden** (comprobado en el código antes de la ola 1; las fases P y D ya lo corrigieron): el manifiesto no tiene familia; solo hay tres esquemas, fijados en dos ADR, en `drizzle.config.ts` y en tres pruebas; `registro` nace como módulo base por defecto con prueba de 30 días; el cálculo de acceso vive privado dentro del guardia HTTP y no sirve para el relevo ni para las reglas; la base de pruebas tiene nombre fijo, así que dos carriles no pueden probar a la vez; la prueba de la lista de plataforma no ve permisos por columna; el índice de parecido de Cotizín no cumple la regla de índices por `tenant_id`; `EmpresasService` guarda en memoria qué empresas ya aprovisionó (inofensivo con varias instancias porque es idempotente, pero roza la regla de servidor sin estado de ADR-013). Las fases P y D lo corrigen, salvo los esquemas (ADR-015).
 
 ## 11. Puntos ciegos que siguen vigilados
 

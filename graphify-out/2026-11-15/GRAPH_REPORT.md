@@ -1,17 +1,17 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 501 files · ~246,814 words
+- 547 files · ~270,185 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 890 nodes · 1388 edges · 51 communities (41 shown, 10 thin omitted)
+- 944 nodes · 1480 edges · 57 communities (47 shown, 10 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1dd2721d`
+- Built from commit: `1e3e0043`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,14 +21,14 @@
 - src/index.ts
 - web/package.json
 - main.ts
-- con-empresa.ts
+- base-de-pruebas.ts
 - preparar-base.ts
 - compilerOptions
 - scripts
 - reglas.ts
 - shared/package.json
 - compilerOptions
-- dependencies
+- @nestjs/common
 - FORCE ROW LEVEL SECURITY con politica unica
 - Registro de herramientas con ejecutar() unico
 - scripts
@@ -36,11 +36,11 @@
 - config.js
 - ADR-003: PostgreSQL y Drizzle; alojamiento en Neon
 - compilerOptions
-- devDependencies
+- api/package.json
 - Fase 8: eventos entre modulos y correlativos (outbox)
 - db
 - ADR-011: Cuatro roles de base, esquema auth y sin security definer sobre RLS
-- api/package.json
+- catalogo.spec.ts
 - Monolito modular (una app, una base)
 - ADR-007: Pruebas sin e2e
 - Odoo 20.0 Community (referencia de solo lectura)
@@ -54,26 +54,32 @@
 - web/tsconfig.json
 - herramientas-de-intercambio.ts
 - Relevo: dónde quedó Capaz ERP y cómo seguir
-- Invocador
-- prettier@^3.4.2
-- drizzle-kit
+- borradores.int.spec.ts
+- proponer.ts
+- contexto.ts
 - ejecutor.ts
 - favicon.svg (purple lightning-bolt logo, 48x46 favicon)
 - EjecutorDeHerramientas
 - motor.ts
-- @vitest/coverage-v8@^4.1.2
+- barra-superior.tsx
 - Transaccion
-- @nestjs/mau@^0.2.6
+- con-empresa.ts
+- config/config.ts
+- guarda.ts
+- core.ts
+- rutaSiguiente
+- ConfigModule
+- LoggerModule
 
 ## God Nodes (most connected - your core abstractions)
 1. `EjecutorDeHerramientas` - 23 edges
 2. `compilerOptions` - 22 edges
-3. `compilerOptions` - 18 edges
-4. `vitest` - 18 edges
+3. `vitest` - 20 edges
+4. `compilerOptions` - 18 edges
 5. `AGENTS.md (reglas del constructor)` - 18 edges
 6. `@nestjs/common` - 17 edges
 7. `scripts` - 17 edges
-8. `Transaccion` - 15 edges
+8. `Transaccion` - 16 edges
 9. `compilerOptions` - 15 edges
 10. `scripts` - 14 edges
 
@@ -100,35 +106,35 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (51 total, 10 thin omitted)
+## Communities (57 total, 10 thin omitted)
 
 ### Community 0 - "AGENTS.md (reglas del constructor)"
 Cohesion: 0.06
 Nodes (48): ADR 001 a 012, Agente: instrucciones, conocimiento, herramientas, disparadores, AGENTS.md (reglas del constructor), apps/api AGENTS.md (ESM, Vitest), apps/api README (plantilla NestJS), apps/web index.html (entrada de la SPA), apps/web README (plantilla React Vite), Atlantisgraf (cliente piloto) (+40 more)
 
 ### Community 1 - "database.service.ts"
-Cohesion: 0.07
-Nodes (21): Config, CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), ConfigModule, secreto, base (+13 more)
+Cohesion: 0.13
+Nodes (7): BaseDeDatos, ConEmpresa, DatabaseService, DatabaseStatus, HealthController, ADR-0011, HealthResponse
 
 ### Community 2 - "src/index.ts"
-Cohesion: 0.09
-Nodes (33): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), Codigo, codigoDeEstado() (+25 more)
+Cohesion: 0.08
+Nodes (37): ErrorDeNegocio, MENSAJES, FiltroDeErrores, ejecutar(), Traduccion, traducir(), crearPipeDeValidacion(), mensajeDeValidacion() (+29 more)
 
 ### Community 3 - "web/package.json"
 Cohesion: 0.05
 Nodes (39): dependencies, @capaz/shared, react, react-dom, react-router, @tanstack/react-query, devDependencies, oxlint (+31 more)
 
 ### Community 4 - "main.ts"
-Cohesion: 0.09
-Nodes (19): AppModule, leerConfigDelEntorno(), almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto() (+11 more)
+Cohesion: 0.15
+Nodes (6): leerConfigDelEntorno(), CAMPOS_OCULTOS, crearLogger(), LOGGER, LoggerDeNest, bootstrap()
 
-### Community 5 - "con-empresa.ts"
-Cohesion: 0.07
-Nodes (23): core, empresaConfig, ADR-0012, A, B, EJEMPLOS, ESQUEMAS, ADR-0011 (+15 more)
+### Community 5 - "base-de-pruebas.ts"
+Cohesion: 0.18
+Nodes (14): estadoDe(), A, B, EJEMPLOS, ESQUEMAS, ADR-0011, ADR-0012, abrirPool() (+6 more)
 
 ### Community 6 - "preparar-base.ts"
-Cohesion: 0.15
-Nodes (24): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+16 more)
+Cohesion: 0.17
+Nodes (22): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+14 more)
 
 ### Community 7 - "compilerOptions"
 Cohesion: 0.09
@@ -150,9 +156,9 @@ Nodes (20): dependencies, zod@^4.6.7, devDependencies, @types/node@^24.0.0, type
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+11 more)
 
-### Community 12 - "dependencies"
-Cohesion: 0.11
-Nodes (19): dependencies, @capaz/shared@workspace:*, drizzle-orm@^0.45.4, @nestjs/common@^12.4.2, @nestjs/core@^12.4.2, @nestjs/platform-express@^12.4.2, pg@^8.23.1, pino@^10.4.0 (+11 more)
+### Community 12 - "@nestjs/common"
+Cohesion: 0.17
+Nodes (7): @nestjs/core@^12.4.2, AppModule, DatabaseModule, HealthModule, HttpModule, @nestjs/common, @nestjs/core
 
 ### Community 13 - "FORCE ROW LEVEL SECURITY con politica unica"
 Cohesion: 0.14
@@ -182,9 +188,9 @@ Nodes (13): Mismo origen en produccion: la API sirve la web compilada, Servidor 
 Cohesion: 0.14
 Nodes (13): compilerOptions, declaration, isolatedModules, module, moduleResolution, outDir, rootDir, skipLibCheck (+5 more)
 
-### Community 20 - "devDependencies"
-Cohesion: 0.12
-Nodes (17): devDependencies, @nestjs/cli@^12.0.12, @nestjs/schematics@^12.0.0, @nestjs/testing@^12.4.2, oxlint@^1.58.0, @types/node@^24.0.0, @types/pg@^8.15.0, typescript@^6.0.3 (+9 more)
+### Community 20 - "api/package.json"
+Cohesion: 0.05
+Nodes (54): dependencies, @capaz/shared@workspace:*, @nestjs/common@^12.4.2, @nestjs/platform-express@^12.4.2, pg@^8.23.1, pino@^10.4.0, pino-http@^11.0.0, reflect-metadata@^0.2.2 (+46 more)
 
 ### Community 21 - "Fase 8: eventos entre modulos y correlativos (outbox)"
 Cohesion: 0.17
@@ -197,10 +203,6 @@ Nodes (11): environment, image, ports, volumes, POSTGRES_DB, POSTGRES_PASSWORD, 
 ### Community 23 - "ADR-011: Cuatro roles de base, esquema auth y sin security definer sobre RLS"
 Cohesion: 0.17
 Nodes (12): Roles de base capaz_owner, capaz_app, capaz_ro, ADR-010: Sin paquetes 0.x de NestJS en los cimientos, Paquetes @nestjs 0.x descartados (drizzle, idempotency, outbox, authentication, authorization), Salida de eventos e idempotencia propias sobre PostgreSQL, ADR-011: Cuatro roles de base, esquema auth y sin security definer sobre RLS, capaz_app (negocio, sin acceso a auth), capaz_auth (solo esquema auth), capaz_owner (migraciones, sin superusuario ni BYPASSRLS) (+4 more)
-
-### Community 24 - "api/package.json"
-Cohesion: 0.14
-Nodes (13): oxlint-tsgolint@^7.0.2001, source-map-support@^0.5.21, @types/express@^5.0.0, vite@^8.0.0, vite, license, name, private (+5 more)
 
 ### Community 25 - "Monolito modular (una app, una base)"
 Cohesion: 0.25
@@ -235,56 +237,84 @@ Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
 ### Community 33 - "pantalla-registro.tsx"
-Cohesion: 0.06
-Nodes (18): Props, PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), destinoSegunSesion(), esRuta(), normalizar() (+10 more)
+Cohesion: 0.13
+Nodes (3): react, react-dom, react-router
 
 ### Community 36 - "herramientas-de-intercambio.ts"
-Cohesion: 0.08
-Nodes (8): HERRAMIENTA_DE_ALTA, lectura(), nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, recortar(), resumenDe(), 5. Cosas que no son obvias (trampas ya pisadas)
+Cohesion: 0.07
+Nodes (11): crearHerramientasDeIntercambio(), HERRAMIENTA_DE_ALTA, HerramientasDeIntercambio, lectura(), nombreDeEntidad(), PERMISO_DE_EDITAR, PERMISO_DE_VER, recortar() (+3 more)
 
 ### Community 37 - "Relevo: dónde quedó Capaz ERP y cómo seguir"
 Cohesion: 0.25
 Nodes (8): 1. En una frase, 2. Estado exacto, 3. Cómo arrancar el entorno, 4. Mapa del código, 6. Qué hacer ahora, en orden, 7. Documentación, 8. Decisiones del usuario que siguen abiertas, Relevo: dónde quedó Capaz ERP y cómo seguir
 
-### Community 38 - "Invocador"
-Cohesion: 0.20
-Nodes (4): crear(), crearHerramientasDeIntercambio(), HerramientasDeIntercambio, Invocador
+### Community 38 - "borradores.int.spec.ts"
+Cohesion: 0.11
+Nodes (3): CATALOGO, llamar(), PERMISOS
+
+### Community 39 - "proponer.ts"
+Cohesion: 0.15
+Nodes (5): HerramientaConSecretos, HerramientaDeBorradorDesconocida, HERRAMIENTAS_CON_SECRETOS, proponerBorrador(), PropuestaDeBorrador
+
+### Community 40 - "contexto.ts"
+Cohesion: 0.23
+Nodes (9): almacen, CanalDeLlamada, conContexto(), contextoActual(), ContextoDePeticion, crearContexto(), idDePeticion(), middlewareDeContexto() (+1 more)
 
 ### Community 42 - "ejecutor.ts"
 Cohesion: 0.08
 Nodes (3): Fallo, OpcionesDeEjecucion, Previo
 
 ### Community 46 - "EjecutorDeHerramientas"
-Cohesion: 0.20
-Nodes (7): comoObjeto(), EjecutorDeHerramientas, falloDe(), filtrarPorPermisos(), rechazar(), Revertir, segundos()
+Cohesion: 0.18
+Nodes (8): comoObjeto(), EjecutorDeHerramientas, falloDe(), filtrarPorPermisos(), rechazar(), Revertir, segundos(), transaccionEnCurso()
 
 ### Community 47 - "motor.ts"
-Cohesion: 0.09
-Nodes (6): AccionResuelta, Entrada, Opciones, Resultado, Salida, conPuntoDeGuardado()
+Cohesion: 0.10
+Nodes (6): AccionRechazada, AccionResuelta, Entrada, Opciones, Resultado, Salida
 
 ### Community 49 - "Transaccion"
-Cohesion: 0.26
-Nodes (3): AccionRechazada, MotorDeReglas, Transaccion
+Cohesion: 0.23
+Nodes (4): MotorDeReglas, crear(), conPuntoDeGuardado(), Transaccion
+
+### Community 50 - "con-empresa.ts"
+Cohesion: 0.19
+Nodes (9): drizzle-orm@^0.45.4, proponer(), Activa, CambioDeEmpresa, ContextoDeEmpresa, crearConEmpresa(), transaccionActual, conEmpresaDePruebas() (+1 more)
+
+### Community 51 - "config/config.ts"
+Cohesion: 0.24
+Nodes (8): Config, CONFIG, ConfigInvalida, esquemaDeConfig, leerConfig(), secreto, base, url
+
+### Community 52 - "guarda.ts"
+Cohesion: 0.23
+Nodes (9): destinoSegunSesion(), esRuta(), normalizar(), RUTA_INICIAR_SESION, RUTA_INICIO, RUTA_NUEVA_EMPRESA, RUTAS_PUBLICAS, base (+1 more)
+
+### Community 53 - "core.ts"
+Cohesion: 0.40
+Nodes (3): core, empresaConfig, ADR-0012
+
+### Community 54 - "rutaSiguiente"
+Cohesion: 0.60
+Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
 
 ## Knowledge Gaps
-- **272 isolated node(s):** `PERMISO_DE_VER`, `PERMISO_DE_EDITAR`, `HERRAMIENTA_DE_ALTA`, `1. En una frase`, `2. Estado exacto` (+267 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 401 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **275 isolated node(s):** `CATALOGO`, `PERMISOS`, `HERRAMIENTAS_CON_SECRETOS`, `Traduccion`, `Props` (+270 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 434 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `vitest` connect `con-empresa.ts` to `database.service.ts`, `src/index.ts`, `web/package.json`, `main.ts`, `pantalla-registro.tsx`, `reglas.ts`?**
-  _High betweenness centrality (0.104) - this node is a cross-community bridge._
-- **What connects `PERMISO_DE_VER`, `PERMISO_DE_EDITAR`, `HERRAMIENTA_DE_ALTA` to the rest of the system?**
-  _272 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `vitest` connect `src/index.ts` to `database.service.ts`, `web/package.json`, `main.ts`, `base-de-pruebas.ts`, `borradores.int.spec.ts`, `contexto.ts`, `reglas.ts`, `con-empresa.ts`, `config/config.ts`, `guarda.ts`, `catalogo.spec.ts`?**
+  _High betweenness centrality (0.115) - this node is a cross-community bridge._
+- **What connects `CATALOGO`, `PERMISOS`, `HERRAMIENTAS_CON_SECRETOS` to the rest of the system?**
+  _275 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
-- **Why does `@nestjs/common` connect `database.service.ts` to `src/index.ts`, `herramientas-de-intercambio.ts`, `main.ts`, `ejecutor.ts`, `dependencies`, `motor.ts`, `api/package.json`?**
-  _High betweenness centrality (0.069) - this node is a cross-community bridge._
+- **Why does `@nestjs/common` connect `@nestjs/common` to `database.service.ts`, `src/index.ts`, `herramientas-de-intercambio.ts`, `main.ts`, `ejecutor.ts`, `motor.ts`, `config/config.ts`, `api/package.json`?**
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
 - **Should `database.service.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06711915535444947 - nodes in this community are weakly interconnected._
-- **Why does `pg` connect `con-empresa.ts` to `database.service.ts`, `preparar-base.ts`, `dependencies`, `config.js`, `api/package.json`?**
-  _High betweenness centrality (0.054) - this node is a cross-community bridge._
+  _Cohesion score 0.12648221343873517 - nodes in this community are weakly interconnected._
+- **Why does `pg` connect `base-de-pruebas.ts` to `database.service.ts`, `borradores.int.spec.ts`, `preparar-base.ts`, `config.js`, `con-empresa.ts`, `api/package.json`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08862745098039215 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07743496672716274 - nodes in this community are weakly interconnected._

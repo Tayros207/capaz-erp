@@ -122,7 +122,7 @@ Cada ola termina con uso real, aunque sea interno.
 | **5 · Crecer** | Endurecer, WhatsApp, pagos (pasarela con Yape/Plin), contabilidad externa, Producción, Portal del cliente, Archivos, Mostrador, Máquinas, agente de consultas, MCP de solo lectura, cobro automático de suscripciones | Más de diez empresas de pago |
 | **Final · Cierre** | **Facturación electrónica SUNAT** como conector de un proveedor OSE/PSE. La contabilidad formal no se construye: se exporta o se conecta | El cliente emite comprobantes sin salir del flujo pedido → cobro |
 
-Las olas 2 y 3 necesitan aprobar `docs/adr/ADR-015-estructura-primero-y-modulos-clasicos.md` (propuesto): un esquema de base por módulo, Finanzas ligeras = `registro` en dos pasos (clásico y voz) y Ventas = CRM + Pedidos.
+Las olas 2 y 3 siguen `docs/adr/ADR-015-estructura-primero-y-modulos-clasicos.md` (aceptado el 2026-11-15; fichas en `FICHAS-OLA-2.md` y `FICHAS-OLA-3.md`): un esquema de base por módulo, Finanzas ligeras = `registro` en dos pasos (clásico y voz) y Ventas = CRM + Pedidos.
 
 Mientras Compras no exista (ola 3), una compra se anota como egreso en Finanzas. Mientras la voz no exista (ola 4), todo se registra con pantallas tradicionales y por la bandeja.
 

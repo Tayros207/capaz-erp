@@ -1,7 +1,7 @@
 # Graph Report - capaz-erp  (2026-11-15)
 
 ## Corpus Check
-- 547 files · ~270,185 words
+- 577 files · ~282,342 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 8 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1e3e0043`
+- Built from commit: `49cdf925`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -297,7 +297,7 @@ Cohesion: 0.60
 Nodes (5): PantallaIniciarSesion(), enviar(), PantallaRegistro(), enviar(), rutaSiguiente()
 
 ## Knowledge Gaps
-- **275 isolated node(s):** `CATALOGO`, `PERMISOS`, `HERRAMIENTAS_CON_SECRETOS`, `Traduccion`, `Props` (+270 more)
+- **275 isolated node(s):** `1. En una frase`, `2. Estado exacto`, `3. Cómo arrancar el entorno`, `4. Mapa del código`, `6. Qué hacer ahora, en orden` (+270 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 434 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -306,7 +306,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `src/index.ts` to `database.service.ts`, `web/package.json`, `main.ts`, `base-de-pruebas.ts`, `borradores.int.spec.ts`, `contexto.ts`, `reglas.ts`, `con-empresa.ts`, `config/config.ts`, `guarda.ts`, `catalogo.spec.ts`?**
   _High betweenness centrality (0.115) - this node is a cross-community bridge._
-- **What connects `CATALOGO`, `PERMISOS`, `HERRAMIENTAS_CON_SECRETOS` to the rest of the system?**
+- **What connects `1. En una frase`, `2. Estado exacto`, `3. Cómo arrancar el entorno` to the rest of the system?**
   _275 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `AGENTS.md (reglas del constructor)` be split into smaller, more focused modules?**
   _Cohesion score 0.0573025856044724 - nodes in this community are weakly interconnected._
