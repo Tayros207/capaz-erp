@@ -54,14 +54,14 @@
     "semantic_hash": ""
   },
   "apps/api/scripts/config.d.ts": {
-    "mtime": 1794679351.216955,
-    "seen": 1794781771.1042662,
+    "mtime": 1794787711.4433742,
+    "seen": 1794787882.5240023,
     "ast_hash": "7cc68a3aa0d28caff681d16f34794c75",
     "semantic_hash": "7cc68a3aa0d28caff681d16f34794c75"
   },
   "apps/api/scripts/config.js": {
-    "mtime": 1794679351.215955,
-    "seen": 1794781771.1042686,
+    "mtime": 1794787711.442374,
+    "seen": 1794787882.5240085,
     "ast_hash": "99f7a8ecf70c048ceda2f8eec2a3463e",
     "semantic_hash": "99f7a8ecf70c048ceda2f8eec2a3463e"
   },
@@ -72,14 +72,14 @@
     "semantic_hash": "b65aef2458e6b2dc349436d2362980e4"
   },
   "apps/api/scripts/migrar.d.ts": {
-    "mtime": 1794679351.7759557,
-    "seen": 1794781771.104274,
+    "mtime": 1794787711.9483755,
+    "seen": 1794787882.524017,
     "ast_hash": "b628cd7af9ae148345dc77992f095a5e",
     "semantic_hash": "b628cd7af9ae148345dc77992f095a5e"
   },
   "apps/api/scripts/migrar.js": {
-    "mtime": 1794679351.7759557,
-    "seen": 1794781771.1042762,
+    "mtime": 1794787711.9483755,
+    "seen": 1794787882.5240233,
     "ast_hash": "ff5decdd1c4735a66eaafa8564568c26",
     "semantic_hash": "ff5decdd1c4735a66eaafa8564568c26"
   },
@@ -294,10 +294,10 @@
     "semantic_hash": ""
   },
   "apps/api/tsconfig.build.json": {
-    "mtime": 1794415393.328583,
-    "seen": 1794676297.768173,
-    "ast_hash": "ec778f0251ce9c58bc38be504c852d39",
-    "semantic_hash": "ec778f0251ce9c58bc38be504c852d39"
+    "mtime": 1794787715.2796438,
+    "seen": 1794787882.5246198,
+    "ast_hash": "eff5a2a63879aa7fa3518e0c731abd06",
+    "semantic_hash": ""
   },
   "apps/api/tsconfig.json": {
     "mtime": 1794674055.8400598,
@@ -504,9 +504,9 @@
     "semantic_hash": ""
   },
   "docs/MODULOS-Y-MERCADO.md": {
-    "mtime": 1794776397.5606418,
-    "seen": 1794781771.1049943,
-    "ast_hash": "d1013f7595e2e816e37a91963b96f6d0",
+    "mtime": 1794787835.4079158,
+    "seen": 1794787882.5252914,
+    "ast_hash": "d4fd331d548922351287ce62b1860517",
     "semantic_hash": ""
   },
   "docs/PLAN-CIMIENTOS.md": {
@@ -516,9 +516,9 @@
     "semantic_hash": "19cf6670edd363cff2f7de732abd4066"
   },
   "docs/PLAN-DE-CONSTRUCCION.md": {
-    "mtime": 1794779816.4451175,
-    "seen": 1794781771.1050017,
-    "ast_hash": "738bb251eb94a0e1e2136fec21821619",
+    "mtime": 1794787892.105072,
+    "seen": 1794787897.1208496,
+    "ast_hash": "de7aaa1ec68f1b13d812c6f84d37f51c",
     "semantic_hash": ""
   },
   "docs/PLATAFORMA-Y-PLANES.md": {
@@ -1950,15 +1950,15 @@
     "semantic_hash": ""
   },
   "docs/PLAN-PARALELO.md": {
-    "mtime": 1794776463.506613,
-    "seen": 1794781771.1050038,
-    "ast_hash": "6a9be6377b24ccae8437fbb536133978",
+    "mtime": 1794787819.2761085,
+    "seen": 1794787882.525301,
+    "ast_hash": "610da4e0d550be2571231e3fcca56d26",
     "semantic_hash": ""
   },
   "docs/RELEVO.md": {
-    "mtime": 1794786346.2126074,
-    "seen": 1794786350.818115,
-    "ast_hash": "4a4e76a9cd0231b6ae754c5d4de68f04",
+    "mtime": 1794787775.9703567,
+    "seen": 1794787882.525308,
+    "ast_hash": "f736615678a926d62e7d5bcef715c4e0",
     "semantic_hash": ""
   },
   "docs/adr/ADR-013-extensibilidad-y-escalabilidad.md": {
@@ -3483,6 +3483,24 @@
     "mtime": 1794786221.357541,
     "seen": 1794786350.8177068,
     "ast_hash": "ef0b071cadf4625bcf17deb1ef820352",
+    "semantic_hash": ""
+  },
+  "docs/FICHAS-OLA-2.md": {
+    "mtime": 1794787409.5535977,
+    "seen": 1794787882.5252788,
+    "ast_hash": "c621c03e2253639cc70a2f38d9a3bbc0",
+    "semantic_hash": ""
+  },
+  "docs/FICHAS-OLA-3.md": {
+    "mtime": 1794787509.6709895,
+    "seen": 1794787882.525281,
+    "ast_hash": "ef951b735e5081bf8c4b4a2a0091a1a9",
+    "semantic_hash": ""
+  },
+  "docs/adr/ADR-016-reglas-de-los-modulos-clasicos.md": {
+    "mtime": 1794787892.1053991,
+    "seen": 1794787897.1209252,
+    "ast_hash": "0c6fa41bc3790c93fda64bd31e59d3e2",
     "semantic_hash": ""
   }
 }

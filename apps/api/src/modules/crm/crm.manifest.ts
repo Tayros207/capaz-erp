@@ -23,5 +23,4 @@ export const manifiestoCrm: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'cian',
   icono: 'crm',
-  enConstruccion: true,
 };
