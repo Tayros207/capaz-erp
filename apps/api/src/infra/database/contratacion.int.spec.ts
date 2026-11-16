@@ -133,6 +133,8 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.plan_modulos': ['select', 'insert', 'update', 'delete'],
     'core.empresa_modulos': ['select', 'insert', 'update'],
     'core.empresa_modulos_eventos': ['select', 'insert'],
+    'core.empresa_cuenta': ['select', 'insert', 'update'],
+    'core.empresa_cuenta_eventos': ['select', 'insert'],
     'core.solicitudes_modulo': ['select'],
     'core.plataforma_admins': ['select', 'insert', 'delete'],
     'core.confirmaciones_usadas': ['delete'],

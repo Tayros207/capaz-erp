@@ -153,3 +153,35 @@ export const plataformaAdmins = core.table('plataforma_admins', {
   usuarioId: text('usuario_id').primaryKey(),
   creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Estado de la cuenta de la empresa (pausa o baja global). Sin fila = activa. Lo cambia solo la plataforma. */
+export const empresaCuenta = core.table(
+  'empresa_cuenta',
+  {
+    tenantId: text('tenant_id').primaryKey(),
+    estado: text('estado').notNull().default('activa'),
+    motivo: text('motivo'),
+    cambiadoEn: timestamp('cambiado_en', { withTimezone: true }).notNull().defaultNow(),
+    cambiadoPor: text('cambiado_por'),
+  },
+  (t) => [check('empresa_cuenta_estado', sql`${t.estado} IN ('activa', 'prueba', 'pausada', 'baja')`)],
+);
+
+/** Historial de la cuenta: solo inserción, lo escribe un disparador. */
+export const empresaCuentaEventos = core.table(
+  'empresa_cuenta_eventos',
+  {
+    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    tenantId: text('tenant_id').notNull(),
+    evento: text('evento').notNull(),
+    estadoAnterior: text('estado_anterior'),
+    estadoNuevo: text('estado_nuevo').notNull(),
+    motivo: text('motivo'),
+    actor: text('actor'),
+    creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    check('cuenta_evento_tipo', sql`${t.evento} IN ('pausa', 'baja', 'reactivacion', 'alta')`),
+    index('idx_cuenta_eventos_empresa').on(t.tenantId, t.creadoEn.desc()),
+  ],
+);

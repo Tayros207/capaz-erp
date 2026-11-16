@@ -74,6 +74,27 @@ describe('catálogo: funciones', () => {
   });
 });
 
+describe('catálogo: estado de cuenta (0022)', () => {
+  it('las tablas de cuenta son de lectura para capaz_app y las funciones solo las ejecuta capaz_sistema', async () => {
+    const { rows } = await owner.query<{ tabla: string; ins: boolean; upd: boolean; del: boolean; sel: boolean }>(`
+      select t as tabla, has_table_privilege('capaz_app', t, 'insert') as ins, has_table_privilege('capaz_app', t, 'update') as upd,
+             has_table_privilege('capaz_app', t, 'delete') as del, has_table_privilege('capaz_app', t, 'select') as sel
+      from unnest(array['core.empresa_cuenta', 'core.empresa_cuenta_eventos']) t`);
+    expect(rows).toHaveLength(2);
+    for (const r of rows) expect(r, r.tabla).toMatchObject({ sel: true, ins: false, upd: false, del: false });
+    const ev = await owner.query<{ upd: boolean; del: boolean; ins: boolean }>(`
+      select has_table_privilege('capaz_sistema', 'core.empresa_cuenta_eventos', 'update') as upd,
+             has_table_privilege('capaz_sistema', 'core.empresa_cuenta_eventos', 'delete') as del,
+             has_table_privilege('capaz_sistema', 'core.empresa_cuenta_eventos', 'insert') as ins`);
+    expect(ev.rows[0]).toEqual({ upd: false, del: false, ins: true });
+    const { rows: fn } = await owner.query<{ f: string; app: boolean; sis: boolean }>(`
+      select p.proname as f, has_function_privilege('capaz_app', p.oid, 'execute') as app, has_function_privilege('capaz_sistema', p.oid, 'execute') as sis
+      from pg_proc p where p.pronamespace = 'core'::regnamespace and p.proname in ('pausar_cuenta', 'dar_baja_cuenta', 'reactivar_cuenta', 'cambiar_estado_cuenta')`);
+    expect(fn).toHaveLength(4);
+    for (const r of fn) expect(r, r.f).toMatchObject({ app: false, sis: true });
+  });
+});
+
 describe('catálogo: roles', () => {
   it('ningún rol de Capaz tiene SUPERUSER, BYPASSRLS ni CREATEROLE', async () => {
     const { rows } = await owner.query<{ rolname: string }>(

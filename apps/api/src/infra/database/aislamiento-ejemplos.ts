@@ -9,6 +9,11 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into core.empresa_modulos_eventos (tenant_id, modulo, evento, estado_nuevo) values ($1, 'ejemplo', 'alta', 'activo')`,
     modo: 'lectura',
   },
+  'core.empresa_cuenta': { sql: `insert into core.empresa_cuenta (tenant_id) values ($1)`, modo: 'lectura' },
+  'core.empresa_cuenta_eventos': {
+    sql: `insert into core.empresa_cuenta_eventos (tenant_id, evento, estado_nuevo) values ($1, 'alta', 'activa')`,
+    modo: 'lectura',
+  },
   'core.usuario_modulos': { sql: `insert into core.usuario_modulos (tenant_id, usuario_id, modulo) values ($1, 'u1', 'ejemplo')`, modo: 'completo' },
   'core.solicitudes_modulo': {
     sql: `insert into core.solicitudes_modulo (tenant_id, modulo, usuario_id) values ($1, 'ejemplo', 'u1')`,
