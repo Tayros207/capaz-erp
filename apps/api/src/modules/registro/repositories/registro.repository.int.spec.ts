@@ -51,20 +51,20 @@ beforeAll(async () => {
 afterAll(() => pool.end());
 
 describe('catálogos por defecto', () => {
-  it('siembra una vez la cuenta «Caja» principal y las ocho categorías; repetir no crea nada', async () => {
-    expect(await conEmpresa(ctxA, (tx) => asegurarCatalogos(tx, ctxA))).toEqual({ cuentasCreadas: 1, categoriasCreadas: 8 });
+  it('siembra una vez la cuenta «Caja» principal y las diez categorías (con «Transferencia» de ingreso y de egreso); repetir no crea nada', async () => {
+    expect(await conEmpresa(ctxA, (tx) => asegurarCatalogos(tx, ctxA))).toEqual({ cuentasCreadas: 1, categoriasCreadas: 10 });
     expect(await conEmpresa(ctxA, (tx) => asegurarCatalogos(tx, ctxA))).toEqual({ cuentasCreadas: 0, categoriasCreadas: 0 });
     const principal = await conEmpresa(ctxA, (tx) => cuentaPrincipal(tx, ctxA));
     expect(principal).toMatchObject({ nombre: 'Caja', tipo: 'caja', esPrincipal: true, saldoInicialCentimos: 0, creadoPor: 'ua' });
     cajaA = principal!.id;
-    expect(await conEmpresa(ctxA, (tx) => listarCategorias(tx, ctxA, { incluirArchivadas: true }))).toHaveLength(8);
+    expect(await conEmpresa(ctxA, (tx) => listarCategorias(tx, ctxA, { incluirArchivadas: true }))).toHaveLength(10);
     expect(await conEmpresa(ctxA, (tx) => categoriaConNombre(tx, ctxA, 'ingreso', 'cobros'))).toMatchObject({ nombre: 'Cobros' });
   });
 
   it('dos primeras escrituras a la vez dejan una sola «Caja»', async () => {
     const r = await Promise.all([conEmpresa(ctxB, (tx) => asegurarCatalogos(tx, ctxB)), conEmpresa(ctxB, (tx) => asegurarCatalogos(tx, ctxB))]);
     expect(r.map((x) => x.cuentasCreadas).sort((a, b) => a - b)).toEqual([0, 1]);
-    expect(r.reduce((n, x) => n + x.categoriasCreadas, 0)).toBe(8);
+    expect(r.reduce((n, x) => n + x.categoriasCreadas, 0)).toBe(10);
     expect(await conEmpresa(ctxB, (tx) => listarCuentas(tx, ctxB, { incluirArchivadas: true }))).toHaveLength(1);
   });
 
@@ -114,9 +114,9 @@ describe('movimientos', () => {
       ids.push(await insertarMovimiento(tx, ctxA2, mov({ numero: 9003, cuentaId: cajaA, montoCentimos: 1, fecha: '2026-03-10' })));
     });
     const flujo = await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA));
-    expect(flujo.get(cajaA)).toEqual({ ingresos: 10_001, egresos: 2_550, movimientos: 3 });
-    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA, { antesDe: '2026-03-09' }))).get(cajaA)).toEqual({ ingresos: 10_000, egresos: 0, movimientos: 1 });
-    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA, { enElDia: '2026-03-09' }))).get(cajaA)).toEqual({ ingresos: 0, egresos: 2_550, movimientos: 1 });
+    expect(flujo.get(cajaA)).toEqual({ ingresos: 10_001, egresos: 2_550, movimientos: 3, entradasPorTransferencia: 0, salidasPorTransferencia: 0 });
+    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA, { antesDe: '2026-03-09' }))).get(cajaA)).toEqual({ ingresos: 10_000, egresos: 0, movimientos: 1, entradasPorTransferencia: 0, salidasPorTransferencia: 0 });
+    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA, { enElDia: '2026-03-09' }))).get(cajaA)).toEqual({ ingresos: 0, egresos: 2_550, movimientos: 1, entradasPorTransferencia: 0, salidasPorTransferencia: 0 });
 
     const base = { limite: 2, cursor: null, estado: 'activos' as const, cuentaId: cajaA };
     const p1 = await conEmpresa(ctxA, (tx) => listarMovimientos(tx, ctxA, base, null));
@@ -143,7 +143,7 @@ describe('movimientos', () => {
     expect(await conEmpresa(ctxA, (tx) => anularMovimiento(tx, ctxA, ids[1]!, 'duplicado'))).toBe(true);
     expect(await conEmpresa(ctxA, (tx) => anularMovimiento(tx, ctxA, ids[1]!, 'otra vez'))).toBe(false);
     expect(await conEmpresa(ctxA, (tx) => verMovimiento(tx, ctxA, ids[1]!, null))).toMatchObject({ estado: 'anulado', anuladoPor: 'ua', motivoAnulacion: 'duplicado' });
-    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA))).get(cajaA)).toEqual({ ingresos: 10_001, egresos: 0, movimientos: 2 });
+    expect((await conEmpresa(ctxA, (tx) => flujosPorCuenta(tx, ctxA))).get(cajaA)).toEqual({ ingresos: 10_001, egresos: 0, movimientos: 2, entradasPorTransferencia: 0, salidasPorTransferencia: 0 });
   });
 
   it('la base no deja cambiar el monto ni borrar un movimiento', async () => {

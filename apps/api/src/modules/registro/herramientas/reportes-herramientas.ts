@@ -42,13 +42,17 @@ export const cajaDelDia = definirHerramienta('caja_del_dia', {
       // Una cuenta archivada solo aparece si se pidió expresamente o si ese día tuvo movimientos.
       if (c.archivadoEn && !una && hoy.movimientos === 0) continue;
       const antes = previos.get(c.id) ?? SIN_FLUJO;
+      // Las transferencias entre cuentas no son ingresos ni egresos: se muestran aparte y sí mueven el saldo.
+      const ingresosCentimos = hoy.ingresos - hoy.entradasPorTransferencia;
+      const egresosCentimos = hoy.egresos - hoy.salidasPorTransferencia;
       const saldoInicialCentimos = saldoDeCuenta(c.saldoInicialCentimos, antes.ingresos, antes.egresos);
       cuentas.push({
         cuentaId: c.id,
         nombre: c.nombre,
         saldoInicialCentimos,
-        ingresosCentimos: hoy.ingresos,
-        egresosCentimos: hoy.egresos,
+        ingresosCentimos,
+        egresosCentimos,
+        transferenciasNetasCentimos: hoy.entradasPorTransferencia - hoy.salidasPorTransferencia,
         saldoFinalCentimos: saldoDeCuenta(saldoInicialCentimos, hoy.ingresos, hoy.egresos),
         movimientos: hoy.movimientos,
       });

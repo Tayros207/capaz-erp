@@ -143,3 +143,24 @@ export async function existeContacto(tx: Transaccion, ctx: ContextoDeEmpresa, id
     .where(and(eq(clientes.tenantId, ctx.empresaId), eq(clientes.id, id), isNull(clientes.fusionadoEn)));
   return fila !== undefined;
 }
+
+/**
+ * Las patas de una transferencia (egreso e ingreso), tomadas con `for update` en orden de id: quien anula una pata
+ * y quien anula la otra pasan por el mismo orden y se turnan sin interbloqueo.
+ */
+export async function bloquearPatasDeTransferencia(tx: Transaccion, ctx: ContextoDeEmpresa, referencia: string): Promise<Movimiento[]> {
+  return tx
+    .select()
+    .from(m)
+    .where(and(deEmpresa(ctx), eq(m.origenRef, referencia)))
+    .orderBy(asc(m.id))
+    .for('update');
+}
+
+/** Las dos patas de una transferencia (sin bloquear), con sus nombres, en orden de id. */
+export async function patasDeTransferencia(tx: Transaccion, ctx: ContextoDeEmpresa, referencia: string): Promise<MovimientoConNombres[]> {
+  const filas = await conNombres(tx)
+    .where(and(deEmpresa(ctx), eq(m.origenRef, referencia)))
+    .orderBy(asc(m.id));
+  return filas.map(aplanar);
+}

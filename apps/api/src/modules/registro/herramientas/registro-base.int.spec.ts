@@ -63,15 +63,15 @@ describe('primer movimiento sin haber creado nada', () => {
     ]);
   });
 
-  it('la cuenta «Caja» es la principal y su saldo ya cuenta el ingreso; hay ocho categorías', async () => {
+  it('la cuenta «Caja» es la principal y su saldo ya cuenta el ingreso; hay diez categorías (con «Transferencia» reservada)', async () => {
     const cuentas = (await datosDe(dueno, 'cuentas_listar')).items;
     expect(cuentas).toEqual([expect.objectContaining({ id: cajaA, nombre: 'Caja', tipo: 'caja', esPrincipal: true, saldoInicialCentimos: 0, saldoCentimos: 15_000 })]);
     const categorias = (await datosDe(dueno, 'categorias_listar')).items;
     expect(categorias.map((c: any) => `${c.tipo}:${c.nombre}`)).toEqual([
-      'egreso:Compras', 'egreso:Otros egresos', 'egreso:Pagos', 'egreso:Servicios', 'egreso:Sueldos', 'ingreso:Cobros', 'ingreso:Otros ingresos', 'ingreso:Ventas',
+      'egreso:Compras', 'egreso:Otros egresos', 'egreso:Pagos', 'egreso:Servicios', 'egreso:Sueldos', 'egreso:Transferencia', 'ingreso:Cobros', 'ingreso:Otros ingresos', 'ingreso:Transferencia', 'ingreso:Ventas',
     ]);
     expect(await datosDe(dueno, 'registro_iniciar')).toEqual({ cuentasCreadas: 0, categoriasCreadas: 0 });
-    expect((await datosDe(dueno, 'categorias_listar', { tipo: 'ingreso' })).items).toHaveLength(3);
+    expect((await datosDe(dueno, 'categorias_listar', { tipo: 'ingreso' })).items).toHaveLength(4);
   });
 });
 

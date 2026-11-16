@@ -1,7 +1,8 @@
-import { and, asc, desc, eq, isNull, lt, ne, sql, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, lt, ne, sql, type SQL } from 'drizzle-orm';
 import { sucursales } from '../../../db/esquema/core-maestros.js';
 import { registroCuentas, registroMovimientos } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import { LIKE_DE_TRANSFERENCIA } from '../domain/transferencia.js';
 
 // Repositorio de cuentas (caja, banco, billetera). Recibe la transacción de `conEmpresa`: la RLS aísla y el
 // `where` por empresa es defensa en profundidad. Un choque de nombre se devuelve, no se lanza.
@@ -10,7 +11,15 @@ export type Cuenta = typeof registroCuentas.$inferSelect;
 export type DatosDeCuenta = { nombre: string; nombreNormalizado: string; tipo: string; sucursalId: string | null; saldoInicialCentimos: number };
 export type CambiosDeCuenta = Partial<Pick<DatosDeCuenta, 'nombre' | 'nombreNormalizado' | 'tipo' | 'sucursalId'>>;
 /** Lo que entró y lo que salió de una cuenta, en céntimos y en positivo. */
-export type Flujo = { ingresos: number; egresos: number; movimientos: number };
+export type Flujo = {
+  ingresos: number;
+  egresos: number;
+  movimientos: number;
+  /** De `ingresos`, lo que entró por transferencias entre cuentas. */
+  entradasPorTransferencia: number;
+  /** De `egresos`, lo que salió por transferencias entre cuentas. */
+  salidasPorTransferencia: number;
+};
 
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(registroCuentas.tenantId, ctx.empresaId);
 
@@ -130,14 +139,16 @@ export async function flujosPorCuenta(
       ingresos: sql<string>`coalesce(sum(${m.montoCentimos}) filter (where ${m.tipo} = 'ingreso'), 0)::bigint`,
       egresos: sql<string>`coalesce(sum(${m.montoCentimos}) filter (where ${m.tipo} = 'egreso'), 0)::bigint`,
       movimientos: sql<string>`count(*)`,
+      entradasT: sql<string>`coalesce(sum(${m.montoCentimos}) filter (where ${m.tipo} = 'ingreso' and ${m.origenRef} like ${LIKE_DE_TRANSFERENCIA}), 0)::bigint`,
+      salidasT: sql<string>`coalesce(sum(${m.montoCentimos}) filter (where ${m.tipo} = 'egreso' and ${m.origenRef} like ${LIKE_DE_TRANSFERENCIA}), 0)::bigint`,
     })
     .from(m)
     .where(and(...filtros))
     .groupBy(m.cuentaId);
-  return new Map(filas.map((f) => [f.cuentaId, { ingresos: aEntero(f.ingresos), egresos: aEntero(f.egresos), movimientos: aEntero(f.movimientos) }]));
+  return new Map(filas.map((f) => [f.cuentaId, { ingresos: aEntero(f.ingresos), egresos: aEntero(f.egresos), movimientos: aEntero(f.movimientos), entradasPorTransferencia: aEntero(f.entradasT), salidasPorTransferencia: aEntero(f.salidasT) }]));
 }
 
-export const SIN_FLUJO: Flujo = { ingresos: 0, egresos: 0, movimientos: 0 };
+export const SIN_FLUJO: Flujo = { ingresos: 0, egresos: 0, movimientos: 0, entradasPorTransferencia: 0, salidasPorTransferencia: 0 };
 
 /** La sucursal existe en esta empresa y no está archivada. */
 export async function existeSucursal(tx: Transaccion, ctx: ContextoDeEmpresa, id: string): Promise<boolean> {
@@ -146,4 +157,17 @@ export async function existeSucursal(tx: Transaccion, ctx: ContextoDeEmpresa, id
     .from(sucursales)
     .where(and(eq(sucursales.tenantId, ctx.empresaId), eq(sucursales.id, id), isNull(sucursales.archivadoEn)));
   return fila !== undefined;
+}
+
+/**
+ * Toma las cuentas con `for update`, SIEMPRE en orden de id: dos transferencias a la vez (aunque vayan en sentidos
+ * opuestos) se turnan sin interbloqueo. Devuelve las que existen en esta empresa.
+ */
+export async function bloquearCuentas(tx: Transaccion, ctx: ContextoDeEmpresa, ids: string[]): Promise<Cuenta[]> {
+  return tx
+    .select()
+    .from(registroCuentas)
+    .where(and(deEmpresa(ctx), inArray(registroCuentas.id, ids)))
+    .orderBy(asc(registroCuentas.id))
+    .for('update');
 }

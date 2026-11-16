@@ -1,3 +1,4 @@
+import { NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA } from '@capaz/shared';
 import type { TipoDeMovimiento } from './movimiento.js';
 
 // Catálogos con los que arranca una empresa (regla 10 de la ficha). Nombres propios de Capaz.
@@ -13,6 +14,9 @@ export const CATEGORIAS_POR_DEFECTO: ReadonlyArray<{ nombre: string; tipo: TipoD
   { nombre: 'Servicios', tipo: 'egreso' },
   { nombre: 'Sueldos', tipo: 'egreso' },
   { nombre: 'Otros egresos', tipo: 'egreso' },
+  // Reservada: la usan las dos patas de una transferencia entre cuentas (no se edita ni se archiva).
+  { nombre: NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, tipo: 'ingreso' },
+  { nombre: NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, tipo: 'egreso' },
 ];
 
 /** Categoría de un abono: «Cobros» si entra dinero, «Pagos» si sale. */
