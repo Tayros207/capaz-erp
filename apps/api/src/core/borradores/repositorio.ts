@@ -102,3 +102,16 @@ export async function marcarDescartado(tx: Transaccion, id: string, usuarioId: s
   if (!fila) throw new Error('No se pudo descartar el borrador.');
   return fila;
 }
+
+/** Cuenta los pendientes de esos módulos (y cuántos son de prioridad alta). Sin módulos, ceros. */
+export async function contarPendientes(tx: Transaccion, modulos: readonly string[]): Promise<{ pendientes: number; deAltaPrioridad: number }> {
+  if (modulos.length === 0) return { pendientes: 0, deAltaPrioridad: 0 };
+  const [fila] = await tx
+    .select({
+      pendientes: sql<number>`count(*)::int`,
+      deAltaPrioridad: sql<number>`(count(*) filter (where ${borradores.prioridad} = 'alta'))::int`,
+    })
+    .from(borradores)
+    .where(and(eq(borradores.estado, 'pendiente'), inArray(borradores.modulo, [...modulos])));
+  return { pendientes: fila?.pendientes ?? 0, deAltaPrioridad: fila?.deAltaPrioridad ?? 0 };
+}

@@ -8,7 +8,10 @@ import {
   formularioDeCorreccion,
   hayCambios,
   mensajeDeRechazoAlAprobar,
+  etiquetaDeArgumento,
+  medidaDeArgumento,
   titularDeHerramienta,
+  valorDeArgumento,
   validarMotivo,
   valorLegible,
 } from './logica.ts';
@@ -83,5 +86,35 @@ describe('rechazos al aprobar', () => {
     expect(mensajeDeRechazoAlAprobar('confirmacion_solo_ui', '')).toMatch(/desde la pantalla/);
     expect(mensajeDeRechazoAlAprobar('confirmacion_vencida', '')).toMatch(/crítica/);
     expect(mensajeDeRechazoAlAprobar('otro', 'Texto del servidor')).toBe('Texto del servidor');
+  });
+});
+
+describe('dinero y cantidades en los argumentos', () => {
+  const deuda = { clienteId: 'c1', totalCentimos: 150000, cantidadMilesimas: 12500, notas: 'x' };
+  it('reconoce la medida por el nombre', () => {
+    expect(medidaDeArgumento('totalCentimos')).toBe('centimos');
+    expect(medidaDeArgumento('cantidadMilesimas')).toBe('milesimas');
+    expect(medidaDeArgumento('total')).toBeNull();
+    expect(etiquetaDeArgumento('totalCentimos')).toBe('Total');
+    expect(etiquetaDeArgumento('precioUnitarioMilesimas')).toBe('Precio unitario');
+  });
+  it('muestra soles y tres decimales', () => {
+    expect(valorDeArgumento('totalCentimos', 150000)).toBe('S/ 1,500.00');
+    expect(valorDeArgumento('cantidadMilesimas', 12500)).toBe('12.500');
+    expect(valorDeArgumento('cantidadMilesimas', 1234567)).toBe('1,234.567');
+    expect(filasDeArgumentos(deuda)).toContainEqual({ clave: 'totalCentimos', etiqueta: 'Total', valor: 'S/ 1,500.00' });
+  });
+  it('edita en soles y vuelve a céntimos', () => {
+    const f = formularioDeCorreccion(deuda);
+    expect(f.totalCentimos).toBe('1,500.00');
+    expect(f.cantidadMilesimas).toBe('12.500');
+    expect(hayCambios(deuda, f)).toBe(false);
+    const r = argumentosCorregidos(deuda, { ...f, totalCentimos: 'S/ 150.50', cantidadMilesimas: '3.5555' });
+    expect(r.ok).toBe(false);
+    expect(argumentosCorregidos(deuda, { ...f, totalCentimos: 'S/ 150.50', cantidadMilesimas: '3.5' })).toEqual({
+      ok: true,
+      args: { clienteId: 'c1', totalCentimos: 15050, cantidadMilesimas: 3500, notas: 'x' },
+    });
+    expect(argumentosCorregidos(deuda, { ...f, totalCentimos: '1.234' })).toEqual({ ok: false, errores: { totalCentimos: expect.any(String) } });
   });
 });

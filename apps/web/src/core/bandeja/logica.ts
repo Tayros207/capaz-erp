@@ -1,4 +1,6 @@
-import type { Borrador } from '@capaz/shared';
+import type { Borrador, Centimos } from '@capaz/shared';
+import { centimosATexto, formatearSoles, textoACentimos } from '../../shared/formato/soles.ts';
+import { milesimasATexto, textoAMilesimas } from '../../shared/formato/milesimas.ts';
 
 // Lógica pura de la bandeja de borradores: textos legibles, edición de argumentos y atajos de teclado.
 
@@ -56,6 +58,33 @@ export function etiquetaDeCampo(clave: string): string {
   return capitalizar(separado);
 }
 
+/** Un argumento cuyo nombre termina en `Centimos` es dinero; en `Milesimas`, una cantidad o precio con tres decimales. */
+export type MedidaDeArgumento = 'centimos' | 'milesimas' | null;
+
+export function medidaDeArgumento(clave: string): MedidaDeArgumento {
+  if (clave.endsWith('Centimos')) return 'centimos';
+  if (clave.endsWith('Milesimas')) return 'milesimas';
+  return null;
+}
+
+/** «totalCentimos» pasa a «Total»: la medida va en el valor («S/ 1,500.00»), no en el nombre. */
+export function etiquetaDeArgumento(clave: string): string {
+  const base = clave.replace(/(Centimos|Milesimas)$/, '');
+  return etiquetaDeCampo(base === '' ? clave : base);
+}
+
+const milesimasConTresDecimales = (n: number) => `${n < 0 ? '-' : ''}${milesimasATexto(Math.abs(n)).replace(/^([\d,]+\.\d{2})$/, (m) => `${m}0`)}`;
+
+/** Valor de un argumento para leerlo: dinero en soles, milésimas con tres decimales, el resto como `valorLegible`. */
+export function valorDeArgumento(clave: string, valor: unknown): string {
+  const medida = medidaDeArgumento(clave);
+  if (typeof valor === 'number' && Number.isSafeInteger(valor)) {
+    if (medida === 'centimos') return formatearSoles(valor as Centimos);
+    if (medida === 'milesimas') return milesimasConTresDecimales(valor);
+  }
+  return valorLegible(valor);
+}
+
 export type TipoDeCampo = 'texto' | 'numero' | 'booleano' | 'json';
 
 export function tipoDeCampo(valor: unknown): TipoDeCampo {
@@ -84,7 +113,7 @@ export type FilaDeArgumento = { clave: string; etiqueta: string; valor: string }
 /** Lo que propone el borrador, campo por campo y en español. Vacío si los argumentos no son un objeto. */
 export function filasDeArgumentos(args: unknown): FilaDeArgumento[] {
   if (!esObjetoPlano(args)) return [];
-  return Object.entries(args).map(([clave, valor]) => ({ clave, etiqueta: etiquetaDeCampo(clave), valor: valorLegible(valor) }));
+  return Object.entries(args).map(([clave, valor]) => ({ clave, etiqueta: etiquetaDeArgumento(clave), valor: valorDeArgumento(clave, valor) }));
 }
 
 /** Claves cuyo valor cambió respecto de lo que propuso el origen (para marcar lo corregido). */
@@ -102,6 +131,11 @@ export function formularioDeCorreccion(args: unknown): Record<string, string> {
     Object.entries(args).map(([k, v]) => {
       if (v === null || v === undefined) return [k, ''];
       if (typeof v === 'object') return [k, JSON.stringify(v, null, 2)];
+      if (typeof v === 'number' && Number.isSafeInteger(v)) {
+        const medida = medidaDeArgumento(k);
+        if (medida === 'centimos') return [k, centimosATexto(v as Centimos)];
+        if (medida === 'milesimas') return [k, milesimasConTresDecimales(v)];
+      }
       return [k, String(v)];
     }),
   );
@@ -125,7 +159,16 @@ export function argumentosCorregidos(original: unknown, editado: Record<string, 
       else if (previo !== undefined) args[clave] = previo;
       continue;
     }
-    if (tipo === 'numero') {
+    const medida = medidaDeArgumento(clave);
+    if (tipo === 'numero' && medida === 'centimos') {
+      const c = textoACentimos(texto);
+      if (c === null) errores[clave] = 'Escribe un monto en soles, con hasta dos decimales.';
+      else args[clave] = c;
+    } else if (tipo === 'numero' && medida === 'milesimas') {
+      const m = textoAMilesimas(texto);
+      if (m === null) errores[clave] = 'Escribe un número con hasta tres decimales.';
+      else args[clave] = m;
+    } else if (tipo === 'numero') {
       const n = Number(texto.replace(',', '.'));
       if (!Number.isFinite(n)) errores[clave] = 'Escribe un número.';
       else args[clave] = n;

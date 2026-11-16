@@ -7,6 +7,7 @@ import { useYo } from '../../shared/sesion/use-yo.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { unir } from '../../shared/ui/unir.ts';
+import { Pendientes } from './pendientes.tsx';
 
 const COLOR_ACENTO: Record<string, string> = {
   esmeralda: 'bg-acento-esmeralda', cian: 'bg-acento-cian', ambar: 'bg-acento-ambar', rosa: 'bg-acento-rosa', gris: 'bg-acento-gris',
@@ -52,6 +53,7 @@ export function PantallaInicio() {
         <h1 className="font-titulo text-2xl font-bold text-texto">Hola, {primerNombre}</h1>
         <p className="text-texto-suave">{yo.empresa.nombre}</p>
       </header>
+      <Pendientes yo={yo} />
       {menu.familias.map((f) => (
         <section key={f.familia} aria-labelledby={`fam-${f.familia}`} className="flex flex-col gap-2">
           <h2 id={`fam-${f.familia}`} className="font-titulo text-lg font-semibold text-texto">{f.nombre}</h2>

@@ -66,7 +66,15 @@ export const borradorAprobadoSchema = z.strictObject({
   resultado: z.unknown(),
 });
 
+/** Lo que espera a la persona: borradores pendientes de módulos a los que puede entrar. */
+export const resumenDeBorradoresSchema = z.strictObject({
+  pendientes: z.number().int().nonnegative(),
+  deAltaPrioridad: z.number().int().nonnegative(),
+});
+export type ResumenDeBorradores = z.infer<typeof resumenDeBorradoresSchema>;
+
 export const contratosDeBorradores = {
+  borradores_resumen: contrato(z.strictObject({}), resumenDeBorradoresSchema),
   borradores_listar: contrato(listarBorradoresSchema, listadoSchema(borradorSchema)),
   borrador_ver: contrato(verBorradorSchema, borradorSchema),
   borrador_corregir: contrato(corregirBorradorSchema, borradorSchema),

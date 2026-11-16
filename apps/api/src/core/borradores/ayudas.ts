@@ -17,6 +17,16 @@ export const AYUDAS = {
     erroresComunes: ['Solo ves los borradores de módulos a los que puedes entrar.'],
     relacionadas: ['borrador_ver', 'borrador_aprobar'],
   },
+  resumen: {
+    titulo: 'Contar lo pendiente de aprobar',
+    paraQueSirve: 'Dice cuántos borradores esperan tu aprobación y cuántos son de prioridad alta.',
+    cuandoUsarla: 'Para avisar en el menú o en Inicio que hay algo por revisar.',
+    campos: [],
+    ejemploTecleado: 'cuántos pendientes tengo',
+    ejemploHablado: 'qué tengo por aprobar',
+    erroresComunes: ['Solo cuenta los borradores de módulos a los que puedes entrar.'],
+    relacionadas: ['borradores_listar'],
+  },
   ver: {
     titulo: 'Ver un borrador',
     paraQueSirve: 'Muestra lo que entendió el sistema y los datos que se guardarían al aprobar.',

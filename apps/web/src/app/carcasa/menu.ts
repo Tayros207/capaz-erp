@@ -82,6 +82,12 @@ export function itemDeModulo(m: ModuloDeYo): ItemDeMenu {
 }
 
 /** ¿Este item se puede abrir? */
+/** «1», «12», «99+»: lo que dice la insignia de pendientes; vacío si no hay ninguno. */
+export function textoDeInsignia(n: number): string {
+  if (n <= 0) return '';
+  return n > 99 ? '99+' : String(n);
+}
+
 export const puedeAbrirse = (i: ItemDeMenu) => i.ruta !== null;
 
 export function menuDesdeYo(yo: Yo): MenuDeYo {

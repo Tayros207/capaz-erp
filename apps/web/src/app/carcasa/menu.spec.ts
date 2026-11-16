@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AccesoDeModulo, ModuloDeYo, MotivoDeAcceso, Yo } from '@capaz/shared';
-import { avisoDeAccesoDenegado, itemDeModulo, menuDesdeYo } from './menu.ts';
+import { avisoDeAccesoDenegado, itemDeModulo, menuDesdeYo, textoDeInsignia } from './menu.ts';
 
 const acceso = (codigo: string, motivo: MotivoDeAcceso, extra: Partial<AccesoDeModulo> = {}): AccesoDeModulo => {
   const entra = ['activo', 'prueba', 'baja_solo_lectura', 'suspendido'].includes(motivo);
@@ -80,5 +80,14 @@ describe('avisoDeAccesoDenegado', () => {
     expect(avisoDeAccesoDenegado(yo, '/m/no')).toMatch(/aún no tiene/);
     expect(avisoDeAccesoDenegado(yo, '/m/fantasma')).toMatch(/no existe/);
     expect(avisoDeAccesoDenegado(yo, '/m/pronto/x')).toMatch(/próximamente/);
+  });
+});
+
+describe('textoDeInsignia', () => {
+  it('vacío sin pendientes, el número, y 99+ para muchos', () => {
+    expect(textoDeInsignia(0)).toBe('');
+    expect(textoDeInsignia(1)).toBe('1');
+    expect(textoDeInsignia(99)).toBe('99');
+    expect(textoDeInsignia(100)).toBe('99+');
   });
 });
