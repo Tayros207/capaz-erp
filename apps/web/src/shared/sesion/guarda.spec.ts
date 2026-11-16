@@ -34,6 +34,15 @@ describe('destinoSegunSesion', () => {
     expect(destinoSegunSesion(base, '/nueva-empresa')).toBeNull();
   });
 
+  it('operador sin empresa: entra a la consola y no se le obliga a crear una empresa', () => {
+    const operador: Yo = { ...base, operador: true };
+    expect(destinoSegunSesion(operador, '/plataforma')).toBeNull();
+    expect(destinoSegunSesion(operador, '/plataforma/planes')).toBeNull();
+    expect(destinoSegunSesion(operador, '/inicio')).toBe('/plataforma');
+    expect(destinoSegunSesion(operador, '/')).toBe('/plataforma');
+    expect(destinoSegunSesion(operador, '/nueva-empresa')).toBeNull();
+  });
+
   it('con empresa: entra, y las pantallas de acceso llevan a /inicio', () => {
     expect(destinoSegunSesion(conEmpresa, '/clientes')).toBeNull();
     expect(destinoSegunSesion(conEmpresa, '/ajustes/usuarios')).toBeNull();

@@ -2,11 +2,12 @@ import type { Yo } from '@capaz/shared';
 
 // Guarda de rutas: función pura que dice adónde redirigir según la sesión, o nulo si se puede entrar.
 // Flujo (fase 3b): sin sesión → /iniciar-sesion; con sesión pero sin empresa → /nueva-empresa;
-// con todo → /inicio. `/kit` (solo existe en desarrollo) es siempre accesible.
+// operador sin empresa → /plataforma; con todo → /inicio. `/kit` (solo existe en desarrollo) es siempre accesible.
 
 export const RUTA_INICIAR_SESION = '/iniciar-sesion';
 export const RUTA_NUEVA_EMPRESA = '/nueva-empresa';
 export const RUTA_INICIO = '/inicio';
+export const RUTA_CONSOLA = '/plataforma';
 
 /** Pública con o sin sesión: quien abre el enlace de restablecimiento puede estar logueado y no debe ser desviado. */
 const RUTA_RESTABLECER = '/restablecer-contrasena';
@@ -27,6 +28,8 @@ export function destinoSegunSesion(yo: Yo | null, ruta: string): string | null {
     if (publica) return null;
     return invitacion ? `${RUTA_INICIAR_SESION}?siguiente=${encodeURIComponent(r)}` : RUTA_INICIAR_SESION;
   }
+  // Un operador de la plataforma puede no tener empresa propia: su sitio es la consola.
+  if (!yo.empresa && yo.operador) return esRuta(r, RUTA_CONSOLA) || esRuta(r, RUTA_NUEVA_EMPRESA) || invitacion ? null : RUTA_CONSOLA;
   if (!yo.empresa) return esRuta(r, RUTA_NUEVA_EMPRESA) || invitacion ? null : RUTA_NUEVA_EMPRESA;
   if (r === '/' || publica || esRuta(r, RUTA_NUEVA_EMPRESA)) return RUTA_INICIO;
   return null;
