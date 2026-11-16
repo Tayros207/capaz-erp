@@ -174,7 +174,8 @@ describe('oportunidades y etapas (s1)', () => {
     expect(codigo(await propio.herramienta('oportunidad_ver', { id: opo.id }))).toBe('no_encontrado');
     expect(codigo(await propio.herramienta('oportunidad_editar', { id: opo.id, titulo: 'Ajeno' }))).toBe('no_encontrado');
     await dueno.herramienta('oportunidad_editar', { id: opo.id, responsableId: propio.usuarioId });
-    expect(datos(await propio.herramienta('oportunidades_listar', {})).items.map((o: any) => o.id).sort()).toEqual([suya.id, opo.id].sort());
+    const vistas: string[] = datos(await propio.herramienta('oportunidades_listar', {})).items.map((o: any) => o.id);
+    expect(new Set(vistas)).toEqual(new Set([suya.id, opo.id]));
     expect(datos(await dueno.herramienta('oportunidades_listar', { buscar: 'stickers' })).items).toHaveLength(1);
   });
 

@@ -21,6 +21,14 @@ const o = crmOportunidades;
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(a.tenantId, ctx.empresaId);
 const visibles = (usuarioId: string): SQL => or(eq(a.creadoPor, usuarioId), eq(a.responsableId, usuarioId), soloPropias(usuarioId))!;
 
+/** Lo mismo que `visibles`, sin la oportunidad en el `from` (para bloquear solo la actividad). */
+const visiblesSinJoin = (usuarioId: string): SQL =>
+  or(
+    eq(a.creadoPor, usuarioId),
+    eq(a.responsableId, usuarioId),
+    sql`exists (select 1 from crm.oportunidades o where o.tenant_id = ${a.tenantId} and o.id = ${a.oportunidadId} and (o.creado_por = ${usuarioId} or o.responsable_id = ${usuarioId}))`,
+  )!;
+
 function consulta(tx: Transaccion, donde: SQL | undefined) {
   return tx
     .select({ a: crmActividades, oportunidadNumero: o.numero, oportunidadAnio: o.anio, oportunidadTitulo: o.titulo, instante: sql<string>`${a.creadoEn}::text` })
@@ -42,12 +50,11 @@ export async function verActividad(tx: Transaccion, ctx: ContextoDeEmpresa, id: 
 /** Toma la actividad con `for update`. `null` si no existe o no está a su alcance. */
 export async function bloquearActividad(tx: Transaccion, ctx: ContextoDeEmpresa, id: string, propios: boolean): Promise<Actividad | null> {
   const [fila] = await tx
-    .select({ a: crmActividades })
+    .select()
     .from(a)
-    .innerJoin(o, and(eq(o.tenantId, a.tenantId), eq(o.id, a.oportunidadId)))
-    .where(and(deEmpresa(ctx), eq(a.id, id), propios ? visibles(ctx.usuarioId) : undefined))
-    .for('update', { of: crmActividades });
-  return fila?.a ?? null;
+    .where(and(deEmpresa(ctx), eq(a.id, id), propios ? visiblesSinJoin(ctx.usuarioId) : undefined))
+    .for('update');
+  return fila ?? null;
 }
 
 export type DatosDeActividad = Pick<Actividad, 'oportunidadId' | 'tipo' | 'asunto'> & Partial<Pick<Actividad, 'nota' | 'venceEl' | 'responsableId'>>;

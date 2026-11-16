@@ -116,6 +116,16 @@ export const contratosDeCrm = {
   oportunidades_listar: contrato(listarOportunidadesSchema, listadoSchema(oportunidadSchema)),
   oportunidad_editar: contrato(editarOportunidadSchema, oportunidadSchema),
   oportunidad_mover: contrato(z.strictObject({ id: z.uuid(), etapaId: z.uuid() }), oportunidadSchema),
+  oportunidad_ganar: contrato(soloId, oportunidadSchema),
+  oportunidad_perder: contrato(z.strictObject({ id: z.uuid(), motivo: texto(300).min(1, { error: 'Indica el motivo.' }) }), oportunidadSchema),
+  oportunidad_reabrir: contrato(soloId, oportunidadSchema),
+  actividad_crear: contrato(crearActividadSchema, actividadSchema),
+  actividad_completar: contrato(z.strictObject({ id: z.uuid(), nota: texto(4000).nullish() }), actividadSchema),
+  actividades_listar: contrato(listarActividadesSchema, listadoSchema(actividadSchema)),
+  crm_resumen: contrato(
+    z.strictObject({ desde: dia, hasta: dia }).refine((v) => v.desde <= v.hasta, { error: '«desde» no puede ser posterior a «hasta».', path: ['hasta'] }),
+    resumenDeCrmSchema,
+  ),
 } as const;
 
 export const eventosDeCrm = {

@@ -138,7 +138,7 @@ export const oportunidadMover = definirHerramienta('oportunidad_mover', {
     ejemploTecleado: 'mover OPO-2026-0001 a Negociación',
     ejemploHablado: 'pasa la oportunidad uno a negociación',
     erroresComunes: ['Una oportunidad cerrada no se mueve: reábrela primero.', 'Para cerrar no se mueve: se marca ganada o perdida.'],
-    relacionadas: ['etapas_listar', 'oportunidad_ver'],
+    relacionadas: ['etapas_listar', 'oportunidad_ganar', 'oportunidad_perder'],
   },
   auditar: auditarOportunidad,
   async ejecutar(args, ctx, tx) {

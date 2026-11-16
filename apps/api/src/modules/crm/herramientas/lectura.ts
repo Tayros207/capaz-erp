@@ -44,7 +44,7 @@ export const oportunidadVer = definirHerramienta('oportunidad_ver', {
     ejemploTecleado: 'ver la oportunidad OPO-2026-0001',
     ejemploHablado: 'abre la oportunidad uno',
     erroresComunes: ['La oportunidad no existe, es de otra empresa o no está a tu cargo.'],
-    relacionadas: ['oportunidades_listar', 'oportunidad_editar'],
+    relacionadas: ['oportunidades_listar', 'oportunidad_editar', 'actividad_crear'],
   },
   async ejecutar(args, ctx, tx) {
     const soloMias = propios(ctx);

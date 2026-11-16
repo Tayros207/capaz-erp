@@ -10,6 +10,8 @@ import { aOportunidadDto } from './mapeo.js';
 
 export const MODULO = 'crm';
 
+export type Rechazo = ReturnType<typeof rechazo>;
+
 /** Alcance «propios» del módulo (R4). */
 export const propios = (ctx: ContextoDeHerramienta): boolean => alcanceDe(ctx, MODULO) === 'propios';
 
