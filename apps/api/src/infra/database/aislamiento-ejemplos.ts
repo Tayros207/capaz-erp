@@ -1,7 +1,7 @@
 // Ejemplos de la prueba de aislamiento (insert mínimo por tabla, `$1` = empresa) con su modo de acceso para `capaz_app`.
 // Separado de `aislamiento.int.spec.ts` para no pasar el máximo de 500 líneas. Orden: la tabla referida antes que la que la referencia.
 
-export type Modo = 'completo' | 'lectura' | 'insercion';
+export type Modo = 'completo' | 'lectura' | 'insercion' | 'plataforma';
 export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   'core.empresa_config': { sql: `insert into core.empresa_config (tenant_id) values ($1)`, modo: 'completo' },
   'core.empresa_modulos': { sql: `insert into core.empresa_modulos (tenant_id, modulo) values ($1, 'ejemplo')`, modo: 'lectura' },
@@ -14,6 +14,8 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into core.empresa_cuenta_eventos (tenant_id, evento, estado_nuevo) values ($1, 'alta', 'activa')`,
     modo: 'lectura',
   },
+  // Solo plataforma: capaz_app no tiene ningún permiso (ni lectura); se prueba aparte, no con las pruebas genéricas.
+  'core.empresa_ficha': { sql: `insert into core.empresa_ficha (tenant_id, actualizado_por) values ($1, 'op1')`, modo: 'plataforma' },
   'core.usuario_modulos': { sql: `insert into core.usuario_modulos (tenant_id, usuario_id, modulo) values ($1, 'u1', 'ejemplo')`, modo: 'completo' },
   'core.solicitudes_modulo': {
     sql: `insert into core.solicitudes_modulo (tenant_id, modulo, usuario_id) values ($1, 'ejemplo', 'u1')`,

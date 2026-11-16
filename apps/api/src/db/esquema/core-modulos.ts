@@ -163,8 +163,39 @@ export const empresaCuenta = core.table(
     motivo: text('motivo'),
     cambiadoEn: timestamp('cambiado_en', { withTimezone: true }).notNull().defaultNow(),
     cambiadoPor: text('cambiado_por'),
+    /** Límite de personas de la empresa entera; nulo = sin límite. */
+    maxUsuarios: integer('max_usuarios'),
   },
-  (t) => [check('empresa_cuenta_estado', sql`${t.estado} IN ('activa', 'prueba', 'pausada', 'baja')`)],
+  (t) => [
+    check('empresa_cuenta_estado', sql`${t.estado} IN ('activa', 'prueba', 'pausada', 'baja')`),
+    check('empresa_cuenta_max_usuarios', sql`${t.maxUsuarios} is null or ${t.maxUsuarios} > 0`),
+  ],
+);
+
+/** Ficha comercial de la cuenta (contacto, RUC, estado comercial, responsable, nota, enlace al CRM). Solo plataforma: capaz_app no la ve. */
+export const empresaFicha = core.table(
+  'empresa_ficha',
+  {
+    tenantId: text('tenant_id').primaryKey(),
+    contactoNombre: text('contacto_nombre'),
+    contactoTelefono: text('contacto_telefono'),
+    contactoCorreo: text('contacto_correo'),
+    ruc: text('ruc'),
+    estadoComercial: text('estado_comercial').notNull().default('prospecto'),
+    responsable: text('responsable'),
+    nota: text('nota'),
+    enlaceCrm: text('enlace_crm'),
+    direccion: text('direccion'),
+    ciudad: text('ciudad'),
+    actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
+    actualizadoPor: text('actualizado_por').notNull(),
+  },
+  (t) => [
+    check('empresa_ficha_ruc', sql`${t.ruc} is null or ${t.ruc} ~ '^[0-9]{11}$'`),
+    check('empresa_ficha_estado', sql`${t.estadoComercial} IN ('prospecto', 'prueba', 'cliente', 'en_riesgo', 'perdido')`),
+    check('empresa_ficha_enlace', sql`${t.enlaceCrm} is null or (length(${t.enlaceCrm}) <= 500 and ${t.enlaceCrm} like 'https://%')`),
+    check('empresa_ficha_largos', sql`length(${t.contactoNombre}) <= 200 and length(${t.contactoTelefono}) <= 50 and length(${t.contactoCorreo}) <= 200 and length(${t.responsable}) <= 200 and length(${t.nota}) <= 4000 and length(${t.direccion}) <= 300 and length(${t.ciudad}) <= 100`),
+  ],
 );
 
 /** Historial de la cuenta: solo inserción, lo escribe un disparador. */
