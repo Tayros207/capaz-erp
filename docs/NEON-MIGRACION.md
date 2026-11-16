@@ -115,6 +115,7 @@ Si quieres automatizar 1 a 6, escribe `apps/api/scripts/verificar-neon.ts` (solo
 | 2026-11-16 | production | 5 (migraciones 0006–0020, autorizado por el usuario; sin ensayo en rama porque production no tenía datos y el migrador corre en una transacción) | OK | `core.migraciones` = 21 = archivos `.sql`; roles `capaz_*` sin superusuario ni BYPASSRLS; 0 tablas con `tenant_id` sin RLS forzada. Rama `ensayo-migraciones` sigue sin decidir |
 | 2026-11-16 | ensayo-0021-0022 (nueva, desde production) | 5 (migraciones 0021–0022, 2 corridas) y verificaciones | OK | `core.migraciones` = 23; 10 verificaciones en verde (roles sin super/bypass/createrole, 0 tablas con `tenant_id` sin RLS forzada y política, 0 funciones `security definer`, 7 columnas de 0021, 2 tablas y 5 funciones de 0022, `uuidv7()`, 0 empresas sin fila de cuenta) |
 | 2026-11-16 | production | 5 (migraciones 0021–0022, 2 corridas) y verificaciones | OK | Mismo resultado que el ensayo; production sin empresas ni usuarios al momento de aplicar. Orden directa del usuario en esta conversación. La rama `ensayo-0021-0022` queda pendiente de que el usuario decida si se borra |
+| 2026-11-16 | ensayo-migraciones y ensayo-0021-0022 | Borrar ramas de ensayo | OK | Autorizado por el usuario en esta conversación; queda solo `production` |
 
 **Informe de cierre** (en este documento, debajo de la tabla): qué se hizo · resultado de cada verificación de la sección 6 · vía que funcionó para el dueño de la base · latencias medidas · qué no se hizo y por qué · qué necesita el usuario.
 
