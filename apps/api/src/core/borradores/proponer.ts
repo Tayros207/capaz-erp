@@ -1,4 +1,4 @@
-import type { NombreDeHerramienta } from '@capaz/shared';
+import { ORIGENES_DE_BORRADOR, type NombreDeHerramienta } from '@capaz/shared';
 import { sql } from 'drizzle-orm';
 import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Transaccion } from '../../infra/database/con-empresa.js';
@@ -9,7 +9,7 @@ export type PropuestaDeBorrador = {
   herramienta: NombreDeHerramienta;
   args: unknown;
   resumen: string;
-  origen: 'voz' | 'texto' | 'agente' | 'regla' | 'conector' | 'importacion';
+  origen: (typeof ORIGENES_DE_BORRADOR)[number];
   origenRef?: string;
   prioridad?: 'normal' | 'alta';
   propuestoPor: string;

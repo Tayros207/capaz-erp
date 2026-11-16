@@ -18,6 +18,7 @@ export const ETIQUETA_DE_ORIGEN: Record<OrigenDeBorrador, string> = {
   regla: 'Regla',
   conector: 'Conector',
   importacion: 'Importación',
+  modulo: 'Otro módulo',
 };
 
 const VERBOS: Record<string, string> = {
