@@ -38,7 +38,9 @@ let miembro = true;
 let candidatos: Awaited<ReturnType<FuenteDeTiempo['candidatos']>> = [];
 
 const PERMISOS = [...TODOS, 'automatizaciones:ver', 'automatizaciones:gestionar'];
-const AHORA = new Date('2026-11-15T15:00:00.000Z'); // 10:00 en Lima
+// 10:00 en Lima del día de hoy en Lima: `regla_probar` usa el reloj real, así que el reloj de la prueba debe caer en el mismo día.
+const DIA_DE_LIMA = new Date(Date.now() - 5 * 3_600_000).toISOString().slice(0, 10);
+const AHORA = new Date(`${DIA_DE_LIMA}T15:00:00.000Z`);
 
 beforeAll(() => {
   app = abrirPool('app');
@@ -335,7 +337,7 @@ describe('disparo por tiempo', () => {
   it('cuenta el día en la zona horaria de la empresa', async () => {
     await reglaDeTiempo(0);
     // 03:00Z del 16 es 22:00 del 15 en Lima; con ahora = 15:00Z del 15 sigue siendo el 15 de allá.
-    candidatos = [{ entidadTipo: 'deuda', entidadId: 'tz', fecha: new Date('2026-11-16T03:00:00Z'), datos: { que: 'tz' } }];
+    candidatos = [{ entidadTipo: 'deuda', entidadId: 'tz', fecha: new Date(AHORA.getTime() + 12 * 3_600_000), datos: { que: 'tz' } }];
     await disparadores.dispararPorTiempo(AHORA);
     expect(await borradores()).toHaveLength(1);
   });
