@@ -22,5 +22,4 @@ export const manifiestoInsumos: ManifiestoDeEntrada = {
   orden: 1,
   acento: 'esmeralda',
   icono: 'insumos',
-  enConstruccion: true,
 };

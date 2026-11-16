@@ -6,9 +6,9 @@
     "semantic_hash": "71b98c39158b9a6ff3f275d45635c59c"
   },
   "apps/api/drizzle.config.ts": {
-    "mtime": 1794788351.0092869,
-    "seen": 1794794523.3414478,
-    "ast_hash": "857f2394bf3d47030719a33663aa737c",
+    "mtime": 1794798241.1102693,
+    "seen": 1794800138.8867004,
+    "ast_hash": "73f05485081d94ee8d5fe7e7d22a297e",
     "semantic_hash": ""
   },
   "apps/api/drizzle/0000_cimientos.sql": {
@@ -36,9 +36,9 @@
     "semantic_hash": "9fc8aee8c3c801aae684c46fd76a41e2"
   },
   "apps/api/drizzle/meta/_journal.json": {
-    "mtime": 1794789072.4625406,
-    "seen": 1794794523.3415792,
-    "ast_hash": "710588d4b678ad848ea0d4aa1e3334a0",
+    "mtime": 1794799067.0386431,
+    "seen": 1794800138.8868203,
+    "ast_hash": "553b28e38f6223be1aed1c4abdb8d1d2",
     "semantic_hash": ""
   },
   "apps/api/nest-cli.json": {
@@ -120,9 +120,9 @@
     "semantic_hash": "8629c864b029444be5691601830ee211"
   },
   "apps/api/src/db/esquema/index.ts": {
-    "mtime": 1794789072.462767,
-    "seen": 1794794523.342235,
-    "ast_hash": "6d6370a11abcfa3da46cea59d0941bf7",
+    "mtime": 1794799067.0391142,
+    "seen": 1794800138.8873234,
+    "ast_hash": "13011bd31bd749999b9fc8868ba0d131",
     "semantic_hash": ""
   },
   "apps/api/src/infra/config/config.module.ts": {
@@ -150,15 +150,15 @@
     "semantic_hash": "a73f077ebca34651d33ed17590795b63"
   },
   "apps/api/src/infra/database/aislamiento.int.spec.ts": {
-    "mtime": 1794789072.4631019,
-    "seen": 1794794523.3422587,
-    "ast_hash": "b2d3d2a0893abc8f1d01fdf44092976c",
+    "mtime": 1794799067.0401142,
+    "seen": 1794800138.8873487,
+    "ast_hash": "77c674ec65100ff7ec81e3c2080b734f",
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/catalogo.int.spec.ts": {
-    "mtime": 1794788351.0114248,
-    "seen": 1794794523.3422618,
-    "ast_hash": "cd8b524cd5ae7d2604c5b0fad8e57d90",
+    "mtime": 1794798241.1136763,
+    "seen": 1794800138.8873508,
+    "ast_hash": "9b9d15fc7ea4f7ea471f9456e54e40a1",
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/con-empresa.int.spec.ts": {
@@ -936,9 +936,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.spec.ts": {
-    "mtime": 1794796288.840199,
-    "seen": 1794796293.8661044,
-    "ast_hash": "f667c10474072899de2dd2410f120e84",
+    "mtime": 1794799866.140602,
+    "seen": 1794800138.8872023,
+    "ast_hash": "f833243613e53f97079d7b3879d79a9b",
     "semantic_hash": ""
   },
   "apps/api/src/core/modulos/catalogo.ts": {
@@ -1026,9 +1026,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/infra/database/contratacion.int.spec.ts": {
-    "mtime": 1794788351.0116174,
-    "seen": 1794794523.3422718,
-    "ast_hash": "7dcff52b039f8072d564d8829d3a422b",
+    "mtime": 1794798241.1138494,
+    "seen": 1794800138.887358,
+    "ast_hash": "54263e3ab7d233ed91549e8729fe43d0",
     "semantic_hash": ""
   },
   "apps/api/src/infra/http/decoradores.ts": {
@@ -1092,15 +1092,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/personal/personal.manifest.ts": {
-    "mtime": 1794780380.3095317,
-    "seen": 1794781771.10453,
-    "ast_hash": "9f53428583d7c40262688ea4e9f19abf",
+    "mtime": 1794799861.4240024,
+    "seen": 1794800138.8875709,
+    "ast_hash": "8bc5a571f8567dbc832fb10789ee6929",
     "semantic_hash": ""
   },
   "apps/api/src/modules/personal/personal.module.ts": {
-    "mtime": 1794780380.3096716,
-    "seen": 1794781771.1045322,
-    "ast_hash": "b74bbfb922cd00a649aeb7507b5e2535",
+    "mtime": 1794799861.3600023,
+    "seen": 1794800138.8875735,
+    "ast_hash": "4d895cee0db5e210f9f4afac0dbaef15",
     "semantic_hash": ""
   },
   "apps/api/src/modules/registro/registro.manifest.ts": {
@@ -1242,9 +1242,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/kit/pagina-kit.tsx": {
-    "mtime": 1794788172.9345284,
-    "seen": 1794794523.344259,
-    "ast_hash": "5f0ce6c063eb2722996d46c43626c84d",
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8877847,
+    "ast_hash": "8108cca6dfd76a0469ca53b965a8eaf7",
     "semantic_hash": ""
   },
   "apps/web/src/app/proveedores.tsx": {
@@ -1422,9 +1422,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/personal/rutas.tsx": {
-    "mtime": 1794780243.5865583,
-    "seen": 1794781771.1047454,
-    "ast_hash": "6423f8375007e3fddda27485a2967e51",
+    "mtime": 1794799861.3710024,
+    "seen": 1794800138.8881946,
+    "ast_hash": "f5ea4ba72fc3919ece738b818ddba540",
     "semantic_hash": ""
   },
   "apps/web/src/modules/registro/rutas.tsx": {
@@ -1782,9 +1782,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/compras.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1048956,
-    "ast_hash": "f8321d7eb90566a7cc2c6a369a1ea323",
+    "mtime": 1794798065.4269085,
+    "seen": 1794800138.8885496,
+    "ast_hash": "7d73aafc27012a77058b7a98cff6d58d",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/conexiones.ts": {
@@ -1794,9 +1794,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/contratos.spec.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1048994,
-    "ast_hash": "5658f4806134914cca52ceeb6610e096",
+    "mtime": 1794798065.4269085,
+    "seen": 1794800138.8885546,
+    "ast_hash": "1e94cf09e45fd44623811de4e308334b",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/cotizador.ts": {
@@ -1824,9 +1824,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/insumos.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049085,
-    "ast_hash": "ee9de67c7eba9b162dfa3ee274243aab",
+    "mtime": 1794798065.4269085,
+    "seen": 1794800138.8885665,
+    "ast_hash": "1cdf421f9d956c229899f80dc6ba6c95",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/intercambio.ts": {
@@ -1854,9 +1854,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/personal.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.1049175,
-    "ast_hash": "a367a27a8ecbba51e4d0c98f4e4730d2",
+    "mtime": 1794799861.3710024,
+    "seen": 1794800138.88858,
+    "ast_hash": "46ce97866d7fc448db4da1ded66610f9",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/plataforma.ts": {
@@ -3696,9 +3696,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/registro/consumidores.ts": {
-    "mtime": 1794794514.9433722,
-    "seen": 1794794523.344019,
-    "ast_hash": "a6e9066436c9d7069dc281674d85802b",
+    "mtime": 1794799401.4978945,
+    "seen": 1794800138.8875868,
+    "ast_hash": "1ce2f1b5e6463017fb8d396923eb097c",
     "semantic_hash": ""
   },
   "apps/api/src/modules/registro/domain/casos-de-referencia.spec.ts": {
@@ -3870,9 +3870,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/registro/herramientas/reportes-y-eventos.int.spec.ts": {
-    "mtime": 1794794514.949472,
-    "seen": 1794794523.344102,
-    "ast_hash": "9364ff129ffbfd651e670f60e460b86d",
+    "mtime": 1794799401.4988945,
+    "seen": 1794800138.8876636,
+    "ast_hash": "27b6042aba005344d8a4c12cc9e7688c",
     "semantic_hash": ""
   },
   "apps/api/src/modules/registro/registro.module.ts": {
@@ -4545,6 +4545,348 @@
     "mtime": 1794797430.1631541,
     "seen": 1794797683.252602,
     "ast_hash": "7f832ac8efa7090cad9b1187f62f78df",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0017_modulos_clasicos_ii_base.sql": {
+    "mtime": 1794798241.110355,
+    "seen": 1794800138.8867564,
+    "ast_hash": "fd4d036a8be6dea6f155f29b8fb78eb9",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0018_insumos.sql": {
+    "mtime": 1794798241.1104813,
+    "seen": 1794800138.8867595,
+    "ast_hash": "c9f94b6540d09c91dc8be98ef0616d8e",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0019_personal.sql": {
+    "mtime": 1794798241.1105757,
+    "seen": 1794800138.886762,
+    "ast_hash": "5bf475ff53811c7ff34330fc77630b35",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/0020_compras.sql": {
+    "mtime": 1794799067.03813,
+    "seen": 1794800138.8867645,
+    "ast_hash": "beb2bdf0d9cdccf47bedf50e84302647",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0017_snapshot.json": {
+    "mtime": 1794798241.1112413,
+    "seen": 1794800138.886811,
+    "ast_hash": "2b006222d31cfd73e0b6abbe20540b2d",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0018_snapshot.json": {
+    "mtime": 1794798241.111616,
+    "seen": 1794800138.8868132,
+    "ast_hash": "d6f5a2eae3d009179527712b3c30d2e7",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0019_snapshot.json": {
+    "mtime": 1794798241.112711,
+    "seen": 1794800138.8868155,
+    "ast_hash": "0b83941c4342a3b819b0d3a27e2d2b5a",
+    "semantic_hash": ""
+  },
+  "apps/api/drizzle/meta/0020_snapshot.json": {
+    "mtime": 1794799067.0386431,
+    "seen": 1794800138.8868177,
+    "ast_hash": "f0c8615a9529e6f06056217693857846",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/compras.ts": {
+    "mtime": 1794799067.0391142,
+    "seen": 1794800138.8872988,
+    "ast_hash": "5404732fb8ff6bd7759bd8be8093f81b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/insumos.ts": {
+    "mtime": 1794798241.1131604,
+    "seen": 1794800138.8873255,
+    "ast_hash": "08a70453c0eb9a2ab354051025c6cf51",
+    "semantic_hash": ""
+  },
+  "apps/api/src/db/esquema/personal.ts": {
+    "mtime": 1794798241.1131604,
+    "seen": 1794800138.8873305,
+    "ast_hash": "7b00978ffae33549b3383e1cd69cbecb",
+    "semantic_hash": ""
+  },
+  "apps/api/src/infra/database/aislamiento-ejemplos.ts": {
+    "mtime": 1794799067.0391142,
+    "seen": 1794800138.8873463,
+    "ast_hash": "b60e84974d737dd5ad3b90959301fd31",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/adelanto.spec.ts": {
+    "mtime": 1794799861.3550024,
+    "seen": 1794800138.8875377,
+    "ast_hash": "9ce8ab57e31f68dfd340731142cb17b1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/adelanto.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.8875396,
+    "ast_hash": "c15bae720fc7a1e8045c31fb09f815ea",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/asistencia.spec.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.8875415,
+    "ast_hash": "e0d2bda3fcc6907a3bd4286d71e5f632",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/asistencia.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.8875432,
+    "ast_hash": "c05a5be9e046b94b328794926502fd8d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/colaborador.spec.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.887545,
+    "ast_hash": "0cb3d7aa56812eb53a4b0d13bed7259c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/colaborador.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.8875473,
+    "ast_hash": "137712443617995fffb486328867e538",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/domain/cursor.ts": {
+    "mtime": 1794799861.355835,
+    "seen": 1794800138.887549,
+    "ast_hash": "4ee26a89f4f893a50b9717409c39cdba",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/adelantos-herramientas.ts": {
+    "mtime": 1794799861.3560023,
+    "seen": 1794800138.8875508,
+    "ast_hash": "c74ea127a313f6d3a9233a483131693a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/adelantos.int.spec.ts": {
+    "mtime": 1794799861.3565683,
+    "seen": 1794800138.8875525,
+    "ast_hash": "16116878c83a5ca3b6cc1d7dd05ecf7b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/asistencias-herramientas.ts": {
+    "mtime": 1794799861.3565683,
+    "seen": 1794800138.8875544,
+    "ast_hash": "adcfc536dcbdf2f7e75c44e889a4206d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/colaboradores-escritura.ts": {
+    "mtime": 1794799861.3565683,
+    "seen": 1794800138.8875558,
+    "ast_hash": "119951a48a2100fe7522f9d53c575bf1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/colaboradores-lectura.ts": {
+    "mtime": 1794799861.3565683,
+    "seen": 1794800138.887558,
+    "ast_hash": "3e7c38747b44a134834a6a50f8a9d8cc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/comunes.ts": {
+    "mtime": 1794799861.3565683,
+    "seen": 1794800138.8875597,
+    "ast_hash": "1ce6196a56dc6a1f0023c58e6fcfe421",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/herramientas-de-personal.ts": {
+    "mtime": 1794799861.3590024,
+    "seen": 1794800138.8875616,
+    "ast_hash": "f651de4581b6ac17ff5a320494a38fa9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/mapeo.ts": {
+    "mtime": 1794799861.3590024,
+    "seen": 1794800138.8875632,
+    "ast_hash": "208ee708dade9ca6d7762ea51be17e2a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/personal-base.int.spec.ts": {
+    "mtime": 1794799861.3590024,
+    "seen": 1794800138.8875651,
+    "ast_hash": "c82c1f3376d4a3bbbb7f9436b464e6f4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/pruebas-de-personal.ts": {
+    "mtime": 1794799861.3590024,
+    "seen": 1794800138.8875668,
+    "ast_hash": "24e7d234cf6e6e1a8b5de756a95eb2b9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/herramientas/resumen-herramienta.ts": {
+    "mtime": 1794799861.3590024,
+    "seen": 1794800138.8875687,
+    "ast_hash": "3164e836e485d84d3f373ea9d0032189",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/repositories/adelantos.repository.ts": {
+    "mtime": 1794799861.3600023,
+    "seen": 1794800138.8875759,
+    "ast_hash": "a1925bea075355e945ac7ff5835db0b8",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/repositories/asistencias.repository.ts": {
+    "mtime": 1794799861.3607478,
+    "seen": 1794800138.8875778,
+    "ast_hash": "480fd329e528a78015d3e1c2fc64f512",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/repositories/colaboradores.repository.ts": {
+    "mtime": 1794799861.3607478,
+    "seen": 1794800138.88758,
+    "ast_hash": "ac60c4c712c55dd1a96bf71d68cdb818",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/repositories/personal.repository.int.spec.ts": {
+    "mtime": 1794799861.3607478,
+    "seen": 1794800138.8875823,
+    "ast_hash": "00dcdd52876414f7a18d16ae79373f83",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/personal/repositories/resumen.repository.ts": {
+    "mtime": 1794799861.3607478,
+    "seen": 1794800138.8875842,
+    "ast_hash": "8b1c0b460d8e05cd8f798f2ee90f5c86",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/herramientas/consumidores-compras-personal.int.spec.ts": {
+    "mtime": 1794799401.4978945,
+    "seen": 1794800138.8876283,
+    "ast_hash": "bb4586b46b36253fc42855519dbd0cf9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/app/kit/kit-ola-3.tsx": {
+    "mtime": 1794797942.973641,
+    "seen": 1794800138.887782,
+    "ast_hash": "e46e22104e03249594ee049c53cef5f1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/acciones.ts": {
+    "mtime": 1794799861.3607478,
+    "seen": 1794800138.8881667,
+    "ast_hash": "e93e836824757555776cccdaf64fae00",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/api.ts": {
+    "mtime": 1794799861.3610022,
+    "seen": 1794800138.8881688,
+    "ast_hash": "5573c5d0c5052335ca233a0bfbdf02bc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/claves.ts": {
+    "mtime": 1794799861.3620024,
+    "seen": 1794800138.8881705,
+    "ast_hash": "4b201bb83a42d479e0daa6718eb60e8e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/fila-asistencia.tsx": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.8881724,
+    "ast_hash": "4adb3366dfa700013a87bc04e14e13fa",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/hoja-adelanto.tsx": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.8881738,
+    "ast_hash": "36978f599b4a6f1ca24a91ae982ac773",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/hoja-colaborador.tsx": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.888176,
+    "ast_hash": "31b8acebbe9d2cbdc37f922e15a0654f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/hoja-correccion.tsx": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.8881776,
+    "ast_hash": "8093c4380a8114302688b825145322cf",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/logica.spec.ts": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.8881795,
+    "ast_hash": "57b0de75be756bc5b1aaf84ef531b828",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/logica.ts": {
+    "mtime": 1794799861.3640022,
+    "seen": 1794800138.8881812,
+    "ast_hash": "e67a6e2c4bd660c0b8b87feb57788e78",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/marco.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.8881834,
+    "ast_hash": "5a388cd7500431ebb9ffc4a24a2912db",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/pantalla-adelantos.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.888185,
+    "ast_hash": "0592bf878493fe5d87b849aa0d6141ed",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/pantalla-asistencia.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.888187,
+    "ast_hash": "34c75a6e1316877747c4390c8f37f016",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/pantalla-colaboradores.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.8881886,
+    "ast_hash": "dbdec3b3121d5e6e389ae140679a81f8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/pantalla-ficha-colaborador.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.8881905,
+    "ast_hash": "4db38590bfdcca98633c2dc63dca4c84",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/personal/pantalla-nuevo-adelanto.tsx": {
+    "mtime": 1794799861.3670022,
+    "seen": 1794800138.8881922,
+    "ast_hash": "a2005eb500ebaa48917bb200a8285653",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/ui/grafico-comun.tsx": {
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8884702,
+    "ast_hash": "56b6cbc3e162ce07be508123ca58fd9d",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/ui/grafico-de-barras.tsx": {
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8884723,
+    "ast_hash": "e3371d3b61811ab3c2a06e2bc27f88c5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/ui/grafico-de-linea.tsx": {
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8884745,
+    "ast_hash": "569c77cd4b1ba0d93421372d43e50360",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/ui/logica-grafico.spec.ts": {
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8884864,
+    "ast_hash": "44307ccc8b4a307d7bf20ed0be67b0e5",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/ui/logica-grafico.ts": {
+    "mtime": 1794797942.9746408,
+    "seen": 1794800138.8884883,
+    "ast_hash": "4993a22aa041fae44c8f2a0b5a90dbe1",
     "semantic_hash": ""
   }
 }
