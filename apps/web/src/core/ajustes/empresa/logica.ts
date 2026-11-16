@@ -24,12 +24,12 @@ export function cambiosDeZona(actual: string, elegida: string): { zonaHoraria: s
 
 const MENSAJES: Record<string, string> = {
   sin_permiso: 'No tienes permiso para cambiar la configuración de la empresa.',
-  argumentos_invalidos: 'Esa zona horaria no es válida.',
   confirmacion_ya_usada: 'Esa confirmación ya se usó. Vuelve a intentarlo.',
   confirmacion_desactualizada: 'La configuración cambió mientras decidías. Revisa y vuelve a intentarlo.',
   confirmacion_vencida: 'La confirmación venció. Vuelve a intentarlo.',
 };
 
+/** Los rechazos conocidos se traducen; el resto (por ejemplo, un RUC inválido) muestra el mensaje del servidor. */
 export function mensajeDeGuardado(codigo: string, mensajeDelServidor: string): string {
   return MENSAJES[codigo] ?? mensajeDelServidor;
 }
