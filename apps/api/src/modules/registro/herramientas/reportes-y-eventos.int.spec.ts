@@ -164,7 +164,7 @@ describe('consumidores de pedidos: solo proponen borradores', () => {
   it('los consumidores y la fuente de tiempo quedaron registrados al arrancar el módulo', () => {
     const consumidores = app.obtener(RegistroDeConsumidores).todos().filter((c) => c.modulo === 'registro');
     expect(consumidores.map((c) => `${c.nombre}:${c.evento}`).sort((a, b) => a.localeCompare(b))).toEqual([
-      'registro_adelanto_registrado:adelanto.registrado', 'registro_compra_recibida:compra.recibida', 'registro_pedido_cancelado:pedido.cancelado', 'registro_pedido_confirmado:pedido.confirmado',
+      'registro_adelanto_registrado:adelanto.registrado', 'registro_compra_recibida:compra.recibida', 'registro_pedido_cancelado:pedido.cancelado', 'registro_pedido_confirmado:pedido.confirmado', 'registro_pedido_entregado:pedido.entregado',
     ]);
     expect(app.obtener(RegistroDeFuentesDeTiempo).obtener('registro.deuda_vence')).toMatchObject({ modulo: 'registro' });
   });

@@ -118,6 +118,46 @@ describe('adelanto.registrado', () => {
   });
 });
 
+describe('pedido.entregado', () => {
+  const pedidoId = randomUUID();
+  const entregado = (id = pedidoId) => ({ id, codigo: 'PED-2026-0009', clienteId: proveedor });
+  const cobros = async (s: Sesion = dueno) => (await borradores(s)).filter((x: any) => x.herramienta === 'deuda_abonar' && x.estado === 'pendiente');
+
+  it('sin deuda viva del pedido no propone nada', { timeout: 120_000 }, async () => {
+    await emitir(A, 'pedido.entregado', entregado());
+    await drenar();
+    expect(await cobros()).toEqual([]);
+  });
+
+  it('con saldo propone UN cobro por el saldo, sin cobrar; la reentrega y otra entrega no duplican', { timeout: 120_000 }, async () => {
+    const deuda = await datosDe(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: proveedor, concepto: 'Pedido PED-2026-0009', totalCentimos: 50_000, origenTipo: 'pedido', origenId: pedidoId });
+    await datosDe(dueno, 'deuda_abonar', { id: deuda.id, montoCentimos: 20_000 });
+    const eventoId = await emitir(A, 'pedido.entregado', entregado());
+    await drenar();
+    const lista = await cobros();
+    expect(lista).toHaveLength(1);
+    expect(lista[0]).toMatchObject({
+      herramienta: 'deuda_abonar', origen: 'modulo', origenRef: `pedido:${pedidoId}`, propuestoPor: 'sistema',
+      resumen: 'Cobrar el saldo de S/ 300.00 del pedido PED-2026-0009',
+      args: { id: deuda.id, montoCentimos: 30_000 },
+    });
+    expect((await tabla(A, 'deudas')).find((d: any) => d.id === deuda.id).abonado_centimos).toBe('20000');
+    await sistema.query('update core.eventos_salida set procesado_en = null where id = $1', [eventoId]);
+    await emitir(A, 'pedido.entregado', entregado());
+    await drenar();
+    expect(await cobros()).toHaveLength(1);
+    expect(await cobros(ajeno)).toEqual([]);
+  });
+
+  it('aprobado el cobro la deuda queda saldada y una nueva entrega ya no propone', { timeout: 120_000 }, async () => {
+    const [b] = await cobros();
+    await datosDe(dueno, 'borrador_aprobar', { id: b.id });
+    await emitir(A, 'pedido.entregado', entregado());
+    await drenar();
+    expect(await cobros()).toEqual([]);
+  });
+});
+
 describe('R5: los consumidores no ejecutan ni escriben', () => {
   it('consumidores.ts no importa el ejecutor ni llama a ejecutarDentro ni inserta en tablas del módulo', () => {
     const fuente = readFileSync(new URL('../consumidores.ts', import.meta.url), 'utf8');

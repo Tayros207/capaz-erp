@@ -1,5 +1,7 @@
 import { EVENTOS, formatearSoles } from '@capaz/shared';
+import { and, eq } from 'drizzle-orm';
 import { proponerBorrador } from '../../core/borradores/proponer.js';
+import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Consumidor } from '../../core/eventos/tipos.js';
 import { normalizarNombre } from './domain/catalogos.js';
 import { categoriaConNombre } from './repositories/categorias.repository.js';
@@ -63,6 +65,35 @@ export const registroPedidoCancelado: Consumidor = {
   },
 };
 
+/** Un pedido entregado con saldo pendiente propone cobrarlo. Sin deuda viva, sin saldo o con un cobro ya propuesto no hace nada. */
+export const registroPedidoEntregado: Consumidor = {
+  nombre: 'registro_pedido_entregado',
+  modulo: 'registro',
+  evento: 'pedido.entregado',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['pedido.entregado'].parse(e.carga);
+    const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PEDIDO, carga.id);
+    if (!viva) return;
+    const saldo = viva.totalCentimos - viva.abonadoCentimos;
+    if (saldo <= 0) return;
+    // Solo lectura: un cobro del saldo aún pendiente en la bandeja no se vuelve a proponer.
+    const [pendiente] = await tx
+      .select({ id: borradores.id })
+      .from(borradores)
+      .where(and(eq(borradores.tenantId, ctx.empresaId), eq(borradores.herramienta, 'deuda_abonar'), eq(borradores.origenRef, `pedido:${carga.id}`), eq(borradores.estado, 'pendiente')))
+      .limit(1);
+    if (pendiente) return;
+    await proponerBorrador(tx, {
+      herramienta: 'deuda_abonar',
+      args: { id: viva.id, montoCentimos: saldo },
+      resumen: `Cobrar el saldo de ${formatearSoles(saldo)} del pedido ${carga.codigo}`,
+      origen: 'modulo',
+      origenRef: `pedido:${carga.id}`,
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
 /** Una compra recibida con importe propone su cuenta por pagar por lo recibido; el origen es la recepción, así no se duplica. */
 export const registroCompraRecibida: Consumidor = {
   nombre: 'registro_compra_recibida',
@@ -119,4 +150,4 @@ export const registroAdelantoRegistrado: Consumidor = {
   },
 };
 
-export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroCompraRecibida, registroAdelantoRegistrado];
+export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado];
