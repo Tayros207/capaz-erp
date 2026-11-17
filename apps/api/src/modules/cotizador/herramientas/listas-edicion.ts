@@ -1,7 +1,7 @@
 import { rechazo, type ArgsDe, type ErrorDeRespuesta } from '@capaz/shared';
 import type { Transaccion, ContextoDeEmpresa } from '../../../infra/database/con-empresa.js';
 import { evaluarReferencias, normalizarNombre, type EstadoDePrecios, cambiaronLosPrecios } from '../domain/lista.js';
-import { existeProductoVivo, listaActivaConNombre, type CambiosDeLista, type ListaDePrecio } from '../repositories/listas.repository.js';
+import { listaActivaConNombre, listaActivaDeProducto, productoVivo, type CambiosDeLista, type ListaDePrecio } from '../repositories/listas.repository.js';
 
 // Prepara el cambio de una lista: lo comparten `resumir` (antes de confirmar) y `ejecutar`, para que lo que se
 // confirma sea lo que se guarda. Solo lee.
@@ -10,6 +10,8 @@ export const NO_EXISTE_LA_LISTA = 'No existe esa lista de precios.';
 
 export const candidataDeLista = (f: ListaDePrecio) => ({ id: f.id, nombre: f.nombre, detalle: f.unidad });
 export const nombreRepetido = (f: ListaDePrecio) => rechazo('conflicto', `Ya existe una lista llamada «${f.nombre}».`, [candidataDeLista(f)]);
+
+export const productoYaTieneLista = (f: ListaDePrecio) => rechazo('conflicto', `Ese producto ya tiene la lista activa «${f.nombre}».`, [candidataDeLista(f)]);
 
 export const estadoDePrecios = (f: EstadoDePrecios): EstadoDePrecios => ({
   p100Centimos: f.p100Centimos,
@@ -45,7 +47,11 @@ export async function prepararEdicion(
   }
   if (args.unidad !== undefined) cambios.unidad = args.unidad;
   if (args.productoId !== undefined) {
-    if (args.productoId !== null && !(await existeProductoVivo(tx, ctx, args.productoId))) return rechazo('no_encontrado', 'No existe ese producto o está archivado.');
+    if (args.productoId !== null) {
+      if (!(await productoVivo(tx, ctx, args.productoId))) return rechazo('no_encontrado', 'No existe ese producto o está archivado.');
+      const otra = await listaActivaDeProducto(tx, ctx, args.productoId, actual.id);
+      if (otra) return productoYaTieneLista(otra);
+    }
     cambios.productoId = args.productoId;
   }
   const referenciasCambian = despues.p100Centimos !== antes.p100Centimos || despues.p1000Centimos !== antes.p1000Centimos || despues.p5000Centimos !== antes.p5000Centimos;

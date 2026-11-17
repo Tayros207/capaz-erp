@@ -13,4 +13,10 @@ export const GRUPOS_DE_UNIDADES: { grupo: string; unidades: { valor: string; nom
   { grupo: 'Volumen', unidades: [{ valor: 'ml', nombre: 'Mililitro' }, { valor: 'l', nombre: 'Litro' }, { valor: 'gal', nombre: 'Galón' }] },
 ];
 
-export const esUnidadConocida = (valor: string): boolean => GRUPOS_DE_UNIDADES.some((g) => g.unidades.some((u) => u.valor === valor));
+/** La unidad de la lista que coincide sin mirar mayúsculas (el catálogo guarda «und» aunque se haya elegido «UND»), o `undefined`. */
+export const unidadConocida = (valor: string): string | undefined => {
+  const v = valor.trim().toLowerCase();
+  return GRUPOS_DE_UNIDADES.flatMap((g) => g.unidades).find((u) => u.valor.toLowerCase() === v)?.valor;
+};
+
+export const esUnidadConocida = (valor: string): boolean => unidadConocida(valor) !== undefined;

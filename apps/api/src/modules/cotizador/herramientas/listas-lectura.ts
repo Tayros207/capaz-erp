@@ -5,7 +5,7 @@ import { decodificarCursorDeLista } from '../domain/cursor.js';
 import { corteParaRevisar, normalizarNombre } from '../domain/lista.js';
 import { listarListas, verLista } from '../repositories/listas.repository.js';
 import { ID_DE_EJEMPLO, MODULO } from './comun.js';
-import { aListaDto } from './mapeo.js';
+import { listaADto, listasADto } from './listas-respuesta.js';
 
 // Lecturas de la lista de precios. Orden por (nombre normalizado, id).
 
@@ -20,6 +20,8 @@ export const listasPrecioListar = definirHerramienta('listas_precio_listar', {
     campos: [
       { nombre: 'buscar', queSeAnota: 'Parte del nombre (opcional).', ejemplo: 'volantes' },
       { nombre: 'estado', queSeAnota: 'activas, archivadas o todas (por defecto, activas).', ejemplo: 'activas' },
+      { nombre: 'productoId', queSeAnota: 'Solo la lista de ese producto del catálogo (opcional).', ejemplo: ID_DE_EJEMPLO },
+      { nombre: 'soloSinProducto', queSeAnota: 'true para ver solo las listas que aún no están enlazadas a un producto.', ejemplo: 'false' },
       { nombre: 'soloPorRevisar', queSeAnota: 'true para ver solo los precios con más de 90 días sin fijar.', ejemplo: 'false' },
     ],
     ejemploTecleado: 'ver los precios por revisar',
@@ -34,13 +36,15 @@ export const listasPrecioListar = definirHerramienta('listas_precio_listar', {
     const buscar = args.buscar ? normalizarNombre(args.buscar) : '';
     const r = await listarListas(tx, ctx, {
       ...(buscar && { buscar }),
+      ...(args.productoId && { productoId: args.productoId }),
+      soloSinProducto: args.soloSinProducto,
       estado: args.estado,
       porRevisarAntesDe: args.soloPorRevisar ? corteParaRevisar(hoy.dia) : null,
       zona: hoy.zona,
       cursor,
       limite: args.limite,
     });
-    return exito({ items: r.items.map((f) => aListaDto(f, hoy)), siguiente: r.siguiente });
+    return exito({ items: await listasADto(tx, ctx, r.items, hoy), siguiente: r.siguiente });
   },
 });
 
@@ -60,6 +64,6 @@ export const listaPrecioVer = definirHerramienta('lista_precio_ver', {
   },
   async ejecutar(args, ctx, tx) {
     const f = await verLista(tx, ctx, args.id);
-    return f ? exito(aListaDto(f, await hoyDeLaEmpresa(tx))) : rechazo('no_encontrado', 'No existe esa lista de precios.');
+    return f ? exito(await listaADto(tx, ctx, f, await hoyDeLaEmpresa(tx))) : rechazo('no_encontrado', 'No existe esa lista de precios.');
   },
 });

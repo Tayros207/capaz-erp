@@ -10,6 +10,7 @@ import { confirmar } from '../../shared/ui/confirmar.ts';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import { Ficha } from '../../shared/ui/datos/ficha.tsx';
 import { useFicha } from '../../shared/ui/datos/use-ficha.ts';
+import { EnlaceAlCotizador } from '../../shared/ui/enlace-al-cotizador.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
@@ -107,6 +108,7 @@ function Contenido({ producto }: { producto: ProductoDto }) {
           <>
             {archivado ? <Insignia tono="neutro">Archivado</Insignia> : null}
             {puedeEditar ? <Boton variante={archivado ? 'secundario' : 'peligro'} onClick={() => void alternarArchivo()}>{archivado ? 'Restaurar' : 'Archivar'}</Boton> : null}
+            <EnlaceAlCotizador productoId={producto.id} />
           </>
         }
       />

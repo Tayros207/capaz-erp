@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { Link, useSearchParams } from 'react-router';
 import type { ListaDePrecioDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -20,20 +21,27 @@ import { resumenDeLista } from './logica.ts';
 import { Cargando, SeccionesDelCotizador } from './marco.tsx';
 import { usePermisosDelCotizador } from './use-cotizador.ts';
 
-type Filtro = 'activas' | 'revisar' | 'archivadas';
-const ETIQUETA: Record<Filtro, string> = { activas: 'Activas', revisar: 'Por revisar', archivadas: 'Archivadas' };
+type Filtro = 'activas' | 'revisar' | 'sin_producto' | 'archivadas';
+const ETIQUETA: Record<Filtro, string> = { activas: 'Activas', revisar: 'Por revisar', sin_producto: 'Sin producto', archivadas: 'Archivadas' };
+
+const vacioTitulo = (f: Filtro): string => (f === 'revisar' ? 'Ningún precio por revisar' : f === 'sin_producto' ? 'Todas las listas tienen producto' : 'Todavía no hay precios');
+const vacioDescripcion = (f: Filtro): string =>
+  f === 'revisar' ? 'Todos tus precios se fijaron hace poco.' : f === 'sin_producto' ? 'No quedan listas heredadas por enlazar al catálogo.' : 'Los productos del catálogo se cotizan con su precio. Aquí anotas precios por escala (100, 1.000 y 5.000).';
 
 /** Lista de precios: precios de referencia por producto, con la marca «Revisar» si hace mucho que no se fijan. */
 export function PantallaPrecios() {
   const { configurar } = usePermisosDelCotizador();
+  const [parametros, setParametros] = useSearchParams();
+  /** Desde la ficha de un producto se llega con `?producto=<id>`: solo se ve la lista de ese producto. */
+  const productoId = parametros.get('producto') ?? undefined;
   const [filtro, setFiltro] = useState<Filtro>('activas');
   const [texto, setTexto] = useState('');
   const buscar = useRetardo(texto.trim());
   const [hoja, setHoja] = useState<{ lista: ListaDePrecioDto | null } | null>(null);
   const estado: EstadoDeListas = filtro === 'archivadas' ? 'archivadas' : 'activas';
   const consulta = useInfiniteQuery({
-    queryKey: [...CLAVE_COTIZADOR, 'listas', filtro, buscar],
-    queryFn: async ({ pageParam }) => datosOError(await listarListas({ estado, soloPorRevisar: filtro === 'revisar', ...(buscar !== '' && { buscar }) }, pageParam)),
+    queryKey: [...CLAVE_COTIZADOR, 'listas', filtro, buscar, productoId ?? null],
+    queryFn: async ({ pageParam }) => datosOError(await listarListas({ estado, soloPorRevisar: filtro === 'revisar', soloSinProducto: filtro === 'sin_producto', ...(productoId && { productoId }), ...(buscar !== '' && { buscar }) }, pageParam)),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (p) => p.siguiente ?? undefined,
   });
@@ -45,6 +53,7 @@ export function PantallaPrecios() {
       celda: (l) => (
         <span className="inline-flex flex-wrap items-center gap-2">
           {l.nombre}
+          {l.productoId ? <Link to={`/productos/${l.productoId}`} className="rounded-chip text-sm font-medium text-texto-suave underline-offset-2 hover:text-accion hover:underline">Producto: {l.productoNombre ?? 'ver ficha'}</Link> : null}
           {l.porRevisar ? <Insignia tono="aviso">Revisar</Insignia> : null}
           {l.archivadoEn ? <Insignia tono="neutro">Archivada</Insignia> : null}
         </span>
@@ -70,6 +79,12 @@ export function PantallaPrecios() {
     <div className="flex flex-col gap-4">
       <EncabezadoDePagina titulo="Lista de precios" accionPrincipal={nueva} />
       <SeccionesDelCotizador />
+      {productoId ? (
+        <p className="flex flex-wrap items-center gap-2 text-sm text-texto-suave">
+          Mostrando solo la lista de un producto.
+          <Boton variante="fantasma" onClick={() => setParametros({})}>Ver todas</Boton>
+        </p>
+      ) : null}
       <div className="grid gap-3 sm:grid-cols-[14rem_1fr]">
         <CampoSelect etiqueta="Mostrar" value={filtro} onChange={(e) => setFiltro(e.target.value as Filtro)}>
           {(Object.keys(ETIQUETA) as Filtro[]).map((f) => <option key={f} value={f}>{ETIQUETA[f]}</option>)}
@@ -87,7 +102,7 @@ export function PantallaPrecios() {
             columnas={columnas}
             filas={filas}
             clave={(l) => l.id}
-            vacio={<EstadoVacio titulo={filtro === 'revisar' ? 'Ningún precio por revisar' : 'Todavía no hay precios'} descripcion={filtro === 'revisar' ? 'Todos tus precios se fijaron hace poco.' : 'Anota tus precios para cotizar en segundos.'} icono="caja" accion={filtro === 'activas' ? nueva : undefined} />}
+            vacio={<EstadoVacio titulo={vacioTitulo(filtro)} descripcion={vacioDescripcion(filtro)} icono="caja" accion={filtro === 'activas' ? nueva : undefined} />}
           />
           <CargarMas cursor={consulta.hasNextPage ? (consulta.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={consulta.isFetchingNextPage} onCargar={() => void consulta.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
         </>

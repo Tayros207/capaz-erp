@@ -9,8 +9,9 @@ import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
 import { cotizacionAceptar, cotizacionAnular, cotizacionMarcarEnviada, cotizacionRechazar } from './cotizaciones-estado.js';
 import { cotizacionesListar, cotizacionVer, cotizadorResumen } from './cotizaciones-lectura.js';
 import { precioConsultar } from './precio-consultar.js';
+import { cotizadorProductosBuscar } from './productos-buscar.js';
 
-/** Once de s1 (precios y configuración) y doce de s2 (cotizaciones); R15 cuenta por sesión: máximo 13. */
+/** Once de s1 (precios y configuración), doce de s2 (cotizaciones) y el buscador del catálogo; R15 cuenta por sesión: máximo 13. */
 export const HERRAMIENTAS_DE_COTIZADOR = [
   cotizadorIniciar,
   cotizadorConfiguracionVer,
@@ -21,6 +22,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   listaPrecioEditar,
   listaPrecioArchivar,
   precioConsultar,
+  cotizadorProductosBuscar,
   ajustesClienteListar,
   ajusteClienteFijar,
   cotizacionCrear,

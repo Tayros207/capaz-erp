@@ -10,9 +10,10 @@ import type { ListaDePrecio } from '../repositories/listas.repository.js';
 
 const iso = (f: Date | null): string | null => (f ? f.toISOString() : null);
 
-export const aListaDto = (f: ListaDePrecio, hoy: HoyDeLaEmpresa): ListaDePrecioDto => ({
+export const aListaDto = (f: ListaDePrecio, hoy: HoyDeLaEmpresa, productoNombre: string | null = null): ListaDePrecioDto => ({
   id: f.id,
   productoId: f.productoId,
+  productoNombre,
   nombre: f.nombre,
   unidad: f.unidad,
   p100Centimos: f.p100Centimos,

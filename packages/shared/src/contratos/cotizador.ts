@@ -52,6 +52,8 @@ export type ConfiguracionDeCotizadorDto = z.infer<typeof configuracionDeCotizado
 export const listaDePrecioSchema = z.strictObject({
   id: z.string(),
   productoId: z.string().nullable(),
+  /** Nombre del producto del catálogo enlazado (nulo si la lista no tiene producto). */
+  productoNombre: z.string().nullable(),
   nombre: z.string(),
   unidad: z.string(),
   p100Centimos: z.number().int(),
@@ -70,9 +72,25 @@ export const listaDePrecioSchema = z.strictObject({
 export type ListaDePrecioDto = z.infer<typeof listaDePrecioSchema>;
 
 const referencias = { p100Centimos: positivo, p1000Centimos: positivo, p5000Centimos: positivo };
+/** Un resultado de `cotizador_productos_buscar`: de dónde sale el precio con que se cotiza. */
+export const ORIGENES_DE_PRECIO = ['lista', 'catalogo', 'sin_precio'] as const;
+export const productoCotizableSchema = z.strictObject({
+  productoId: z.string().nullable(),
+  listaId: z.string().nullable(),
+  nombre: z.string(),
+  unidad: z.string(),
+  origen: z.enum(ORIGENES_DE_PRECIO),
+  lista: listaDePrecioSchema.optional(),
+  /** Solo con `origen = 'catalogo'`: el precio del catálogo ya pasado a sin IGV. */
+  precioCatalogoSinIgvMilesimas: z.number().int().optional(),
+  afectoIgv: z.boolean().optional(),
+});
+export type ProductoCotizableDto = z.infer<typeof productoCotizableSchema>;
+
 export const crearListaDePrecioSchema = z.strictObject({
   nombre,
-  unidad: texto(20).min(1).default('unidad'),
+  /** Sin unidad: la del producto enlazado o, si no hay, «unidad». */
+  unidad: texto(20).min(1).optional(),
   productoId: z.uuid().nullish(),
   ...referencias,
   modoIntermedio: z.enum(MODOS_INTERMEDIOS).default('curva'),
@@ -304,8 +322,16 @@ export const contratosDeCotizador = {
       buscar: texto(100).optional(),
       estado: z.enum(['activas', 'archivadas', 'todas']).default('activas'),
       soloPorRevisar: z.boolean().default(false),
+      /** Solo la lista de este producto del catálogo. */
+      productoId: z.uuid().optional(),
+      /** Solo las listas sin producto (las heredadas), para enlazarlas al catálogo. */
+      soloSinProducto: z.boolean().default(false),
     }),
     listadoSchema(listaDePrecioSchema),
+  ),
+  cotizador_productos_buscar: contrato(
+    z.strictObject({ texto: texto(120).min(1, { error: 'Escribe qué buscar.' }), limite: z.number().int().min(1).max(20).default(8) }),
+    z.strictObject({ items: z.array(productoCotizableSchema) }),
   ),
   lista_precio_ver: contrato(soloId, listaDePrecioSchema),
   lista_precio_crear: contrato(crearListaDePrecioSchema, listaDePrecioSchema),

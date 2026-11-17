@@ -4,10 +4,10 @@ import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { evaluarReferencias, normalizarNombre, resumenDeCambioDePrecios } from '../domain/lista.js';
 import { asegurarConfiguracion } from '../repositories/configuracion.repository.js';
-import { archivarLista, bloquearLista, crearLista, editarLista, existeProductoVivo, listaActivaConNombre, verLista, type ListaDePrecio } from '../repositories/listas.repository.js';
+import { archivarLista, bloquearLista, crearLista, editarLista, listaActivaConNombre, listaActivaDeProducto, productoVivo, verLista, type ListaDePrecio } from '../repositories/listas.repository.js';
 import { ID_DE_EJEMPLO, MODULO, rechazoDe } from './comun.js';
-import { nombreRepetido, NO_EXISTE_LA_LISTA, prepararEdicion } from './listas-edicion.js';
-import { aListaDto } from './mapeo.js';
+import { nombreRepetido, NO_EXISTE_LA_LISTA, prepararEdicion, productoYaTieneLista } from './listas-edicion.js';
+import { listaADto } from './listas-respuesta.js';
 
 // Escrituras de la lista de precios: crear, editar (crítica) y archivar. Los precios van SIN IGV.
 
@@ -55,14 +55,19 @@ export const listaPrecioCrear = definirHerramienta('lista_precio_crear', {
     await asegurarConfiguracion(tx, ctx);
     const v = evaluarReferencias(args, args.confirmarUnitarioNoBaja);
     if (!v.ok) return rechazoDe(v);
-    if (args.productoId && !(await existeProductoVivo(tx, ctx, args.productoId))) return rechazo('no_encontrado', 'No existe ese producto o está archivado.');
+    const producto = args.productoId ? await productoVivo(tx, ctx, args.productoId) : null;
+    if (args.productoId && !producto) return rechazo('no_encontrado', 'No existe ese producto o está archivado.');
+    if (producto) {
+      const deProducto = await listaActivaDeProducto(tx, ctx, producto.id);
+      if (deProducto) return productoYaTieneLista(deProducto);
+    }
     const normalizado = normalizarNombre(args.nombre);
     const otra = await listaActivaConNombre(tx, ctx, normalizado);
     if (otra) return nombreRepetido(otra);
     const r = await crearLista(tx, ctx, {
       nombre: args.nombre,
       nombreNormalizado: normalizado,
-      unidad: args.unidad,
+      unidad: args.unidad ?? producto?.unidad.slice(0, 20) ?? 'unidad',
       productoId: args.productoId ?? null,
       p100Centimos: args.p100Centimos,
       p1000Centimos: args.p1000Centimos,
@@ -71,7 +76,7 @@ export const listaPrecioCrear = definirHerramienta('lista_precio_crear', {
       precioMinimoCentimos: args.precioMinimoCentimos ?? null,
       aConfirmado: v.aConfirmado,
     });
-    return r.creada ? exito(aListaDto(r.lista, await hoyDeLaEmpresa(tx))) : nombreRepetido(r.existente);
+    return r.creada ? exito(await listaADto(tx, ctx, r.lista, await hoyDeLaEmpresa(tx))) : nombreRepetido(r.existente);
   },
 });
 
@@ -112,7 +117,7 @@ export const listaPrecioEditar = definirHerramienta('lista_precio_editar', {
     if (!actual) return rechazo('no_encontrado', NO_EXISTE_LA_LISTA);
     const p = await prepararEdicion(tx, ctx, actual, args);
     if (!p.ok) return p;
-    return exito(aListaDto(await editarLista(tx, ctx, actual.id, p.valor.cambios), await hoyDeLaEmpresa(tx)));
+    return exito(await listaADto(tx, ctx, await editarLista(tx, ctx, actual.id, p.valor.cambios), await hoyDeLaEmpresa(tx)));
   },
 });
 
@@ -134,6 +139,6 @@ export const listaPrecioArchivar = definirHerramienta('lista_precio_archivar', {
   async ejecutar(args, ctx, tx) {
     await asegurarConfiguracion(tx, ctx);
     const f = await archivarLista(tx, ctx, args.id);
-    return f ? exito(aListaDto(f, await hoyDeLaEmpresa(tx))) : rechazo('no_encontrado', NO_EXISTE_LA_LISTA);
+    return f ? exito(await listaADto(tx, ctx, f, await hoyDeLaEmpresa(tx))) : rechazo('no_encontrado', NO_EXISTE_LA_LISTA);
   },
 });

@@ -8,6 +8,9 @@ describe('CampoUnidad', () => {
     expect(html).not.toContain('Otra unidad');
     expect(html).toContain('Otra…');
   });
+  it('«und» en minúsculas (como la guarda el catálogo) también es una unidad conocida', () => {
+    expect(renderToStaticMarkup(<CampoUnidad valor="und" alCambiar={() => {}} />)).not.toContain('Otra unidad');
+  });
   it('con una unidad desconocida abre «Otra…» y muestra el campo libre con su valor', () => {
     const html = renderToStaticMarkup(<CampoUnidad valor="bobina" alCambiar={() => {}} />);
     expect(html).toContain('Otra unidad');

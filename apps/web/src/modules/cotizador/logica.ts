@@ -1,8 +1,9 @@
 import {
   CANTIDAD_MAXIMA_DE_LISTA_MILESIMAS, CANTIDAD_MINIMA_DE_LISTA_MILESIMAS, centimosSchema, formatearSoles,
-  type Centimos, type ConfiguracionDeCotizadorDto, type EntradaDe, type ListaDePrecioDto,
+  type Centimos, type ConfiguracionDeCotizadorDto, type EntradaDe, type LineaDeCotizacionEntrada, type ListaDePrecioDto, type ProductoCotizableDto,
 } from '@capaz/shared';
 import { formatearCantidad } from '../../shared/formato/milesimas.ts';
+import { lineaManualDeCatalogo } from './logica-catalogo.ts';
 
 // Lógica pura del Cotizador (sin React): formularios, validación y armado de argumentos. Los precios y totales
 // los calcula el servidor; aquí solo se da formato y se prepara lo que se envía.
@@ -19,6 +20,8 @@ export type ClaveDeReferencia = (typeof REFERENCIAS)[number]['clave'];
 // --- Lista de precios ---
 
 export type FormularioDeLista = {
+  /** Producto del catálogo al que se enlaza (opcional). */
+  producto: { id: string; nombre: string } | null;
   nombre: string;
   unidad: string;
   p100: Centimos | null;
@@ -29,10 +32,11 @@ export type FormularioDeLista = {
 };
 export type ErroresDeLista = Partial<Record<'nombre' | 'unidad' | 'p100' | 'p1000' | 'p5000' | 'minimo', string>>;
 
-export const LISTA_VACIA: FormularioDeLista = { nombre: '', unidad: 'unidad', p100: null, p1000: null, p5000: null, modo: 'curva', minimo: null };
+export const LISTA_VACIA: FormularioDeLista = { producto: null, nombre: '', unidad: 'unidad', p100: null, p1000: null, p5000: null, modo: 'curva', minimo: null };
 
 export function formularioDeLista(l: ListaDePrecioDto): FormularioDeLista {
   return {
+    producto: l.productoId ? { id: l.productoId, nombre: l.productoNombre ?? l.nombre } : null,
     nombre: l.nombre,
     unidad: l.unidad,
     p100: centimosSchema.parse(l.p100Centimos),
@@ -72,6 +76,7 @@ export function argumentosDeCreacionDeLista(f: FormularioDeLista, confirmar: boo
   return {
     nombre: f.nombre.trim(),
     unidad: f.unidad.trim(),
+    ...(f.producto && { productoId: f.producto.id }),
     p100Centimos: f.p100 ?? 0,
     p1000Centimos: f.p1000 ?? 0,
     p5000Centimos: f.p5000 ?? 0,
@@ -86,6 +91,7 @@ export function argumentosDeEdicionDeLista(original: ListaDePrecioDto, f: Formul
   const cambios: Record<string, unknown> = {};
   if (f.nombre.trim() !== original.nombre) cambios.nombre = f.nombre.trim();
   if (f.unidad.trim() !== original.unidad) cambios.unidad = f.unidad.trim();
+  if ((f.producto?.id ?? null) !== original.productoId) cambios.productoId = f.producto?.id ?? null;
   if (f.p100 !== original.p100Centimos) cambios.p100Centimos = f.p100;
   if (f.p1000 !== original.p1000Centimos) cambios.p1000Centimos = f.p1000;
   if (f.p5000 !== original.p5000Centimos) cambios.p5000Centimos = f.p5000;
@@ -116,11 +122,13 @@ export function validarCantidadRapida(milesimas: number | null): string | undefi
 export const tituloDeCotizacionRapida = (lista: Pick<ListaDePrecioDto, 'nombre'>, cliente: string | null): string =>
   (cliente ? `${lista.nombre} · ${cliente}` : lista.nombre).slice(0, 200);
 
-export function argumentosDeCotizacionRapida(listaId: string, nombreDeLista: string, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null): EntradaDe<'cotizacion_crear'> {
+/** Con lista (de producto o heredada) la línea es de lista y el servidor calcula el precio; con precio de catálogo, manual con su `productoId`. */
+export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null): EntradaDe<'cotizacion_crear'> {
+  const linea: LineaDeCotizacionEntrada = elegido.origen === 'lista' && elegido.listaId ? { tipo: 'lista', listaId: elegido.listaId, cantidadMilesimas } : lineaManualDeCatalogo(elegido, cantidadMilesimas);
   return {
-    titulo: tituloDeCotizacionRapida({ nombre: nombreDeLista }, cliente?.nombre ?? null),
+    titulo: tituloDeCotizacionRapida({ nombre: elegido.nombre }, cliente?.nombre ?? null),
     ...(cliente && { clienteId: cliente.id }),
-    lineas: [{ tipo: 'lista', listaId, cantidadMilesimas }],
+    lineas: [linea],
     conOpciones: false,
   };
 }

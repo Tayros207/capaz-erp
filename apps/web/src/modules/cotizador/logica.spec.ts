@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { centimosSchema, type ListaDePrecioDto } from '@capaz/shared';
+import { centimosSchema, type ListaDePrecioDto, type ProductoCotizableDto } from '@capaz/shared';
 import {
   LISTA_VACIA, argumentosDeAjuste, argumentosDeConfiguracion, argumentosDeCotizacionRapida, argumentosDeCreacionDeLista, argumentosDeEdicionDeLista,
   formularioDeConfiguracion, formularioDeLista, pideConfirmarUnitario, rutaDeCotizacion, soles, textoDeAjuste, unitarioDeReferencia, validarAjusteDeCliente,
@@ -8,7 +8,7 @@ import {
 
 const c = (n: number) => centimosSchema.parse(n);
 const lista = (extra: Partial<ListaDePrecioDto> = {}): ListaDePrecioDto => ({
-  id: 'l1', productoId: null, nombre: 'Volantes', unidad: 'millar', p100Centimos: 4500, p1000Centimos: 25_000, p5000Centimos: 90_000, modoIntermedio: 'curva',
+  id: 'l1', productoId: null, productoNombre: null, nombre: 'Volantes', unidad: 'millar', p100Centimos: 4500, p1000Centimos: 25_000, p5000Centimos: 90_000, modoIntermedio: 'curva',
   precioMinimoCentimos: null, aConfirmado: false, preciosFijadosEn: '2026-11-01T10:00:00.000Z', porRevisar: false, archivadoEn: null,
   creadoEn: '2026-11-01T10:00:00.000Z', actualizadoEn: '2026-11-01T10:00:00.000Z', ...extra,
 });
@@ -54,12 +54,32 @@ describe('cotización rápida', () => {
     expect(validarCantidadRapida(2_500_000)).toBeUndefined();
   });
   it('arma la cotización con una línea de la lista y lleva a su ficha', () => {
-    expect(argumentosDeCotizacionRapida('l1', 'Volantes', 2_500_000, null)).toEqual({ titulo: 'Volantes', lineas: [{ tipo: 'lista', listaId: 'l1', cantidadMilesimas: 2_500_000 }], conOpciones: false });
-    expect(argumentosDeCotizacionRapida('l1', 'Volantes', 100_000, { id: 'c1', nombre: 'Imprenta Sol' })).toMatchObject({ titulo: 'Volantes · Imprenta Sol', clienteId: 'c1' });
+    const deLista: ProductoCotizableDto = { productoId: 'p1', listaId: 'l1', nombre: 'Volantes', unidad: 'millar', origen: 'lista', lista: lista() };
+    expect(argumentosDeCotizacionRapida(deLista, 2_500_000, null)).toEqual({ titulo: 'Volantes', lineas: [{ tipo: 'lista', listaId: 'l1', cantidadMilesimas: 2_500_000 }], conOpciones: false });
+    expect(argumentosDeCotizacionRapida(deLista, 100_000, { id: 'c1', nombre: 'Imprenta Sol' })).toMatchObject({ titulo: 'Volantes · Imprenta Sol', clienteId: 'c1' });
+    const deCatalogo: ProductoCotizableDto = { productoId: 'p2', listaId: null, nombre: 'Banner', unidad: 'm²', origen: 'catalogo', precioCatalogoSinIgvMilesimas: 25_000, afectoIgv: true };
+    expect(argumentosDeCotizacionRapida(deCatalogo, 3_000, null)).toEqual({
+      titulo: 'Banner', lineas: [{ tipo: 'manual', productoId: 'p2', descripcion: 'Banner', unidad: 'm²', cantidadMilesimas: 3_000, precioUnitarioMilesimas: 25_000 }], conOpciones: false,
+    });
+    const heredada: ProductoCotizableDto = { productoId: null, listaId: 'l9', nombre: 'Troquel', unidad: 'unidad', origen: 'lista', lista: lista({ id: 'l9' }) };
+    expect(argumentosDeCotizacionRapida(heredada, 100_000, null).lineas).toEqual([{ tipo: 'lista', listaId: 'l9', cantidadMilesimas: 100_000 }]);
     expect(rutaDeCotizacion('abc')).toBe('/m/cotizador/cotizaciones/abc');
   });
   it('da formato a los céntimos del servidor', () => {
     expect(soles(250_000)).toBe('S/ 2,500.00');
+  });
+});
+
+describe('lista de precios enlazada a un producto', () => {
+  it('envía el producto al crear y lo cambia o lo quita al editar', () => {
+    const f = { ...LISTA_VACIA, producto: { id: 'p1', nombre: 'Banner' }, nombre: 'Banner', p100: c(4500), p1000: c(25_000), p5000: c(90_000) };
+    expect(argumentosDeCreacionDeLista(f, false)).toMatchObject({ productoId: 'p1' });
+    expect(argumentosDeCreacionDeLista({ ...f, producto: null }, false)).not.toHaveProperty('productoId');
+    const l = lista({ productoId: 'p1', productoNombre: 'Banner' });
+    expect(formularioDeLista(l).producto).toEqual({ id: 'p1', nombre: 'Banner' });
+    expect(argumentosDeEdicionDeLista(l, formularioDeLista(l), false)).toBeNull();
+    expect(argumentosDeEdicionDeLista(l, { ...formularioDeLista(l), producto: null }, false)).toMatchObject({ productoId: null });
+    expect(argumentosDeEdicionDeLista(l, { ...formularioDeLista(l), producto: { id: 'p2', nombre: 'Otro' } }, false)).toMatchObject({ productoId: 'p2' });
   });
 });
 

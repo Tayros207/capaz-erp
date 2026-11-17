@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { esUnidadConocida, GRUPOS_DE_UNIDADES } from '../formato/unidades.ts';
+import { esUnidadConocida, GRUPOS_DE_UNIDADES, unidadConocida } from '../formato/unidades.ts';
 import { Campo } from './campo.tsx';
 import { CampoSelect } from './campo-select.tsx';
 
@@ -18,7 +18,7 @@ type Props = {
 /** Unidad de medida: lista de las comunes (cantidad, cm, m, kg, l…) y «Otra…» para escribir una propia. */
 export function CampoUnidad({ valor, alCambiar, etiqueta = 'Unidad', error, ayuda, textoVacio }: Props) {
   const [otra, setOtra] = useState(() => valor.trim() !== '' && !esUnidadConocida(valor));
-  const seleccion = otra ? OTRA : valor;
+  const seleccion = otra ? OTRA : (unidadConocida(valor) ?? valor);
   return (
     <div className="flex flex-col gap-2">
       <CampoSelect

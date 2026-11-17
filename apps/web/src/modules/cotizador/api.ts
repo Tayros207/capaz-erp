@@ -1,6 +1,8 @@
 import type { EntradaDe } from '@capaz/shared';
 import { llamar, llamarConfirmando } from '../../shared/api/herramientas.ts';
 
+export { buscarProductos as buscarProductosDelCatalogo } from '../../core/productos/api.ts';
+
 // Las pantallas del Cotizador solo hablan con el servidor por herramientas tipadas. Ningún precio se calcula aquí.
 
 export const POR_PAGINA = 25;
@@ -9,6 +11,8 @@ export type EstadoDeListas = NonNullable<EntradaDe<'listas_precio_listar'>['esta
 export function listarListas(filtros: Omit<EntradaDe<'listas_precio_listar'>, 'cursor' | 'limite'>, cursor?: string, limite = POR_PAGINA) {
   return llamar('listas_precio_listar', { limite, ...filtros, ...(cursor && { cursor }) });
 }
+/** El buscador de «qué cotizar»: catálogo y listas heredadas, con el origen del precio de cada resultado. */
+export const buscarProductosParaCotizar = (texto: string, limite = 8) => llamar('cotizador_productos_buscar', { texto, limite });
 export const crearLista = (args: EntradaDe<'lista_precio_crear'>) => llamar('lista_precio_crear', args);
 /** Crítica: el servidor devuelve el resumen del cambio y la persona confirma. */
 export const editarLista = (args: EntradaDe<'lista_precio_editar'>) =>

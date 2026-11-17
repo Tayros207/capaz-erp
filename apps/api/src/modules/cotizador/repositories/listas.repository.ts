@@ -1,4 +1,4 @@
-import { and, asc, eq, isNotNull, isNull, like, ne, sql, type SQL } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNotNull, isNull, like, ne, sql, type SQL } from 'drizzle-orm';
 import { productos } from '../../../db/esquema/core-maestros.js';
 import { cotizadorListasDePrecio } from '../../../db/esquema/cotizador.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
@@ -25,6 +25,8 @@ export type CambiosDeLista = Partial<DatosDeLista> & { preciosFijadosEn?: Date }
 export type FiltrosDeListas = {
   buscar?: string;
   estado: 'activas' | 'archivadas' | 'todas';
+  productoId?: string;
+  soloSinProducto?: boolean;
   /** Día (`AAAA-MM-DD`, zona de la empresa) anterior al cual los precios están por revisar; solo con `soloPorRevisar`. */
   porRevisarAntesDe: string | null;
   zona: string;
@@ -41,6 +43,8 @@ export async function listarListas(tx: Transaccion, ctx: ContextoDeEmpresa, f: F
     deEmpresa(ctx),
     f.estado === 'activas' ? isNull(l.archivadoEn) : f.estado === 'archivadas' ? isNotNull(l.archivadoEn) : undefined,
     f.buscar ? like(l.nombreNormalizado, `%${sinComodines(f.buscar)}%`) : undefined,
+    f.productoId ? eq(l.productoId, f.productoId) : undefined,
+    f.soloSinProducto ? isNull(l.productoId) : undefined,
     f.porRevisarAntesDe ? sql`(${l.preciosFijadosEn} at time zone ${f.zona})::date < ${f.porRevisarAntesDe}::date` : undefined,
     f.cursor ? sql`(${l.nombreNormalizado}, ${l.id}) > (${f.cursor.nombreNormalizado}, ${f.cursor.id}::uuid)` : undefined,
   ];
@@ -68,9 +72,28 @@ export async function listaActivaConNombre(tx: Transaccion, ctx: ContextoDeEmpre
   return fila ?? null;
 }
 
-export async function existeProductoVivo(tx: Transaccion, ctx: ContextoDeEmpresa, id: string): Promise<boolean> {
-  const [fila] = await tx.select({ id: productos.id }).from(productos).where(and(eq(productos.tenantId, ctx.empresaId), eq(productos.id, id), isNull(productos.archivadoEn)));
-  return fila !== undefined;
+/** El producto activo con ese id (solo lo que el Cotizador necesita de él), o `null`. */
+export async function productoVivo(tx: Transaccion, ctx: ContextoDeEmpresa, id: string): Promise<{ id: string; nombre: string; unidad: string } | null> {
+  const [fila] = await tx
+    .select({ id: productos.id, nombre: productos.nombre, unidad: productos.unidad })
+    .from(productos)
+    .where(and(eq(productos.tenantId, ctx.empresaId), eq(productos.id, id), isNull(productos.archivadoEn)));
+  return fila ?? null;
+}
+
+/** Los nombres de producto por id, en una sola consulta (para mostrar la lista con su producto). */
+export async function nombresDeProductos(tx: Transaccion, ctx: ContextoDeEmpresa, ids: string[]): Promise<Map<string, string>> {
+  if (ids.length === 0) return new Map();
+  const filas = await tx.select({ id: productos.id, nombre: productos.nombre }).from(productos).where(and(eq(productos.tenantId, ctx.empresaId), inArray(productos.id, ids)));
+  return new Map(filas.map((f) => [f.id, f.nombre]));
+}
+
+/** La otra lista activa que ya usa ese producto, salvo `salvo`. Una sola por producto (D6); el índice llega en la 0026. */
+export async function listaActivaDeProducto(tx: Transaccion, ctx: ContextoDeEmpresa, productoId: string, salvo?: string): Promise<ListaDePrecio | null> {
+  const filtros: SQL[] = [deEmpresa(ctx), eq(l.productoId, productoId), isNull(l.archivadoEn)];
+  if (salvo) filtros.push(ne(l.id, salvo));
+  const [fila] = await tx.select().from(l).where(and(...filtros)).orderBy(asc(l.creadoEn)).limit(1);
+  return fila ?? null;
 }
 
 export async function crearLista(
