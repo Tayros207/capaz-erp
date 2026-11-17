@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { clienteDeConsultas } from '../api/cliente-de-consultas.ts';
 import { datosOError } from '../api/consultas.ts';
 import { llamar } from '../api/herramientas.ts';
+import { useYo } from '../sesion/use-yo.ts';
 import type { DatosDeEmpresaImpresion } from './hoja-imprimible.tsx';
 import { normalizarEmpresa } from './logica-impresion.ts';
 
@@ -32,5 +33,8 @@ export const refrescarDatosDeEmpresa = () => clienteDeConsultas.invalidateQuerie
  */
 export function useDatosDeEmpresaParaImprimir() {
   const q = useQuery({ queryKey: CLAVE_DATOS_DE_EMPRESA, queryFn: consultarDatosDeEmpresa, staleTime: 5 * 60_000 });
-  return { datos: q.data, cargando: q.isPending, error: q.error };
+  const nombreDeLaEmpresa = useYo()?.empresa?.nombre ?? null;
+  // Sin razón social cargada, el encabezado usa el nombre de la empresa activa en vez de «Empresa sin nombre».
+  const datos = q.data && !q.data.razonSocial && nombreDeLaEmpresa ? { ...q.data, razonSocial: nombreDeLaEmpresa } : q.data;
+  return { datos, cargando: q.isPending, error: q.error };
 }

@@ -3,10 +3,12 @@ import { menuDesdeYo, type ItemDeMenu } from '../../app/carcasa/menu.ts';
 import { IconoMenu } from '../../app/carcasa/iconos-menu.tsx';
 import { TONO_DE_ESTADO } from '../../app/carcasa/lista-de-menu.tsx';
 import { solicitarModulo } from '../../app/carcasa/solicitar.ts';
+import { puedeEscribirEn } from '../../shared/sesion/acceso.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { unir } from '../../shared/ui/unir.ts';
+import { LineaDeMedicion } from '../captura/pantalla-dictado.tsx';
 import { Pendientes } from './pendientes.tsx';
 
 const COLOR_ACENTO: Record<string, string> = {
@@ -41,6 +43,17 @@ function Tarjeta({ item }: { item: ItemDeMenu }) {
   );
 }
 
+/** Acceso rápido al dictado, con la medición del mes (dictados, porcentaje sin corregir y tiempo). */
+function TarjetaDeDictado() {
+  return (
+    <Link to="/dictar" className="flex flex-col gap-1 rounded-tarjeta border border-borde bg-superficie p-4 shadow-tarjeta transition duration-150 hover:-translate-y-0.5 hover:border-borde-fuerte hover:shadow-elevada">
+      <span className="font-semibold text-texto">Dictar un registro</span>
+      <span className="text-sm text-texto-suave">Escribe o di lo que pasó y apruébalo con un clic.</span>
+      <LineaDeMedicion alineacion="izquierda" />
+    </Link>
+  );
+}
+
 /** `/inicio`: saludo y las mismas familias del menú, como tarjetas con el estado de cada módulo. */
 export function PantallaInicio() {
   const yo = useYo();
@@ -54,6 +67,7 @@ export function PantallaInicio() {
         <h1 className="font-titulo text-3xl font-semibold text-texto">Hola, {primerNombre}</h1>
       </header>
       <Pendientes yo={yo} />
+      {puedeEscribirEn(yo, 'registro') ? <TarjetaDeDictado /> : null}
       {menu.familias.map((f) => (
         <section key={f.familia} aria-labelledby={`fam-${f.familia}`} className="flex flex-col gap-2">
           <h2 id={`fam-${f.familia}`} className="font-titulo text-sm font-semibold tracking-wide text-texto-suave uppercase">{f.nombre}</h2>

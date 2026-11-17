@@ -21,11 +21,11 @@ function diaDeHoy(): string {
   return p;
 }
 
-function LineaDeMedicion() {
+export function LineaDeMedicion({ alineacion = 'centro' }: { alineacion?: 'centro' | 'izquierda' } = {}) {
   const [rango] = useState(() => rangoDelMes(diaDeHoy()));
   const m = useQuery({ queryKey: [...CLAVE_CAPTURA, 'metricas', rango.desde, rango.hasta], queryFn: async () => datosOError(await medirDictados(rango.desde, rango.hasta)), staleTime: 30_000 });
   if (!m.data) return null;
-  return <p className="text-center text-sm text-texto-suave">{lineaDeMedicion(m.data)}</p>;
+  return <p className={alineacion === 'centro' ? 'text-center text-sm text-texto-suave' : 'text-sm text-texto-suave'}>{lineaDeMedicion(m.data)}</p>;
 }
 
 /** Dictado por voz o texto: el texto es siempre el respaldo. Interpreta, propone borradores y la persona los aprueba. */
