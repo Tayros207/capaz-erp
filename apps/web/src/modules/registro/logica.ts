@@ -56,18 +56,26 @@ export type FormularioDeMovimiento = {
   contacto: { id: string; nombre: string } | null;
   medioDePago: MedioDePago;
   descripcion: string;
+  /** «¿Hubo adelanto?»: el monto pasa a ser el TOTAL, lo que se dejó va a cuenta y el resto queda por cobrar o pagar. */
+  conAdelanto: boolean;
+  adelanto: Centimos | null;
+  /** Hasta cuándo se espera el resto (opcional, solo con adelanto). */
+  venceEn: string;
 };
-export type ErroresDeMovimiento = Partial<Record<'monto' | 'fecha' | 'cuentaId' | 'descripcion', string>>;
+export type ErroresDeMovimiento = Partial<Record<'monto' | 'fecha' | 'cuentaId' | 'descripcion' | 'adelanto' | 'contacto' | 'venceEn', string>>;
+
+/** Lo que falta cancelar: el total menos lo que se dejó a cuenta (nunca negativo en pantalla). */
+export const faltaCancelar = (f: Pick<FormularioDeMovimiento, 'monto' | 'adelanto'>): number => Math.max(0, (f.monto ?? 0) - (f.adelanto ?? 0));
 
 /** Formulario en blanco: fecha de hoy, la cuenta principal elegida y efectivo. */
 export function formularioInicial(tipo: TipoDeMovimiento, hoy: string, cuentas: readonly CuentaDto[]): FormularioDeMovimiento {
   const vivas = cuentas.filter((c) => c.archivadoEn === null);
   const principal = vivas.find((c) => c.esPrincipal) ?? vivas[0];
-  return { tipo, monto: null, fecha: hoy, cuentaId: principal?.id ?? '', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '' };
+  return { tipo, monto: null, fecha: hoy, cuentaId: principal?.id ?? '', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' };
 }
 
 /** Tras guardar, la hoja queda lista para el siguiente: se conservan tipo, fecha, cuenta y medio; se vacía lo demás. */
-export const siguienteFormulario = (f: FormularioDeMovimiento): FormularioDeMovimiento => ({ ...f, monto: null, categoriaId: '', contacto: null, descripcion: '' });
+export const siguienteFormulario = (f: FormularioDeMovimiento): FormularioDeMovimiento => ({ ...f, monto: null, categoriaId: '', contacto: null, descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
 
 /** Las categorías en uso del tipo del movimiento. */
 export const categoriasDe = (tipo: TipoDeMovimiento, categorias: readonly CategoriaDto[]): CategoriaDto[] =>
@@ -80,6 +88,12 @@ export function validarMovimiento(f: FormularioDeMovimiento, hoy: string): Error
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.fecha)) e.fecha = 'Elige la fecha.';
   else if (f.fecha > hoy) e.fecha = 'La fecha no puede ser futura.';
   if (f.descripcion.trim().length > 500) e.descripcion = 'La descripción admite hasta 500 caracteres.';
+  if (f.conAdelanto) {
+    if (!f.contacto) e.contacto = f.tipo === 'ingreso' ? 'Elige a quién se le vendió: el resto queda por cobrarle.' : 'Elige a quién se le compró: el resto queda por pagarle.';
+    if (f.adelanto === null || f.adelanto <= 0) e.adelanto = 'Escribe cuánto dejó a cuenta, por ejemplo 30 o 30.50.';
+    else if (f.monto !== null && f.adelanto >= f.monto) e.adelanto = 'El adelanto debe ser menor que el total: si ya pagó todo, registra un ingreso sin adelanto.';
+    if (f.venceEn && f.venceEn < f.fecha) e.venceEn = 'El vencimiento no puede ser anterior a la fecha.';
+  }
   return e;
 }
 
@@ -92,6 +106,27 @@ export function argumentosDeMovimiento(f: FormularioDeMovimiento): EntradaDe<'mo
   if (f.contacto) args.contactoId = f.contacto.id;
   const descripcion = f.descripcion.trim();
   if (descripcion) args.descripcion = descripcion;
+  return args;
+}
+
+/**
+ * Argumentos de `deuda_crear_con_adelanto`: un ingreso con adelanto es una venta por cobrar y un egreso con adelanto una compra
+ * por pagar; la deuda y el adelanto nacen en un solo gesto. El concepto, si no se escribe, nombra al contacto.
+ */
+export function argumentosDeAdelanto(f: FormularioDeMovimiento): EntradaDe<'deuda_crear_con_adelanto'> {
+  if (f.monto === null || f.adelanto === null || !f.contacto) throw new Error('No se arma una deuda con adelanto sin total, adelanto y contacto.');
+  const concepto = f.descripcion.trim() || `${f.tipo === 'ingreso' ? 'Venta a' : 'Compra a'} ${f.contacto.nombre}`;
+  const args: EntradaDe<'deuda_crear_con_adelanto'> = {
+    tipo: f.tipo === 'ingreso' ? 'por_cobrar' : 'por_pagar',
+    contactoId: f.contacto.id,
+    concepto: concepto.slice(0, 200),
+    totalCentimos: f.monto,
+    adelantoCentimos: f.adelanto,
+    fecha: f.fecha,
+    medioDePago: f.medioDePago,
+  };
+  if (f.cuentaId) args.cuentaId = f.cuentaId;
+  if (f.venceEn) args.venceEn = f.venceEn;
   return args;
 }
 

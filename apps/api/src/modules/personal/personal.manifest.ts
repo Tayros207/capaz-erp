@@ -1,21 +1,23 @@
 import type { ManifiestoDeEntrada } from '@capaz/shared';
 
-// Colaboradores, asistencia diaria y adelantos (FICHAS-OLA-3 §4). Sin planilla. `enConstruccion` es del integrador.
+// Colaboradores, asistencia diaria y adelantos (FICHAS-OLA-3 §4), contratos de trabajo y vacaciones (0028). Sin planilla. `enConstruccion` es del integrador.
 export const manifiestoPersonal: ManifiestoDeEntrada = {
   codigo: 'personal',
   nombre: 'Personal',
   descripcion: 'Colaboradores, asistencia del día y adelantos.',
   version: '0.1.0',
   dependeDe: [],
-  permisos: ['personal:ver', 'personal:editar', 'personal:adelantos', 'personal:anular'],
+  permisos: ['personal:ver', 'personal:editar', 'personal:adelantos', 'personal:anular', 'personal:contratos', 'personal:aprobar'],
   permisosPorNivel: {
-    completo: ['personal:ver', 'personal:editar', 'personal:adelantos', 'personal:anular'],
+    completo: ['personal:ver', 'personal:editar', 'personal:adelantos', 'personal:anular', 'personal:contratos', 'personal:aprobar'],
     lectura: ['personal:ver'],
   },
   secciones: [
     { id: 'colaboradores', nombre: 'Colaboradores', ruta: '/m/personal', construida: true },
     { id: 'asistencia', nombre: 'Asistencia', ruta: '/m/personal/asistencia', construida: true },
     { id: 'adelantos', nombre: 'Adelantos', ruta: '/m/personal/adelantos', construida: true },
+    { id: 'vacaciones', nombre: 'Vacaciones', ruta: '/m/personal/vacaciones', construida: true },
+    { id: 'contratos', nombre: 'Contratos', ruta: '/m/personal/contratos', construida: true },
   ],
   familia: 'personal',
   orden: 1,

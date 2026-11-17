@@ -7,6 +7,10 @@ import { contratosDeMiembros, eventosDeMiembros } from './miembros.js';
 import { contratosDeClientes, eventosDeClientes } from './clientes.js';
 import { contratosDeProductos, eventosDeProductos } from './productos.js';
 import { contratosDeMaestrosAmpliados, eventosDeMaestrosAmpliados } from './maestros-ampliados.js';
+import { contratosDeProduccion, eventosDeProduccion } from './produccion.js';
+import { contratosDePersonalContratos, eventosDePersonalContratos } from './personal-contratos.js';
+import { contratosDeRegistroAntiguedad } from './registro-antiguedad.js';
+import { contratosDeClientesFusion, eventosDeClientesFusion } from './clientes-fusion.js';
 import { contratosDeInsumosOperaciones, eventosDeInsumosOperaciones } from './insumos-operaciones.js';
 import { contratosDeComprasOperaciones, eventosDeComprasOperaciones } from './compras-operaciones.js';
 import { contratosDeSucursales, eventosDeSucursales } from './sucursales.js';
@@ -35,6 +39,10 @@ export * from './miembros.js';
 export * from './clientes.js';
 export * from './productos.js';
 export * from './maestros-ampliados.js';
+export * from './clientes-fusion.js';
+export * from './produccion.js';
+export * from './personal-contratos.js';
+export * from './registro-antiguedad.js';
 export * from './insumos-operaciones.js';
 export * from './compras-operaciones.js';
 export * from './sucursales.js';
@@ -66,6 +74,10 @@ export const CONTRATOS = {
   ...contratosDeClientes,
   ...contratosDeProductos,
   ...contratosDeMaestrosAmpliados,
+  ...contratosDeClientesFusion,
+  ...contratosDeProduccion,
+  ...contratosDePersonalContratos,
+  ...contratosDeRegistroAntiguedad,
   ...contratosDeInsumosOperaciones,
   ...contratosDeComprasOperaciones,
   ...contratosDeSucursales,
@@ -98,6 +110,9 @@ export const EVENTOS = {
   ...eventosDeClientes,
   ...eventosDeProductos,
   ...eventosDeMaestrosAmpliados,
+  ...eventosDeClientesFusion,
+  ...eventosDeProduccion,
+  ...eventosDePersonalContratos,
   ...eventosDeInsumosOperaciones,
   ...eventosDeComprasOperaciones,
   ...eventosDeSucursales,

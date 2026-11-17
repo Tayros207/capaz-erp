@@ -37,6 +37,8 @@ import { ConfigModule } from './infra/config/config.module.js';
 import { DatabaseModule } from './infra/database/database.module.js';
 import { HealthModule } from './infra/health/health.module.js';
 import { HttpModule } from './infra/http/http.module.js';
+import { manifiestoProduccion } from './modules/produccion/produccion.manifest.js';
+import { ProduccionModule } from './modules/produccion/produccion.module.js';
 import { LoggerModule } from './infra/logger/logger.module.js';
 
 @Module({
@@ -55,6 +57,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
       manifiestoPersonal,
       manifiestoReportes,
       manifiestoWebhooks,
+      manifiestoProduccion,
     ]),
     HerramientasModule,
     AuthModule,
@@ -81,6 +84,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
     PersonalModule,
     ReportesModule,
     WebhooksModule,
+    ProduccionModule,
   ],
 })
 export class AppModule {}

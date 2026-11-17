@@ -4,7 +4,9 @@ import { adelantoAnular, adelantoRegistrar, adelantosListar } from './adelantos-
 import { asistenciaCorregir, asistenciaMarcar, asistenciasListar } from './asistencias-herramientas.js';
 import { colaboradorArchivar, colaboradorCrear, colaboradorEditar, colaboradorRestaurar } from './colaboradores-escritura.js';
 import { colaboradorVer, colaboradoresListar } from './colaboradores-lectura.js';
+import { contratoCrear, contratosListar, contratoTerminar } from './contratos-herramientas.js';
 import { personalResumen } from './resumen-herramienta.js';
+import { vacacionesAnular, vacacionesListar, vacacionesResolver, vacacionesSaldo, vacacionesSolicitar } from './vacaciones-herramientas.js';
 
 /** Las herramientas del módulo de personal. No consume eventos ni tiene fuentes de tiempo en esta ola. */
 @Injectable()
@@ -17,6 +19,8 @@ export class HerramientasDePersonal implements OnModuleInit {
       asistenciaMarcar, asistenciaCorregir, asistenciasListar,
       adelantoRegistrar, adelantoAnular, adelantosListar,
       personalResumen,
+      contratoCrear, contratoTerminar, contratosListar,
+      vacacionesSolicitar, vacacionesResolver, vacacionesAnular, vacacionesListar, vacacionesSaldo,
     ]);
   }
 }

@@ -6,6 +6,7 @@ import { RegistroDeHerramientas } from '../../../core/herramientas/registro.js';
 import { CONSUMIDORES_DE_REGISTRO } from '../consumidores.js';
 import { interpreteDeRegistro } from '../dictado/interprete.js';
 import { FUENTES_DE_REGISTRO } from '../fuentes.js';
+import { deudasAntiguedad } from './antiguedad-herramientas.js';
 import { categoriaArchivar, categoriaCrear, categoriaEditar, categoriasListar } from './categorias-herramientas.js';
 import { cuentaArchivar, cuentaCrear, cuentaEditar, cuentaMarcarPrincipal, cuentasListar, registroIniciar } from './cuentas-herramientas.js';
 import { deudaAbonar } from './deudas-abonar.js';
@@ -18,6 +19,7 @@ import { cuentasTransferir } from './transferencias.js';
 import { cajaDelDia, registroResumen } from './reportes-herramientas.js';
 
 export const HERRAMIENTAS_DE_REGISTRO = [
+  deudasAntiguedad,
   registroIniciar,
   cuentasListar,
   cuentaCrear,

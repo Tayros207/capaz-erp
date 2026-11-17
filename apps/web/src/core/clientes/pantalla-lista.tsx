@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import type { ClienteDto } from '@capaz/shared';
 import { puede } from '../../shared/sesion/sesion.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
@@ -76,6 +76,7 @@ export function PantallaClientes() {
       <EncabezadoDePagina
         titulo="Clientes"
         accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNuevo(true)}>Nuevo cliente</Boton> : undefined}
+        accionesSecundarias={<Link to="/clientes/repetidos" className="text-sm font-medium text-texto underline-offset-2 hover:underline">Buscar repetidos</Link>}
       />
       <div className="grid gap-3 sm:grid-cols-[1fr_14rem]">
         <BarraDeBusqueda valor={texto} onCambio={setTexto} etiqueta="Buscar clientes" placeholder="Buscar por nombre…" />

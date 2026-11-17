@@ -23,6 +23,7 @@ import { rutas as ordenes } from '../modules/ordenes/rutas.tsx';
 import { rutas as insumos } from '../modules/insumos/rutas.tsx';
 import { rutas as compras } from '../modules/compras/rutas.tsx';
 import { rutas as personal } from '../modules/personal/rutas.tsx';
+import { rutas as produccion } from '../modules/produccion/rutas.tsx';
 import { rutas as reportes } from '../modules/reportes/rutas.tsx';
 import { rutas as cotizador } from '../modules/cotizador/rutas.tsx';
 import { rutas as plataforma } from '../plataforma/rutas.tsx';
@@ -34,7 +35,7 @@ import { rutas as plataforma } from '../plataforma/rutas.tsx';
 const DE_AREAS: RouteObject[] = [
   ...acceso, ...inicio, ...clientes, ...productos, ...bandeja, ...captura, ...conecta, ...automatizaciones, ...invitaciones,
   ...ajustesEmpresa, ...ajustesHistorial, ...ajustesUsuarios, ...ajustesSucursales,
-  ...registro, ...crm, ...ordenes, ...insumos, ...compras, ...personal, ...reportes, ...cotizador,
+  ...registro, ...crm, ...ordenes, ...insumos, ...compras, ...personal, ...produccion, ...reportes, ...cotizador,
   ...plataforma,
 ];
 

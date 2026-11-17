@@ -94,19 +94,20 @@ export class Relevo implements OnApplicationBootstrap, OnModuleDestroy {
         do r = await this.procesarLote();
         while (r.reservados > 0 && !this.detenido);
       } while (this.pidieronOtraVuelta && !this.detenido);
-      await this.programarBarrido();
+      this.programarBarrido();
     } catch (error) {
       if (!this.detenido) this.logger.error({ err: error }, 'El relevo falló al drenar eventos; se reintenta en el barrido.');
       if (!this.detenido) this.armarBarrido();
     }
   }
 
-  /** El barrido de respaldo solo se arma si quedan pendientes (con espera o sin consumir). */
-  private async programarBarrido(): Promise<void> {
-    const { rows } = await this.db.sistema.query(
-      'select 1 from core.eventos_salida where procesado_en is null and fallido_en is null limit 1',
-    );
-    if (rows.length > 0) this.armarBarrido();
+  /**
+   * El barrido de respaldo se arma siempre mientras el relevo esté activo: `LISTEN/NOTIFY` no funciona detrás del pooler de
+   * Neon (modo transacción), y sin barrido un evento emitido después del último drenaje no se consumiría nunca. El costo es
+   * una consulta liviana cada `RELEVO_BARRIDO_SEGUNDOS`; con `LISTEN` operativo, los eventos se consumen al instante igual.
+   */
+  private programarBarrido(): void {
+    this.armarBarrido();
   }
 
   private armarBarrido(): void {

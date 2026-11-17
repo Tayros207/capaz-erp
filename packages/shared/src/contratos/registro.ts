@@ -206,8 +206,12 @@ export const crearDeudaConAdelantoSchema = z
     sucursalId: z.uuid().nullish(),
     notas: texto(2000).nullish(),
     origen: z.enum(ORIGENES_DE_MOVIMIENTO).default('teclado'),
+    /** De dónde nace la deuda (p. ej. una orden de producción), para que el módulo de origen la encuentre después. */
+    origenTipo: texto(40).min(1).optional(),
+    origenId: texto(100).min(1).optional(),
   })
-  .refine((v) => v.adelantoCentimos < v.totalCentimos, { error: 'El adelanto debe ser menor que el total.' });
+  .refine((v) => v.adelantoCentimos < v.totalCentimos, { error: 'El adelanto debe ser menor que el total.' })
+  .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen se indica completo (tipo e identificador) o no se indica.' });
 
 export const cajaDelDiaSchema = z.strictObject({
   fecha: dia,

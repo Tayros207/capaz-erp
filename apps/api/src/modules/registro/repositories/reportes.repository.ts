@@ -1,6 +1,8 @@
 import { and, eq, gte, inArray, lte, sql } from 'drizzle-orm';
+import { clientes } from '../../../db/esquema/core-maestros.js';
 import { registroCategorias, registroDeudas, registroMovimientos } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import type { DeudaAbierta } from '../domain/antiguedad.js';
 import { LIKE_DE_TRANSFERENCIA } from '../domain/transferencia.js';
 
 // Lecturas agregadas del módulo (resumen del periodo y deudas abiertas). No escriben. Las sumas salen de la base
@@ -52,4 +54,21 @@ export async function deudasAbiertasPorTipo(tx: Transaccion, ctx: ContextoDeEmpr
     r[f.tipo] = { saldoCentimos: aEntero(f.saldo), vencidas: aEntero(f.vencidas), vencidasCentimos: aEntero(f.vencidasSaldo) };
   }
   return r;
+}
+
+/** Las deudas abiertas (pendientes y parciales) de un tipo, con el contacto y lo que falta cobrar o pagar. */
+export async function deudasAbiertasConContacto(tx: Transaccion, ctx: ContextoDeEmpresa, tipo: 'por_cobrar' | 'por_pagar'): Promise<DeudaAbierta[]> {
+  const d = registroDeudas;
+  const filas = await tx
+    .select({
+      contactoId: d.contactoId,
+      contactoNombre: clientes.nombre,
+      saldo: sql<string>`(${d.totalCentimos} - ${d.abonadoCentimos})::bigint`,
+      fecha: sql<string>`${d.fecha}::text`,
+      venceEn: sql<string | null>`${d.venceEn}::text`,
+    })
+    .from(d)
+    .innerJoin(clientes, and(eq(clientes.tenantId, d.tenantId), eq(clientes.id, d.contactoId)))
+    .where(and(eq(d.tenantId, ctx.empresaId), eq(d.tipo, tipo), inArray(d.estado, ['pendiente', 'parcial'])));
+  return filas.map((f) => ({ contactoId: f.contactoId, contactoNombre: f.contactoNombre, saldoCentimos: aEntero(f.saldo), fecha: f.fecha, venceEn: f.venceEn }));
 }

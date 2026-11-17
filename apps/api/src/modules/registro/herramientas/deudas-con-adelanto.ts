@@ -67,8 +67,8 @@ export const deudaCrearConAdelanto = definirHerramienta('deuda_crear_con_adelant
       venceEn: args.venceEn ?? null,
       sucursalId: args.sucursalId ?? null,
       notas: args.notas || null,
-      origenTipo: null,
-      origenId: null,
+      origenTipo: args.origenTipo ?? null,
+      origenId: args.origenId ?? null,
     });
     if (!creada) return conflictoDeOrigen();
     const deuda = await verDeuda(tx, ctx, creada.id, null);

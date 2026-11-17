@@ -63,7 +63,7 @@ describe('empresa nueva', () => {
     const yo = await c.get('/api/v1/yo');
     expect(modulo(yo, 'registro')).toMatchObject({ motivo: 'prueba', puedeEntrar: true, puedeEscribir: true, diasDePrueba: 30 });
     expect(modulo(yo, 'cotizador')).toMatchObject({ motivo: 'no_contratado', puedeEntrar: false, visible: true });
-    expect(yo.cuerpo.datos.modulos.map((m: any) => m.codigo)).toEqual(['registro', 'cotizador', 'crm', 'ordenes', 'compras', 'insumos', 'personal', 'reportes', 'webhooks']);
+    expect(yo.cuerpo.datos.modulos.map((m: any) => m.codigo)).toEqual(['registro', 'cotizador', 'crm', 'ordenes', 'compras', 'insumos', 'personal', 'reportes', 'webhooks', 'produccion']);
     expect(yo.cuerpo.datos.modulos.map((m: any) => `${m.codigo}:${m.familia}:${m.orden}`)).toEqual([
       'registro:finanzas:1',
       'cotizador:ventas:3',
@@ -74,6 +74,7 @@ describe('empresa nueva', () => {
       'personal:personal:1',
       'reportes:analisis:1',
       'webhooks:conexiones:1',
+      'produccion:produccion:1',
     ]);
   });
 

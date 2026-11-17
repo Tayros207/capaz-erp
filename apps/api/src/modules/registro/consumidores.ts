@@ -15,6 +15,8 @@ import { deudaVivaPorOrigen } from './repositories/deudas.repository.js';
 const ORIGEN_PEDIDO = 'pedido';
 /** Ídem para la recepción de una compra (la deuda por pagar nace al recibir, por lo recibido: P3-4). */
 const ORIGEN_COMPRA = 'compra';
+/** Ídem para una orden de producción: la deuda nace con la orden, por su total, y el adelanto entra en el mismo gesto. */
+const ORIGEN_PRODUCCION = 'produccion';
 
 /** Un pedido confirmado con importe propone su cuenta por cobrar, salvo que ya exista una deuda viva de ese pedido. */
 export const registroPedidoConfirmado: Consumidor = {
@@ -150,4 +152,117 @@ export const registroAdelantoRegistrado: Consumidor = {
   },
 };
 
-export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado];
+/**
+ * Una orden de trabajo (taller) propone su cuenta por cobrar. Con adelanto, la deuda y el adelanto nacen en un
+ * solo gesto (`deuda_crear_con_adelanto`); si el adelanto es el total, solo se registra el ingreso. Sin total no hace nada.
+ */
+export const registroProduccionOrdenCreada: Consumidor = {
+  nombre: 'registro_produccion_orden_creada',
+  modulo: 'registro',
+  evento: 'produccion.orden_creada',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['produccion.orden_creada'].parse(e.carga);
+    if (carga.totalCentimos <= 0) return;
+    if (await deudaVivaPorOrigen(tx, ctx, ORIGEN_PRODUCCION, carga.id)) return;
+    const concepto = `Orden ${carga.codigo}: ${carga.descripcion}`.slice(0, 200);
+    const origenRef = `produccion:${carga.id}`;
+    if (carga.adelantoCentimos >= carga.totalCentimos) {
+      await proponerBorrador(tx, {
+        herramienta: 'movimiento_registrar',
+        args: { tipo: 'ingreso', montoCentimos: carga.totalCentimos, contactoId: carga.clienteId, descripcion: concepto, origen: 'modulo', origenRef },
+        resumen: `Registrar el cobro de ${formatearSoles(carga.totalCentimos)} de la orden ${carga.codigo}`,
+        origen: 'modulo',
+        origenRef,
+        propuestoPor: 'sistema',
+      });
+      return;
+    }
+    const base = { tipo: 'por_cobrar', contactoId: carga.clienteId, concepto, totalCentimos: carga.totalCentimos, venceEn: carga.entregaEl ?? undefined, origenTipo: ORIGEN_PRODUCCION, origenId: carga.id };
+    await proponerBorrador(tx, {
+      herramienta: carga.adelantoCentimos > 0 ? 'deuda_crear_con_adelanto' : 'deuda_crear',
+      args: carga.adelantoCentimos > 0 ? { ...base, adelantoCentimos: carga.adelantoCentimos, origen: 'modulo' } : base,
+      resumen:
+        carga.adelantoCentimos > 0
+          ? `Cobrar ${formatearSoles(carga.totalCentimos)} por la orden ${carga.codigo}, con adelanto de ${formatearSoles(carga.adelantoCentimos)} (falta ${formatearSoles(carga.totalCentimos - carga.adelantoCentimos)})`
+          : `Cobrar ${formatearSoles(carga.totalCentimos)} por la orden ${carga.codigo}`,
+      origen: 'modulo',
+      origenRef,
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
+/** Propone cobrar el saldo de la deuda viva de una orden. Sin deuda viva, sin saldo o con un cobro ya propuesto no hace nada. */
+async function proponerCobroDeOrden(tx: Parameters<Consumidor['manejar']>[2], ctx: Parameters<Consumidor['manejar']>[1], orden: { id: string; codigo: string }): Promise<void> {
+  const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PRODUCCION, orden.id);
+  if (!viva) return;
+  const saldo = viva.totalCentimos - viva.abonadoCentimos;
+  if (saldo <= 0) return;
+  // Solo lectura: un cobro del saldo aún pendiente en la bandeja no se vuelve a proponer.
+  const [pendiente] = await tx
+    .select({ id: borradores.id })
+    .from(borradores)
+    .where(and(eq(borradores.tenantId, ctx.empresaId), eq(borradores.herramienta, 'deuda_abonar'), eq(borradores.origenRef, `produccion:${orden.id}`), eq(borradores.estado, 'pendiente')))
+    .limit(1);
+  if (pendiente) return;
+  await proponerBorrador(tx, {
+    herramienta: 'deuda_abonar',
+    args: { id: viva.id, montoCentimos: saldo },
+    resumen: `Cobrar lo que falta, ${formatearSoles(saldo)}, de la orden ${orden.codigo}`,
+    origen: 'modulo',
+    origenRef: `produccion:${orden.id}`,
+    propuestoPor: 'sistema',
+  });
+}
+
+/** Una orden entregada propone cobrar lo que falta. */
+export const registroProduccionOrdenEntregada: Consumidor = {
+  nombre: 'registro_produccion_orden_entregada',
+  modulo: 'registro',
+  evento: 'produccion.orden_entregada',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['produccion.orden_entregada'].parse(e.carga);
+    await proponerCobroDeOrden(tx, ctx, carga);
+  },
+};
+
+/** «Anotar que ya me pagó»: la orden pide cobrar lo que falta. */
+export const registroProduccionCobroPedido: Consumidor = {
+  nombre: 'registro_produccion_cobro_pedido',
+  modulo: 'registro',
+  evento: 'produccion.orden_cobro_pedido',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['produccion.orden_cobro_pedido'].parse(e.carga);
+    await proponerCobroDeOrden(tx, ctx, carga);
+  },
+};
+
+/**
+ * Una orden anulada propone anular su deuda viva, con prioridad alta. Si el cliente había dejado un adelanto, el resumen dice
+ * qué se hizo con él: si se devolvió, hay que anular antes ese cobro; si se retuvo, la deuda queda por revisar a mano.
+ */
+export const registroProduccionOrdenAnulada: Consumidor = {
+  nombre: 'registro_produccion_orden_anulada',
+  modulo: 'registro',
+  evento: 'produccion.orden_anulada',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['produccion.orden_anulada'].parse(e.carga);
+    const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PRODUCCION, carga.id);
+    if (!viva) return;
+    const nota =
+      carga.destinoAdelanto === 'devuelto' ? ` (el adelanto de ${formatearSoles(carga.adelantoCentimos)} se devolvió: anula antes ese cobro)`
+      : carga.destinoAdelanto === 'retenido' ? ` (se retuvo el adelanto de ${formatearSoles(carga.adelantoCentimos)}: revisa a mano el saldo)`
+      : '';
+    await proponerBorrador(tx, {
+      herramienta: 'deuda_anular',
+      args: { id: viva.id, motivo: `Orden ${carga.codigo} anulada` },
+      resumen: `Anular la deuda de la orden ${carga.codigo}, que fue anulada${nota}`,
+      origen: 'modulo',
+      origenRef: `produccion:${carga.id}`,
+      prioridad: 'alta',
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
+export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada];

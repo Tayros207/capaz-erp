@@ -10,6 +10,7 @@ export const POR_PAGINA = 25;
 export const iniciarRegistro = () => llamar('registro_iniciar', {});
 export const listarCuentas = (incluirArchivadas = false) => llamar('cuentas_listar', { incluirArchivadas });
 export const listarCategorias = (incluirArchivadas = false) => llamar('categorias_listar', { incluirArchivadas });
+export const crearDeudaConAdelanto = (args: EntradaDe<'deuda_crear_con_adelanto'>) => llamar('deuda_crear_con_adelanto', args);
 export const registrarMovimiento = (args: EntradaDe<'movimiento_registrar'>) => llamar('movimiento_registrar', args);
 export const transferirEntreCuentas = (args: EntradaDe<'cuentas_transferir'>) => llamar('cuentas_transferir', args);
 export const verMovimiento = (id: string) => llamar('movimiento_ver', { id });

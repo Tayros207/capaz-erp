@@ -2,6 +2,7 @@ import { Navigate, type RouteObject } from 'react-router';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { MarcoDeRegistro } from './marco.tsx';
 import { PantallaAjustes } from './pantalla-ajustes.tsx';
+import { PantallaAntiguedad } from './pantalla-antiguedad.tsx';
 import { PantallaCaja } from './pantalla-caja.tsx';
 import { PantallaDeuda } from './pantalla-deuda.tsx';
 import { PantallaDeudas } from './pantalla-deudas.tsx';
@@ -26,6 +27,7 @@ export const rutas: RouteObject[] = [
       { path: 'por-pagar', element: <PantallaDeudas tipo="por_pagar" /> },
       { path: 'deudas/:id', element: <PantallaDeuda /> },
       { path: 'caja', element: <PantallaCaja /> },
+      { path: 'antiguedad', element: <PantallaAntiguedad /> },
       { path: 'ajustes', element: <PantallaAjustes /> },
       { path: '*', element: <EstadoVacio titulo="No encontramos esta pantalla" icono="caja" /> },
     ],

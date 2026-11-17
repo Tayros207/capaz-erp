@@ -3,7 +3,7 @@ import type { CategoriaDto, Centimos, CuentaDto } from '@capaz/shared';
 import {
   abonoInicial, argumentosDeAbono, argumentosDeCuentaEditada, argumentosDeCuentaNueva, argumentosDeEdicionDeDeuda, argumentosDeListadoDeDeudas, cuentaEnBlanco,
   estaAbierta, formularioDeCuenta, formularioDeDeuda, pasoDeDeuda, textoDeEstadoDeDeuda, tonoDeEstadoDeDeuda, validarAbono, validarCuenta, validarDeuda, validarMotivo, validarNombre,
-  argumentosDeListado, argumentosDeMovimiento, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
+  argumentosDeListado, argumentosDeAdelanto, argumentosDeMovimiento, faltaCancelar, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
   formularioInicial, mensajeDeRechazo, montoConSigno, siguienteFormulario, validarMovimiento,
   argumentosDeDeudaNueva, deudaNuevaEnBlanco, validarDeudaNueva,
   argumentosDeTransferencia, cuentasDeDestino, esCategoriaDeTransferencia, esTransferencia, invertirTransferencia, puedeTransferir, siguienteTransferencia,
@@ -46,7 +46,7 @@ describe('formulario de movimiento', () => {
   const cuentas = [cuenta('banco', { tipo: 'banco' }), cuenta('caja', { esPrincipal: true }), cuenta('vieja', { archivadoEn: '2026-02-01T00:00:00.000Z' })];
 
   it('empieza con la fecha de hoy, la cuenta principal y efectivo', () => {
-    expect(formularioInicial('egreso', HOY, cuentas)).toEqual({ tipo: 'egreso', monto: null, fecha: HOY, cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '' });
+    expect(formularioInicial('egreso', HOY, cuentas)).toEqual({ tipo: 'egreso', monto: null, fecha: HOY, cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
     expect(formularioInicial('ingreso', HOY, [cuentas[2]!, cuentas[0]!]).cuentaId).toBe('banco');
     expect(formularioInicial('ingreso', HOY, []).cuentaId).toBe('');
   });
@@ -70,9 +70,32 @@ describe('formulario de movimiento', () => {
     expect(() => argumentosDeMovimiento({ ...base, monto: null })).toThrow();
   });
 
+  it('con adelanto el monto es el total, falta cancelar es la resta y se pide contacto y un adelanto menor al total', () => {
+    const base = { ...formularioInicial('ingreso', HOY, cuentas), monto: c(24_000), conAdelanto: true, adelanto: c(10_000), contacto: { id: 'cli', nombre: 'Cristina' } };
+    expect(faltaCancelar(base)).toBe(14_000);
+    expect(faltaCancelar({ ...base, adelanto: null })).toBe(24_000);
+    expect(faltaCancelar({ ...base, adelanto: c(30_000) })).toBe(0);
+    expect(validarMovimiento(base, HOY)).toEqual({});
+    expect(validarMovimiento({ ...base, contacto: null }, HOY)).toHaveProperty('contacto');
+    expect(validarMovimiento({ ...base, adelanto: null }, HOY).adelanto).toMatch(/cuánto dejó a cuenta/);
+    expect(validarMovimiento({ ...base, adelanto: c(24_000) }, HOY).adelanto).toMatch(/menor que el total/);
+    expect(validarMovimiento({ ...base, venceEn: '2026-03-01' }, HOY)).toHaveProperty('venceEn');
+    // Sin la casilla, el adelanto y el contacto no se exigen.
+    expect(validarMovimiento({ ...base, conAdelanto: false, adelanto: null, contacto: null }, HOY)).toEqual({});
+  });
+
+  it('un ingreso con adelanto arma una deuda por cobrar y un egreso una por pagar, con el concepto del contacto si no se escribe', () => {
+    const base = { ...formularioInicial('ingreso', HOY, cuentas), monto: c(24_000), conAdelanto: true, adelanto: c(10_000), contacto: { id: 'cli', nombre: 'Cristina' }, venceEn: '2026-03-20' };
+    expect(argumentosDeAdelanto(base)).toEqual({ tipo: 'por_cobrar', contactoId: 'cli', concepto: 'Venta a Cristina', totalCentimos: 24_000, adelantoCentimos: 10_000, fecha: HOY, medioDePago: 'efectivo', cuentaId: 'caja', venceEn: '2026-03-20' });
+    const egreso = argumentosDeAdelanto({ ...base, tipo: 'egreso', descripcion: ' Papel ', venceEn: '' });
+    expect(egreso).toMatchObject({ tipo: 'por_pagar', concepto: 'Papel' });
+    expect(egreso).not.toHaveProperty('venceEn');
+    expect(() => argumentosDeAdelanto({ ...base, contacto: null })).toThrow();
+  });
+
   it('tras guardar queda listo para el siguiente, con el mismo tipo, fecha, cuenta y medio', () => {
     const lleno = { ...formularioInicial('egreso', '2026-03-09', cuentas), monto: c(100), categoriaId: 'cat', contacto: { id: 'cli', nombre: 'José' }, medioDePago: 'yape' as const, descripcion: 'Tinta' };
-    expect(siguienteFormulario(lleno)).toEqual({ tipo: 'egreso', monto: null, fecha: '2026-03-09', cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'yape', descripcion: '' });
+    expect(siguienteFormulario(lleno)).toEqual({ tipo: 'egreso', monto: null, fecha: '2026-03-09', cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'yape', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
   });
 
   it('ofrece solo las categorías vivas del tipo', () => {
