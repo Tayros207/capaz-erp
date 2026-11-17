@@ -18,6 +18,7 @@ import { archivarCliente, datosOError, editarCliente, restaurarCliente, verClien
 import { CLAVE_CLIENTES } from './claves.ts';
 import { FormularioCliente } from './formulario-cliente.tsx';
 import { SeccionesAmpliadasDeCliente } from './secciones-ampliadas.tsx';
+import { Extensiones } from '../../shared/ui/extensiones.tsx';
 import {
   argumentosDeEdicion,
   ETIQUETA_DE_CLASE,
@@ -146,6 +147,7 @@ function Contenido({ cliente }: { cliente: ClienteDto }) {
         ]}
       />
       <SeccionesAmpliadasDeCliente clienteId={cliente.id} puedeEditar={puedeEditar && !archivado} />
+      <Extensiones punto="ficha-cliente" clienteId={cliente.id} />
     </div>
   );
 }
