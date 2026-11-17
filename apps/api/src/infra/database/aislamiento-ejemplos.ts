@@ -35,6 +35,12 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   'core.contadores': { sql: `insert into core.contadores (tenant_id, clave, serie, anio) values ($1, 'ejemplo', '', 2026)`, modo: 'completo' },
   'core.clientes': { sql: `insert into core.clientes (id, tenant_id, clase, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'cl')::uuid, $1, 'persona', 'Ana', 'ana', 'u1')`, modo: 'completo' },
   'core.productos': { sql: `insert into core.productos (id, tenant_id, nombre, nombre_normalizado, tipo, creado_por) values (md5($1::text || 'pr')::uuid, $1, 'Tarjeta', 'tarjeta', 'producto', 'u1')`, modo: 'completo' },
+  'core.cliente_comercial': { sql: `insert into core.cliente_comercial (tenant_id, cliente_id, actualizado_por) values ($1, md5($1::text || 'cl')::uuid, 'u1')`, modo: 'completo' },
+  'core.cliente_contactos': { sql: `insert into core.cliente_contactos (id, tenant_id, cliente_id, nombre, creado_por) values (md5($1::text || 'cc')::uuid, $1, md5($1::text || 'cl')::uuid, 'Ana', 'u1')`, modo: 'completo' },
+  'core.cliente_direcciones': { sql: `insert into core.cliente_direcciones (id, tenant_id, cliente_id, direccion, creado_por) values (md5($1::text || 'cd')::uuid, $1, md5($1::text || 'cl')::uuid, 'Av. Sol 1', 'u1')`, modo: 'completo' },
+  'core.categorias_producto': { sql: `insert into core.categorias_producto (id, tenant_id, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'ca')::uuid, $1, 'Papel', 'papel', 'u1')`, modo: 'completo' },
+  'core.producto_ficha': { sql: `insert into core.producto_ficha (tenant_id, producto_id, actualizado_por) values ($1, md5($1::text || 'pr')::uuid, 'u1')`, modo: 'completo' },
+  'core.producto_unidades': { sql: `insert into core.producto_unidades (id, tenant_id, producto_id, unidad, factor_milesimas, creado_por) values (md5($1::text || 'pu')::uuid, $1, md5($1::text || 'pr')::uuid, 'caja', 12000, 'u1')`, modo: 'completo' },
   'core.sucursales': { sql: `insert into core.sucursales (id, tenant_id, codigo, nombre) values (md5($1::text || 'su')::uuid, $1, 'LIM', 'Lima')`, modo: 'completo' },
   'core.conexiones': { sql: `insert into core.conexiones (id, tenant_id, conector, creado_por) values (md5($1::text || 'c1')::uuid, $1, 'ejemplo', 'u1')`, modo: 'completo' },
   'core.referencias_externas': { sql: `insert into core.referencias_externas (tenant_id, conector, entidad, id_interno, id_externo) values ($1, 'ejemplo', 'cliente', 'i1', 'x1')`, modo: 'completo' },
@@ -121,6 +127,34 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   'insumos.movimientos': {
     sql: `insert into insumos.movimientos (tenant_id, articulo_id, sucursal_id, tipo, cantidad_milesimas, existencia_resultante_milesimas, creado_por) values ($1, md5($1::text || 'i1')::uuid, md5($1::text || 'su')::uuid, 'entrada', 5000, 5000, 'u1')`,
     modo: 'insercion',
+  },
+  'insumos.transferencias': {
+    sql: `with s as (insert into core.sucursales (id, tenant_id, codigo, nombre) values (md5($1::text || 'su2')::uuid, $1, 'CUS', 'Cusco') returning id) insert into insumos.transferencias (id, tenant_id, numero, anio, origen_sucursal_id, destino_sucursal_id, creado_por) select md5($1::text || 'tf')::uuid, $1, 1, 2026, md5($1::text || 'su')::uuid, s.id, 'u1' from s`,
+    modo: 'insercion',
+  },
+  'insumos.transferencia_lineas': {
+    sql: `insert into insumos.transferencia_lineas (id, tenant_id, transferencia_id, articulo_id, cantidad_milesimas) values (md5($1::text || 'tl')::uuid, $1, md5($1::text || 'tf')::uuid, md5($1::text || 'i1')::uuid, 1000)`,
+    modo: 'insercion',
+  },
+  'insumos.conteos': {
+    sql: `insert into insumos.conteos (id, tenant_id, numero, anio, sucursal_id, creado_por) values (md5($1::text || 'ct')::uuid, $1, 1, 2026, md5($1::text || 'su')::uuid, 'u1')`,
+    modo: 'completo',
+  },
+  'insumos.conteo_lineas': {
+    sql: `insert into insumos.conteo_lineas (id, tenant_id, conteo_id, articulo_id, sistema_milesimas) values (md5($1::text || 'cl')::uuid, $1, md5($1::text || 'ct')::uuid, md5($1::text || 'i1')::uuid, 5000)`,
+    modo: 'completo',
+  },
+  'compras.solicitudes': {
+    sql: `insert into compras.solicitudes (id, tenant_id, fecha, solicitado_por, creado_por) values (md5($1::text || 'so')::uuid, $1, '2026-03-01', 'u1', 'u1')`,
+    modo: 'completo',
+  },
+  'compras.solicitud_lineas': {
+    sql: `insert into compras.solicitud_lineas (id, tenant_id, solicitud_id, posicion, descripcion, cantidad_milesimas) values (md5($1::text || 'sl')::uuid, $1, md5($1::text || 'so')::uuid, 0, 'Papel', 1000)`,
+    modo: 'completo',
+  },
+  'compras.facturas': {
+    sql: `insert into compras.facturas (id, tenant_id, proveedor_id, serie, numero, fecha, subtotal_centimos, igv_centimos, total_centimos, creado_por) values (md5($1::text || 'fa')::uuid, $1, md5($1::text || 'cl')::uuid, 'F001', '1', '2026-03-01', 1000, 180, 1180, 'u1')`,
+    modo: 'completo',
   },
   'compras.ordenes': {
     sql: `insert into compras.ordenes (id, tenant_id, proveedor_id, fecha, creado_por) values (md5($1::text || 'k1')::uuid, $1, md5($1::text || 'cl')::uuid, date '2026-01-01', 'u1')`,
