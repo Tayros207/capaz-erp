@@ -42,13 +42,31 @@ async function sembrarListas(c: Ctx): Promise<void> {
     const id = precios ? await crearSiFalta(c, { nombre: p.nombre, productoId: p.id, ...precios }, existentes, p.id) : null;
     if (id) creadas.push(id);
   }
-  // La mitad, con los precios fijados hace 100 días: salen como «Revisar».
-  for (const id of creadas.slice(0, MARCADAS_PARA_REVISAR)) {
-    await c.db.query(`update cotizador.listas_de_precio set precios_fijados_en = now() - interval '100 days' where tenant_id = $1 and id = $2`, [c.empresaId, id]);
-  }
   const heredadas = c.sec.clave === 'grafica' ? HEREDADAS : [];
   for (const h of heredadas) await crearSiFalta(c, h, existentes);
-  c.log(`  cotizador: ${creadas.length} listas con producto nuevas (${Math.min(MARCADAS_PARA_REVISAR, creadas.length)} por revisar), ${existentes.length} ya existían`);
+  // Hasta cinco listas con producto quedan con los precios fijados hace 100 días («Revisar»), aunque ya existieran.
+  const yaMarcadas = existentes.filter((l) => l.productoId && l.porRevisar).length;
+  const porMarcar = [...creadas, ...existentes.filter((l) => l.productoId && !l.porRevisar && !l.archivadoEn).map((l) => l.id as string)].slice(0, Math.max(0, MARCADAS_PARA_REVISAR - yaMarcadas));
+  await marcarParaRevisar(c, porMarcar);
+  c.log(`  cotizador: ${creadas.length} listas con producto nuevas, ${porMarcar.length} marcadas por revisar, ${existentes.length} ya existían`);
+}
+
+/**
+ * Deja los precios fijados hace 100 días para que salgan como «Revisar». Va por SQL directo porque ninguna
+ * herramienta cambia esa fecha hacia atrás; el disparador del módulo exige `app.tenant_id` en la sesión,
+ * así que se fija dentro de la misma transacción (igual que `resumen.ts`).
+ */
+async function marcarParaRevisar(c: Ctx, ids: string[]): Promise<void> {
+  if (ids.length === 0) return;
+  await c.db.query('begin');
+  try {
+    await c.db.query(`select set_config('app.tenant_id', $1, true)`, [c.empresaId]);
+    await c.db.query(`update cotizador.listas_de_precio set precios_fijados_en = now() - interval '100 days' where tenant_id = $1 and id = any($2::uuid[])`, [c.empresaId, ids]);
+    await c.db.query('commit');
+  } catch (e) {
+    await c.db.query('rollback');
+    throw e;
+  }
 }
 
 /** Deja a propósito un producto sin precio (caso «sin precio»); el resto sin lista se cotiza con su precio de catálogo. */
