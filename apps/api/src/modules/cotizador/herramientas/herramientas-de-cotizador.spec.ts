@@ -34,8 +34,8 @@ describe('herramientas del Cotizador (s1 y s2)', () => {
     expect(HERRAMIENTAS_DE_COTIZADOR.find((h) => h.nombre === 'cotizacion_crear')?.idempotente).toBe(true);
   });
 
-  it('el manifiesto trae cuatro secciones sin construir y el permiso cotizador:configurar en el nivel completo', () => {
-    expect(manifiestoCotizador.secciones.map((s) => [s.id, s.construida])).toEqual([['rapida', false], ['cotizaciones', false], ['precios', false], ['ajustes', false]]);
+  it('el manifiesto trae cuatro secciones construidas y el permiso cotizador:configurar en el nivel completo', () => {
+    expect(manifiestoCotizador.secciones.map((s) => [s.id, s.construida])).toEqual([['rapida', true], ['cotizaciones', true], ['precios', true], ['ajustes', true]]);
     expect(manifiestoCotizador.permisosPorNivel.completo).toContain('cotizador:configurar');
     expect(manifiestoCotizador.permisosPorNivel.lectura).toEqual(['cotizador:ver']);
   });
