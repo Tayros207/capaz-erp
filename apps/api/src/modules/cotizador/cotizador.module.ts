@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { HerramientasDeCotizador } from './herramientas/herramientas-de-cotizador.js';
 
-@Module({})
+/** Lista de precios por cantidad, ajustes por cliente y configuración (B1). */
+@Module({ providers: [HerramientasDeCotizador] })
 export class CotizadorModule {}
