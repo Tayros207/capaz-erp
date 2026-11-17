@@ -1,6 +1,6 @@
 import type { ManifiestoDeEntrada } from '@capaz/shared';
 
-// Cotizador (B1): lista de precios por cantidad, ajuste por cliente y configuración; las cotizaciones llegan con s2.
+// Cotizador (B1): lista de precios por cantidad, ajuste por cliente, configuración y cotizaciones.
 export const manifiestoCotizador: ManifiestoDeEntrada = {
   codigo: 'cotizador',
   nombre: 'Cotizador',

@@ -4,9 +4,13 @@ import { ajusteClienteFijar, ajustesClienteListar } from './ajustes-herramientas
 import { cotizadorConfiguracionVer, cotizadorConfigurar, cotizadorIniciar } from './configuracion-herramientas.js';
 import { listaPrecioVer, listasPrecioListar } from './listas-lectura.js';
 import { listaPrecioArchivar, listaPrecioCrear, listaPrecioEditar } from './listas-escritura.js';
+import { cotizacionEmitir, cotizacionDuplicar, cotizacionNuevaVersion } from './cotizaciones-emision.js';
+import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
+import { cotizacionAceptar, cotizacionAnular, cotizacionMarcarEnviada, cotizacionRechazar } from './cotizaciones-estado.js';
+import { cotizacionesListar, cotizacionVer, cotizadorResumen } from './cotizaciones-lectura.js';
 import { precioConsultar } from './precio-consultar.js';
 
-/** Once herramientas en esta parte (R15: máximo 13). Las cotizaciones llegan con s2. */
+/** Once de s1 (precios y configuración) y doce de s2 (cotizaciones); R15 cuenta por sesión: máximo 13. */
 export const HERRAMIENTAS_DE_COTIZADOR = [
   cotizadorIniciar,
   cotizadorConfiguracionVer,
@@ -19,6 +23,18 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   precioConsultar,
   ajustesClienteListar,
   ajusteClienteFijar,
+  cotizacionCrear,
+  cotizacionEditar,
+  cotizacionVer,
+  cotizacionesListar,
+  cotizacionEmitir,
+  cotizacionNuevaVersion,
+  cotizacionDuplicar,
+  cotizacionMarcarEnviada,
+  cotizacionAceptar,
+  cotizacionRechazar,
+  cotizacionAnular,
+  cotizadorResumen,
 ] as const;
 
 /** Todo lo que el módulo `cotizador` aporta al servidor en esta parte: herramientas (sin consumidores ni fuentes de tiempo). */

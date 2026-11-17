@@ -33,6 +33,7 @@ export const condicionesSchema = z.strictObject({
   tolerancia: texto(300),
   noIncluye: texto(300),
 });
+export type CondicionesDeCotizacion = z.infer<typeof condicionesSchema>;
 export const CONDICIONES_VACIAS = { validezDias: null, plazoEntrega: '', formaPago: '', tolerancia: '', noIncluye: '' } as const;
 
 export const configuracionDeCotizadorSchema = z.strictObject({
@@ -150,6 +151,149 @@ const configurarSchema = z
   })
   .refine((v) => Object.values(v).some((x) => x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
 
+// --- Cotizaciones (s2). Precios y totales SIN IGV; el IGV se calcula por línea. ---
+
+export const TIPOS_DE_LINEA_DE_COTIZACION = ['lista', 'manual'] as const;
+export const TIPOS_DE_EVENTO_DE_COTIZACION = ['creada', 'editada', 'emitida', 'enviada', 'aceptada', 'rechazada', 'anulada', 'nueva_version'] as const;
+export const FILTROS_DE_ESTADO_DE_COTIZACION = ['abiertas', ...ESTADOS_DE_COTIZACION, 'todas'] as const;
+export const MAXIMO_DE_LINEAS_DE_COTIZACION = 100;
+
+const cantidadDeLinea = z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' });
+const dia = z.iso.date();
+
+/** Una línea que se anota: de la lista (el servidor calcula el precio) o manual (con precio unitario sin IGV). */
+export const lineaDeCotizacionEntradaSchema = z.discriminatedUnion('tipo', [
+  z.strictObject({ tipo: z.literal('lista'), listaId: z.uuid(), cantidadMilesimas: cantidadDeLinea, descripcion: texto(300).min(1).optional() }),
+  z.strictObject({
+    tipo: z.literal('manual'),
+    productoId: z.uuid().nullish(),
+    descripcion: texto(300).min(1, { error: 'La descripción es obligatoria.' }),
+    unidad: texto(20).min(1).default('unidad'),
+    cantidadMilesimas: cantidadDeLinea,
+    precioUnitarioMilesimas: z.number().int().safe().min(1, { error: 'El precio debe ser mayor que cero.' }),
+  }),
+]);
+export type LineaDeCotizacionEntrada = z.infer<typeof lineaDeCotizacionEntradaSchema>;
+
+const lineasDeEntrada = z.array(lineaDeCotizacionEntradaSchema).min(1, { error: 'Agrega al menos una línea.' }).max(MAXIMO_DE_LINEAS_DE_COTIZACION);
+const costo = z.number().int().safe().min(0, { error: 'El costo no puede ser negativo.' });
+const titulo = texto(200).min(1, { error: 'El título es obligatorio.' });
+
+export const lineaDeCotizacionSchema = z.strictObject({
+  posicion: z.number().int(),
+  tipo: z.enum(TIPOS_DE_LINEA_DE_COTIZACION),
+  productoId: z.string().nullable(),
+  listaId: z.string().nullable(),
+  descripcion: z.string(),
+  unidad: z.string(),
+  cantidadMilesimas: z.number().int(),
+  /** Sin IGV; informativo. El que manda es el importe. */
+  precioUnitarioMilesimas: z.number().int(),
+  importeCentimos: z.number().int(),
+  igvCentimos: z.number().int(),
+  totalCentimos: z.number().int(),
+});
+
+/** Lo que muestra una lista de cotizaciones: la versión vigente, sin sus líneas. */
+export const cotizacionSchema = z.strictObject({
+  id: z.string(),
+  /** «Borrador» mientras no tenga número; después «COT-2026-0001» y, desde la segunda versión, «COT-2026-0001 v2». */
+  codigo: z.string(),
+  numero: z.number().int().nullable(),
+  anio: z.number().int().nullable(),
+  titulo: z.string(),
+  estado: z.enum(ESTADOS_DE_COTIZACION),
+  clienteId: z.string().nullable(),
+  clienteNombre: z.string().nullable(),
+  versionActual: z.number().int(),
+  conOpciones: z.boolean(),
+  igvPorcentaje: z.number().int(),
+  subtotalCentimos: z.number().int(),
+  igvCentimos: z.number().int(),
+  totalCentimos: z.number().int(),
+  validaHasta: z.iso.date().nullable(),
+  cantidadDeLineas: z.number().int(),
+  creadoPor: z.string(),
+  creadoEn: z.iso.datetime(),
+  actualizadoEn: z.iso.datetime(),
+});
+export type CotizacionDto = z.infer<typeof cotizacionSchema>;
+
+export const versionDeCotizacionSchema = z.strictObject({
+  version: z.number().int(),
+  subtotalCentimos: z.number().int(),
+  totalCentimos: z.number().int(),
+  emitidaEn: z.iso.datetime().nullable(),
+});
+export const eventoDeCotizacionSchema = z.strictObject({
+  tipo: z.enum(TIPOS_DE_EVENTO_DE_COTIZACION),
+  version: z.number().int(),
+  motivo: z.string().nullable(),
+  usuarioId: z.string(),
+  creadoEn: z.iso.datetime(),
+});
+
+/** La cotización con la versión pedida (por defecto la vigente), sus líneas, versiones e historial. */
+export const cotizacionCompletaSchema = cotizacionSchema.extend({
+  /** La versión cuyas líneas y totales se muestran. */
+  version: z.number().int(),
+  notas: z.string().nullable(),
+  observaciones: z.string().nullable(),
+  condiciones: condicionesSchema,
+  /** Solo para quien tiene `cotizador:costos`; para los demás son `null`. */
+  costoCentimos: z.number().int().nullable(),
+  margenPct: z.string().nullable(),
+  motivoMargenBajo: z.string().nullable(),
+  emitidaEn: z.iso.datetime().nullable(),
+  lineas: z.array(lineaDeCotizacionSchema),
+  /** Posiciones de las líneas que aceptó el cliente. */
+  lineasAceptadas: z.array(z.number().int()).nullable(),
+  totalAceptadoCentimos: z.number().int().nullable(),
+  aceptadaEn: z.iso.datetime().nullable(),
+  motivoRechazo: z.string().nullable(),
+  anuladoEn: z.iso.datetime().nullable(),
+  motivoAnulacion: z.string().nullable(),
+  versiones: z.array(versionDeCotizacionSchema),
+  /** Lo más reciente primero. */
+  historial: z.array(eventoDeCotizacionSchema),
+});
+export type CotizacionCompletaDto = z.infer<typeof cotizacionCompletaSchema>;
+
+export const resumenDeCotizadorSchema = z.strictObject({
+  desde: z.iso.date(),
+  hasta: z.iso.date(),
+  /** Cotizaciones creadas en el período, por estado actual. */
+  porEstado: z.array(z.strictObject({ estado: z.enum(ESTADOS_DE_COTIZACION), cantidad: z.number().int(), totalCentimos: z.number().int() })),
+  /** Aceptadas en el período y lo aceptado (con IGV). */
+  aceptadas: z.strictObject({ cantidad: z.number().int(), totalCentimos: z.number().int() }),
+  /** Emitidas o enviadas cuya validez ya pasó. */
+  vencidas: z.number().int(),
+});
+
+const crearCotizacionSchema = z.strictObject({
+  titulo,
+  clienteId: z.uuid().nullish(),
+  lineas: lineasDeEntrada,
+  conOpciones: z.boolean().default(false),
+  notas: texto(1000).nullish(),
+  observaciones: texto(1000).nullish(),
+  condiciones: condicionesSchema.partial().optional(),
+  costoCentimos: costo.nullish(),
+});
+const editarCotizacionSchema = z
+  .strictObject({
+    id: z.uuid(),
+    titulo: titulo.optional(),
+    clienteId: z.uuid().nullish(),
+    lineas: lineasDeEntrada.optional(),
+    conOpciones: z.boolean().optional(),
+    notas: texto(1000).nullish(),
+    observaciones: texto(1000).nullish(),
+    condiciones: condicionesSchema.partial().optional(),
+    costoCentimos: costo.nullish(),
+  })
+  .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
+
 export const contratosDeCotizador = {
   cotizador_iniciar: contrato(z.strictObject({}), z.strictObject({ configuracionCreada: z.boolean() })),
   cotizador_configuracion_ver: contrato(z.strictObject({}), configuracionDeCotizadorSchema),
@@ -172,6 +316,32 @@ export const contratosDeCotizador = {
   ajuste_cliente_fijar: contrato(
     z.strictObject({ clienteId: z.uuid(), porcentaje: porcentajeConSigno.nullable(), nota: texto(200).nullable().optional() }),
     z.strictObject({ clienteId: z.string(), ajuste: ajusteDeClienteSchema.nullable() }),
+  ),
+  cotizacion_crear: contrato(crearCotizacionSchema, cotizacionCompletaSchema),
+  cotizacion_editar: contrato(editarCotizacionSchema, cotizacionCompletaSchema),
+  cotizacion_ver: contrato(z.strictObject({ id: z.uuid(), version: z.number().int().min(1).optional() }), cotizacionCompletaSchema),
+  cotizaciones_listar: contrato(
+    z.strictObject({
+      ...paginaSchema.shape,
+      estado: z.enum(FILTROS_DE_ESTADO_DE_COTIZACION).default('todas'),
+      clienteId: z.uuid().optional(),
+      buscar: texto(100).optional(),
+    }),
+    listadoSchema(cotizacionSchema),
+  ),
+  cotizacion_emitir: contrato(z.strictObject({ id: z.uuid(), motivoMargenBajo: texto(300).min(1).optional() }), cotizacionCompletaSchema),
+  cotizacion_nueva_version: contrato(soloId, cotizacionCompletaSchema),
+  cotizacion_duplicar: contrato(soloId, cotizacionCompletaSchema),
+  cotizacion_marcar_enviada: contrato(soloId, cotizacionCompletaSchema),
+  cotizacion_aceptar: contrato(
+    z.strictObject({ id: z.uuid(), posiciones: z.array(z.number().int().min(0)).min(1).max(MAXIMO_DE_LINEAS_DE_COTIZACION).optional() }),
+    cotizacionCompletaSchema,
+  ),
+  cotizacion_rechazar: contrato(z.strictObject({ id: z.uuid(), motivo: texto(300).nullish() }), cotizacionCompletaSchema),
+  cotizacion_anular: contrato(z.strictObject({ id: z.uuid(), motivo: texto(300).min(1, { error: 'Indica el motivo.' }) }), cotizacionCompletaSchema),
+  cotizador_resumen: contrato(
+    z.strictObject({ desde: dia, hasta: dia }).refine((v) => v.desde <= v.hasta, { error: 'El período empieza antes de terminar.' }),
+    resumenDeCotizadorSchema,
   ),
 } as const;
 
