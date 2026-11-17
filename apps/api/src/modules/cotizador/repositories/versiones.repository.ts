@@ -108,14 +108,26 @@ export async function copiarLineas(tx: Transaccion, ctx: ContextoDeEmpresa, deVe
   await tx.insert(l).values(origen.map(({ id: _id, creadoEn: _creadoEn, ...resto }) => ({ ...resto, versionId: aVersionId })));
 }
 
+export type CanalDeEvento = EventoDeCotizacion['canal'];
+
+/** Por omisión el evento es de la pantalla y de la persona de `ctx`; desde el enlace público va con `{ canal: 'enlace', usuarioId: null }`. */
 export async function registrarEvento(
   tx: Transaccion,
   ctx: ContextoDeEmpresa,
   cotizacionId: string,
   version: number,
-  evento: { tipo: TipoDeEventoDeCotizacion; motivo?: string | null; datos?: object },
+  evento: { tipo: TipoDeEventoDeCotizacion; motivo?: string | null; datos?: object; canal?: CanalDeEvento; usuarioId?: string | null },
 ): Promise<void> {
-  await tx.insert(e).values({ tenantId: ctx.empresaId, cotizacionId, version, tipo: evento.tipo, motivo: evento.motivo ?? null, datos: evento.datos ?? {}, usuarioId: ctx.usuarioId });
+  await tx.insert(e).values({
+    tenantId: ctx.empresaId,
+    cotizacionId,
+    version,
+    tipo: evento.tipo,
+    motivo: evento.motivo ?? null,
+    datos: evento.datos ?? {},
+    usuarioId: evento.usuarioId === undefined ? ctx.usuarioId : evento.usuarioId,
+    canal: evento.canal ?? 'ui',
+  });
 }
 
 const MAXIMO_DE_HISTORIAL = 200;

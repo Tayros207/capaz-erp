@@ -13,13 +13,14 @@ import { Lista } from '../../shared/ui/datos/lista.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { MenuDeAcciones, type AccionDeMenu } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
-import { resolverAccion } from './acciones.ts';
+import { refrescarCotizador, resolverAccion } from './acciones.ts';
 import { enviarPorWhatsApp, usePermisosDeCotizaciones } from './acciones-cotizacion.ts';
 import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, emitirCotizacion, listarPedidosDelCliente, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { formatearDia } from './documento-cotizacion.ts';
 import { HojaAceptar } from './hoja-aceptar.tsx';
 import { HojaDeCotizacion } from './hoja-cotizacion.tsx';
+import { HojaEnlace } from './hoja-enlace.tsx';
 import { HojaMotivo } from './hoja-motivo.tsx';
 import { InsigniaDeCotizacion } from './insignia-cotizacion.tsx';
 import { mensajeDeRechazo, soles } from './logica.ts';
@@ -67,13 +68,15 @@ function DatoDePedido({ c }: { c: CotizacionCompletaDto }) {
   );
 }
 
-type Hoja = 'editar' | 'aceptar' | 'rechazar' | 'anular' | 'margen' | null;
+type Hoja = 'editar' | 'aceptar' | 'rechazar' | 'anular' | 'margen' | 'enlace' | null;
 
 function Contenido({ c }: { c: CotizacionCompletaDto }) {
   const navegar = useNavigate();
   const permisos = usePermisosDeCotizaciones();
   const [hoja, setHoja] = useState<Hoja>(null);
   const [ocupado, setOcupado] = useState(false);
+  // El enlace nuevo se muestra una sola vez dentro de la hoja: la ficha se refresca al cerrarla, no antes.
+  const [enlaceCambio, setEnlaceCambio] = useState(false);
   const visibles = new Set(accionesVisibles(c.estado, permisos));
   const margen = textoDeMargen(c.margenPct);
 
@@ -105,6 +108,7 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
 
   const acciones: AccionDeMenu[] = [
     ...(sePuedeImprimir(c.estado) ? [{ etiqueta: 'Imprimir cotización', onSeleccionar: () => void navegar(rutaDeDocumento(c.id)) }, { etiqueta: 'Enviar por WhatsApp', onSeleccionar: () => void enviarPorWhatsApp(c) }] : []),
+    ...(permisos.emitir && sePuedeImprimir(c.estado) ? [{ etiqueta: 'Enlace para el cliente', onSeleccionar: () => setHoja('enlace') }] : []),
     ...(visibles.has('enviar') ? [{ etiqueta: 'Marcar como enviada', onSeleccionar: () => void simple(() => marcarEnviada(c.id), 'Marcada como enviada.') }] : []),
     ...(visibles.has('rechazar') ? [{ etiqueta: 'Rechazar', onSeleccionar: () => setHoja('rechazar') }] : []),
     ...(visibles.has('nueva_version') ? [{ etiqueta: 'Nueva versión', onSeleccionar: () => void simple(() => nuevaVersion(c.id), 'Nueva versión creada como borrador.') }] : []),
@@ -193,6 +197,7 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
       <HojaAceptar abierto={hoja === 'aceptar'} cotizacion={c} alCerrar={() => setHoja(null)} alAceptar={(e) => resolverAccion(aceptarCotizacion(argumentosDeAceptar(c.id, c.conOpciones, e)), 'Cotización aceptada.')} />
       <HojaMotivo abierto={hoja === 'rechazar'} titulo="Rechazar cotización" etiqueta="Motivo (opcional)" textoEnviar="Rechazar" obligatorio={false} alCerrar={() => setHoja(null)} alEnviar={(t) => resolverAccion(rechazarCotizacion(argumentosDeRechazo(c.id, t)), 'Cotización rechazada.')} />
       <HojaMotivo abierto={hoja === 'anular'} titulo="Anular cotización" etiqueta="Motivo de la anulación" textoEnviar="Continuar" obligatorio peligroso alCerrar={() => setHoja(null)} alEnviar={(t) => resolverAccion(anularCotizacion(argumentosDeAnulacion(c.id, t)), 'Cotización anulada.')} />
+      <HojaEnlace abierto={hoja === 'enlace'} cotizacion={c} alCambiar={() => setEnlaceCambio(true)} alCerrar={() => { setHoja(null); if (enlaceCambio) { setEnlaceCambio(false); void refrescarCotizador(); } }} />
       <HojaMotivo abierto={hoja === 'margen'} titulo="Margen por debajo del mínimo" etiqueta="¿Por qué se emite así?" ayuda="El margen está por debajo del mínimo de tus Ajustes. Anota el motivo para poder emitirla." textoEnviar="Continuar" obligatorio alCerrar={() => setHoja(null)} alEnviar={emitirConMotivo} />
     </div>
   );
