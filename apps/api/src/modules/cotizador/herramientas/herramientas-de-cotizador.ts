@@ -8,6 +8,11 @@ import { cotizacionEmitir, cotizacionDuplicar, cotizacionNuevaVersion } from './
 import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
 import { cotizacionAceptar, cotizacionAnular, cotizacionMarcarEnviada, cotizacionRechazar } from './cotizaciones-estado.js';
 import { cotizacionesListar, cotizacionVer, cotizadorResumen } from './cotizaciones-lectura.js';
+import { formatoPliegoArchivar, formatoPliegoCrear, formatoPliegoEditar, formatosPliegoListar } from './taller-formatos.js';
+import { itemCuadroArchivar, itemCuadroCrear, itemCuadroEditar, itemsCuadroListar, itemsCuadroReordenar } from './taller-items.js';
+import { maquinaArchivar, maquinaCrear, maquinaEditar, maquinasListar } from './taller-maquinas.js';
+import { tallerSembrar } from './taller-sembrar.js';
+import { tarifaArchivar, tarifaCrear, tarifaEditar, tarifasListar } from './taller-tarifas.js';
 import { precioConsultar } from './precio-consultar.js';
 import { cotizadorProductosBuscar } from './productos-buscar.js';
 
@@ -37,6 +42,12 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   cotizacionRechazar,
   cotizacionAnular,
   cotizadorResumen,
+  // Taller (cot-s3): formatos, máquinas, tarifas, ítems del cuadro y la carga de ejemplo.
+  formatosPliegoListar, formatoPliegoCrear, formatoPliegoEditar, formatoPliegoArchivar,
+  maquinasListar, maquinaCrear, maquinaEditar, maquinaArchivar,
+  tarifasListar, tarifaCrear, tarifaEditar, tarifaArchivar,
+  itemsCuadroListar, itemCuadroCrear, itemCuadroEditar, itemCuadroArchivar, itemsCuadroReordenar,
+  tallerSembrar,
 ] as const;
 
 /** Todo lo que el módulo `cotizador` aporta al servidor en esta parte: herramientas (sin consumidores ni fuentes de tiempo). */
