@@ -2,6 +2,7 @@ import { plataforma, type Urls } from './plataforma.ts';
 import { crearAzar } from './demo/azar.ts';
 import { sembrarCrm } from './demo/crm.ts';
 import { escribible, type Ctx } from './demo/contexto.ts';
+import { sembrarCotizador } from './demo/cotizador.ts';
 import { CLAVE_DEMO, CORREO_DEMO, conAdmin, leerEntorno, soltarLimiteDeAcceso, type Entorno } from './demo/entorno.ts';
 import { sembrarFinanzas } from './demo/finanzas.ts';
 import { Sesion } from './demo/http.ts';
@@ -18,7 +19,7 @@ import { correoDe, sembrarUsuarios } from './demo/usuarios.ts';
 // por la API real (herramientas, permisos, auditoría, correlativos y RLS incluidos). SOLO base local.
 // Requiere la API local en marcha (`pnpm --filter api start`) y `ALTA_DE_EMPRESAS=abierta`. Ver docs/DATOS-DE-PRUEBA.md.
 
-const ORDEN_DE_MODULOS = ['registro', 'crm', 'ordenes', 'insumos', 'compras', 'personal', 'reportes'];
+const ORDEN_DE_MODULOS = ['registro', 'crm', 'ordenes', 'cotizador', 'insumos', 'compras', 'personal', 'reportes'];
 const log = (m: string): void => console.log(m);
 
 async function estadosDe(e: Entorno, empresaId: string): Promise<Map<string, string>> {
@@ -67,7 +68,7 @@ async function sembrarEmpresa(e: Entorno, sec: Sector, indice: number): Promise<
     await sembrarMaestros(ctx);
     log(`  maestros: ${ctx.productos.length} productos, ${ctx.clientes.length} clientes, ${ctx.proveedores.length} proveedores, ${ctx.sucursales.length} sucursales`);
     if (ctx.clientes.length === 0 || ctx.productos.length === 0) return log('  ⚠ sin maestros: se omiten los módulos.');
-    for (const paso of [sembrarFinanzas, sembrarCrm, sembrarPedidos, sembrarInsumos, sembrarCompras, sembrarPersonal, sembrarBorradores]) await paso(ctx);
+    for (const paso of [sembrarFinanzas, sembrarCrm, sembrarPedidos, sembrarCotizador, sembrarInsumos, sembrarCompras, sembrarPersonal, sembrarBorradores]) await paso(ctx);
     await sembrarUsuarios(ctx, e);
     log(`  listo (${[...ctx.estados].filter(([m]) => escribible(ctx, m)).length} módulos con escritura)`);
   });

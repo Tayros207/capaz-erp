@@ -3,7 +3,7 @@ import { conAdmin, type Entorno } from './entorno.ts';
 
 const TABLAS: [string, string][] = [
   ['productos', 'core.productos'], ['contactos', 'core.clientes'], ['sucursales', 'core.sucursales'], ['movimientos', 'registro.movimientos'],
-  ['deudas', 'registro.deudas'], ['oportunid.', 'crm.oportunidades'], ['pedidos', 'ordenes.pedidos'], ['artículos', 'insumos.articulos'],
+  ['deudas', 'registro.deudas'], ['oportunid.', 'crm.oportunidades'], ['pedidos', 'ordenes.pedidos'], ['listas', 'cotizador.listas_de_precio'], ['artículos', 'insumos.articulos'],
   ['compras', 'compras.ordenes'], ['colaborad.', 'personal.colaboradores'], ['borradores', 'core.borradores'],
 ];
 

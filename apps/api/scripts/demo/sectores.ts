@@ -38,7 +38,7 @@ export const SECTORES: Sector[] = [
       { codigo: 'PRI', nombre: 'Taller principal · Lima Cercado', direccion: 'Jr. Ucayali 482, Lima' },
       { codigo: 'MIR', nombre: 'Tienda Miraflores', direccion: 'Av. Larco 1120, Miraflores' },
     ],
-    modulos: { registro: {}, crm: {}, ordenes: {}, insumos: {}, compras: {}, personal: {}, reportes: {} },
+    modulos: { registro: {}, crm: {}, ordenes: {}, cotizador: {}, insumos: {}, compras: {}, personal: {}, reportes: {} },
     usuarios: [
       { clave: 'admin', nombre: 'Rosa Quispe Mamani', rol: 'owner', modulos: {} },
       { clave: 'ventas', nombre: 'Daniel Huamán Rojas', rol: 'member', modulos: TODOS_COMPLETO('crm', 'ordenes') },
@@ -74,7 +74,7 @@ export const SECTORES: Sector[] = [
       { codigo: 'MER', nombre: 'Punto de venta Mercado Mayorista', direccion: 'Puesto 112, Mercado Mayorista, La Victoria' },
       { codigo: 'CAL', nombre: 'Reparto Callao', direccion: 'Av. Argentina 2450, Callao' },
     ],
-    modulos: { registro: {}, crm: {}, ordenes: {}, insumos: {}, compras: { prueba: 15 }, reportes: {} },
+    modulos: { registro: {}, crm: {}, ordenes: {}, cotizador: {}, insumos: {}, compras: { prueba: 15 }, reportes: {} },
     usuarios: [
       { clave: 'admin', nombre: 'Jorge Mendoza Castillo', rol: 'owner', modulos: {} },
       { clave: 'ventas', nombre: 'Patricia Torres Vargas', rol: 'member', modulos: { crm: 'completo', ordenes: 'completo' } },
