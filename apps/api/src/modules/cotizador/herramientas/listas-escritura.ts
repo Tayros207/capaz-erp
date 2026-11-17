@@ -4,7 +4,7 @@ import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { evaluarReferencias, normalizarNombre, resumenDeCambioDePrecios } from '../domain/lista.js';
 import { asegurarConfiguracion } from '../repositories/configuracion.repository.js';
-import { archivarLista, bloquearLista, crearLista, editarLista, listaActivaConNombre, listaActivaDeProducto, productoVivo, verLista, type ListaDePrecio } from '../repositories/listas.repository.js';
+import { archivarLista, bloquearLista, restaurarLista, crearLista, editarLista, listaActivaConNombre, listaActivaDeProducto, productoVivo, verLista, type ListaDePrecio } from '../repositories/listas.repository.js';
 import { ID_DE_EJEMPLO, MODULO, rechazoDe } from './comun.js';
 import { nombreRepetido, NO_EXISTE_LA_LISTA, prepararEdicion, productoYaTieneLista } from './listas-edicion.js';
 import { listaADto } from './listas-respuesta.js';
@@ -140,5 +140,36 @@ export const listaPrecioArchivar = definirHerramienta('lista_precio_archivar', {
     await asegurarConfiguracion(tx, ctx);
     const f = await archivarLista(tx, ctx, args.id);
     return f ? exito(await listaADto(tx, ctx, f, await hoyDeLaEmpresa(tx))) : rechazo('no_encontrado', NO_EXISTE_LA_LISTA);
+  },
+});
+
+export const listaPrecioRestaurar = definirHerramienta('lista_precio_restaurar', {
+  modulo: MODULO,
+  permiso: 'cotizador:configurar',
+  criticidad: 'normal',
+  idempotente: true,
+  ayuda: {
+    titulo: 'Restaurar un producto archivado de la lista de precios',
+    paraQueSirve: 'Vuelve a activar un producto archivado: se puede editar y cotizar otra vez. Si ya está activo, no cambia nada.',
+    cuandoUsarla: 'Cuando archivaste un producto por error o vuelves a venderlo.',
+    campos: [ID],
+    ejemploTecleado: 'restaurar la lista Volantes A5',
+    ejemploHablado: 'vuelvo a vender volantes a cinco',
+    erroresComunes: ['La lista no existe o es de otra empresa.', 'Otra lista activa ya usa ese nombre o ese producto: archívala o cámbiale el nombre primero.'],
+    relacionadas: ['listas_precio_listar', 'lista_precio_archivar'],
+  },
+  auditar: AUDITAR,
+  async ejecutar(args, ctx, tx) {
+    await asegurarConfiguracion(tx, ctx);
+    const actual = await bloquearLista(tx, ctx, args.id);
+    if (!actual) return rechazo('no_encontrado', NO_EXISTE_LA_LISTA);
+    if (actual.archivadoEn) {
+      const conNombre = await listaActivaConNombre(tx, ctx, actual.nombreNormalizado, actual.id);
+      if (conNombre) return nombreRepetido(conNombre);
+      const deProducto = actual.productoId ? await listaActivaDeProducto(tx, ctx, actual.productoId, actual.id) : null;
+      if (deProducto) return productoYaTieneLista(deProducto);
+    }
+    const f = await restaurarLista(tx, ctx, actual.id);
+    return exito(await listaADto(tx, ctx, f ?? actual, await hoyDeLaEmpresa(tx)));
   },
 });

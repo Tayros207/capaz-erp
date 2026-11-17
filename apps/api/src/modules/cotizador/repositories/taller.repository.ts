@@ -2,7 +2,7 @@ import { and, asc, count, eq, isNull, ne, sql } from 'drizzle-orm';
 import { cotizadorFormatosPliego, cotizadorItemsDelCuadro, cotizadorMaquinas, cotizadorTarifas } from '../../../db/esquema/cotizador.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import type { SemillaDelTaller } from '../domain/taller-semilla.js';
-import { bloquearPorId, editarPorId, insertarUnica, listarPorNombre, verPorId, archivarPorId, activaConNombre, type FiltrosPorNombre } from './taller-comun.repository.js';
+import { bloquearPorId, editarPorId, insertarUnica, listarPorNombre, verPorId, archivarPorId, restaurarPorId, activaConNombre, type FiltrosPorNombre } from './taller-comun.repository.js';
 
 // Los cuatro catálogos del taller, cada uno con su forma. Lo común está en `taller-comun.repository.ts`.
 
@@ -26,6 +26,7 @@ export const formatoActivoConNombre = (tx: Transaccion, ctx: ContextoDeEmpresa, 
 export const crearFormato = (tx: Transaccion, ctx: ContextoDeEmpresa, d: { nombre: string; nombreNormalizado: string; anchoCm: string; altoCm: string; tipo: string }) => insertarUnica(tx, ctx, f, d);
 export const editarFormato = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string, c: Record<string, unknown>) => editarPorId(tx, ctx, f, id, c);
 export const archivarFormato = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => archivarPorId(tx, ctx, f, id);
+export const restaurarFormato = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => restaurarPorId(tx, ctx, f, id);
 
 // --- Máquinas ---
 export const listarMaquinas = (tx: Transaccion, ctx: ContextoDeEmpresa, fl: FiltrosPorNombre) => listarPorNombre(tx, ctx, m, fl);
@@ -35,6 +36,7 @@ export const maquinaActivaConNombre = (tx: Transaccion, ctx: ContextoDeEmpresa, 
 export const crearMaquina = (tx: Transaccion, ctx: ContextoDeEmpresa, d: Record<string, unknown> & { nombreNormalizado: string }) => insertarUnica(tx, ctx, m, d);
 export const editarMaquina = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string, c: Record<string, unknown>) => editarPorId(tx, ctx, m, id, c);
 export const archivarMaquina = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => archivarPorId(tx, ctx, m, id);
+export const restaurarMaquina = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => restaurarPorId(tx, ctx, m, id);
 
 // --- Tarifas ---
 export const listarTarifas = (tx: Transaccion, ctx: ContextoDeEmpresa, fl: FiltrosPorNombre & { factor?: string }) =>
@@ -45,6 +47,7 @@ export const tarifaActivaConNombre = (tx: Transaccion, ctx: ContextoDeEmpresa, n
 export const crearTarifa = (tx: Transaccion, ctx: ContextoDeEmpresa, d: Record<string, unknown> & { nombreNormalizado: string }) => insertarUnica(tx, ctx, t, d);
 export const editarTarifa = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string, c: Record<string, unknown>) => editarPorId(tx, ctx, t, id, c);
 export const archivarTarifa = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => archivarPorId(tx, ctx, t, id);
+export const restaurarTarifa = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => restaurarPorId(tx, ctx, t, id);
 
 /** El formato activo con ese id (para enlazar una tarifa), o `null`. */
 export async function formatoVivo(tx: Transaccion, ctx: ContextoDeEmpresa, id: string): Promise<FormatoDePliego | null> {
@@ -62,6 +65,7 @@ export const bloquearItem = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string
 export const itemActivoConNombre = (tx: Transaccion, ctx: ContextoDeEmpresa, n: string, salvo?: string) => activaConNombre(tx, ctx, i, n, salvo);
 export const editarItem = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string, c: Record<string, unknown>) => editarPorId(tx, ctx, i, id, c);
 export const archivarItem = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => archivarPorId(tx, ctx, i, id);
+export const restaurarItem = (tx: Transaccion, ctx: ContextoDeEmpresa, id: string) => restaurarPorId(tx, ctx, i, id);
 
 /** Cuántos ítems activos hay y la siguiente posición libre. */
 export async function resumenDeItems(tx: Transaccion, ctx: ContextoDeEmpresa): Promise<{ activos: number; siguientePosicion: number }> {

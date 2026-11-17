@@ -137,3 +137,33 @@ export async function archivarLista(tx: Transaccion, ctx: ContextoDeEmpresa, id:
     .returning();
   return fila ?? (await verLista(tx, ctx, id));
 }
+
+/** Restaura (idempotente): una lista ya activa se devuelve tal cual. */
+export async function restaurarLista(tx: Transaccion, ctx: ContextoDeEmpresa, id: string): Promise<ListaDePrecio | null> {
+  const [fila] = await tx
+    .update(l)
+    .set({ archivadoEn: null, actualizadoEn: new Date() })
+    .where(and(deEmpresa(ctx), eq(l.id, id), isNotNull(l.archivadoEn)))
+    .returning();
+  return fila ?? (await verLista(tx, ctx, id));
+}
+
+/** Las listas activas cuyo nombre contiene todas las `palabras` (ya normalizadas); sin palabras, todas. Con `bloquear`, las filas se bloquean. */
+export async function listasActivasConPalabras(tx: Transaccion, ctx: ContextoDeEmpresa, palabras: string[], bloquear: boolean): Promise<ListaDePrecio[]> {
+  const consulta = tx
+    .select()
+    .from(l)
+    .where(and(deEmpresa(ctx), isNull(l.archivadoEn), ...palabras.map((p) => like(l.nombreNormalizado, `%${sinComodines(p)}%`))))
+    .orderBy(asc(l.nombreNormalizado), asc(l.id));
+  return bloquear ? consulta.for('update') : consulta;
+}
+
+export type PreciosNuevos = { id: string; p100Centimos: number; p1000Centimos: number; p5000Centimos: number; precioMinimoCentimos: number | null; aConfirmado: boolean };
+
+/** Escribe los precios nuevos de varias listas y fija la fecha de los precios; va dentro de la transacción de la herramienta. */
+export async function guardarPreciosDeListas(tx: Transaccion, ctx: ContextoDeEmpresa, cambios: PreciosNuevos[]): Promise<void> {
+  const ahora = new Date();
+  for (const { id, ...datos } of cambios) {
+    await tx.update(l).set({ ...datos, preciosFijadosEn: ahora, actualizadoEn: ahora }).where(and(deEmpresa(ctx), eq(l.id, id), isNull(l.archivadoEn)));
+  }
+}
