@@ -66,6 +66,6 @@ export function aCotizacionCompleta({ c, version: v, lineas, versiones, historia
     anuladoEn: iso(c.anuladoEn),
     motivoAnulacion: c.motivoAnulacion,
     versiones: versiones.map((x) => ({ version: x.version, subtotalCentimos: x.subtotalCentimos, totalCentimos: x.totalCentimos, emitidaEn: iso(x.emitidaEn) })),
-    historial: historial.map((h) => ({ tipo: h.tipo as CotizacionCompletaDto['historial'][number]['tipo'], version: h.version, motivo: h.motivo, usuarioId: h.usuarioId, creadoEn: h.creadoEn.toISOString() })),
+    historial: historial.map((h) => ({ tipo: h.tipo as CotizacionCompletaDto['historial'][number]['tipo'], version: h.version, motivo: h.motivo, usuarioId: h.usuarioId, canal: h.canal as CotizacionCompletaDto['historial'][number]['canal'], creadoEn: h.creadoEn.toISOString() })),
   };
 }

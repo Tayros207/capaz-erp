@@ -172,7 +172,9 @@ const configurarSchema = z
 // --- Cotizaciones (s2). Precios y totales SIN IGV; el IGV se calcula por línea. ---
 
 export const TIPOS_DE_LINEA_DE_COTIZACION = ['lista', 'manual'] as const;
-export const TIPOS_DE_EVENTO_DE_COTIZACION = ['creada', 'editada', 'emitida', 'enviada', 'aceptada', 'rechazada', 'anulada', 'nueva_version'] as const;
+export const TIPOS_DE_EVENTO_DE_COTIZACION = ['creada', 'editada', 'emitida', 'enviada', 'aceptada', 'rechazada', 'anulada', 'nueva_version', 'vista', 'enlace_generado', 'enlace_revocado'] as const;
+/** Por dónde ocurrió un evento: la pantalla, el enlace público del cliente o el sistema. */
+export const CANALES_DE_EVENTO_DE_COTIZACION = ['ui', 'enlace', 'sistema'] as const;
 export const FILTROS_DE_ESTADO_DE_COTIZACION = ['abiertas', ...ESTADOS_DE_COTIZACION, 'todas'] as const;
 export const MAXIMO_DE_LINEAS_DE_COTIZACION = 100;
 
@@ -247,7 +249,9 @@ export const eventoDeCotizacionSchema = z.strictObject({
   tipo: z.enum(TIPOS_DE_EVENTO_DE_COTIZACION),
   version: z.number().int(),
   motivo: z.string().nullable(),
-  usuarioId: z.string(),
+  /** Nulo cuando el evento lo produjo el cliente desde el enlace público. */
+  usuarioId: z.string().nullable(),
+  canal: z.enum(CANALES_DE_EVENTO_DE_COTIZACION),
   creadoEn: z.iso.datetime(),
 });
 

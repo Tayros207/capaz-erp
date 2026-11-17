@@ -85,9 +85,10 @@ type EventoDeCotizacionDto = CotizacionCompletaDto['historial'][number];
 const TEXTO_DE_EVENTO: Readonly<Record<EventoDeCotizacionDto['tipo'], string>> = {
   creada: 'Creada', editada: 'Editada', emitida: 'Emitida', enviada: 'Marcada como enviada', aceptada: 'Aceptada',
   rechazada: 'Rechazada', anulada: 'Anulada', nueva_version: 'Nueva versión',
+  vista: 'Vista por el cliente', enlace_generado: 'Enlace generado', enlace_revocado: 'Enlace revocado',
 };
-export const textoDeEvento = (e: Pick<EventoDeCotizacionDto, 'tipo' | 'version' | 'motivo'>): string =>
-  `${TEXTO_DE_EVENTO[e.tipo]} (versión ${e.version})${e.motivo ? `: ${e.motivo}` : ''}`;
+export const textoDeEvento = (e: Pick<EventoDeCotizacionDto, 'tipo' | 'version' | 'motivo'> & Partial<Pick<EventoDeCotizacionDto, 'canal'>>): string =>
+  `${TEXTO_DE_EVENTO[e.tipo]}${e.canal === 'enlace' ? ' desde el enlace' : ''} (versión ${e.version})${e.motivo ? `: ${e.motivo}` : ''}`;
 
 // --- Formulario de cotización ---
 
