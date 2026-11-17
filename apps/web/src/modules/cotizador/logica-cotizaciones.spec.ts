@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { centimosSchema, type CotizacionCompletaDto } from '@capaz/shared';
 import {
   FORMULARIO_VACIO, accionesVisibles, argumentosDeAceptar, argumentosDeAnulacion, argumentosDeCreacion, argumentosDeEdicion, argumentosDeEmision, argumentosDeRechazo,
-  formularioDesdeCotizacion, lineaVacia, pideMotivoDeMargen, sePuede, textoDeAceptadas, textoDeEvento, textoDeMargen, validarAceptacion, validarFormulario, validarLinea,
+  estaVencida, formularioDesdeCotizacion, hoyEnLima, rutaDeReenvio, sePuedeReenviar, lineaVacia, pideMotivoDeMargen, sePuede, textoDeAceptadas, textoDeEvento, textoDeMargen, validarAceptacion, validarFormulario, validarLinea,
   type FormularioDeCotizacion, type LineaDeFormulario,
 } from './logica-cotizaciones.ts';
 
@@ -117,5 +117,26 @@ describe('formulario', () => {
     expect(f.lineas.map((l) => [l.tipo, l.descripcion])).toEqual([['lista', 'A'], ['manual', 'B']]);
     expect(f.lineas[0]?.lista).toEqual({ id: 'l1', nombre: 'A' });
     expect(f).toMatchObject({ cliente: { id: 'c1', nombre: 'Ana' }, validezDias: '7', costo: null });
+  });
+});
+
+describe('vencida y reenviar', () => {
+  it('solo emitida o enviada con validaHasta anterior a hoy', () => {
+    expect(estaVencida({ estado: 'emitida', validaHasta: '2026-11-16' }, '2026-11-17')).toBe(true);
+    expect(estaVencida({ estado: 'enviada', validaHasta: '2026-01-01' }, '2026-11-17')).toBe(true);
+    expect(estaVencida({ estado: 'emitida', validaHasta: '2026-11-17' }, '2026-11-17')).toBe(false);
+    expect(estaVencida({ estado: 'emitida', validaHasta: null }, '2026-11-17')).toBe(false);
+    for (const estado of ['borrador', 'aceptada', 'rechazada', 'anulada'] as const) expect(estaVencida({ estado, validaHasta: '2020-01-01' }, '2026-11-17')).toBe(false);
+  });
+  it('hoy se cuenta en Lima: a las 02:00 UTC todavía es el día anterior', () => {
+    expect(hoyEnLima(new Date('2026-11-18T02:00:00Z'))).toBe('2026-11-17');
+    expect(hoyEnLima(new Date('2026-11-18T06:00:00Z'))).toBe('2026-11-18');
+  });
+  it('reenviar solo desde emitida o enviada y lleva a la ficha con el enlace', () => {
+    expect(sePuedeReenviar('emitida')).toBe(true);
+    expect(sePuedeReenviar('enviada')).toBe(true);
+    expect(sePuedeReenviar('borrador')).toBe(false);
+    expect(sePuedeReenviar('aceptada')).toBe(false);
+    expect(rutaDeReenvio('abc')).toBe('/m/cotizador/cotizaciones/abc?enlace=1');
   });
 });
