@@ -8,6 +8,7 @@ import { listaPrecioVer, listasPrecioListar } from './listas-lectura.js';
 import { listaPrecioArchivar, listaPrecioCrear, listaPrecioEditar, listaPrecioRestaurar } from './listas-escritura.js';
 import { listasPrecioAjustarEnBloque } from './listas-bloque.js';
 import { formatoPliegoRestaurar, itemCuadroRestaurar, maquinaRestaurar, tarifaRestaurar } from './taller-restaurar.js';
+import { listaPrecioHistorial } from './listas-historial.js';
 import { cotizacionEmitir, cotizacionDuplicar, cotizacionNuevaVersion } from './cotizaciones-emision.js';
 import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
 import { cotizacionAceptar, cotizacionAnular, cotizacionMarcarEnviada, cotizacionRechazar } from './cotizaciones-estado.js';
@@ -38,6 +39,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   listaPrecioArchivar,
   listaPrecioRestaurar,
   listasPrecioAjustarEnBloque,
+  listaPrecioHistorial,
   precioConsultar,
   cotizadorProductosBuscar,
   ajustesClienteListar,

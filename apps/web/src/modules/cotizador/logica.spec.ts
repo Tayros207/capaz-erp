@@ -10,7 +10,7 @@ const c = (n: number) => centimosSchema.parse(n);
 const lista = (extra: Partial<ListaDePrecioDto> = {}): ListaDePrecioDto => ({
   id: 'l1', productoId: null, productoNombre: null, nombre: 'Volantes', unidad: 'millar', p100Centimos: 4500, p1000Centimos: 25_000, p5000Centimos: 90_000, modoIntermedio: 'curva',
   precioMinimoCentimos: null, aConfirmado: false, preciosFijadosEn: '2026-11-01T10:00:00.000Z', porRevisar: false, archivadoEn: null,
-  creadoEn: '2026-11-01T10:00:00.000Z', actualizadoEn: '2026-11-01T10:00:00.000Z', ...extra,
+  creadoEn: '2026-11-01T10:00:00.000Z', actualizadoEn: '2026-11-01T10:00:00.000Z', origen: null, ...extra,
 });
 
 describe('lista de precios', () => {
@@ -106,13 +106,13 @@ describe('ajustes por cliente', () => {
 describe('configuración', () => {
   const dto = {
     utilidadPct: '35', utilidadBase: 'venta' as const, umbralVerdePct: '30', umbralMinimoPct: '15', redondeoComercial: '5' as const, igvPorcentaje: 18,
-    condiciones: { validezDias: 15, plazoEntrega: '3 días', formaPago: '50 % adelanto', tolerancia: '', noIncluye: '' }, mensajeWhatsapp: null, actualizadoEn: null,
+    condiciones: { validezDias: 15, plazoEntrega: '3 días', formaPago: '50 % adelanto', tolerancia: '', noIncluye: '' }, mensajeWhatsapp: null, unidades: ['unidad', 'caja'], actualizadoEn: null,
   };
   it('ida y vuelta del formulario', () => {
     const f = formularioDeConfiguracion(dto);
     expect(validarConfiguracion(f)).toEqual({});
     expect(argumentosDeConfiguracion({ ...f, utilidadPct: ' 40,5 ', validezDias: '', mensajeWhatsapp: '  ' })).toMatchObject({
-      utilidadPct: '40.5', condiciones: { validezDias: null, plazoEntrega: '3 días' }, mensajeWhatsapp: null, igvPorcentaje: 18,
+      utilidadPct: '40.5', condiciones: { validezDias: null, plazoEntrega: '3 días' }, mensajeWhatsapp: null, igvPorcentaje: 18, unidades: ['unidad', 'caja'],
     });
   });
   it('valida porcentajes, umbrales y días', () => {

@@ -22,6 +22,7 @@ export const restaurarLista = (id: string) => llamar('lista_precio_restaurar', {
 /** Crítica: el servidor devuelve cuántas listas cambian y ejemplos; la persona confirma. */
 export const ajustarListasEnBloque = (args: EntradaDe<'listas_precio_ajustar_en_bloque'>) =>
   llamarConfirmando('listas_precio_ajustar_en_bloque', args, { titulo: 'Cambiar precios en bloque', textoConfirmar: 'Confirmar y cambiar' });
+export const historialDeLista = (id: string, cursor?: string, limite = 20) => llamar('lista_precio_historial', { id, limite, ...(cursor && { cursor }) });
 
 export const consultarPrecio = (args: EntradaDe<'precio_consultar'>) => llamar('precio_consultar', args);
 export const crearCotizacion = (args: EntradaDe<'cotizacion_crear'>) => llamar('cotizacion_crear', args);

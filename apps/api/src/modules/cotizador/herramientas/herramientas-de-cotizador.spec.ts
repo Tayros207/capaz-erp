@@ -6,9 +6,9 @@ import { manifiestoCotizador } from '../cotizador.manifest.js';
 describe('herramientas del Cotizador (s1, s2 y taller)', () => {
   const nombres = HERRAMIENTAS_DE_COTIZADOR.map((h) => h.nombre);
 
-  it('son 11 de s1, 12 de s2 y el buscador del catálogo, más las 18 del taller (cot-s3), las 17 del cuadro por partes (cot-s4) y 6 de cot-p3 (cambiar en bloque y restaurar), cada una con contrato, módulo «cotizador» y un permiso del manifiesto', () => {
-    expect(nombres).toHaveLength(65);
-    expect(new Set(nombres).size).toBe(65);
+  it('son 11 de s1, 12 de s2 y el buscador del catálogo, más las 18 del taller (cot-s3), las 17 del cuadro por partes (cot-s4) 6 de cot-p3 (cambiar en bloque y restaurar) y el historial de cot-p37, cada una con contrato, módulo «cotizador» y un permiso del manifiesto', () => {
+    expect(nombres).toHaveLength(66);
+    expect(new Set(nombres).size).toBe(66);
     for (const h of HERRAMIENTAS_DE_COTIZADOR) {
       expect(h.nombre in CONTRATOS, h.nombre).toBe(true);
       expect(h.modulo).toBe('cotizador');
@@ -20,7 +20,7 @@ describe('herramientas del Cotizador (s1, s2 y taller)', () => {
     const criticas = HERRAMIENTAS_DE_COTIZADOR.filter((h) => h.criticidad === 'critica');
     expect(criticas.map((h) => h.nombre).sort()).toEqual(['cotizacion_anular', 'cotizacion_emitir', 'cuadro_guardar_referencias', 'lista_precio_editar', 'listas_precio_ajustar_en_bloque', 'tarifa_editar']);
     expect(criticas.every((h) => h.resumir !== null)).toBe(true);
-    const lectura = ['cotizador_configuracion_ver', 'listas_precio_listar', 'lista_precio_ver', 'precio_consultar', 'cotizador_productos_buscar', 'ajustes_cliente_listar', 'cotizacion_ver', 'cotizaciones_listar', 'cotizador_resumen', 'formatos_pliego_listar', 'maquinas_listar', 'tarifas_listar', 'items_cuadro_listar', 'cuadro_ver', 'cuadro_calcular', 'cuadro_generar_referencias'];
+    const lectura = ['cotizador_configuracion_ver', 'listas_precio_listar', 'lista_precio_ver', 'precio_consultar', 'cotizador_productos_buscar', 'ajustes_cliente_listar', 'cotizacion_ver', 'cotizaciones_listar', 'cotizador_resumen', 'formatos_pliego_listar', 'maquinas_listar', 'tarifas_listar', 'items_cuadro_listar', 'cuadro_ver', 'cuadro_calcular', 'cuadro_generar_referencias', 'lista_precio_historial'];
     expect(HERRAMIENTAS_DE_COTIZADOR.filter((h) => h.criticidad === 'lectura').map((h) => h.nombre).sort()).toEqual([...lectura].sort());
   });
 

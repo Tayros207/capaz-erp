@@ -206,6 +206,7 @@ export type FormularioDeConfiguracion = {
   tolerancia: string;
   noIncluye: string;
   mensajeWhatsapp: string;
+  unidades: string[];
 };
 export type ErroresDeConfiguracion = Partial<Record<'utilidadPct' | 'umbralVerdePct' | 'umbralMinimoPct' | 'validezDias', string>>;
 
@@ -223,6 +224,7 @@ export function formularioDeConfiguracion(c: ConfiguracionDeCotizadorDto): Formu
     tolerancia: c.condiciones.tolerancia,
     noIncluye: c.condiciones.noIncluye,
     mensajeWhatsapp: c.mensajeWhatsapp ?? '',
+    unidades: [...c.unidades],
   };
 }
 
@@ -260,6 +262,7 @@ export function argumentosDeConfiguracion(f: FormularioDeConfiguracion): Entrada
       noIncluye: f.noIncluye.trim(),
     },
     mensajeWhatsapp: f.mensajeWhatsapp.trim() === '' ? null : f.mensajeWhatsapp.trim(),
+    unidades: f.unidades,
   };
 }
 

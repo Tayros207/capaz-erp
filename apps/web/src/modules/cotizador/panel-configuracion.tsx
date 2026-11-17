@@ -12,6 +12,7 @@ import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { resolverAccion } from './acciones.ts';
 import { configurarCotizador, iniciarCotizador, verConfiguracion } from './api.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
+import { TarjetaDeUnidades } from './tarjeta-unidades.tsx';
 import { argumentosDeConfiguracion, formularioDeConfiguracion, validarConfiguracion, type ErroresDeConfiguracion, type FormularioDeConfiguracion } from './logica.ts';
 
 const ETIQUETA_DE_REDONDEO: Record<(typeof REDONDEOS_COMERCIALES)[number], string> = {
@@ -66,6 +67,7 @@ function Formulario({ config, puedeConfigurar }: { config: ConfiguracionDeCotiza
         <Campo etiqueta="Lo que no incluye" maxLength={300} value={f.noIncluye} onChange={(e) => poner('noIncluye', e.target.value)} />
         <CampoTextarea etiqueta="Mensaje de WhatsApp" filas={3} maxLength={500} value={f.mensajeWhatsapp} ayuda="Si lo dejas vacío, se usa un mensaje por defecto." onChange={(e) => poner('mensajeWhatsapp', e.target.value)} />
       </fieldset>
+      <TarjetaDeUnidades unidades={f.unidades} alCambiar={(u) => poner('unidades', u)} deshabilitado={bloqueado} />
       {puedeConfigurar ? <div className="flex justify-end"><Boton type="submit" variante="primario" cargando={guardando}>Guardar ajustes</Boton></div> : <p className="text-sm text-texto-suave">Solo quien administra los precios puede cambiar estas reglas.</p>}
     </form>
   );

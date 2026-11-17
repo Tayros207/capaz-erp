@@ -6,7 +6,7 @@ import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con
 
 export type Configuracion = typeof cotizadorConfiguracion.$inferSelect;
 export type CambiosDeConfiguracion = Partial<
-  Pick<Configuracion, 'utilidadPct' | 'utilidadBase' | 'umbralVerdePct' | 'umbralMinimoPct' | 'redondeoComercial' | 'igvPorcentaje' | 'condiciones' | 'mensajeWhatsapp'>
+  Pick<Configuracion, 'utilidadPct' | 'utilidadBase' | 'umbralVerdePct' | 'umbralMinimoPct' | 'redondeoComercial' | 'igvPorcentaje' | 'condiciones' | 'mensajeWhatsapp' | 'unidades'>
 >;
 
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(cotizadorConfiguracion.tenantId, ctx.empresaId);

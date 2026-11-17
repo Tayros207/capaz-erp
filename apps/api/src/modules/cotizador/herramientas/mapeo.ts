@@ -10,7 +10,7 @@ import type { ListaDePrecio } from '../repositories/listas.repository.js';
 
 const iso = (f: Date | null): string | null => (f ? f.toISOString() : null);
 
-export const aListaDto = (f: ListaDePrecio, hoy: HoyDeLaEmpresa, productoNombre: string | null = null): ListaDePrecioDto => ({
+export const aListaDto = (f: ListaDePrecio, hoy: HoyDeLaEmpresa, productoNombre: string | null = null, origenCodigo: string | null = null): ListaDePrecioDto => ({
   id: f.id,
   productoId: f.productoId,
   productoNombre,
@@ -27,6 +27,7 @@ export const aListaDto = (f: ListaDePrecio, hoy: HoyDeLaEmpresa, productoNombre:
   archivadoEn: iso(f.archivadoEn),
   creadoEn: f.creadoEn.toISOString(),
   actualizadoEn: f.actualizadoEn.toISOString(),
+  origen: f.origenCotizacionId && f.origenVersion !== null && origenCodigo ? { cotizacionId: f.origenCotizacionId, version: f.origenVersion, codigo: origenCodigo } : null,
 });
 
 export const aConfiguracionDto = (f: Configuracion): ConfiguracionDeCotizadorDto => ({
@@ -38,6 +39,7 @@ export const aConfiguracionDto = (f: Configuracion): ConfiguracionDeCotizadorDto
   igvPorcentaje: f.igvPorcentaje,
   condiciones: { ...CONDICIONES_VACIAS, ...(f.condiciones as Partial<ConfiguracionDeCotizadorDto['condiciones']>) },
   mensajeWhatsapp: f.mensajeWhatsapp,
+  unidades: f.unidades,
   actualizadoEn: f.actualizadoEn.toISOString(),
 });
 

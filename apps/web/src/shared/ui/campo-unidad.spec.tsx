@@ -17,3 +17,16 @@ describe('CampoUnidad', () => {
     expect(html).toContain('bobina');
   });
 });
+
+describe('CampoUnidad con las unidades de la empresa', () => {
+  it('muestra el grupo «De tu empresa» antes de las comunes y no repite las que ya ofrece', () => {
+    const html = renderToStaticMarkup(<CampoUnidad valor="Rollo grande" unidadesDeLaEmpresa={['Rollo grande', 'caja']} alCambiar={() => {}} />);
+    expect(html.indexOf('De tu empresa')).toBeGreaterThan(-1);
+    expect(html.indexOf('De tu empresa')).toBeLessThan(html.indexOf('Cantidad'));
+    expect(html).not.toContain('Otra unidad');
+    expect(html.match(/value="caja"/g)).toHaveLength(1);
+  });
+  it('sin la prop se comporta como siempre', () => {
+    expect(renderToStaticMarkup(<CampoUnidad valor="UND" alCambiar={() => {}} />)).not.toContain('De tu empresa');
+  });
+});

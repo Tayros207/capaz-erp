@@ -46,6 +46,8 @@ export const configuracionDeCotizadorSchema = z.strictObject({
   igvPorcentaje: z.number().int(),
   condiciones: condicionesSchema,
   mensajeWhatsapp: z.string().nullable(),
+  /** Las unidades que ofrece la empresa al anotar cantidades (1 a 40, orden propio). */
+  unidades: z.array(z.string()),
   actualizadoEn: z.iso.datetime().nullable(),
 });
 export type ConfiguracionDeCotizadorDto = z.infer<typeof configuracionDeCotizadorSchema>;
@@ -69,6 +71,8 @@ export const listaDePrecioSchema = z.strictObject({
   archivadoEn: z.iso.datetime().nullable(),
   creadoEn: z.iso.datetime(),
   actualizadoEn: z.iso.datetime(),
+  /** La cotización por partes de la que salieron los tres precios, si se fijaron desde un cuadro. */
+  origen: z.strictObject({ cotizacionId: z.string(), version: z.number().int(), codigo: z.string() }).nullable(),
 });
 export type ListaDePrecioDto = z.infer<typeof listaDePrecioSchema>;
 
@@ -176,6 +180,33 @@ export const ajusteDeClienteSchema = z.strictObject({
 });
 export type AjusteDeClienteDto = z.infer<typeof ajusteDeClienteSchema>;
 
+/** Unidades de la empresa: 1 a 40 textos de 1 a 20 caracteres. Los repetidos se rechazan en el servidor (`validarUnidades`). */
+export const unidadesDeEmpresaSchema = z
+  .array(z.string().trim().min(1, { error: 'Una unidad no puede estar vacía.' }).max(20, { error: 'Una unidad admite hasta 20 caracteres.' }))
+  .min(1, { error: 'Deja al menos una unidad.' })
+  .max(40, { error: 'Se admiten hasta 40 unidades.' });
+
+/** Una cotización que tiene líneas de una lista de precios (historial por producto). */
+export const historialDeListaItemSchema = z.strictObject({
+  cotizacionId: z.string(),
+  codigo: z.string(),
+  titulo: z.string(),
+  estado: z.enum(ESTADOS_DE_COTIZACION),
+  clienteNombre: z.string().nullable(),
+  version: z.number().int(),
+  fecha: z.iso.datetime(),
+  cantidadMilesimas: z.number().int(),
+  precioUnitarioMilesimas: z.number().int(),
+  importeCentimos: z.number().int(),
+});
+export type HistorialDeListaItemDto = z.infer<typeof historialDeListaItemSchema>;
+export const historialDeListaSchema = z.strictObject({
+  origen: listaDePrecioSchema.shape.origen,
+  items: z.array(historialDeListaItemSchema),
+  siguiente: z.string().nullable(),
+});
+export type HistorialDeListaDto = z.infer<typeof historialDeListaSchema>;
+
 const configurarSchema = z
   .strictObject({
     utilidadPct: porcentaje.optional(),
@@ -186,6 +217,7 @@ const configurarSchema = z
     igvPorcentaje: z.union([z.literal(18), z.literal(0)]).optional(),
     condiciones: condicionesSchema.optional(),
     mensajeWhatsapp: texto(500).nullable().optional(),
+    unidades: unidadesDeEmpresaSchema.optional(),
   })
   .refine((v) => Object.values(v).some((x) => x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
 
@@ -367,6 +399,7 @@ export const contratosDeCotizador = {
   lista_precio_archivar: contrato(soloId, listaDePrecioSchema),
   lista_precio_restaurar: contrato(soloId, listaDePrecioSchema),
   listas_precio_ajustar_en_bloque: contrato(ajustarListasEnBloqueSchema, resultadoDeAjusteEnBloqueSchema),
+  lista_precio_historial: contrato(z.strictObject({ id: z.uuid(), limite: z.number().int().min(1).max(50).default(20), cursor: z.string().max(200).optional() }), historialDeListaSchema),
   precio_consultar: contrato(consultarPrecioSchema, precioConsultadoSchema),
   ajustes_cliente_listar: contrato(z.strictObject({}), listadoSchema(ajusteDeClienteSchema)),
   ajuste_cliente_fijar: contrato(

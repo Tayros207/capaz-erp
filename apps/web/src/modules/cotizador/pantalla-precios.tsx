@@ -19,6 +19,7 @@ import { archivarLista, listarListas, restaurarLista, type EstadoDeListas } from
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { HojaDeBloque } from './hoja-bloque.tsx';
 import { HojaDeLista } from './hoja-lista.tsx';
+import { HojaHistorialDeLista } from './hoja-historial-lista.tsx';
 import { resumenDeLista } from './logica.ts';
 import { Cargando, SeccionesDelCotizador } from './marco.tsx';
 import { usePermisosDelCotizador } from './use-cotizador.ts';
@@ -41,6 +42,7 @@ export function PantallaPrecios() {
   const buscar = useRetardo(texto.trim());
   const [hoja, setHoja] = useState<{ lista: ListaDePrecioDto | null } | null>(null);
   const [bloque, setBloque] = useState(false);
+  const [historial, setHistorial] = useState<ListaDePrecioDto | null>(null);
   const estado: EstadoDeListas = filtro === 'archivadas' ? 'archivadas' : 'activas';
   const consulta = useInfiniteQuery({
     queryKey: [...CLAVE_COTIZADOR, 'listas', filtro, buscar, productoId ?? null],
@@ -64,6 +66,7 @@ export function PantallaPrecios() {
     },
     { id: 'unidad', titulo: 'Unidad', celda: (l) => l.unidad },
     { id: 'precios', titulo: 'Precios (sin IGV)', celda: (l) => resumenDeLista(l) },
+    { id: 'historial', titulo: 'Historial', alinear: 'derecha' as const, celda: (l: ListaDePrecioDto) => <Boton variante="fantasma" aria-label={`Ver historial de ${l.nombre}`} onClick={() => setHistorial(l)}>Historial</Boton> },
     ...(configurar
       ? [{
           id: 'acciones', titulo: 'Acciones', alinear: 'derecha' as const,
@@ -114,6 +117,7 @@ export function PantallaPrecios() {
         </>
       )}
       <HojaDeBloque abierto={bloque} alCerrar={() => setBloque(false)} />
+      <HojaHistorialDeLista lista={historial} alCerrar={() => setHistorial(null)} />
       <HojaDeLista abierto={hoja !== null} lista={hoja?.lista ?? null} alCerrar={() => setHoja(null)} />
     </div>
   );
