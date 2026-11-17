@@ -1,6 +1,7 @@
 import { exito } from '@capaz/shared';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { CONFIGURACION_POR_DEFECTO, validarConfiguracion } from '../domain/configuracion.js';
+import { validarUnidades } from '../domain/unidades.js';
 import { asegurarConfiguracion, guardarConfiguracion, leerConfiguracion, type CambiosDeConfiguracion } from '../repositories/configuracion.repository.js';
 import { MODULO, rechazoDe } from './comun.js';
 import { aConfiguracionDto } from './mapeo.js';
@@ -54,16 +55,17 @@ export const cotizadorConfigurar = definirHerramienta('cotizador_configurar', {
   criticidad: 'normal',
   ayuda: {
     titulo: 'Configurar el Cotizador',
-    paraQueSirve: 'Cambia la utilidad, los umbrales de semáforo, el redondeo comercial, el IGV (18 % o 0 %), las condiciones y el mensaje de WhatsApp.',
+    paraQueSirve: 'Cambia la utilidad, los umbrales de semáforo, el redondeo comercial, el IGV (18 % o 0 %), las condiciones, el mensaje de WhatsApp y las unidades de la empresa.',
     cuandoUsarla: 'Cuando cambian tus márgenes, tus condiciones de venta o la forma de redondear precios.',
     campos: [
       { nombre: 'utilidadPct', queSeAnota: 'Utilidad deseada en porcentaje (opcional).', ejemplo: '35' },
       { nombre: 'redondeoComercial', queSeAnota: 'ninguno, 1, 5 o 10 (opcional).', ejemplo: '5' },
       { nombre: 'igvPorcentaje', queSeAnota: '18 o 0 (opcional).', ejemplo: '18' },
+      { nombre: 'unidades', queSeAnota: 'Las unidades de la empresa: de 1 a 40, de hasta 20 caracteres, sin repetidas (opcional).', ejemplo: 'unidad, caja' },
     ],
     ejemploTecleado: 'configurar el redondeo comercial a 5',
     ejemploHablado: 'redondea mis precios hacia arriba de cinco en cinco',
-    erroresComunes: ['Hay que indicar al menos un dato.', 'El umbral mínimo debe ser menor que el umbral verde.', 'Con la utilidad sobre la venta, el porcentaje debe ser menor que 100.'],
+    erroresComunes: ['Hay que indicar al menos un dato.', 'Las unidades no pueden estar vacías ni repetirse.', 'El umbral mínimo debe ser menor que el umbral verde.', 'Con la utilidad sobre la venta, el porcentaje debe ser menor que 100.'],
     relacionadas: ['cotizador_configuracion_ver'],
   },
   auditar: () => ({ entidadTipo: 'cotizador' }),
@@ -80,6 +82,11 @@ export const cotizadorConfigurar = definirHerramienta('cotizador_configurar', {
     if (args.igvPorcentaje !== undefined) cambios.igvPorcentaje = args.igvPorcentaje;
     if (args.condiciones !== undefined) cambios.condiciones = args.condiciones;
     if (args.mensajeWhatsapp !== undefined) cambios.mensajeWhatsapp = args.mensajeWhatsapp?.trim() ? args.mensajeWhatsapp.trim() : null;
+    if (args.unidades !== undefined) {
+      const u = validarUnidades(args.unidades);
+      if (!u.ok) return rechazoDe(u);
+      cambios.unidades = u.unidades;
+    }
     const final = { ...actual, ...cambios };
     const invalida = validarConfiguracion({
       utilidadPct: final.utilidadPct,

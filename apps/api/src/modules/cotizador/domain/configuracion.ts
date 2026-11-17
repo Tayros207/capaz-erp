@@ -1,5 +1,5 @@
 // Reglas de la configuración del Cotizador. Puras.
-import { CONDICIONES_VACIAS, type ConfiguracionDeCotizadorDto } from '@capaz/shared';
+import { CONDICIONES_VACIAS, UNIDADES_SUGERIDAS, type ConfiguracionDeCotizadorDto } from '@capaz/shared';
 import type { Rechazo } from './precios.js';
 
 /** Los valores cuando la empresa todavía no tiene fila (coinciden con los de la tabla). */
@@ -12,6 +12,7 @@ export const CONFIGURACION_POR_DEFECTO: ConfiguracionDeCotizadorDto = {
   igvPorcentaje: 18,
   condiciones: { ...CONDICIONES_VACIAS },
   mensajeWhatsapp: null,
+  unidades: [...UNIDADES_SUGERIDAS],
   actualizadoEn: null,
 };
 

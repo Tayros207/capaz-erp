@@ -18,6 +18,7 @@ import { resolverAccion } from './acciones.ts';
 import { archivarLista, listarListas, type EstadoDeListas } from './api.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { HojaDeLista } from './hoja-lista.tsx';
+import { HojaHistorialDeLista } from './hoja-historial-lista.tsx';
 import { resumenDeLista } from './logica.ts';
 import { Cargando, SeccionesDelCotizador } from './marco.tsx';
 import { usePermisosDelCotizador } from './use-cotizador.ts';
@@ -39,6 +40,7 @@ export function PantallaPrecios() {
   const [texto, setTexto] = useState('');
   const buscar = useRetardo(texto.trim());
   const [hoja, setHoja] = useState<{ lista: ListaDePrecioDto | null } | null>(null);
+  const [historial, setHistorial] = useState<ListaDePrecioDto | null>(null);
   const estado: EstadoDeListas = filtro === 'archivadas' ? 'archivadas' : 'activas';
   const consulta = useInfiniteQuery({
     queryKey: [...CLAVE_COTIZADOR, 'listas', filtro, buscar, productoId ?? null],
@@ -62,6 +64,7 @@ export function PantallaPrecios() {
     },
     { id: 'unidad', titulo: 'Unidad', celda: (l) => l.unidad },
     { id: 'precios', titulo: 'Precios (sin IGV)', celda: (l) => resumenDeLista(l) },
+    { id: 'historial', titulo: 'Historial', alinear: 'derecha' as const, celda: (l: ListaDePrecioDto) => <Boton variante="fantasma" aria-label={`Ver historial de ${l.nombre}`} onClick={() => setHistorial(l)}>Historial</Boton> },
     ...(configurar
       ? [{
           id: 'acciones', titulo: 'Acciones', alinear: 'derecha' as const,
@@ -108,6 +111,7 @@ export function PantallaPrecios() {
           <CargarMas cursor={consulta.hasNextPage ? (consulta.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={consulta.isFetchingNextPage} onCargar={() => void consulta.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
         </>
       )}
+      <HojaHistorialDeLista lista={historial} alCerrar={() => setHistorial(null)} />
       <HojaDeLista abierto={hoja !== null} lista={hoja?.lista ?? null} alCerrar={() => setHoja(null)} />
     </div>
   );

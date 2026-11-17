@@ -16,6 +16,7 @@ import {
   pideConfirmarUnitario, unitarioDeReferencia, validarLista, type ErroresDeLista, type FormularioDeLista, type ModoIntermedio,
 } from './logica.ts';
 import type { ProductoParaLista } from './logica-catalogo.ts';
+import { useUnidadesDeLaEmpresa } from './use-unidades.ts';
 
 type Props = {
   abierto: boolean;
@@ -31,6 +32,7 @@ const formularioInicial = (lista: ListaDePrecioDto | null, producto: ProductoPar
   lista ? formularioDeLista(lista) : producto ? { ...LISTA_VACIA, producto: { id: producto.id, nombre: producto.nombre }, nombre: producto.nombre, unidad: producto.unidad } : LISTA_VACIA;
 
 function Contenido({ lista, producto, alGuardar, alCerrar }: Omit<Props, 'abierto'>) {
+  const unidadesDeLaEmpresa = useUnidadesDeLaEmpresa();
   const [f, setF] = useState<FormularioDeLista>(() => formularioInicial(lista, producto));
   const [errores, setErrores] = useState<ErroresDeLista>({});
   const [aviso, setAviso] = useState<string | undefined>();
@@ -88,7 +90,7 @@ function Contenido({ lista, producto, alGuardar, alCerrar }: Omit<Props, 'abiert
         textoSinResultados="Ningún producto se parece a eso"
       />
       <Campo etiqueta="Nombre" autoFocus maxLength={120} value={f.nombre} error={errores.nombre} onChange={(e) => setF((a) => ({ ...a, nombre: e.target.value }))} />
-      <CampoUnidad valor={f.unidad} error={errores.unidad} alCambiar={(u) => setF((a) => ({ ...a, unidad: u }))} />
+      <CampoUnidad unidadesDeLaEmpresa={unidadesDeLaEmpresa} valor={f.unidad} error={errores.unidad} alCambiar={(u) => setF((a) => ({ ...a, unidad: u }))} />
       <p className="text-sm text-texto-suave">Escribe el precio total, sin IGV, de cada cantidad. Al lado ves lo que sale por unidad.</p>
       {REFERENCIAS.map((r) => (
         <div key={r.clave} className="grid grid-cols-[1fr_auto] items-end gap-3">

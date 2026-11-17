@@ -18,6 +18,7 @@ export const crearLista = (args: EntradaDe<'lista_precio_crear'>) => llamar('lis
 export const editarLista = (args: EntradaDe<'lista_precio_editar'>) =>
   llamarConfirmando('lista_precio_editar', args, { titulo: 'Cambiar la lista de precios', textoConfirmar: 'Guardar cambios' });
 export const archivarLista = (id: string) => llamar('lista_precio_archivar', { id });
+export const historialDeLista = (id: string, cursor?: string, limite = 20) => llamar('lista_precio_historial', { id, limite, ...(cursor && { cursor }) });
 
 export const consultarPrecio = (args: EntradaDe<'precio_consultar'>) => llamar('precio_consultar', args);
 export const crearCotizacion = (args: EntradaDe<'cotizacion_crear'>) => llamar('cotizacion_crear', args);

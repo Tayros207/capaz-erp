@@ -5,6 +5,7 @@ import { ajusteClienteFijar, ajustesClienteListar } from './ajustes-herramientas
 import { cotizadorConfiguracionVer, cotizadorConfigurar, cotizadorIniciar } from './configuracion-herramientas.js';
 import { crearHerramientasDeEnlaces } from './enlaces-herramientas.js';
 import { listaPrecioVer, listasPrecioListar } from './listas-lectura.js';
+import { listaPrecioHistorial } from './listas-historial.js';
 import { listaPrecioArchivar, listaPrecioCrear, listaPrecioEditar } from './listas-escritura.js';
 import { cotizacionEmitir, cotizacionDuplicar, cotizacionNuevaVersion } from './cotizaciones-emision.js';
 import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
@@ -28,6 +29,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   listaPrecioCrear,
   listaPrecioEditar,
   listaPrecioArchivar,
+  listaPrecioHistorial,
   precioConsultar,
   cotizadorProductosBuscar,
   ajustesClienteListar,

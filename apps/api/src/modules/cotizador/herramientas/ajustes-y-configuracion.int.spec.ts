@@ -118,3 +118,25 @@ describe('configuración', () => {
     expect(await comoEmpresa(appPool, A, async (c) => (await c.query('select count(*)::int as n from cotizador.configuracion')).rows[0].n)).toBe(1);
   });
 });
+
+describe('unidades de la empresa', () => {
+  const configurar = (args: Record<string, unknown>) => dueno.herramienta('cotizador_configurar', args);
+  it('por defecto trae las ocho de la migración, también sin fila de configuración', async () => {
+    expect((await datosDe(ajeno, 'cotizador_configuracion_ver')).unidades).toEqual(['unidad', 'ciento', 'millar', 'pliego', 'm2', 'hora', 'juego', 'talonario']);
+  });
+  it('guarda unas válidas, normalizadas y en su orden, y las devuelve al ver', async () => {
+    const r = await datosDe(dueno, 'cotizador_configurar', { unidades: ['  caja ', 'unidad', 'Rollo  grande'] });
+    expect(r.unidades).toEqual(['caja', 'unidad', 'Rollo grande']);
+    expect((await datosDe(dueno, 'cotizador_configuracion_ver')).unidades).toEqual(['caja', 'unidad', 'Rollo grande']);
+    expect((await datosDe(ajeno, 'cotizador_configuracion_ver')).unidades).toHaveLength(8);
+  });
+  it('rechaza repetidas (tras normalizar), vacías, largas, ninguna y más de 40', async () => {
+    for (const mal of [['a', ' A '], ['Millar', 'millár'], ['a', '  '], [''], ['x'.repeat(21)], [], Array.from({ length: 41 }, (_, i) => `u${i}`)]) {
+      expect(codigoDe(await configurar({ unidades: mal })), JSON.stringify(mal)).toBe('argumentos_invalidos');
+    }
+    expect((await datosDe(dueno, 'cotizador_configurar', { unidades: Array.from({ length: 40 }, (_, i) => `u${i}`) })).unidades).toHaveLength(40);
+  });
+  it('quien solo puede ver no las cambia', async () => {
+    expect(codigoDe(await lector.herramienta('cotizador_configurar', { unidades: ['x'] }))).toBe('modulo_solo_lectura');
+  });
+});

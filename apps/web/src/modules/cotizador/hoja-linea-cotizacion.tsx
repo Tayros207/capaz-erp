@@ -15,6 +15,7 @@ import { Insignia } from '../../shared/ui/insignia.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
 import { buscarProductosParaCotizar, consultarPrecio } from './api.ts';
+import { useUnidadesDeLaEmpresa } from './use-unidades.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { soles } from './logica.ts';
 import { opcionDeProducto } from './logica-catalogo.ts';
@@ -44,6 +45,7 @@ function PrecioDeLista({ l, clienteId }: { l: LineaDeFormulario; clienteId: stri
 }
 
 function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }: Props) {
+  const unidadesDeLaEmpresa = useUnidadesDeLaEmpresa();
   const [l, setL] = useState(linea);
   const [errores, setErrores] = useState<ErroresDeLinea>({});
   const encontrados = useRef(new Map<string, ProductoCotizableDto>());
@@ -109,7 +111,7 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
         <CampoCantidad etiqueta="Cantidad" valor={l.cantidadMilesimas} unidad={l.unidad} error={errores.cantidad} alCambiar={(v) => setL((a) => ({ ...a, cantidadMilesimas: v }))} />
         {l.tipo === 'manual' ? (
           <>
-            <CampoUnidad valor={l.unidad} alCambiar={(u) => setL((a) => ({ ...a, unidad: u }))} />
+            <CampoUnidad unidadesDeLaEmpresa={unidadesDeLaEmpresa} valor={l.unidad} alCambiar={(u) => setL((a) => ({ ...a, unidad: u }))} />
             <CampoPrecio etiqueta="Precio unitario" valor={l.precioUnitarioMilesimas} error={errores.precio} ayuda="Sin IGV." alCambiar={(v) => setL((a) => ({ ...a, precioUnitarioMilesimas: v }))} />
           </>
         ) : null}
