@@ -1,14 +1,16 @@
 import type { TonoDeInsignia } from './insignia.tsx';
 
-export type TipoDeEntidad = 'cliente' | 'pedido' | 'deuda' | 'movimiento';
+export type TipoDeEntidad = 'cliente' | 'pedido' | 'deuda' | 'movimiento' | 'producto' | 'cotizacion';
 
-// Rutas verificadas en `core/clientes/rutas.tsx`, `modules/ordenes/rutas.tsx` y `modules/registro/rutas.tsx`.
+// Rutas verificadas en `core/clientes/rutas.tsx`, `modules/ordenes/rutas.tsx` y `modules/registro/rutas.tsx`, `core/productos/rutas.tsx` y `modules/cotizador/rutas.tsx`.
 // Un solo lugar: si una ficha cambia de dirección, cambia aquí y todos los enlaces del sistema la siguen.
 const RUTAS: Record<TipoDeEntidad, (id: string) => string> = {
   cliente: (id) => `/clientes/${id}`,
   pedido: (id) => `/m/ordenes/${id}`,
   deuda: (id) => `/m/registro/deudas/${id}`,
   movimiento: (id) => `/m/registro/movimientos/${id}`,
+  producto: (id) => `/productos/${id}`,
+  cotizacion: (id) => `/m/cotizador/cotizaciones/${id}`,
 };
 
 export const rutaDeEntidad = (tipo: TipoDeEntidad, id: string): string => RUTAS[tipo](id);
@@ -20,10 +22,10 @@ export function inicialesDe(nombre: string): string {
 }
 
 const TONOS_POR_ESTADO: Array<[RegExp, TonoDeInsignia]> = [
-  [/(pagad|cobrad|entregad|ganad|complet|activ|aprobad|recibid|al d[ií]a)/i, 'exito'],
+  [/(pagad|cobrad|entregad|aceptad|ganad|complet|activ|aprobad|recibid|al d[ií]a)/i, 'exito'],
   [/(vencid|atrasad|anulad|cancelad|perdid|rechazad|descartad|fall)/i, 'peligro'],
   [/(pendiente|parcial|borrador|prueba|solo lectura|suspendid|por aprobar)/i, 'aviso'],
-  [/(proceso|producci[oó]n|enviad|confirmad|abiert)/i, 'info'],
+  [/(proceso|producci[oó]n|emitid|enviad|confirmad|abiert)/i, 'info'],
 ];
 
 /** Tono de una insignia según el texto del estado: el mismo estado se ve igual en todos los módulos. */

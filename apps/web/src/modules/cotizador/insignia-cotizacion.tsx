@@ -1,6 +1,7 @@
-import { Insignia } from '../../shared/ui/insignia.tsx';
-import { ETIQUETA_DE_ESTADO, TONO_DE_ESTADO, type EstadoDeCotizacion } from './logica-cotizaciones.ts';
+import { InsigniaDeEstado } from '../../shared/ui/entidades.tsx';
+import { ETIQUETA_DE_ESTADO, type EstadoDeCotizacion } from './logica-cotizaciones.ts';
 
+/** El color sale del estado compartido: «Aceptada» o «Anulada» se ven igual que en Pedidos y Deudas. */
 export function InsigniaDeCotizacion({ estado }: { estado: EstadoDeCotizacion }) {
-  return <Insignia tono={TONO_DE_ESTADO[estado]}>{ETIQUETA_DE_ESTADO[estado]}</Insignia>;
+  return <InsigniaDeEstado estado={ETIQUETA_DE_ESTADO[estado]} />;
 }

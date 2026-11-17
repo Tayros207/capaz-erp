@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useState, type ReactNode } from 'react';
+import { Link, useNavigate, useParams } from 'react-router';
 import { centimosSchema, type CotizacionCompletaDto } from '@capaz/shared';
+import { ChipDeCliente, EnlaceDeEntidad } from '../../shared/ui/entidades.tsx';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
@@ -14,7 +15,7 @@ import { MenuDeAcciones, type AccionDeMenu } from '../../shared/ui/datos/menu-de
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { resolverAccion } from './acciones.ts';
 import { enviarPorWhatsApp, usePermisosDeCotizaciones } from './acciones-cotizacion.ts';
-import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, emitirCotizacion, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
+import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, emitirCotizacion, listarPedidosDelCliente, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { formatearDia } from './documento-cotizacion.ts';
 import { HojaAceptar } from './hoja-aceptar.tsx';
@@ -31,19 +32,38 @@ import { notificar } from '../../shared/ui/notificar.ts';
 
 type Linea = CotizacionCompletaDto['lineas'][number];
 const COLUMNAS: Array<Columna<Linea>> = [
-  { id: 'descripcion', titulo: 'Descripción', principal: true, celda: (l) => `${l.posicion + 1}. ${l.descripcion}` },
+  { id: 'descripcion', titulo: 'Descripción', principal: true, celda: (l) => (l.productoId ? <span>{l.posicion + 1}. <EnlaceDeEntidad tipo="producto" id={l.productoId}>{l.descripcion}</EnlaceDeEntidad></span> : `${l.posicion + 1}. ${l.descripcion}`) },
   { id: 'cantidad', titulo: 'Cantidad', alinear: 'derecha', celda: (l) => formatearCantidad(l.cantidadMilesimas, l.unidad) },
   { id: 'precio', titulo: 'Cada una (sin IGV)', alinear: 'derecha', celda: (l) => `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}` },
   { id: 'importe', titulo: 'Importe', alinear: 'derecha', celda: (l) => soles(l.importeCentimos) },
   { id: 'total', titulo: 'Total con IGV', alinear: 'derecha', celda: (l) => soles(l.totalCentimos) },
 ];
 
-function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
+function Dato({ etiqueta, valor }: { etiqueta: string; valor: ReactNode }) {
   return (
     <div className="flex flex-col gap-0.5">
       <dt className="text-sm text-texto-suave">{etiqueta}</dt>
       <dd className="break-words font-medium text-texto">{valor || '—'}</dd>
     </div>
+  );
+}
+
+/** «Ver pedido»: el pedido nacido de esta cotización, o dónde está si aún espera aprobación. Sin permiso de Pedidos no se muestra. */
+function DatoDePedido({ c }: { c: CotizacionCompletaDto }) {
+  const clienteId = c.clienteId;
+  const consulta = useQuery({
+    queryKey: [...CLAVE_COTIZADOR, 'pedido-de', c.id],
+    queryFn: async () => datosOError(await listarPedidosDelCliente(clienteId ?? '')).items.find((p) => p.origenTipo === 'cotizacion' && p.origenId === c.id) ?? null,
+    enabled: clienteId !== null,
+    retry: false,
+  });
+  if (clienteId === null || consulta.isPending || consulta.isError) return null;
+  const pedido = consulta.data;
+  return (
+    <Dato
+      etiqueta="Pedido"
+      valor={pedido ? <EnlaceDeEntidad tipo="pedido" id={pedido.id}>Ver pedido · {pedido.codigo}</EnlaceDeEntidad> : <Link to="/bandeja" className="font-medium text-accion underline-offset-2 hover:underline">Esperando tu aprobación en la bandeja</Link>}
+    />
   );
 }
 
@@ -91,11 +111,19 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
     ...(visibles.has('duplicar') ? [{ etiqueta: 'Duplicar', onSeleccionar: () => void simple(() => duplicarCotizacion(c.id), 'Cotización duplicada como borrador.', rutaDeFicha) }] : []),
     ...(visibles.has('anular') ? [{ etiqueta: 'Anular', peligro: true, onSeleccionar: () => setHoja('anular') }] : []),
   ];
+  /** Abre WhatsApp y, si se pudo, marca la cotización como enviada. */
+  const enviarYMarcar = () =>
+    conOcupado(async () => {
+      if (await enviarPorWhatsApp(c)) await resolverAccion(marcarEnviada(c.id), 'Marcada como enviada.');
+    });
+  // La acción siguiente va en primer plano: emitir → enviar por WhatsApp → aceptar.
+  const alAceptar = <Boton variante="primario" onClick={() => setHoja('aceptar')}>Aceptar</Boton>;
   const principal = visibles.has('emitir') ? (
     <Boton variante="primario" cargando={ocupado} onClick={() => void emitir()}>Emitir</Boton>
-  ) : visibles.has('aceptar') ? (
-    <Boton variante="primario" onClick={() => setHoja('aceptar')}>Aceptar</Boton>
-  ) : undefined;
+  ) : visibles.has('enviar') && c.clienteId ? (
+    <Boton variante="primario" cargando={ocupado} onClick={() => void enviarYMarcar()}>Enviar por WhatsApp</Boton>
+  ) : visibles.has('aceptar') ? alAceptar : undefined;
+  const aceptarAparte = visibles.has('aceptar') && principal !== alAceptar && !visibles.has('emitir');
 
   return (
     <div className="flex flex-col gap-4">
@@ -106,13 +134,15 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
         accionesSecundarias={
           <>
             <InsigniaDeCotizacion estado={c.estado} />
+            {aceptarAparte ? <Boton onClick={() => setHoja('aceptar')}>Aceptar</Boton> : null}
             {visibles.has('editar') ? <Boton onClick={() => setHoja('editar')}>Editar</Boton> : null}
             {acciones.length > 0 ? <MenuDeAcciones etiqueta="Más acciones de la cotización" acciones={acciones} /> : null}
           </>
         }
       />
       <dl className="grid gap-4 sm:grid-cols-2">
-        <Dato etiqueta="Cliente" valor={c.clienteNombre ?? 'Sin cliente todavía'} />
+        <Dato etiqueta="Cliente" valor={c.clienteId && c.clienteNombre ? <ChipDeCliente id={c.clienteId} nombre={c.clienteNombre} /> : 'Sin cliente todavía'} />
+        {c.estado === 'aceptada' ? <DatoDePedido c={c} /> : null}
         <Dato etiqueta="Código" valor={`${c.codigo} · versión ${c.version}${c.versionActual !== c.version ? ` (vigente: ${c.versionActual})` : ''}`} />
         <Dato etiqueta="Válida hasta" valor={formatearDia(c.validaHasta)} />
         <Dato etiqueta="Líneas" valor={c.conOpciones ? 'Opciones para elegir (no se suman)' : 'Un solo trabajo (se suman)'} />

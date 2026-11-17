@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import type { ListaDePrecioDto, ProductoCotizableDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { milesimasATexto } from '../../shared/formato/milesimas.ts';
@@ -8,14 +8,17 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
+import { ChipDeCliente, EnlaceDeEntidad } from '../../shared/ui/entidades.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
 import { refrescarCotizador } from './acciones.ts';
+import { emitirCotizacion, verClienteParaWhatsApp } from './api-cotizaciones.ts';
 import { buscarClientes, buscarProductosParaCotizar, consultarPrecio, crearCotizacion, verConfiguracion } from './api.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
+import { argumentosDeEmision } from './logica-cotizaciones.ts';
 import { HojaDeLista } from './hoja-lista.tsx';
 import { REFERENCIAS, soles, argumentosDeCotizacionRapida, mensajeDeRechazo, resumenDeLista, rutaDeCotizacion, validarCantidadRapida } from './logica.ts';
 import { calcularParaMostrar, opcionDeProducto, productoParaLista, textoSinPrecio, validarCantidadDeCatalogo } from './logica-catalogo.ts';
@@ -30,7 +33,7 @@ function PreciosDeLista({ lista }: { lista: ListaDePrecioDto }) {
   return (
     <section aria-label="Precios de la lista" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="font-titulo text-lg font-semibold text-texto">{lista.nombre}</h2>
+        <h2 className="font-titulo text-lg font-semibold text-texto">{lista.productoId ? <EnlaceDeEntidad tipo="producto" id={lista.productoId}>{lista.nombre}</EnlaceDeEntidad> : lista.nombre}</h2>
         <Insignia tono="info">Precios por escala</Insignia>
         {lista.porRevisar ? <Insignia tono="aviso">Revisar precios</Insignia> : null}
       </div>
@@ -49,7 +52,7 @@ function PrecioDeCatalogo({ p, cantidad, igv, alFijar }: { p: ProductoCotizableD
   return (
     <section aria-label="Precio del catálogo" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="font-titulo text-lg font-semibold text-texto">{p.nombre}</h2>
+        <h2 className="font-titulo text-lg font-semibold text-texto">{p.productoId ? <EnlaceDeEntidad tipo="producto" id={p.productoId}>{p.nombre}</EnlaceDeEntidad> : p.nombre}</h2>
         <Insignia tono="neutro">Precio del catálogo</Insignia>
         {alFijar ? <Boton variante="secundario" onClick={alFijar}>Fijar precios por escala</Boton> : null}
       </div>
@@ -66,6 +69,7 @@ function PrecioDeCatalogo({ p, cantidad, igv, alFijar }: { p: ProductoCotizableD
 /** Cotización rápida: elige qué cotizar (catálogo o lista), escribe la cantidad y ve precio, IGV y total. */
 export function PantallaRapida() {
   const navegar = useNavigate();
+  const [parametros] = useSearchParams();
   const { editar, configurar } = usePermisosDelCotizador();
   const encontrados = useRef(new Map<string, ProductoCotizableDto>());
   const [elegido, setElegido] = useState<ProductoCotizableDto | null>(null);
@@ -73,6 +77,17 @@ export function PantallaRapida() {
   const [cantidad, setCantidad] = useState<number | null>(null);
   const [creando, setCreando] = useState(false);
   const [fijando, setFijando] = useState(false);
+
+  // Desde una ficha de cliente se llega con `?cliente=<id>`: el cliente ya viene puesto.
+  const clienteDeRuta = parametros.get('cliente');
+  useEffect(() => {
+    if (!clienteDeRuta) return;
+    let vigente = true;
+    void verClienteParaWhatsApp(clienteDeRuta).then((r) => {
+      if (vigente && r.ok && 'datos' in r) setCliente({ id: r.datos.id, nombre: r.datos.nombre });
+    });
+    return () => { vigente = false; };
+  }, [clienteDeRuta]);
 
   const esLista = elegido?.origen === 'lista';
   const esCatalogo = elegido?.origen === 'catalogo';
@@ -99,15 +114,20 @@ export function PantallaRapida() {
   }
 
   const puedeCrear = elegido !== null && (esLista ? consultable && !!precio.data : esCatalogo && errorDeCantidad === undefined && cantidad !== null);
-  async function crear() {
+  async function crear(emitir: boolean) {
     if (!elegido || cantidad === null || !puedeCrear) return;
     setCreando(true);
     const r = await crearCotizacion(argumentosDeCotizacionRapida(elegido, cantidad, cliente));
     setCreando(false);
     if (r.ok && 'datos' in r) {
+      const id = r.datos.id;
+      // Crear y emitir: si se cancela la confirmación o pide motivo de margen, queda como borrador y la ficha lo explica.
+      const emitida = emitir ? await emitirCotizacion(argumentosDeEmision(id)) : null;
       await refrescarCotizador();
-      notificar('Cotización creada como borrador.', 'exito');
-      void navegar(rutaDeCotizacion(r.datos.id));
+      if (emitida && 'datos' in emitida) notificar('Cotización creada y emitida.', 'exito');
+      else if (emitida && 'error' in emitida) notificar(`Se creó como borrador, pero no se pudo emitir: ${mensajeDeRechazo(emitida.error.codigo, emitida.error.mensaje)}`, 'error');
+      else notificar('Cotización creada como borrador.', 'exito');
+      void navegar(rutaDeCotizacion(id));
     } else if ('error' in r) notificar(mensajeDeRechazo(r.error.codigo, r.error.mensaje), 'error');
   }
   /** Tras fijar los precios por escala, la siguiente consulta sale por la lista. */
@@ -137,6 +157,7 @@ export function PantallaRapida() {
           textoSinResultados="Ningún cliente se parece a eso"
         />
       </div>
+      {cliente ? <div><ChipDeCliente id={cliente.id} nombre={cliente.nombre} /></div> : null}
       {elegido?.origen === 'lista' && elegido.lista ? <PreciosDeLista lista={elegido.lista} /> : null}
       {esCatalogo && elegido ? <PrecioDeCatalogo p={elegido} cantidad={cantidad} igv={configuracion.data?.igvPorcentaje} {...(configurar && producto && { alFijar: () => setFijando(true) })} /> : null}
       {elegido?.origen === 'sin_precio' ? (
@@ -148,7 +169,7 @@ export function PantallaRapida() {
         />
       ) : elegido ? (
         <div className="grid gap-4 sm:grid-cols-[16rem]">
-          <CampoCantidad etiqueta="Cantidad" valor={cantidad} unidad={elegido.unidad} error={errorDeCantidad} alCambiar={setCantidad} />
+          <CampoCantidad etiqueta="Cantidad" valor={cantidad} unidad={elegido.unidad} error={errorDeCantidad} alCambiar={setCantidad} onKeyDown={(e) => { if (e.key === 'Enter' && puedeCrear && !creando) { e.preventDefault(); void crear(false); } }} />
         </div>
       ) : (
         <EstadoVacio titulo="Elige un producto para empezar" descripcion="Busca en tu catálogo. Si tiene precios por escala se usan; si no, se cotiza con su precio del catálogo." icono="buscar" />
@@ -170,8 +191,9 @@ export function PantallaRapida() {
         </section>
       ) : null}
       {editar ? (
-        <div className="flex justify-end">
-          <Boton variante="primario" cargando={creando} disabled={!puedeCrear} onClick={() => void crear()}>Crear cotización</Boton>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Boton variante="secundario" disabled={!puedeCrear || creando} onClick={() => void crear(false)}>Crear como borrador</Boton>
+          <Boton variante="primario" cargando={creando} disabled={!puedeCrear} onClick={() => void crear(true)}>Crear y emitir</Boton>
         </div>
       ) : null}
       <HojaDeLista abierto={fijando} lista={null} producto={producto} alGuardar={alFijar} alCerrar={() => setFijando(false)} />

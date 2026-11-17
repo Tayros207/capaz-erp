@@ -9,6 +9,7 @@ import { CargarMas } from '../../shared/ui/datos/cargar-mas.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import { Lista } from '../../shared/ui/datos/lista.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
+import { ChipDeCliente } from '../../shared/ui/entidades.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
 import type { CotizacionDto } from '@capaz/shared';
@@ -24,7 +25,7 @@ import { Cargando, SeccionesDelCotizador } from './marco.tsx';
 const COLUMNAS: Array<Columna<CotizacionDto>> = [
   { id: 'codigo', titulo: 'Cotización', principal: true, celda: (c) => c.codigo },
   { id: 'titulo', titulo: 'Título', celda: (c) => c.titulo },
-  { id: 'cliente', titulo: 'Cliente', celda: (c) => c.clienteNombre ?? 'Sin cliente' },
+  { id: 'cliente', titulo: 'Cliente', celda: (c) => (c.clienteId && c.clienteNombre ? <span onClick={(e) => e.stopPropagation()}><ChipDeCliente id={c.clienteId} nombre={c.clienteNombre} /></span> : 'Sin cliente') },
   { id: 'estado', titulo: 'Estado', celda: (c) => <InsigniaDeCotizacion estado={c.estado} /> },
   { id: 'total', titulo: 'Total', alinear: 'derecha', celda: (c) => (c.conOpciones ? 'Con opciones' : soles(c.totalCentimos)) },
 ];

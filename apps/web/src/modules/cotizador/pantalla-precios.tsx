@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import type { ListaDePrecioDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -10,6 +10,7 @@ import { CargarMas } from '../../shared/ui/datos/cargar-mas.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { Lista } from '../../shared/ui/datos/lista.tsx';
+import { EnlaceDeEntidad } from '../../shared/ui/entidades.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
@@ -53,7 +54,7 @@ export function PantallaPrecios() {
       celda: (l) => (
         <span className="inline-flex flex-wrap items-center gap-2">
           {l.nombre}
-          {l.productoId ? <Link to={`/productos/${l.productoId}`} className="rounded-chip text-sm font-medium text-texto-suave underline-offset-2 hover:text-accion hover:underline">Producto: {l.productoNombre ?? 'ver ficha'}</Link> : null}
+          {l.productoId ? <EnlaceDeEntidad tipo="producto" id={l.productoId} className="text-sm text-texto-suave">Producto: {l.productoNombre ?? 'ver ficha'}</EnlaceDeEntidad> : null}
           {l.porRevisar ? <Insignia tono="aviso">Revisar</Insignia> : null}
           {l.archivadoEn ? <Insignia tono="neutro">Archivada</Insignia> : null}
         </span>

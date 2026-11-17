@@ -18,3 +18,5 @@ export const marcarEnviada = (id: string) => llamar('cotizacion_marcar_enviada',
 export const aceptarCotizacion = (args: EntradaDe<'cotizacion_aceptar'>) => llamar('cotizacion_aceptar', args);
 export const rechazarCotizacion = (args: EntradaDe<'cotizacion_rechazar'>) => llamar('cotizacion_rechazar', args);
 export const verClienteParaWhatsApp = (id: string) => llamar('clientes_ver', { id });
+/** El pedido nacido de una cotización aceptada: se busca entre los del cliente por su origen (par blando, sin llave). */
+export const listarPedidosDelCliente = (clienteId: string) => llamar('pedidos_listar', { clienteId, estado: 'todos', limite: 100 });

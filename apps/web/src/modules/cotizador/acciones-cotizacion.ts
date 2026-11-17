@@ -16,21 +16,22 @@ export function usePermisosDeCotizaciones(): PermisosDeCotizacion {
 }
 
 /** Abre WhatsApp con el mensaje armado; el PDF lo adjunta la persona («Guardar como PDF» del navegador). */
-export async function enviarPorWhatsApp(c: Pick<CotizacionCompletaDto, 'clienteId' | 'codigo' | 'clienteNombre' | 'totalCentimos' | 'conOpciones'>): Promise<void> {
+export async function enviarPorWhatsApp(c: Pick<CotizacionCompletaDto, 'clienteId' | 'codigo' | 'clienteNombre' | 'totalCentimos' | 'conOpciones'>): Promise<boolean> {
   if (!c.clienteId) {
     notificar('Esta cotización no tiene cliente.', 'error');
-    return;
+    return false;
   }
   const [cliente, config] = await Promise.all([verClienteParaWhatsApp(c.clienteId), verConfiguracion()]);
   if (!cliente.ok || !('datos' in cliente)) {
     notificar('No pudimos leer los datos del cliente.', 'error');
-    return;
+    return false;
   }
   const plantilla = config.ok && 'datos' in config ? datosOError(config).mensajeWhatsapp : null;
   const enlace = enlaceDeWhatsApp(datosOError(cliente).telefono, mensajeDeWhatsApp(c, plantilla));
   if (!enlace) {
     notificar('El cliente no tiene un teléfono válido registrado.', 'error');
-    return;
+    return false;
   }
   window.open(enlace, '_blank', 'noopener,noreferrer');
+  return true;
 }
