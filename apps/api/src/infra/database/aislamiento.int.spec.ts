@@ -18,7 +18,7 @@ beforeAll(async () => {
   owner = abrirPool('owner');
   await owner.query(`insert into core.modulos (codigo, nombre) values ('ejemplo', 'Ejemplo') on conflict do nothing`);
   await owner.query(
-    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos'), ('insumos', 'Inventario'), ('compras', 'Compras'), ('personal', 'Personal') on conflict do nothing`,
+    `insert into core.modulos (codigo, nombre) values ('registro', 'Registro'), ('crm', 'CRM'), ('ordenes', 'Pedidos'), ('insumos', 'Inventario'), ('compras', 'Compras'), ('personal', 'Personal'), ('cotizador', 'Cotizador') on conflict do nothing`,
   );
   await owner.query(`insert into core.conectores (codigo, nombre, autenticacion) values ('ejemplo', 'Ejemplo', 'ninguna') on conflict do nothing`);
   // empresa_modulos va antes que usuario_modulos (llave compuesta).
@@ -30,7 +30,7 @@ beforeAll(async () => {
       emp,
       (c) =>
         c.query(
-          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo'), ($1,'insumos','activo'), ($1,'compras','activo'), ($1,'personal','activo') on conflict do nothing`,
+          `insert into core.empresa_modulos (tenant_id, modulo, estado) values ($1,'registro','activo'), ($1,'crm','activo'), ($1,'ordenes','activo'), ($1,'insumos','activo'), ($1,'compras','activo'), ($1,'personal','activo'), ($1,'cotizador','activo') on conflict do nothing`,
           [emp],
         ),
       { confirmar: true },
