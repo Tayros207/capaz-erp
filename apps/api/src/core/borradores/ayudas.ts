@@ -71,4 +71,19 @@ export const AYUDAS = {
     erroresComunes: ['Solo se descarta un borrador pendiente.'],
     relacionadas: ['borrador_ver'],
   },
+  metricas: {
+    titulo: 'Medir cuánto se aprueba sin corregir',
+    paraQueSirve: 'Dice cuántos borradores dictados o escritos se aprobaron sin corregir, en cuánto tiempo y qué datos se corrigen más.',
+    cuandoUsarla: 'Para saber si el dictado está acertando (meta del piloto: 70 % sin corregir y 30 segundos).',
+    campos: [
+      { nombre: 'desde', queSeAnota: 'Primer día del rango (AAAA-MM-DD).', ejemplo: '2026-11-01' },
+      { nombre: 'hasta', queSeAnota: 'Último día del rango, como máximo 92 días en total.', ejemplo: '2026-11-30' },
+      { nombre: 'origen', queSeAnota: 'voz o texto (opcional; sin él, los dos).', ejemplo: 'voz' },
+      { nombre: 'modulo', queSeAnota: 'Solo un módulo (opcional).', ejemplo: 'registro' },
+    ],
+    ejemploTecleado: 'métricas de dictado de noviembre',
+    ejemploHablado: 'cuánto acierta el dictado este mes',
+    erroresComunes: ['Solo cuenta los módulos a los que puedes entrar.', 'La fecha final no puede ser anterior a la inicial.'],
+    relacionadas: ['borradores_listar', 'captura_proponer'],
+  },
 } as const satisfies Record<string, Ayuda>;
