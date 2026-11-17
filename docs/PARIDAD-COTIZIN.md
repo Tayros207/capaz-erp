@@ -460,3 +460,22 @@ Leyenda de la columna «Veredicto»: **Igual** (no hacer nada), **Hacer** (porta
 ### 6.5 Lo que quedó sin verificar (repetido para el integrador)
 
 Ejecución de pruebas y de ambas aplicaciones; datos reales en Neon; el estado real de cot-s4 más allá de sus contratos sin confirmar; la existencia de una consulta de ayuda por tema en el núcleo de Capaz; el comportamiento exacto de `confirmar()` del web (si muestra el resumen con opciones); el contenido de `apps/web/src/core/clientes` más allá de que no enlaza al historial de cotizaciones; los permisos efectivos por rol de cada herramienta de Capaz.
+
+## 7. Estado al cierre (2026-11-17)
+
+Todos los carriles de §6 están integrados en `main`: cuadro por partes (servidor y pantalla), taller, enlace público, precios en bloque, restaurar, historial por producto, unidades por empresa, ajuste de precio por línea, rápida afinada, precios al día, entrega afinada, acciones de la lista y cotizaciones del cliente. La red de seguridad son las 7 suites `paridad-*.int.spec.ts` (98 pruebas por HTTP real con los números de Cotizín): **cero divergencias numéricas**.
+
+**Divergencias de forma que quedan abiertas (ninguna cambia una cifra):**
+1. Una merma de 100 % se rechaza con «La merma debe ser menor que 100 %.» sin nombrar la etapa (Cotizín: `mermas.test.ts:97` la nombra). Prueba `it.fails` en `paridad-cuadro-imposicion.int.spec.ts`.
+2. `cantidad = 0` en el trabajo no se rechaza: deja la imposición sin calcular (Cotizín: `cantidad_invalida`).
+3. `unitarioMilesimas` del cuadro lleva 3 decimales (Cotizín: 4).
+
+**Pendientes conocidos:**
+- La máquina y los pliegos elegidos no se recuerdan al recargar el cuadro: `vistaDelCuadroSchema` debe devolver `maquinaId` y los ids de pliego.
+- Los ítems del cuadro solo se editan con `cotizador:costos`.
+- Los avisos de precios al día se pierden al recargar la ficha (no los devuelve `cotizacion_ver`).
+- `usePermisosDelCotizador` no expone `costos` ni `emitir`: unificar con `usePermisosDeCotizaciones`.
+- Códigos de error `motivo_requerido` y `utilidad_imposible` ausentes de `@capaz/shared/codigos.ts` (hoy `conflicto` y `argumentos_invalidos`).
+- `core/herramientas/ejecutor.ts` filtra el aviso interno de margen con el permiso `costos:ver`, que el Cotizador no usa (usa `cotizador:costos`).
+- Revisión visual a 390 y 1280 px, en claro y oscuro, de todas las pantallas nuevas (persona).
+- Revisión de seguridad de Keny del controlador público del enlace (10 puntos en el informe del carril cot-b3; el token va en la ruta y aparece en los logs HTTP; falta `trust proxy` para el límite por IP).
