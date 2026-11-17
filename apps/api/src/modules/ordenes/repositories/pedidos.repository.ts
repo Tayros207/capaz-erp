@@ -85,7 +85,7 @@ export async function crearPedido(tx: Transaccion, ctx: ContextoDeEmpresa, datos
 /** El pedido vivo (no cancelado) que ya usa ese origen, sin mirar el alcance: solo para explicar el choque. */
 export async function pedidoPorOrigen(tx: Transaccion, ctx: ContextoDeEmpresa, origenTipo: string, origenId: string) {
   const [fila] = await tx
-    .select({ id: ordenesPedidos.id, numero: ordenesPedidos.numero, serie: ordenesPedidos.serie, anio: ordenesPedidos.anio })
+    .select({ id: ordenesPedidos.id, numero: ordenesPedidos.numero, serie: ordenesPedidos.serie, anio: ordenesPedidos.anio, estado: ordenesPedidos.estado })
     .from(ordenesPedidos)
     .where(and(deEmpresa(ctx), eq(ordenesPedidos.origenTipo, origenTipo), eq(ordenesPedidos.origenId, origenId), sql`${ordenesPedidos.estado} <> 'cancelado'`));
   return fila ?? null;
