@@ -1,6 +1,8 @@
 import { EVENTOS, formatearSoles } from '@capaz/shared';
+import { and, eq } from 'drizzle-orm';
 import { proponerBorrador } from '../../core/borradores/proponer.js';
 import type { Consumidor } from '../../core/eventos/tipos.js';
+import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import { pedidoPorOrigen } from './repositories/pedidos.repository.js';
 
 // Puente cotización → pedido (ficha §10.3). Regla R5: un consumidor NUNCA ejecuta herramientas ni escribe en las
@@ -19,6 +21,13 @@ export const ordenesCotizacionAceptada: Consumidor = {
   async manejar(e, ctx, tx) {
     const carga = EVENTOS['cotizacion.aceptada'].parse(e.carga);
     if (await pedidoPorOrigen(tx, ctx, ORIGEN_COTIZACION, carga.id)) return;
+    // Solo lectura: si el borrador de pedido sigue pendiente en la bandeja, una segunda entrega no propone otro.
+    const [pendiente] = await tx
+      .select({ id: borradores.id })
+      .from(borradores)
+      .where(and(eq(borradores.tenantId, ctx.empresaId), eq(borradores.herramienta, 'pedido_crear'), eq(borradores.origenRef, `cotizacion:${carga.id}`), eq(borradores.estado, 'pendiente')))
+      .limit(1);
+    if (pendiente) return;
     const igvAjeno = !IGV_ADMITIDOS.includes(carga.igvPorcentaje);
     const nota = `Cotización ${carga.codigo}`; // el código ya lleva «vN» desde la segunda versión
     await proponerBorrador(tx, {

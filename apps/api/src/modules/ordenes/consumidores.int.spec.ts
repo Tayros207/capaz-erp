@@ -5,7 +5,7 @@ import { Relevo } from '../../core/eventos/relevo.js';
 import { abrirSesion, activarModulo, crearEmpresa, type Sesion } from '../../core/herramientas/http-de-pruebas.js';
 import { levantarApp, type AppDePruebas } from '../../pruebas/app-de-pruebas.js';
 import { abrirPool, comoEmpresa } from '../../pruebas/base-de-pruebas.js';
-import { codigo, crearCliente, datos } from './herramientas/pruebas-de-pedidos.js';
+import { crearCliente, datos } from './herramientas/pruebas-de-pedidos.js';
 
 // Puente cotización → pedido (carril ordenes-s3): los consumidores solo proponen borradores (R5). El evento se
 // emite a mano porque el Cotizador (s2) aún no lo emite.
@@ -74,7 +74,7 @@ describe('cotizacion.aceptada', () => {
     }
   });
 
-  it('P2: el mismo evento entregado dos veces deja un borrador; dos borradores del mismo origen dan un pedido y un conflicto', { timeout: 120_000 }, async () => {
+  it('P2: el mismo evento entregado dos veces deja un borrador; un segundo evento con el borrador pendiente tampoco duplica', { timeout: 120_000 }, async () => {
     const id = randomUUID();
     const eventoId = await emitir(A, 'cotizacion.aceptada', aceptada(id, 408_730));
     await drenar();
@@ -85,14 +85,12 @@ describe('cotizacion.aceptada', () => {
     expect(propios[0].resumen).toBe('Crear el pedido de la cotización COT-2026-0001 por S/ 408.73');
     expect(propios[0].args.notas).toBe('Cotización COT-2026-0001');
 
-    // Un segundo evento con la misma cotización, antes de aprobar el primero, deja otro borrador.
+    // Un segundo evento con la misma cotización, antes de aprobar el primero, NO deja otro borrador (mira la bandeja).
     await emitir(A, 'cotizacion.aceptada', aceptada(id, 408_730));
     await drenar();
-    const dos = (await borradores()).filter((b) => b.origenRef === `cotizacion:${id}`);
-    expect(dos).toHaveLength(2);
-    datos(await dueno.herramienta('borrador_aprobar', { id: dos[0].id }));
-    const segundo = await dueno.herramienta('borrador_aprobar', { id: dos[1].id });
-    expect(codigo(segundo)).toBe('conflicto');
+    const unico = (await borradores()).filter((b) => b.origenRef === `cotizacion:${id}`);
+    expect(unico).toHaveLength(1);
+    datos(await dueno.herramienta('borrador_aprobar', { id: unico[0].id }));
     expect((await pedidos()).filter((p) => p.origenId === id)).toHaveLength(1);
     // Con el pedido ya vivo, un evento nuevo no propone nada.
     const antes = (await borradores()).length;

@@ -147,9 +147,7 @@ for (const caso of CASOS) {
 }
 
 describe('cotizacion.aceptada repetida con el borrador sin aprobar', () => {
-  // Hallazgo: hoy SÍ deja dos (el consumidor de Pedidos solo mira si ya existe el pedido). `it.fails` documenta el defecto
-  // y avisa cuando `modules/ordenes/consumidores.ts` (ajeno) lo corrija: entonces se quita `.fails`.
-  it.fails('no deja dos borradores de pedido', async () => {
+  it('no deja dos borradores de pedido', async () => {
     const cot = await cotizar('Doble entrega', [{ tipo: 'manual', descripcion: 'Trabajo doble', unidad: 'UND', cantidadMilesimas: 1000, precioUnitarioMilesimas: 100_000 }]);
     await datosDe(dueno, 'cotizacion_aceptar', { id: cot.id });
     await drenar();
