@@ -127,7 +127,7 @@ Igual que la versión 1: solo si el piloto de tres trabajos lo pide. **Hecho cua
 
 ### Fase 7 · Producción (B8) · con Keny
 
-1. **Migraciones:** la 0026 (inventario y compras, otra sesión) y la **0027** (índice único de lista por producto, de este plan): ensayo en rama de Neon, revisión de Keny y confirmación del dueño; después production. Las 0023 y 0024 ya están.
+1. **Migraciones:** la 0026 (inventario y compras), la **0027** (taller del Cotizador y enlaces públicos) y la 0028 (personal) ya están en Neon production desde el 2026-11-17 por orden directa del dueño (`NEON-MIGRACION.md` §8). Queda **pendiente la revisión humana de Keny** de la 0027 y del controlador público del enlace, que la ficha pedía antes de producción. Toda migración nueva parte de la 0028; ninguna anterior se edita.
 2. **Despliegue:** front estático con HTTPS automático; API NestJS en un host de procesos; front y API bajo el mismo dominio padre para cookies `Secure` + `SameSite`.
 3. **Seguridad:** HTTPS en el borde; `ORIGENES_PERMITIDOS` con el dominio real; secretos fuera del repo; sesión de 4 h (ya en código, se confirma en fase 0); contraseñas de demostración fuera de producción.
 4. Túnel con acceso por correo solo para probar el micrófono antes del despliegue.
