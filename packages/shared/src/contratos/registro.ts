@@ -189,7 +189,25 @@ export const abonarDeudaSchema = z.strictObject({
   cuentaId: z.uuid().optional(),
   medioDePago: z.enum(MEDIOS_DE_PAGO).default('efectivo'),
   descripcion: texto(500).nullish(),
+  origen: z.enum(ORIGENES_DE_MOVIMIENTO).default('teclado'),
 });
+
+export const crearDeudaConAdelantoSchema = z
+  .strictObject({
+    tipo: z.enum(TIPOS_DE_DEUDA),
+    contactoId: z.uuid(),
+    concepto: texto(200).min(1, { error: 'Indica el concepto.' }),
+    totalCentimos: positivo,
+    adelantoCentimos: positivo,
+    fecha: dia.optional(),
+    venceEn: dia.nullish(),
+    cuentaId: z.uuid().optional(),
+    medioDePago: z.enum(MEDIOS_DE_PAGO).default('efectivo'),
+    sucursalId: z.uuid().nullish(),
+    notas: texto(2000).nullish(),
+    origen: z.enum(ORIGENES_DE_MOVIMIENTO).default('teclado'),
+  })
+  .refine((v) => v.adelantoCentimos < v.totalCentimos, { error: 'El adelanto debe ser menor que el total.' });
 
 export const cajaDelDiaSchema = z.strictObject({
   fecha: dia,
@@ -255,6 +273,7 @@ export const contratosDeRegistro = {
   deudas_listar: contrato(listarDeudasSchema, listadoSchema(deudaSchema)),
   deuda_editar: contrato(editarDeudaSchema, deudaSchema),
   deuda_abonar: contrato(abonarDeudaSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
+  deuda_crear_con_adelanto: contrato(crearDeudaConAdelantoSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
   deuda_anular: contrato(z.strictObject({ id: z.uuid(), motivo }), deudaSchema),
   caja_del_dia: contrato(z.strictObject({ fecha: dia.optional(), cuentaId: z.uuid().optional() }), cajaDelDiaSchema),
   registro_resumen: contrato(pedirResumenSchema, resumenDeRegistroSchema),

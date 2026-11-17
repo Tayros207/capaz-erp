@@ -347,7 +347,7 @@ export function inferirCategoria(texto: string, tipo: 'ingreso' | 'egreso'): Cat
  * hay habito: seria repetir la clasificacion de la primera vez, incluida su
  * eventual equivocacion.
  */
-const MINIMO_REGISTROS = 2
+export const MINIMO_REGISTROS = 2
 
 /**
  * Fraccion que debe alcanzar la categoria dominante. Con 60% hay mayoria real
@@ -356,7 +356,7 @@ const MINIMO_REGISTROS = 2
  * materia prima. Es una SUGERENCIA para precargar el selector, no un dato
  * contable: el costo de fallar es que el dueño cambie el chip.
  */
-const DOMINANCIA_MINIMA = 0.6
+export const DOMINANCIA_MINIMA = 0.6
 
 /**
  * Sugiere la categoria habitual de un contacto a partir de su historial.
