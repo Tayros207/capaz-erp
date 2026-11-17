@@ -19,6 +19,7 @@ import { ListaPaginada } from './lista-paginada.tsx';
 import { argumentosDeMovimientos, FILTROS_DE_MOVIMIENTOS, textoDeCantidad, textoDeCosto, type TipoManual } from './logica.ts';
 import { Cargando, InsigniaBajoMinimo } from './marco.tsx';
 import { columnasDeHistorial } from './columnas.tsx';
+import { SeccionKardex } from './seccion-kardex.tsx';
 import { resolverAccion, useArticulo, usePermisosDeInventario } from './use-inventario.ts';
 
 const HISTORIAL = columnasDeHistorial(false);
@@ -89,6 +90,7 @@ function Contenido({ a }: { a: ArticuloDto }) {
       </GrupoDeCifras>
       <PorSucursal a={a} />
       <Historial articuloId={a.id} />
+      <SeccionKardex articuloId={a.id} />
       <HojaDeMovimiento tipo={hoja === 'entrada' || hoja === 'salida' ? hoja : null} articulo={{ id: a.id, nombre: a.nombre }} alCerrar={() => setHoja(null)} />
       <HojaDeAjuste abierto={hoja === 'ajuste'} articulo={a} alCerrar={() => setHoja(null)} />
       <HojaDeArticulo abierto={hoja === 'editar'} articulo={a} alCerrar={() => setHoja(null)} />

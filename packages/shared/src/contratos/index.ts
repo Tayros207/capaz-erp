@@ -6,6 +6,9 @@ import { contratosDeAuditoria, eventosDeAuditoria } from './auditoria.js';
 import { contratosDeMiembros, eventosDeMiembros } from './miembros.js';
 import { contratosDeClientes, eventosDeClientes } from './clientes.js';
 import { contratosDeProductos, eventosDeProductos } from './productos.js';
+import { contratosDeMaestrosAmpliados, eventosDeMaestrosAmpliados } from './maestros-ampliados.js';
+import { contratosDeInsumosOperaciones, eventosDeInsumosOperaciones } from './insumos-operaciones.js';
+import { contratosDeComprasOperaciones, eventosDeComprasOperaciones } from './compras-operaciones.js';
 import { contratosDeSucursales, eventosDeSucursales } from './sucursales.js';
 import { contratosDeBorradores, eventosDeBorradores } from './borradores.js';
 import { contratosDeConexiones, eventosDeConexiones } from './conexiones.js';
@@ -28,6 +31,9 @@ export * from './auditoria.js';
 export * from './miembros.js';
 export * from './clientes.js';
 export * from './productos.js';
+export * from './maestros-ampliados.js';
+export * from './insumos-operaciones.js';
+export * from './compras-operaciones.js';
 export * from './sucursales.js';
 export * from './borradores.js';
 export * from './conexiones.js';
@@ -52,6 +58,9 @@ export const CONTRATOS = {
   ...contratosDeMiembros,
   ...contratosDeClientes,
   ...contratosDeProductos,
+  ...contratosDeMaestrosAmpliados,
+  ...contratosDeInsumosOperaciones,
+  ...contratosDeComprasOperaciones,
   ...contratosDeSucursales,
   ...contratosDeBorradores,
   ...contratosDeConexiones,
@@ -78,6 +87,9 @@ export const EVENTOS = {
   ...eventosDeMiembros,
   ...eventosDeClientes,
   ...eventosDeProductos,
+  ...eventosDeMaestrosAmpliados,
+  ...eventosDeInsumosOperaciones,
+  ...eventosDeComprasOperaciones,
   ...eventosDeSucursales,
   ...eventosDeBorradores,
   ...eventosDeConexiones,

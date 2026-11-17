@@ -96,9 +96,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/app.module.ts": {
-    "mtime": 1794788508.572368,
-    "seen": 1794794523.3416193,
-    "ast_hash": "a89da35e6185d9aca006e8edef78b8be",
+    "mtime": 1794853223.7853842,
+    "seen": 1794853597.6334217,
+    "ast_hash": "31f24c7553c7271579b0003d8b4cd0f9",
     "semantic_hash": ""
   },
   "apps/api/src/arquitectura/arquitectura.spec.ts": {
@@ -1254,9 +1254,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/app/rutas.tsx": {
-    "mtime": 1794780243.5799453,
-    "seen": 1794781771.1046538,
-    "ast_hash": "e2dd32f1545b05f60f5c21db688ef7eb",
+    "mtime": 1794853223.7865896,
+    "seen": 1794853597.6352842,
+    "ast_hash": "ffa9e85568d4d74bba1c2c585b80648a",
     "semantic_hash": ""
   },
   "apps/web/src/core/acceso/api.spec.ts": {
@@ -1818,9 +1818,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/index.ts": {
-    "mtime": 1794780380.310781,
-    "seen": 1794781771.104907,
-    "ast_hash": "e6e5b8cef981e5fde7b50f31fb6a4187",
+    "mtime": 1794853223.784587,
+    "seen": 1794853597.6371202,
+    "ast_hash": "dafb747cfd5ee0a3518fc947289e2651",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/insumos.ts": {
@@ -1944,9 +1944,9 @@
     "semantic_hash": ""
   },
   "docs/NEON-MIGRACION.md": {
-    "mtime": 1794848943.56012,
-    "seen": 1794848948.86387,
-    "ast_hash": "43aa80aad69abf8dc22e638c152f3ddc",
+    "mtime": 1794853765.264648,
+    "seen": 1794853773.461659,
+    "ast_hash": "a0442673aaa51b468d49bad6974da1a6",
     "semantic_hash": ""
   },
   "docs/PLAN-PARALELO.md": {
@@ -6063,6 +6063,588 @@
     "mtime": 1794852104.4316456,
     "seen": 1794852235.7903876,
     "ast_hash": "2b44f6ed394383480e90d378b6081113",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/captura/captura.module.ts": {
+    "mtime": 1794853223.7850099,
+    "seen": 1794853597.6335366,
+    "ast_hash": "13b23a9db1123f46e40c4336bbbd193d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/cotizador.module.ts": {
+    "mtime": 1794853223.7851744,
+    "seen": 1794853597.6343012,
+    "ast_hash": "4aafdfec340a0fb76c03c14203d46708",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/adaptador-de-dinero.spec.ts": {
+    "mtime": 1794853210.0225654,
+    "seen": 1794853597.6343045,
+    "ast_hash": "7cfe5e94a814d6d851652e2b659ae5df",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/adaptador-de-dinero.ts": {
+    "mtime": 1794853210.0235415,
+    "seen": 1794853597.6343074,
+    "ast_hash": "44a3939a7ff10372b952a657bbc026bc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/frontera-del-motor.spec.ts": {
+    "mtime": 1794853210.0235415,
+    "seen": 1794853597.63431,
+    "ast_hash": "6161a6db219228542e9607e86a12cab0",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/cantidades-de-referencia.spec.ts": {
+    "mtime": 1794853210.0235653,
+    "seen": 1794853597.6343124,
+    "ast_hash": "c72edffb79f87657a0f263bbad681c41",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/cantidades-de-referencia.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343153,
+    "ast_hash": "ab2636d0bbc735e0aa58ab339dc5aca6",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/dinero.spec.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343179,
+    "ast_hash": "935a08afbbf32faaff28fb03ea73983f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/dinero.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343207,
+    "ast_hash": "15d87571f6123ee19fd6a6e9795b5a3e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/dominio.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343231,
+    "ast_hash": "7184075799676107108c84cbbb03f608",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/empresa.spec.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343257,
+    "ast_hash": "c98ea58d67d86dc9b1ec72fc3557c5e7",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/empresa.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343286,
+    "ast_hash": "50761d406f581500d129c16a435515b1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/esquemas-decimales.spec.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343315,
+    "ast_hash": "86862eb15e485bbaa42524592fa72e2e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/esquemas-decimales.ts": {
+    "mtime": 1794853210.0239563,
+    "seen": 1794853597.6343343,
+    "ast_hash": "bbc9372672fa8d488d9244423673308e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/factores.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.634337,
+    "ast_hash": "6dc87d7725c6c7653caecc2541f73c88",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/impuesto.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343396,
+    "ast_hash": "63261c132c45cf57c9dac3e01d1221d4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/medidas.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343422,
+    "ast_hash": "6c4d0989c0bd0f485dd88cd817fabc7c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/resultado.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343443,
+    "ast_hash": "178c01531209bea3890dd8b933d400e2",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/semilla-es-pe.spec.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343465,
+    "ast_hash": "1989e895b1c44913efa35f4ee7330888",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/semilla-es-pe.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.634349,
+    "ast_hash": "4cdfd8d924a867a6d215c79ca453414b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/semillas.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.634352,
+    "ast_hash": "9b00a1b4e9358fb2f3985aeff8afb7c7",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/base/texto.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343544,
+    "ast_hash": "2982607c0fff1744ead1297582c5344b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/calcular-cotizacion.spec.ts": {
+    "mtime": 1794853210.0245652,
+    "seen": 1794853597.6343575,
+    "ast_hash": "0bd72fb23579e1edf4a7754e9e505892",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/calcular-cotizacion.ts": {
+    "mtime": 1794853210.0255919,
+    "seen": 1794853597.6343603,
+    "ast_hash": "ea06b3087e3953e0a46b79210fe20ab4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/constantes/deduccion.ts": {
+    "mtime": 1794853210.0255919,
+    "seen": 1794853597.634363,
+    "ast_hash": "819d4aba8b97122d5c41123634d7eb42",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/constantes/factores.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.6343658,
+    "ast_hash": "5bf0c8d5a0eac1d4801ee1769a585726",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/constantes/plantillas.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.6343682,
+    "ast_hash": "d75ac9e413745385fa131bfb0efefbc3",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/cuadro-directo.spec.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.6343713,
+    "ast_hash": "14f4e881a4d723e0bca4a3ad2f94a982",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/cuadro-directo.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.634374,
+    "ast_hash": "b2ff484209d4fe3d84322a1af37ea201",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/cuadro.spec.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.6343763,
+    "ast_hash": "d137a23d696f9710321049835f4a8819",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/cuadro.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.6343787,
+    "ast_hash": "e34c7d316f53a9acc001fd4921cc3bd4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/escalar-cuadro.spec.ts": {
+    "mtime": 1794853210.0258608,
+    "seen": 1794853597.634381,
+    "ast_hash": "c74f65855afce3e5ce3516d694e61374",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/escalar-cuadro.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343837,
+    "ast_hash": "523464521fa946d17434c7141bcc9f3b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/generar-referencias.spec.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343858,
+    "ast_hash": "9ec14e3d9391ba1d7fc2723fb84f1773",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/generar-referencias.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343882,
+    "ast_hash": "5ad95eed16f19a22e2d1e9525dfa22b1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/imposicion.spec.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343906,
+    "ast_hash": "d1efa2baed06c9024b5fce83730144c3",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/imposicion.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343927,
+    "ast_hash": "b2eaec3f15e1ef6d4d58cfc540ffc2cf",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/mermas.spec.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343954,
+    "ast_hash": "8621150985ac5a303bf995110a5cecd5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/mermas.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6343977,
+    "ast_hash": "d6feb36724c2e9f2f1d1de8f8cdbd546",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/pruebas/caso-base.ts": {
+    "mtime": 1794853210.0265653,
+    "seen": 1794853597.6344006,
+    "ast_hash": "9208eaac97717b4893be9e667b34685c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/pruebas/caso-de-referencia.ts": {
+    "mtime": 1794853210.0275652,
+    "seen": 1794853597.6344028,
+    "ast_hash": "396a4aea84fd12ba2ae7f45c33161a3e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/pruebas/vectores-de-escalado.ts": {
+    "mtime": 1794853210.0275652,
+    "seen": 1794853597.6344054,
+    "ast_hash": "6bc95bb35a1835846f0452bdc32e6b36",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/semaforo.spec.ts": {
+    "mtime": 1794853210.0275652,
+    "seen": 1794853597.6344078,
+    "ast_hash": "27474d3ceb8c2ce7983ab6f6df56c720",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/semaforo.ts": {
+    "mtime": 1794853210.0275652,
+    "seen": 1794853597.6344101,
+    "ast_hash": "1ff66daddcce82e605a75501fe46f73c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/borrador.ts": {
+    "mtime": 1794853210.0275652,
+    "seen": 1794853597.6344125,
+    "ast_hash": "21e5152d756150f952f3bb02b69e7224",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/cotizacion.spec.ts": {
+    "mtime": 1794853210.0283315,
+    "seen": 1794853597.634415,
+    "ast_hash": "77884bf2faa404475bca1dbfad3dcae2",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/cotizacion.ts": {
+    "mtime": 1794853210.0283315,
+    "seen": 1794853597.6344173,
+    "ast_hash": "443176344b5a0b1d4a909d97a832afcc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/cuadro-directo.ts": {
+    "mtime": 1794853210.0283315,
+    "seen": 1794853597.6344194,
+    "ast_hash": "224d11514a64724ebb85b433b447f2dc",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/escalado.ts": {
+    "mtime": 1794853210.0283315,
+    "seen": 1794853597.634422,
+    "ast_hash": "414b0ede7157d22a118a68987b3139b4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/imposicion.spec.ts": {
+    "mtime": 1794853210.0285652,
+    "seen": 1794853597.6344247,
+    "ast_hash": "3f5577d2958e7e37b382cc10879a4027",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/costeo/tipos/imposicion.ts": {
+    "mtime": 1794853210.0285652,
+    "seen": 1794853597.634427,
+    "ast_hash": "490735b597e52aed5a1048ec9473d764",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/ajuste-en-bloque.spec.ts": {
+    "mtime": 1794853210.0285652,
+    "seen": 1794853597.6344297,
+    "ast_hash": "7a23d8a1150c0df478d8ddb65262f804",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/ajuste-en-bloque.ts": {
+    "mtime": 1794853210.029138,
+    "seen": 1794853597.6344323,
+    "ast_hash": "2583efc3bbd6291674f667b13b3fcb37",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/precio-por-escala.spec.ts": {
+    "mtime": 1794853210.029138,
+    "seen": 1794853597.6344347,
+    "ast_hash": "319bc9ea1dd1701df130d252c580ed0b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/precio-por-escala.ts": {
+    "mtime": 1794853210.029138,
+    "seen": 1794853597.6344376,
+    "ast_hash": "7ccce792865f2e7050c8abac9a2e07db",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/precio-rapido.spec.ts": {
+    "mtime": 1794853210.0295653,
+    "seen": 1794853597.6344402,
+    "ast_hash": "9290c1c5591dbc87cad7601a20f35104",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/precio-rapido.ts": {
+    "mtime": 1794853210.0295653,
+    "seen": 1794853597.6344433,
+    "ast_hash": "41ae7259950e9ae4f7ab62878067902f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/pruebas/vectores-de-curva.ts": {
+    "mtime": 1794853210.0295653,
+    "seen": 1794853597.634446,
+    "ast_hash": "2d4ce6f6b956204f92118004cd7f6423",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/tipos/precio-por-escala.spec.ts": {
+    "mtime": 1794853210.0295653,
+    "seen": 1794853597.6344483,
+    "ast_hash": "c7b2e1fffdca691002c72b1de15f4c50",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/tipos/precio-por-escala.ts": {
+    "mtime": 1794853210.0302641,
+    "seen": 1794853597.6344507,
+    "ast_hash": "7e80574e531f2afbb3931583f70b1524",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/validar-referencias.spec.ts": {
+    "mtime": 1794853210.0302641,
+    "seen": 1794853597.6344533,
+    "ast_hash": "b06e4af77c7514c11f71068a130fdcde",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/domain/motor/escala/validar-referencias.ts": {
+    "mtime": 1794853210.0302641,
+    "seen": 1794853597.6344554,
+    "ast_hash": "c57820f59dfa5c8798f78423a9b97fa4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/categoria-de-capaz.spec.ts": {
+    "mtime": 1794852814.1050332,
+    "seen": 1794853597.6348054,
+    "ast_hash": "8e9e4b77a1be3d801b64583514a9d47d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/categoria-de-capaz.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348088,
+    "ast_hash": "4e175d1db92caaa20281b7791286e6a0",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/deuda.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.634812,
+    "ast_hash": "563f0613d77caea20c3ebe1162fe935f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/deuda.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348162,
+    "ast_hash": "d2c1b68f2b3edd0ebc3b92a202e4e028",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/fecha.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348195,
+    "ast_hash": "0b301d627959a52ed176467c5dd7cb31",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/fecha.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348226,
+    "ast_hash": "df765adc5eb8fee0c3d5fe482e4b2918",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/interpretar-dictado.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348257,
+    "ast_hash": "86ff57eb8e1579a167230c241703d24c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/interpretar-dictado.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348293,
+    "ast_hash": "875fab608bce1fb18302ebaed9c0851e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/pista.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348317,
+    "ast_hash": "3085ebc5a5abb15c3060a6a9bac629c5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/pureza.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348336,
+    "ast_hash": "b9fbb6018132c735866f90db1381fc69",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/abono.spec.ts": {
+    "mtime": 1794852814.105198,
+    "seen": 1794853597.6348367,
+    "ast_hash": "be9ccd2fa9c88088785a53498f1be7c2",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/abono.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348395,
+    "ast_hash": "bbe5e8cb2c1f5d66128037666b425942",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/categoria.spec.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348426,
+    "ast_hash": "0544163991f55d98d785abdfbf8cff61",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/categoria.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348455,
+    "ast_hash": "467c99543b5b0292b9ac61f49cbf6d38",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/categorias-de-rubro.spec.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348474,
+    "ast_hash": "9ad339c61c34d6f1b52648e80be336d5",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/categorias-de-rubro.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348517,
+    "ast_hash": "b2b71a9e56600e2ccc12c7b81c5b5b2c",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/descripcion.spec.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348546,
+    "ast_hash": "3bbc975fd32a58d4db52da305e1f671e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/descripcion.ts": {
+    "mtime": 1794852814.1059968,
+    "seen": 1794853597.6348574,
+    "ast_hash": "3a24bc97c212d6528856082f903b7b35",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/enriquecer.spec.ts": {
+    "mtime": 1794852814.106861,
+    "seen": 1794853597.6348605,
+    "ast_hash": "2823b8720a9d45ab942e37a886f35504",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/enriquecer.ts": {
+    "mtime": 1794852814.106861,
+    "seen": 1794853597.6348636,
+    "ast_hash": "599785a781e43d02cb9f980cc4633d78",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/extraccion.ts": {
+    "mtime": 1794852814.106861,
+    "seen": 1794853597.634866,
+    "ast_hash": "694ba6447ddc22fc633084088252594f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/fixtures/005_proformas_y_categorias.sql": {
+    "mtime": 1794852814.106861,
+    "seen": 1794853597.6348696,
+    "ast_hash": "8b170564e851700fa799bc270840c134",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/monto.spec.ts": {
+    "mtime": 1794852814.1082435,
+    "seen": 1794853597.634872,
+    "ast_hash": "de22699ddf8b65f321cc9c98ca75188f",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/monto.ts": {
+    "mtime": 1794852814.108634,
+    "seen": 1794853597.6348748,
+    "ast_hash": "d798f7f5fbbf7c8f12dc9dbb17f2bf84",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/numeros-en-palabras.spec.ts": {
+    "mtime": 1794852814.108756,
+    "seen": 1794853597.6348774,
+    "ast_hash": "ab87e9c974bf2ebd677b0760f2ac5079",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/numeros-en-palabras.ts": {
+    "mtime": 1794852814.108873,
+    "seen": 1794853597.6348808,
+    "ast_hash": "f95a1c3fac134530200286feb5896ad8",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/pista.ts": {
+    "mtime": 1794852814.1089785,
+    "seen": 1794853597.6348834,
+    "ast_hash": "24fa20d0ee43412b718ef4aa139d1f26",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/proforma.spec.ts": {
+    "mtime": 1794852814.109068,
+    "seen": 1794853597.6348858,
+    "ast_hash": "90edab95457d187fd9824e21a6cd7e06",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/proforma.ts": {
+    "mtime": 1794852814.1091669,
+    "seen": 1794853597.634889,
+    "ast_hash": "32e43388faf5ea364270c740310caee4",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/similitud-nombres.spec.ts": {
+    "mtime": 1794852814.109269,
+    "seen": 1794853597.634892,
+    "ast_hash": "23cdb09fbf72734900431b20fe87a862",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/similitud-nombres.ts": {
+    "mtime": 1794852814.1094046,
+    "seen": 1794853597.6348958,
+    "ast_hash": "37b711417e02b7f4163e6df8d2f446aa",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/registro/dictado/reglas/vocabulario-imprenta.ts": {
+    "mtime": 1794852814.1095243,
+    "seen": 1794853597.634899,
+    "ast_hash": "1d50aff92c2cdef9dab8d0bcadca93d9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/captura/rutas.tsx": {
+    "mtime": 1794853223.786233,
+    "seen": 1794853597.6355064,
+    "ast_hash": "bb25b4d40edcd3d9c0e53644e08852f2",
+    "semantic_hash": ""
+  },
+  "packages/shared/src/contratos/captura.ts": {
+    "mtime": 1794853223.7844174,
+    "seen": 1794853597.6370828,
+    "ast_hash": "ccc9146371e5a832e36097999e7b2ca3",
+    "semantic_hash": ""
+  },
+  "docs/PLAN-DE-CIERRE-COTIZADOR-Y-VOZ.md": {
+    "mtime": 1794853669.268382,
+    "seen": 1794853675.5273573,
+    "ast_hash": "6a35c944981b70d42b9d4aeac5b3826a",
     "semantic_hash": ""
   }
 }

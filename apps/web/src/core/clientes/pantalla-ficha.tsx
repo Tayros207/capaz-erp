@@ -17,6 +17,7 @@ import { notificar } from '../../shared/ui/notificar.ts';
 import { archivarCliente, datosOError, editarCliente, restaurarCliente, verCliente } from './api.ts';
 import { CLAVE_CLIENTES } from './claves.ts';
 import { FormularioCliente } from './formulario-cliente.tsx';
+import { SeccionesAmpliadasDeCliente } from './secciones-ampliadas.tsx';
 import {
   argumentosDeEdicion,
   ETIQUETA_DE_CLASE,
@@ -144,6 +145,7 @@ function Contenido({ cliente }: { cliente: ClienteDto }) {
           },
         ]}
       />
+      <SeccionesAmpliadasDeCliente clienteId={cliente.id} puedeEditar={puedeEditar && !archivado} />
     </div>
   );
 }

@@ -18,6 +18,7 @@ import { notificar } from '../../shared/ui/notificar.ts';
 import { archivarProducto, datosOError, editarProducto, restaurarProducto, verProducto } from './api.ts';
 import { CLAVE_PRODUCTOS } from './claves.ts';
 import { FormularioProducto } from './formulario-producto.tsx';
+import { SeccionesAmpliadasDeProducto } from './secciones-ampliadas.tsx';
 import {
   argumentosDeEdicion,
   ETIQUETA_DE_TIPO,
@@ -107,8 +108,8 @@ function Contenido({ producto }: { producto: ProductoDto }) {
         accionesSecundarias={
           <>
             {archivado ? <Insignia tono="neutro">Archivado</Insignia> : null}
-            {puedeEditar ? <Boton variante={archivado ? 'secundario' : 'peligro'} onClick={() => void alternarArchivo()}>{archivado ? 'Restaurar' : 'Archivar'}</Boton> : null}
             <EnlaceAlCotizador productoId={producto.id} />
+            {puedeEditar ? <Boton variante={archivado ? 'secundario' : 'peligro'} onClick={() => void alternarArchivo()}>{archivado ? 'Restaurar' : 'Archivar'}</Boton> : null}
           </>
         }
       />
@@ -144,6 +145,7 @@ function Contenido({ producto }: { producto: ProductoDto }) {
           },
         ]}
       />
+      <SeccionesAmpliadasDeProducto productoId={producto.id} unidadBase={producto.unidad} puedeEditar={puedeEditar && !archivado} />
     </div>
   );
 }

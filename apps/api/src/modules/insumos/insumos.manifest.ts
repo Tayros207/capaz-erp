@@ -17,6 +17,8 @@ export const manifiestoInsumos: ManifiestoDeEntrada = {
     { id: 'existencias', nombre: 'Existencias', ruta: '/m/insumos', construida: true },
     { id: 'alertas', nombre: 'Bajo mínimo', ruta: '/m/insumos/alertas', construida: true },
     { id: 'movimientos', nombre: 'Movimientos', ruta: '/m/insumos/movimientos', construida: true },
+    { id: 'transferencias', nombre: 'Transferencias', ruta: '/m/insumos/transferencias', construida: true },
+    { id: 'conteos', nombre: 'Inventario físico', ruta: '/m/insumos/conteos', construida: true },
   ],
   familia: 'inventario',
   orden: 1,

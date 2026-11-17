@@ -8,10 +8,10 @@ import { CLAVE_COMPRAS } from './claves.ts';
 import { mensajeDeRechazo } from './logica.ts';
 
 /** Qué puede hacer esta persona en Compras: escribir exige acceso completo al módulo y el permiso. */
-export function usePermisosDeCompras(): { editar: boolean; cancelar: boolean } {
+export function usePermisosDeCompras(): { editar: boolean; cancelar: boolean; aprobar: boolean } {
   const yo = useYo();
   const escribe = !!yo && puedeEscribirEn(yo, 'compras');
-  return { editar: escribe && puede(yo, 'compras:editar'), cancelar: escribe && puede(yo, 'compras:cancelar') };
+  return { editar: escribe && puede(yo, 'compras:editar'), cancelar: escribe && puede(yo, 'compras:cancelar'), aprobar: escribe && puede(yo, 'compras:aprobar') };
 }
 
 export const refrescarCompras = () => clienteDeConsultas.invalidateQueries({ queryKey: CLAVE_COMPRAS });

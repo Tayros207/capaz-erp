@@ -21,7 +21,7 @@ import {
 import { clientes, productos } from './core-maestros.js';
 
 // Módulo `cotizador` · datos del corte B1 (0024). Especificación: docs/FICHAS-OLA-4.md §6.
-// Las tablas del cuadro por partes (B2) y del enlace público (B3) no entran. `numeric` devuelve texto (lo que quiere el motor).
+// Taller del cuadro por partes (B2) y enlaces públicos (B3) llegan con la 0027 (docs/FICHAS-COTIZADOR-B2-B3.md §2). `numeric` devuelve texto (lo que quiere el motor).
 
 export const cotizador = pgSchema('cotizador');
 
@@ -83,6 +83,9 @@ export const cotizadorListasDePrecio = cotizador.table(
     check('lista_invariante_b', sql`${t.p100Centimos} < ${t.p1000Centimos} and ${t.p1000Centimos} < ${t.p5000Centimos}`),
     uniqueIndex('uq_cotizador_listas_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
     index('idx_cotizador_listas_producto').on(t.tenantId, t.productoId).where(sql`${t.productoId} is not null`),
+    uniqueIndex('uq_cotizador_listas_producto')
+      .on(t.tenantId, t.productoId)
+      .where(sql`${t.archivadoEn} is null and ${t.productoId} is not null`),
   ],
 );
 
@@ -234,13 +237,142 @@ export const cotizadorEventos = cotizador.table(
     tipo: text('tipo').notNull(),
     motivo: text('motivo'),
     datos: jsonb('datos').notNull().default(sql`'{}'::jsonb`),
-    usuarioId: text('usuario_id').notNull(),
+    usuarioId: text('usuario_id'),
+    canal: text('canal').notNull().default('ui'),
     creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     foreignKey({ name: 'eventos_cotizacion_fk', columns: [t.tenantId, t.cotizacionId], foreignColumns: [cotizadorCotizaciones.tenantId, cotizadorCotizaciones.id] }),
     check('evento_version', sql`${t.version} >= 1`),
-    check('evento_tipo', sql`${t.tipo} IN ('creada', 'editada', 'emitida', 'enviada', 'aceptada', 'rechazada', 'anulada', 'nueva_version')`),
+    check('evento_tipo', sql`${t.tipo} IN ('creada', 'editada', 'emitida', 'enviada', 'aceptada', 'rechazada', 'anulada', 'nueva_version', 'vista', 'enlace_generado', 'enlace_revocado')`),
+    check('evento_canal', sql`${t.canal} IN ('ui', 'enlace', 'sistema')`),
     index('idx_cotizador_eventos_cotizacion').on(t.tenantId, t.cotizacionId, t.creadoEn.desc()),
+  ],
+);
+
+// ===== 0027 · taller del cuadro por partes y enlaces públicos =====
+
+const comunes = () => ({
+  id: uuid('id').primaryKey().default(sql`uuidv7()`),
+  tenantId: text('tenant_id').notNull(),
+});
+const auditoria = () => ({
+  creadoPor: text('creado_por').notNull(),
+  creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
+  actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
+});
+const FACTORES = `('material', 'impresion', 'planchas', 'diseno', 'acabado', 'indirectos')`;
+
+export const cotizadorFormatosPliego = cotizador.table(
+  'formatos_pliego',
+  {
+    ...comunes(),
+    nombre: text('nombre').notNull(),
+    nombreNormalizado: text('nombre_normalizado').notNull(),
+    anchoCm: numeric('ancho_cm', { precision: 7, scale: 2 }).notNull(),
+    altoCm: numeric('alto_cm', { precision: 7, scale: 2 }).notNull(),
+    tipo: text('tipo').notNull(),
+    archivadoEn: timestamp('archivado_en', { withTimezone: true }),
+    ...auditoria(),
+  },
+  (t) => [
+    unique('cotizador_formatos_pliego_empresa_id').on(t.tenantId, t.id),
+    check('formato_tipo', sql`${t.tipo} IN ('madre', 'maquina')`),
+    check('formato_medidas', sql`${t.anchoCm} > 0 and ${t.altoCm} > 0`),
+    uniqueIndex('uq_cotizador_formatos_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
+  ],
+);
+
+export const cotizadorMaquinas = cotizador.table(
+  'maquinas',
+  {
+    ...comunes(),
+    nombre: text('nombre').notNull(),
+    nombreNormalizado: text('nombre_normalizado').notNull(),
+    formatoMaxAnchoCm: numeric('formato_max_ancho_cm', { precision: 7, scale: 2 }).notNull(),
+    formatoMaxAltoCm: numeric('formato_max_alto_cm', { precision: 7, scale: 2 }).notNull(),
+    pinzaCm: numeric('pinza_cm', { precision: 7, scale: 2 }).notNull(),
+    sangradoCm: numeric('sangrado_cm', { precision: 7, scale: 2 }).notNull(),
+    calleCm: numeric('calle_cm', { precision: 7, scale: 2 }).notNull(),
+    etapas: jsonb('etapas').notNull().default(sql`'[]'::jsonb`),
+    archivadoEn: timestamp('archivado_en', { withTimezone: true }),
+    ...auditoria(),
+  },
+  (t) => [
+    unique('cotizador_maquinas_empresa_id').on(t.tenantId, t.id),
+    check('maquina_medidas', sql`${t.formatoMaxAnchoCm} >= 0 and ${t.formatoMaxAltoCm} >= 0 and ${t.pinzaCm} >= 0 and ${t.sangradoCm} >= 0 and ${t.calleCm} >= 0`),
+    uniqueIndex('uq_cotizador_maquinas_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
+  ],
+);
+
+export const cotizadorTarifas = cotizador.table(
+  'tarifas',
+  {
+    ...comunes(),
+    factor: text('factor').notNull(),
+    nombre: text('nombre').notNull(),
+    nombreNormalizado: text('nombre_normalizado').notNull(),
+    unidad: text('unidad').notNull(),
+    costoUnitario: numeric('costo_unitario', { precision: 14, scale: 4 }).notNull(),
+    escalaPorDefecto: text('escala_por_defecto').notNull(),
+    formatoId: uuid('formato_id'),
+    // Par blando hacia insumos.articulos: sin llave foránea (R6).
+    articuloId: uuid('articulo_id'),
+    archivadoEn: timestamp('archivado_en', { withTimezone: true }),
+    ...auditoria(),
+  },
+  (t) => [
+    unique('cotizador_tarifas_empresa_id').on(t.tenantId, t.id),
+    foreignKey({ name: 'tarifas_formato_fk', columns: [t.tenantId, t.formatoId], foreignColumns: [cotizadorFormatosPliego.tenantId, cotizadorFormatosPliego.id] }),
+    check('tarifa_factor', sql`${t.factor} IN ${sql.raw(FACTORES)}`),
+    check('tarifa_escala', sql`${t.escalaPorDefecto} IN ('fija', 'por_pliego', 'por_unidad')`),
+    check('tarifa_costo', sql`${t.costoUnitario} >= 0`),
+    uniqueIndex('uq_cotizador_tarifas_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
+    index('idx_cotizador_tarifas_formato').on(t.tenantId, t.formatoId).where(sql`${t.formatoId} is not null`),
+  ],
+);
+
+export const cotizadorItemsDelCuadro = cotizador.table(
+  'items_del_cuadro',
+  {
+    ...comunes(),
+    nombre: text('nombre').notNull(),
+    nombreNormalizado: text('nombre_normalizado').notNull(),
+    factor: text('factor').notNull(),
+    despuesDe: text('despues_de').notNull(),
+    posicion: integer('posicion').notNull(),
+    fija: boolean('fija').notNull().default(false),
+    archivadoEn: timestamp('archivado_en', { withTimezone: true }),
+    ...auditoria(),
+  },
+  (t) => [
+    unique('cotizador_items_del_cuadro_empresa_id').on(t.tenantId, t.id),
+    check('item_factor', sql`${t.factor} IN ${sql.raw(FACTORES)}`),
+    check('item_despues_de', sql`${t.despuesDe} IN ${sql.raw(FACTORES)}`),
+    check('item_posicion', sql`${t.posicion} >= 0`),
+    uniqueIndex('uq_cotizador_items_nombre').on(t.tenantId, t.nombreNormalizado).where(sql`${t.archivadoEn} is null`),
+  ],
+);
+
+export const cotizadorEnlaces = cotizador.table(
+  'enlaces',
+  {
+    ...comunes(),
+    cotizacionId: uuid('cotizacion_id').notNull(),
+    version: integer('version').notNull(),
+    tokenHash: text('token_hash').notNull(),
+    venceEn: timestamp('vence_en', { withTimezone: true }).notNull(),
+    revocadoEn: timestamp('revocado_en', { withTimezone: true }),
+    vistas: integer('vistas').notNull().default(0),
+    ultimaVistaEn: timestamp('ultima_vista_en', { withTimezone: true }),
+    ...auditoria(),
+  },
+  (t) => [
+    unique('cotizador_enlaces_empresa_id').on(t.tenantId, t.id),
+    unique('uq_cotizador_enlaces_token').on(t.tokenHash),
+    foreignKey({ name: 'enlaces_cotizacion_fk', columns: [t.tenantId, t.cotizacionId], foreignColumns: [cotizadorCotizaciones.tenantId, cotizadorCotizaciones.id] }),
+    check('enlace_version', sql`${t.version} >= 1`),
+    check('enlace_vistas', sql`${t.vistas} >= 0`),
+    index('idx_cotizador_enlaces_cotizacion').on(t.tenantId, t.cotizacionId, t.version),
   ],
 );

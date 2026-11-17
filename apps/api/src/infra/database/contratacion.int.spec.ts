@@ -213,6 +213,7 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
     'core.auditoria': { select: ['creado_en', 'tenant_id'] },
     'core.conexiones': { select: ['conector', 'creado_en', 'estado', 'id', 'tenant_id', 'ultimo_uso_en'] },
     'core.claves_api': { select: ['alcance', 'hash', 'id', 'revocada_en', 'tenant_id'], update: ['ultimo_uso_en'] },
+    'cotizador.enlaces': { select: ['cotizacion_id', 'revocado_en', 'tenant_id', 'token_hash', 'vence_en', 'version'] },
     'core.reglas_automaticas': { select: ['activa', 'disparador_tipo', 'id', 'tenant_id'] },
   };
 

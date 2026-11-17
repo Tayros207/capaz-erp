@@ -3,6 +3,9 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { MarcoDeInventario } from './marco.tsx';
 import { PantallaAlertas } from './pantalla-alertas.tsx';
 import { PantallaArticulo } from './pantalla-articulo.tsx';
+import { PantallaConteo } from './pantalla-conteo.tsx';
+import { PantallaConteos } from './pantalla-conteos.tsx';
+import { PantallaTransferencias } from './pantalla-transferencias.tsx';
 import { PantallaExistencias } from './pantalla-existencias.tsx';
 import { PantallaMovimientos } from './pantalla-movimientos.tsx';
 
@@ -15,6 +18,9 @@ export const rutas: RouteObject[] = [
       { index: true, element: <PantallaExistencias /> },
       { path: 'alertas', element: <PantallaAlertas /> },
       { path: 'movimientos', element: <PantallaMovimientos /> },
+      { path: 'transferencias', element: <PantallaTransferencias /> },
+      { path: 'conteos', element: <PantallaConteos /> },
+      { path: 'conteos/:id', element: <PantallaConteo /> },
       { path: 'articulos/:id', element: <PantallaArticulo /> },
       { path: '*', element: <EstadoVacio titulo="No encontramos esta pantalla" icono="caja" /> },
     ],

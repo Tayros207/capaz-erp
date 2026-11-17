@@ -190,6 +190,13 @@
       "when": 1794930471511,
       "tag": "0026_inventario_compras_operaciones",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1794932972536,
+      "tag": "0027_cotizador_taller_y_enlaces",
+      "breakpoints": true
     }
   ]
 }

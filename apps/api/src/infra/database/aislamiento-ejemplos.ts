@@ -206,6 +206,26 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into cotizador.version_lineas (tenant_id, version_id, posicion, descripcion, cantidad_milesimas, precio_unitario_milesimas, importe_centimos, igv_centimos, total_centimos) values ($1, md5($1::text || 'q3')::uuid, 0, 'Línea', 1000, 1000, 100, 18, 118)`,
     modo: 'completo',
   },
+  'cotizador.formatos_pliego': {
+    sql: `insert into cotizador.formatos_pliego (tenant_id, nombre, nombre_normalizado, ancho_cm, alto_cm, tipo, creado_por) values ($1, 'Pliego 70x100', 'pliego 70x100', 70, 100, 'madre', 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.maquinas': {
+    sql: `insert into cotizador.maquinas (tenant_id, nombre, nombre_normalizado, formato_max_ancho_cm, formato_max_alto_cm, pinza_cm, sangrado_cm, calle_cm, creado_por) values ($1, 'Offset 52', 'offset 52', 52, 36, 1, 0.3, 0.5, 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.tarifas': {
+    sql: `insert into cotizador.tarifas (tenant_id, factor, nombre, nombre_normalizado, unidad, costo_unitario, escala_por_defecto, creado_por) values ($1, 'material', 'Couché 150', 'couche 150', 'pliego', 1.2, 'por_pliego', 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.items_del_cuadro': {
+    sql: `insert into cotizador.items_del_cuadro (tenant_id, nombre, nombre_normalizado, factor, despues_de, posicion, creado_por) values ($1, 'Laminado', 'laminado', 'acabado', 'impresion', 0, 'u1')`,
+    modo: 'completo',
+  },
+  'cotizador.enlaces': {
+    sql: `insert into cotizador.enlaces (tenant_id, cotizacion_id, version, token_hash, vence_en, creado_por) values ($1, md5($1::text || 'q2')::uuid, 1, md5($1::text || 'tok'), now() + interval '7 days', 'u1')`,
+    modo: 'completo',
+  },
   'cotizador.eventos': {
     sql: `insert into cotizador.eventos (tenant_id, cotizacion_id, version, tipo, usuario_id) values ($1, md5($1::text || 'q2')::uuid, 1, 'creada', 'u1')`,
     modo: 'insercion',
