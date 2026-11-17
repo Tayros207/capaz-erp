@@ -13,6 +13,7 @@ import { Lista } from '../../shared/ui/datos/lista.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { MenuDeAcciones, type AccionDeMenu } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
+import { ResumenDelCuadro } from './cuadro/resumen-del-cuadro.tsx';
 import { refrescarCotizador, resolverAccion } from './acciones.ts';
 import { enviarPorWhatsApp, usePermisosDeCotizaciones } from './acciones-cotizacion.ts';
 import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, emitirCotizacion, listarPedidosDelCliente, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
@@ -155,6 +156,7 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
         {c.anuladoEn ? <Dato etiqueta="Anulada" valor={`${formatearFechaHora(c.anuladoEn)} · ${c.motivoAnulacion ?? ''}`} /> : null}
         {c.notas ? <Dato etiqueta="Notas" valor={c.notas} /> : null}
       </dl>
+      <ResumenDelCuadro c={c} />
       <section aria-label="Líneas de la cotización" className="flex flex-col gap-2">
         <h2 className="font-titulo font-semibold text-texto">Líneas</h2>
         <Lista etiqueta="Líneas de la cotización" columnas={COLUMNAS} filas={c.lineas} clave={(l) => String(l.posicion)} vacio={<EstadoVacio titulo="Sin líneas todavía" descripcion="Edita el borrador para agregarlas." icono="caja" />} />

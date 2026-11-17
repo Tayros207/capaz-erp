@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import type { ListaDePrecioDto, ProductoCotizableDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { milesimasATexto } from '../../shared/formato/milesimas.ts';
@@ -138,6 +138,7 @@ export function PantallaRapida() {
     <div className="flex flex-col gap-4">
       <EncabezadoDePagina titulo="Cotización rápida" />
       <SeccionesDelCotizador />
+      {editar ? <p className="text-sm text-texto-suave">¿Un trabajo con varias partes? <Link to="/m/cotizador/cuadro/nuevo" className="font-medium text-accion underline-offset-2 hover:underline">Cotizar por partes</Link></p> : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectorDeRegistro
           etiqueta="Producto"
