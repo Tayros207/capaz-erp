@@ -24,6 +24,7 @@ import { contratosDePersonal, eventosDePersonal } from './personal.js';
 import { contratosDeReportes, eventosDeReportes } from './reportes.js';
 import { contratosDeCaptura, eventosDeCaptura } from './captura.js';
 import { contratosDeCotizador, eventosDeCotizador } from './cotizador.js';
+import { contratosDeCotizadorCuadro } from './cotizador-cuadro.js';
 import { contratosDeCotizadorTaller } from './cotizador-taller.js';
 import { contratosDeCotizadorEnlaces } from './cotizador-enlaces.js';
 
@@ -51,6 +52,8 @@ export * from './personal.js';
 export * from './reportes.js';
 export * from './captura.js';
 export * from './cotizador.js';
+export * from './cotizador-cuadro.js';
+export * from './cotizador-cuadro-vista.js';
 export * from './cotizador-taller.js';
 export * from './cotizador-enlaces.js';
 
@@ -81,6 +84,7 @@ export const CONTRATOS = {
   ...contratosDeCotizador,
   ...contratosDeCotizadorTaller,
   ...contratosDeCotizadorEnlaces,
+  ...contratosDeCotizadorCuadro,
 } as const satisfies Record<string, ContratoDeHerramienta>;
 
 /** Herramientas de la consola de plataforma: viven aparte (rol de plataforma). */

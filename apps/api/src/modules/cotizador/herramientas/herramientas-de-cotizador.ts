@@ -17,6 +17,12 @@ import { tallerSembrar } from './taller-sembrar.js';
 import { tarifaArchivar, tarifaCrear, tarifaEditar, tarifasListar } from './taller-tarifas.js';
 import { precioConsultar } from './precio-consultar.js';
 import { cotizadorProductosBuscar } from './productos-buscar.js';
+import { cuadroFijarCostoDirecto, cuadroFijarColumnasAEnviar, cuadroFijarPrecioFinal, cuadroFijarUtilidad } from './cuadro-costos.js';
+import { cuadroCalcular, cuadroIniciar, cuadroVer } from './cuadro-iniciar.js';
+import { cuadroItemAgregar, cuadroItemEditar, cuadroItemQuitar } from './cuadro-items.js';
+import { cuadroLineaAgregar, cuadroLineaEditar, cuadroLineaQuitar } from './cuadro-lineas.js';
+import { cuadroGenerarReferencias, cuadroGuardarReferencias } from './cuadro-referencias.js';
+import { cuadroFijarImposicion, cuadroFijarTrabajo } from './cuadro-trabajo.js';
 
 /** Once de s1 (precios y configuración), doce de s2 (cotizaciones) y el buscador del catálogo; R15 cuenta por sesión: máximo 13. */
 export const HERRAMIENTAS_DE_COTIZADOR = [
@@ -50,6 +56,10 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   tarifasListar, tarifaCrear, tarifaEditar, tarifaArchivar,
   itemsCuadroListar, itemCuadroCrear, itemCuadroEditar, itemCuadroArchivar, itemsCuadroReordenar,
   tallerSembrar,
+  // Cuadro por partes (cot-s4).
+  cuadroIniciar, cuadroVer, cuadroFijarTrabajo, cuadroFijarImposicion, cuadroLineaAgregar, cuadroLineaEditar, cuadroLineaQuitar,
+  cuadroFijarCostoDirecto, cuadroFijarColumnasAEnviar, cuadroFijarUtilidad, cuadroFijarPrecioFinal, cuadroCalcular,
+  cuadroItemAgregar, cuadroItemEditar, cuadroItemQuitar, cuadroGenerarReferencias, cuadroGuardarReferencias,
 ] as const;
 
 /** Todo lo que el módulo `cotizador` aporta al servidor en esta parte: herramientas (sin consumidores ni fuentes de tiempo). */

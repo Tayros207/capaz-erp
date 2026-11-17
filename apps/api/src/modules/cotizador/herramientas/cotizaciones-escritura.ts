@@ -93,6 +93,10 @@ export const cotizacionEditar = definirHerramienta('cotizacion_editar', {
     if (falta) return rechazo('argumentos_invalidos', falta);
     const version = await versionDe(tx, ctx, c.id, c.versionActual);
     if (!version) throw new Error('La cotización no tiene su versión vigente.');
+    // Por partes, las líneas, el costo y las opciones salen del cuadro: se editan con las herramientas cuadro_*.
+    if (version.modo === 'cuadro' && (args.lineas !== undefined || args.costoCentimos !== undefined || args.conOpciones !== undefined)) {
+      return rechazo('conflicto', 'Esta cotización es por partes: sus líneas, su costo y sus opciones salen del cuadro. Edítalo con las herramientas cuadro_*.');
+    }
     const actuales = await lineasDe(tx, ctx, version.id);
     const clienteId = args.clienteId !== undefined ? args.clienteId : c.clienteId;
     const cambiaCliente = args.clienteId !== undefined && args.clienteId !== c.clienteId;

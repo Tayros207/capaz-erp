@@ -1,4 +1,4 @@
-import { CONDICIONES_VACIAS, type CotizacionCompletaDto, type CotizacionDto } from '@capaz/shared';
+import { CONDICIONES_VACIAS, type CotizacionCompletaDto, type CotizacionDto, type VistaDelCuadroDto } from '@capaz/shared';
 import { codigoDeCotizacion } from '../domain/cotizacion.js';
 import type { EstadoDeCotizacion } from '../domain/estados.js';
 import type { Cotizacion, CotizacionConTotales } from '../repositories/cotizaciones.repository.js';
@@ -31,14 +31,16 @@ export const aCotizacionDto = (c: CotizacionConTotales): CotizacionDto => ({
   actualizadoEn: c.actualizadoEn.toISOString(),
 });
 
-export type PartesDeCotizacion = { c: Cotizacion; version: Version; lineas: LineaDeVersion[]; versiones: Version[]; historial: EventoDeCotizacion[]; veCostos: boolean };
+export type PartesDeCotizacion = { c: Cotizacion; version: Version; lineas: LineaDeVersion[]; versiones: Version[]; historial: EventoDeCotizacion[]; veCostos: boolean; cuadro?: VistaDelCuadroDto | null };
 
-export function aCotizacionCompleta({ c, version: v, lineas, versiones, historial, veCostos }: PartesDeCotizacion): CotizacionCompletaDto {
+export function aCotizacionCompleta({ c, version: v, lineas, versiones, historial, veCostos, cuadro = null }: PartesDeCotizacion): CotizacionCompletaDto {
   const base = aCotizacionDto({ ...c, conOpciones: v.conOpciones, igvPorcentaje: v.igvPorcentaje, subtotalCentimos: v.subtotalCentimos, igvCentimos: v.igvCentimos, totalCentimos: v.totalCentimos, cantidadDeLineas: lineas.length });
   return {
     ...base,
     codigo: codigoDeCotizacion(c.numero, c.anio, v.version),
     version: v.version,
+    modo: v.modo as CotizacionCompletaDto['modo'],
+    cuadro,
     notas: c.notas,
     observaciones: v.observaciones,
     condiciones: { ...CONDICIONES_VACIAS, ...(v.condiciones as Partial<CotizacionCompletaDto['condiciones']>) },

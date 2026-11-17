@@ -13,12 +13,13 @@ import { leerConfiguracion } from '../repositories/configuracion.repository.js';
 import { actualizarCotizacion, clienteVigente, crearCotizacion, verCotizacion, type Cotizacion } from '../repositories/cotizaciones.repository.js';
 import { copiarLineas, crearVersion, datosParaCopiar, lineasDe, marcarVersionEmitida, registrarEvento, versionDe, type Version } from '../repositories/versiones.repository.js';
 import { MODULO } from './comun.js';
+import { copiarCuadroSiAplica, emitirCuadro, prepararCuadroParaEmitir, type CuadroPorEmitir } from './cuadro-emision.js';
 import { alcanceDeCotizaciones, auditarCotizacion, CAMPO_ID, NO_EXISTE, responderCotizacion } from './cotizacion-comun.js';
 
 // Emitir (crítica: da el número y congela la versión), nueva versión y duplicar.
 
 type Preparada =
-  | { ok: true; c: Cotizacion; version: Version; lineas: number; clienteNombre: string; condicionesDeEmpresa: CondicionesDeCotizacion; margenBajo: boolean }
+  | { ok: true; c: Cotizacion; version: Version; lineas: number; clienteNombre: string; condicionesDeEmpresa: CondicionesDeCotizacion; margenBajo: boolean; totales: { subtotalCentimos: number; totalCentimos: number }; cuadro: CuadroPorEmitir | null }
   | { ok: false; error: ErrorDeRespuesta };
 
 /** Lo que exige emitir; lo comparten `resumir` (antes de confirmar) y `ejecutar`. Solo lee. */
@@ -29,19 +30,24 @@ async function prepararEmision(tx: Transaccion, ctx: ContextoDeHerramienta, id: 
   if (!paso.ok) return rechazo('conflicto', paso.motivo);
   const version = await versionDe(tx, ctx, c.id, c.versionActual);
   if (!version) throw new Error('La cotización no tiene su versión vigente.');
-  const lineas = (await lineasDe(tx, ctx, version.id)).length;
+  // Por partes: se valida el cuadro entero y las líneas salen de él (se generan al emitir); si no, ya están guardadas.
+  const porEmitir = version.modo === 'cuadro' ? await prepararCuadroParaEmitir(tx, ctx, version) : null;
+  if (porEmitir && !porEmitir.ok) return porEmitir;
+  const cuadro = porEmitir?.valor ?? null;
+  const lineas = cuadro ? cuadro.emision.lineas.length : (await lineasDe(tx, ctx, version.id)).length;
   if (lineas === 0) return rechazo('conflicto', 'Agrega al menos una línea antes de emitir la cotización.');
   if (!c.clienteId) return rechazo('conflicto', 'Elige el cliente antes de emitir la cotización.');
   const cliente = await clienteVigente(tx, ctx, c.clienteId);
   if (!cliente) return rechazo('conflicto', 'El cliente no existe o está archivado.');
   const config = await leerConfiguracion(tx, ctx);
   const umbral = config?.umbralMinimoPct ?? CONFIGURACION_POR_DEFECTO.umbralMinimoPct;
-  const margenBajo = version.margenPct !== null && margenBajoElMinimo(version.margenPct, umbral);
+  const margenBajo = cuadro ? cuadro.emision.hayRojo : version.margenPct !== null && margenBajoElMinimo(version.margenPct, umbral);
   if (margenBajo && !motivoMargenBajo) {
     return rechazo('argumentos_invalidos', 'El margen de esta cotización está por debajo del mínimo configurado: indica el motivo para poder emitirla.');
   }
+  const totales = cuadro ? cuadro.emision.totales : version;
   const condicionesDeEmpresa = (config?.condiciones as CondicionesDeCotizacion | undefined) ?? CONFIGURACION_POR_DEFECTO.condiciones;
-  return { ok: true, c, version, lineas, clienteNombre: cliente.nombre, condicionesDeEmpresa, margenBajo };
+  return { ok: true, c, version, lineas, clienteNombre: cliente.nombre, condicionesDeEmpresa, margenBajo, totales: { subtotalCentimos: totales.subtotalCentimos, totalCentimos: totales.totalCentimos }, cuadro };
 }
 
 export const cotizacionEmitir = definirHerramienta('cotizacion_emitir', {
@@ -66,8 +72,8 @@ export const cotizacionEmitir = definirHerramienta('cotizacion_emitir', {
     return {
       ok: true,
       resumen: {
-        resumen: `Se emitirá ${cual} por ${formatearSoles(p.version.totalCentimos)} (con IGV). Una vez emitida no se edita: para cambiarla harás una nueva versión.`,
-        huella: hashCanonico({ estado: p.c.estado, version: p.version.version, subtotalCentimos: p.version.subtotalCentimos, totalCentimos: p.version.totalCentimos, lineas: p.lineas }),
+        resumen: `Se emitirá ${cual} por ${formatearSoles(p.totales.totalCentimos)} (con IGV). Una vez emitida no se edita: para cambiarla harás una nueva versión.`,
+        huella: hashCanonico({ estado: p.c.estado, version: p.version.version, subtotalCentimos: p.totales.subtotalCentimos, totalCentimos: p.totales.totalCentimos, lineas: p.lineas }),
       },
     };
   },
@@ -78,7 +84,8 @@ export const cotizacionEmitir = definirHerramienta('cotizacion_emitir', {
     const hoy = await hoyDeLaEmpresa(tx);
     const condiciones = fusionarCondiciones(p.condicionesDeEmpresa, version.condiciones as Partial<CondicionesDeCotizacion>);
     const motivo = p.margenBajo ? (args.motivoMargenBajo ?? null) : null;
-    await marcarVersionEmitida(tx, ctx, version.id, { condiciones, motivoMargenBajo: motivo });
+    if (p.cuadro) await emitirCuadro(tx, ctx, version, p.cuadro, { condiciones, motivoMargenBajo: motivo });
+    else await marcarVersionEmitida(tx, ctx, version.id, { condiciones, motivoMargenBajo: motivo });
     // El número se toma al final y solo la primera vez: si algo falla antes o después, la transacción lo devuelve (sin huecos).
     const numerar = c.numero === null ? { numero: await siguienteNumero(tx, CLAVE_DE_CORRELATIVO, { anio: hoy.anio }), anio: hoy.anio } : { numero: c.numero, anio: c.anio! };
     await actualizarCotizacion(tx, ctx, c.id, {
@@ -93,7 +100,7 @@ export const cotizacionEmitir = definirHerramienta('cotizacion_emitir', {
       codigo: codigoDeCotizacion(numerar.numero, numerar.anio, version.version),
       version: version.version,
       clienteId: c.clienteId!,
-      totalCentimos: version.totalCentimos,
+      totalCentimos: p.totales.totalCentimos,
     });
     return responderCotizacion(tx, ctx, c.id);
   },
@@ -124,6 +131,7 @@ export const cotizacionNuevaVersion = definirHerramienta('cotizacion_nueva_versi
     const siguiente = actual.version + 1;
     const nueva = await crearVersion(tx, ctx, c.id, siguiente, datosParaCopiar(actual));
     await copiarLineas(tx, ctx, actual.id, nueva);
+    await copiarCuadroSiAplica(tx, ctx, actual, nueva, c.id, siguiente);
     await actualizarCotizacion(tx, ctx, c.id, { estado: 'borrador', versionActual: siguiente, validaHasta: null, motivoRechazo: null });
     await registrarEvento(tx, ctx, c.id, siguiente, { tipo: 'nueva_version', datos: { desde: actual.version } });
     return responderCotizacion(tx, ctx, c.id);
@@ -153,6 +161,7 @@ export const cotizacionDuplicar = definirHerramienta('cotizacion_duplicar', {
     const id = await crearCotizacion(tx, ctx, { titulo: c.titulo, clienteId: c.clienteId, notas: c.notas });
     const nueva = await crearVersion(tx, ctx, id, 1, datosParaCopiar(actual));
     await copiarLineas(tx, ctx, actual.id, nueva);
+    await copiarCuadroSiAplica(tx, ctx, actual, nueva, id, 1);
     await registrarEvento(tx, ctx, id, 1, { tipo: 'creada', datos: { duplicadaDe: c.id } });
     return responderCotizacion(tx, ctx, id);
   },

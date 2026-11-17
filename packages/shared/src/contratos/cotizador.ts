@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { MODOS_DE_COTIZACION, vistaDelCuadroSchema } from './cotizador-cuadro-vista.js';
 
 // Contratos del área «cotizador»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo. Precios de la lista y de la cotización SIN IGV.
@@ -259,6 +260,10 @@ export const eventoDeCotizacionSchema = z.strictObject({
 export const cotizacionCompletaSchema = cotizacionSchema.extend({
   /** La versión cuyas líneas y totales se muestran. */
   version: z.number().int(),
+  /** `rapida` (lista de precios o líneas manuales) o `cuadro` (por partes, con el motor de costeo). */
+  modo: z.enum(MODOS_DE_COTIZACION),
+  /** La vista del cuadro (solo en modo `cuadro`); costos y margen únicamente con `cotizador:costos`. */
+  cuadro: vistaDelCuadroSchema.nullable(),
   notas: z.string().nullable(),
   observaciones: z.string().nullable(),
   condiciones: condicionesSchema,
