@@ -1,16 +1,13 @@
 import { exito, rechazo } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
-import { emitir } from '../../../core/eventos/emisor.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
-import { categoriaDeAbono, normalizarNombre } from '../domain/catalogos.js';
-import type { TipoDeDeuda } from '../domain/codigos.js';
-import { aplicarAbono, tipoDeMovimientoDeAbono, type EstadoDeDeuda } from '../domain/deuda.js';
+import { aplicarAbono, type EstadoDeDeuda } from '../domain/deuda.js';
 import { fechaDeMovimiento } from '../domain/movimiento.js';
 import { asegurarCatalogos } from '../repositories/catalogos.repository.js';
-import { categoriaConNombre } from '../repositories/categorias.repository.js';
-import { bloquearDeuda, guardarAbonado, verDeuda } from '../repositories/deudas.repository.js';
+import { bloquearDeuda, verDeuda } from '../repositories/deudas.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
-import { guardarMovimiento, resolverCuenta } from './guardar-movimiento.js';
+import { registrarAbono } from './deudas-comun.js';
+import { resolverCuenta } from './guardar-movimiento.js';
 import { aDeudaDto, aMovimientoDto, codigoDeLaDeuda } from './mapeo.js';
 
 // Abonar una deuda: el único camino por el que una deuda cambia de saldo. Mueve dinero.
@@ -31,6 +28,7 @@ export const deudaAbonar = definirHerramienta('deuda_abonar', {
       { nombre: 'fecha', queSeAnota: 'Día del abono (AAAA-MM-DD); no puede ser futuro.', ejemplo: '2026-03-12' },
       { nombre: 'cuentaId', queSeAnota: 'Cuenta donde entra o de donde sale (opcional: la principal).', ejemplo: ID_DE_EJEMPLO },
       { nombre: 'medioDePago', queSeAnota: 'efectivo, transferencia, yape, plin, tarjeta u otro.', ejemplo: 'transferencia' },
+      { nombre: 'origen', queSeAnota: 'Cómo se anotó: teclado (por defecto) o voz.', ejemplo: 'voz' },
     ],
     ejemploTecleado: 'José Pérez abonó 100 a la deuda CXC-2026-0007 por transferencia',
     ejemploHablado: 'José Pérez me pagó cien soles de lo que me debe, por transferencia',
@@ -54,27 +52,18 @@ export const deudaAbonar = definirHerramienta('deuda_abonar', {
     if (!fecha.ok) return rechazoDe(fecha);
     const cuenta = await resolverCuenta(tx, ctx, args.cuentaId);
     if (!cuenta.ok) return cuenta;
-    const tipo = tipoDeMovimientoDeAbono(deuda.tipo as TipoDeDeuda);
-    const categoria = await categoriaConNombre(tx, ctx, tipo, normalizarNombre(categoriaDeAbono(tipo)));
     const codigo = codigoDeLaDeuda(deuda);
-    const r = await guardarMovimiento(tx, ctx, hoy.anio, cuenta.cuenta, {
-      tipo,
-      fecha: fecha.fecha,
+    const r = await registrarAbono(tx, ctx, {
+      anio: hoy.anio,
+      deuda,
+      abono,
       montoCentimos: args.montoCentimos,
-      categoriaId: categoria?.id ?? null,
-      contactoId: deuda.contactoId,
+      fecha: fecha.fecha,
+      cuenta: cuenta.cuenta,
       medioDePago: args.medioDePago,
       descripcion: args.descripcion || `Abono de ${codigo}`,
-      deudaId: deuda.id,
-      sucursalId: deuda.sucursalId,
-      origen: 'teclado',
-      origenRef: null,
+      origen: args.origen,
     });
-    await guardarAbonado(tx, ctx, deuda.id, abono.abonadoCentimos, abono.estado);
-    await emitir(tx, 'deuda.abonada', { id: deuda.id, codigo, movimientoId: r.movimiento.id, montoCentimos: args.montoCentimos, saldoCentimos: abono.saldoCentimos });
-    if (abono.quedaPagada) {
-      await emitir(tx, 'deuda.pagada', { id: deuda.id, codigo, tipo: deuda.tipo as TipoDeDeuda, contactoId: deuda.contactoId, totalCentimos: deuda.totalCentimos });
-    }
     const final = await verDeuda(tx, ctx, deuda.id, null);
     if (!final) throw new Error('La deuda abonada no se pudo leer.');
     return exito({ deuda: aDeudaDto(final, hoy.dia), movimiento: aMovimientoDto(r.movimiento) }, { avisos: r.avisos });

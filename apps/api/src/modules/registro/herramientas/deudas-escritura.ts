@@ -1,15 +1,14 @@
 import { exito, formatearSoles, rechazo, type DeudaDto } from '@capaz/shared';
-import { siguienteNumero } from '../../../core/correlativos/siguiente-numero.js';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { emitir } from '../../../core/eventos/emisor.js';
 import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
-import { claveDeDeuda } from '../domain/codigos.js';
 import { puedeAnularseLaDeuda, puedeEditarseLaDeuda, validarVencimiento, type EstadoDeDeuda } from '../domain/deuda.js';
 import { existeSucursal } from '../repositories/cuentas.repository.js';
-import { anularDeuda, bloquearDeuda, deudaVivaPorOrigen, editarDeuda, insertarDeuda, verDeuda, type Deuda } from '../repositories/deudas.repository.js';
+import { anularDeuda, bloquearDeuda, deudaVivaPorOrigen, editarDeuda, verDeuda, type Deuda } from '../repositories/deudas.repository.js';
 import { contarAbonosVivos, existeContacto } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
+import { conflictoDeOrigen, crearDeudaYEmitir } from './deudas-comun.js';
 import { aDeudaDto, codigoDeLaDeuda } from './mapeo.js';
 
 // Escrituras de deudas: crear, corregir y anular (crítica). Abonar está en `deudas-abonar.ts`.
@@ -60,10 +59,7 @@ export const deudaCrear = definirHerramienta('deuda_crear', {
     const origen = args.origenTipo && args.origenId ? { tipo: args.origenTipo, id: args.origenId } : null;
     const viva = origen ? await deudaVivaPorOrigen(tx, ctx, origen.tipo, origen.id) : null;
     if (viva) return yaTieneDeuda(viva);
-    const numero = await siguienteNumero(tx, claveDeDeuda(args.tipo), { anio: hoy.anio });
-    const id = await insertarDeuda(tx, ctx, {
-      numero,
-      anio: hoy.anio,
+    const creada = await crearDeudaYEmitir(tx, ctx, hoy, {
       tipo: args.tipo,
       contactoId: args.contactoId,
       concepto: args.concepto,
@@ -76,21 +72,8 @@ export const deudaCrear = definirHerramienta('deuda_crear', {
       origenId: origen?.id ?? null,
     });
     // Otra transacción creó la deuda de ese origen entre la consulta y el alta: el índice único la frenó.
-    if (!id) return rechazo('conflicto', 'Ese documento ya tiene una deuda: vuelve a intentarlo.');
-    const f = await verDeuda(tx, ctx, id, null);
-    if (!f) throw new Error('La deuda recién guardada no se pudo leer.');
-    const dto = aDeudaDto(f, hoy.dia);
-    await emitir(tx, 'deuda.creada', {
-      id,
-      codigo: dto.codigo,
-      tipo: dto.tipo,
-      contactoId: dto.contactoId,
-      totalCentimos: dto.totalCentimos,
-      venceEn: dto.venceEn,
-      origenTipo: dto.origenTipo,
-      origenId: dto.origenId,
-    });
-    return exito(dto);
+    if (!creada) return conflictoDeOrigen();
+    return exito(creada.dto);
   },
 });
 

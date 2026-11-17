@@ -164,3 +164,19 @@ export async function patasDeTransferencia(tx: Transaccion, ctx: ContextoDeEmpre
     .orderBy(asc(m.id));
   return filas.map(aplanar);
 }
+
+/** Cuántos movimientos vivos y sueltos (sin deuda) de ese contacto y tipo usan cada categoría viva. Solo lee. */
+export async function categoriasUsadasConContacto(
+  tx: Transaccion,
+  ctx: ContextoDeEmpresa,
+  contactoId: string,
+  tipo: string,
+): Promise<Array<{ categoriaId: string; veces: number }>> {
+  const filas = await tx
+    .select({ categoriaId: m.categoriaId, veces: count() })
+    .from(m)
+    .innerJoin(registroCategorias, and(eq(registroCategorias.tenantId, m.tenantId), eq(registroCategorias.id, m.categoriaId)))
+    .where(and(deEmpresa(ctx), eq(m.contactoId, contactoId), eq(m.tipo, tipo), eq(m.estado, 'activo'), isNull(m.deudaId), isNull(registroCategorias.archivadoEn)))
+    .groupBy(m.categoriaId);
+  return filas.flatMap((f) => (f.categoriaId ? [{ categoriaId: f.categoriaId, veces: f.veces }] : []));
+}

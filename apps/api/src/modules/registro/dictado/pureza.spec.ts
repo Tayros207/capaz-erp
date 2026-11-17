@@ -2,14 +2,15 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-// Todo archivo de dictado/ que no sea prueba importa solo rutas relativas de dictado/ y zod. (s5b relajará esto para interprete.ts.)
+// Todo archivo de dictado/ que no sea prueba importa solo rutas relativas de dictado/ y zod. Excepción: interprete.ts y resolver.ts (s5b), que leen la base.
+const CON_LECTURA = ['interprete.ts', 'resolver.ts'];
 const RAIZ = join(process.cwd(), 'src/modules/registro/dictado');
 
 function archivos(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {
     const ruta = join(dir, n);
     if (statSync(ruta).isDirectory()) return archivos(ruta);
-    return n.endsWith('.ts') && !n.endsWith('.spec.ts') ? [ruta] : [];
+    return n.endsWith('.ts') && !n.endsWith('.spec.ts') && !(dir === RAIZ && CON_LECTURA.includes(n)) ? [ruta] : [];
   });
 }
 
