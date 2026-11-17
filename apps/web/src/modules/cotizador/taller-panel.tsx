@@ -33,6 +33,9 @@ type Props<T extends Fila> = {
   onNuevo: () => void;
   onEditar: (fila: T) => void;
   archivar: (id: string) => Promise<Respuesta<unknown>>;
+  restaurar: (id: string) => Promise<Respuesta<unknown>>;
+  /** Solo de pantalla: abre la hoja de alta con los datos de la fila (sin herramienta nueva). */
+  onDuplicar?: (fila: T) => void;
   /** Un filtro propio de la pestaña (por ejemplo el factor) y lo que cambia su consulta. */
   filtroExtra?: ReactNode;
   claveExtra?: unknown;
@@ -57,9 +60,15 @@ export function PanelDelTaller<T extends Fila>(p: Props<T>) {
   }
   const acciones: Columna<T> = {
     id: 'acciones', titulo: 'Acciones', alinear: 'derecha',
-    celda: (f) => f.archivadoEn ? <Insignia tono="neutro">Archivado</Insignia> : (
-      <span className="inline-flex gap-1">
+    celda: (f) => f.archivadoEn ? (
+      <span className="inline-flex flex-wrap items-center justify-end gap-2">
+        <Insignia tono="neutro">Archivado</Insignia>
+        <Boton variante="fantasma" onClick={() => void resolverAccion(p.restaurar(f.id), 'Restaurado.')}>Restaurar</Boton>
+      </span>
+    ) : (
+      <span className="inline-flex flex-wrap justify-end gap-1">
         <Boton variante="fantasma" onClick={() => p.onEditar(f)}>Editar</Boton>
+        {p.onDuplicar ? <Boton variante="fantasma" onClick={() => p.onDuplicar?.(f)}>Duplicar</Boton> : null}
         <Boton variante="fantasma" onClick={() => void pedirArchivar(f)}>Archivar</Boton>
       </span>
     ),

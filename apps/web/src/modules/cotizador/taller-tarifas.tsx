@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { TarifaDelTallerDto } from '@capaz/shared';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
-import { archivarTarifa, listarTarifas } from './api-taller.ts';
+import { archivarTarifa, listarTarifas, restaurarTarifa } from './api-taller.ts';
 import { FACTORES, etiquetaDeEscala, etiquetaDeFactor, mostrarDecimal, type Factor } from './logica-taller.ts';
 import { HojaDeTarifa } from './taller-hoja-tarifa.tsx';
 import { PanelDelTaller } from './taller-panel.tsx';
@@ -39,6 +39,7 @@ export function PanelDeTarifas({ puedeConfigurar }: { puedeConfigurar: boolean }
         onNuevo={() => setHoja({ tarifa: null })}
         onEditar={(t) => setHoja({ tarifa: t })}
         archivar={archivarTarifa}
+        restaurar={restaurarTarifa}
       />
       <HojaDeTarifa abierto={hoja !== null} tarifa={hoja?.tarifa ?? null} alCerrar={() => setHoja(null)} />
     </>

@@ -109,6 +109,31 @@ export function resumenDeLista(l: Pick<ListaDePrecioDto, 'p100Centimos' | 'p1000
   return `100 → ${formatearSoles(centimosSchema.parse(l.p100Centimos))} · 1.000 → ${formatearSoles(centimosSchema.parse(l.p1000Centimos))} · 5.000 → ${formatearSoles(centimosSchema.parse(l.p5000Centimos))}`;
 }
 
+// --- Cambiar en bloque ---
+
+const PORCENTAJE_EN_BLOQUE = /^[+-]?\d{1,3}(\.\d{1,2})?$/;
+export type FormularioDeBloque = { busqueda: string; porcentaje: string };
+export const BLOQUE_VACIO: FormularioDeBloque = { busqueda: '', porcentaje: '' };
+
+/** De -90 a 300, distinto de 0, hasta dos decimales (el servidor vuelve a comprobarlo). */
+export function validarBloque(f: FormularioDeBloque): { busqueda?: string; porcentaje?: string } {
+  const t = limpiarPorcentaje(f.porcentaje);
+  if (f.busqueda.trim().length > 80) return { busqueda: 'La búsqueda admite hasta 80 letras.' };
+  if (!PORCENTAJE_EN_BLOQUE.test(t)) return { porcentaje: 'Escribe un porcentaje, por ejemplo 8 (sube) o -5 (baja).' };
+  if (Number(t) === 0) return { porcentaje: 'El porcentaje no puede ser 0.' };
+  if (Number(t) < -90 || Number(t) > 300) return { porcentaje: 'El porcentaje va de -90 a 300.' };
+  return {};
+}
+
+export function argumentosDeBloque(f: FormularioDeBloque, confirmar: boolean): EntradaDe<'listas_precio_ajustar_en_bloque'> {
+  return { busqueda: f.busqueda.trim(), porcentaje: limpiarPorcentaje(f.porcentaje).replace(/^\+/, ''), confirmarUnitarioNoBaja: confirmar };
+}
+
+export function mensajeDeBloqueAplicado(cambiadas: number, porcentaje: string): string {
+  const signo = Number(porcentaje) > 0 ? '+' : '';
+  return `${cambiadas === 1 ? '1 lista cambió' : `${cambiadas} listas cambiaron`} ${signo}${porcentaje} %. Las cotizaciones ya emitidas no cambian.`;
+}
+
 // --- Cotización rápida ---
 
 export function validarCantidadRapida(milesimas: number | null): string | undefined {

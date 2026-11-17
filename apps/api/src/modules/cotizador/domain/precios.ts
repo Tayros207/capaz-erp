@@ -2,6 +2,7 @@
 // llama al motor y devuelve céntimos. Solo este archivo y `lista.ts` importan de `./motor/`.
 import { centimosAImporte, importeACentimos, milesimasACantidad, porcentajeDeBase, unitarioAMilesimas } from './adaptador-de-dinero.js';
 import { igvDeImporte } from './igv.js';
+import { ajustarPrecios } from './motor/escala/ajuste-en-bloque.js';
 import { precioDeRapida } from './motor/escala/precio-rapido.js';
 import type { Ajuste, VariantePrecio } from './motor/escala/tipos/precio-por-escala.js';
 import { validarReferencias } from './motor/escala/validar-referencias.js';
@@ -102,4 +103,15 @@ export type ValidacionDeLista = { bloqueos: string[]; avisos: string[] };
 export function validarLista(r: ReferenciasEnCentimos): ValidacionDeLista {
   const v = validarReferencias({ p100: centimosAImporte(r.p100Centimos), p1000: centimosAImporte(r.p1000Centimos), p5000: centimosAImporte(r.p5000Centimos) });
   return { bloqueos: v.bloqueos.map((h) => h.mensaje), avisos: v.avisos.map((h) => h.mensaje) };
+}
+
+export type PreciosDeListaEnCentimos = ReferenciasEnCentimos & { precioMinimoCentimos: number | null };
+
+/** Sube (o baja, con signo) `porcentaje` % las tres referencias y el mínimo, con el redondeo al céntimo del motor. */
+export function ajustarPreciosDeLista(p: PreciosDeListaEnCentimos, porcentaje: string): PreciosDeListaEnCentimos {
+  const r = ajustarPrecios(
+    { p100: centimosAImporte(p.p100Centimos), p1000: centimosAImporte(p.p1000Centimos), p5000: centimosAImporte(p.p5000Centimos), precioMinimo: p.precioMinimoCentimos === null ? null : centimosAImporte(p.precioMinimoCentimos) },
+    porcentaje,
+  );
+  return { p100Centimos: importeACentimos(r.p100), p1000Centimos: importeACentimos(r.p1000), p5000Centimos: importeACentimos(r.p5000), precioMinimoCentimos: r.precioMinimo === null ? null : importeACentimos(r.precioMinimo) };
 }

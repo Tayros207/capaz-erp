@@ -15,8 +15,9 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
 import { resolverAccion } from './acciones.ts';
-import { archivarLista, listarListas, type EstadoDeListas } from './api.ts';
+import { archivarLista, listarListas, restaurarLista, type EstadoDeListas } from './api.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
+import { HojaDeBloque } from './hoja-bloque.tsx';
 import { HojaDeLista } from './hoja-lista.tsx';
 import { resumenDeLista } from './logica.ts';
 import { Cargando, SeccionesDelCotizador } from './marco.tsx';
@@ -39,6 +40,7 @@ export function PantallaPrecios() {
   const [texto, setTexto] = useState('');
   const buscar = useRetardo(texto.trim());
   const [hoja, setHoja] = useState<{ lista: ListaDePrecioDto | null } | null>(null);
+  const [bloque, setBloque] = useState(false);
   const estado: EstadoDeListas = filtro === 'archivadas' ? 'archivadas' : 'activas';
   const consulta = useInfiniteQuery({
     queryKey: [...CLAVE_COTIZADOR, 'listas', filtro, buscar, productoId ?? null],
@@ -65,7 +67,9 @@ export function PantallaPrecios() {
     ...(configurar
       ? [{
           id: 'acciones', titulo: 'Acciones', alinear: 'derecha' as const,
-          celda: (l: ListaDePrecioDto) => l.archivadoEn ? '—' : (
+          celda: (l: ListaDePrecioDto) => l.archivadoEn ? (
+            <Boton variante="fantasma" onClick={() => void resolverAccion(restaurarLista(l.id), 'Lista restaurada.')}>Restaurar</Boton>
+          ) : (
             <span className="inline-flex gap-1">
               <Boton variante="fantasma" onClick={() => setHoja({ lista: l })}>Editar</Boton>
               <Boton variante="fantasma" onClick={() => void resolverAccion(archivarLista(l.id), 'Lista archivada.')}>Archivar</Boton>
@@ -75,10 +79,11 @@ export function PantallaPrecios() {
       : []),
   ];
   const nueva = configurar ? <Boton variante="primario" icono="mas" onClick={() => setHoja({ lista: null })}>Nueva lista</Boton> : undefined;
+  const bloqueBtn = configurar ? <Boton onClick={() => setBloque(true)}>Cambiar en bloque</Boton> : undefined;
 
   return (
     <div className="flex flex-col gap-4">
-      <EncabezadoDePagina titulo="Lista de precios" accionPrincipal={nueva} />
+      <EncabezadoDePagina titulo="Lista de precios" accionPrincipal={nueva} accionesSecundarias={bloqueBtn} />
       <SeccionesDelCotizador />
       {productoId ? (
         <p className="flex flex-wrap items-center gap-2 text-sm text-texto-suave">
@@ -108,6 +113,7 @@ export function PantallaPrecios() {
           <CargarMas cursor={consulta.hasNextPage ? (consulta.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={consulta.isFetchingNextPage} onCargar={() => void consulta.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
         </>
       )}
+      <HojaDeBloque abierto={bloque} alCerrar={() => setBloque(false)} />
       <HojaDeLista abierto={hoja !== null} lista={hoja?.lista ?? null} alCerrar={() => setHoja(null)} />
     </div>
   );

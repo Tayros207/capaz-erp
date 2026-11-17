@@ -93,3 +93,14 @@ export async function insertarUnica<T extends TablaDelTaller>(
   if (!existente) throw new Error('Conflicto de unicidad del taller sin fila que lo explique.');
   return { creada: false, existente };
 }
+
+/** Restaura (idempotente): una fila ya activa se devuelve tal cual. */
+export async function restaurarPorId<T extends TablaDelTaller>(tx: Transaccion, ctx: ContextoDeEmpresa, tabla: T, id: string): Promise<Fila<T> | null> {
+  const t = comun(tabla);
+  const [fila] = await tx
+    .update(t)
+    .set({ archivadoEn: null, actualizadoEn: new Date() })
+    .where(and(eq(t.tenantId, ctx.empresaId), eq(t.id, id), isNotNull(t.archivadoEn)))
+    .returning();
+  return ((fila as Fila<T> | undefined) ?? (await verPorId(tx, ctx, tabla, id))) as Fila<T> | null;
+}

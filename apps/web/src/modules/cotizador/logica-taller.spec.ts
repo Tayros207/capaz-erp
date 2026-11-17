@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ItemDelCuadroDto, MaquinaDelTallerDto, TarifaDelTallerDto } from '@capaz/shared';
 import {
   argumentosDeCreacionDeTarifa, argumentosDeEdicionDeItem, argumentosDeEdicionDeMaquina, argumentosDeEdicionDeTarifa, costoValido, formularioDeMaquina, formularioDeTarifa, limpiarEntrada,
-  medidaValida, medidasDe, mostrarDecimal, ordenAlMover, resumenDeEtapas, soloLoCambiado, validarMaquina, validarTarifa, TARIFA_VACIA, MAQUINA_VACIA,
+  medidaValida, medidasDe, mostrarDecimal, nombreDeCopia, ordenAlMover, resumenDeEtapas, soloLoCambiado, validarMaquina, validarTarifa, TARIFA_VACIA, MAQUINA_VACIA,
 } from './logica-taller.ts';
 
 const tarifa: TarifaDelTallerDto = {
@@ -84,5 +84,15 @@ describe('ítems y orden', () => {
   it('soloLoCambiado compara por valor', () => {
     expect(soloLoCambiado({ a: 1, b: [1] }, { a: 1, b: [1] })).toEqual({});
     expect(soloLoCambiado({ a: 1, b: [1] }, { a: 2, b: [1, 2] })).toEqual({ a: 2, b: [1, 2] });
+  });
+});
+
+describe('nombreDeCopia', () => {
+  it('agrega «(copia)» y recorta el nombre para no pasar del máximo', () => {
+    expect(nombreDeCopia('70 × 100 cm', 60)).toBe('70 × 100 cm (copia)');
+    expect(nombreDeCopia('  Offset  ', 60)).toBe('Offset (copia)');
+    const largo = nombreDeCopia('x'.repeat(60), 60);
+    expect(largo).toHaveLength(60);
+    expect(largo.endsWith(' (copia)')).toBe(true);
   });
 });

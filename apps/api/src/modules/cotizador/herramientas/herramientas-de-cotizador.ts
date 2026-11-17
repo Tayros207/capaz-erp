@@ -5,7 +5,9 @@ import { ajusteClienteFijar, ajustesClienteListar } from './ajustes-herramientas
 import { cotizadorConfiguracionVer, cotizadorConfigurar, cotizadorIniciar } from './configuracion-herramientas.js';
 import { crearHerramientasDeEnlaces } from './enlaces-herramientas.js';
 import { listaPrecioVer, listasPrecioListar } from './listas-lectura.js';
-import { listaPrecioArchivar, listaPrecioCrear, listaPrecioEditar } from './listas-escritura.js';
+import { listaPrecioArchivar, listaPrecioCrear, listaPrecioEditar, listaPrecioRestaurar } from './listas-escritura.js';
+import { listasPrecioAjustarEnBloque } from './listas-bloque.js';
+import { formatoPliegoRestaurar, itemCuadroRestaurar, maquinaRestaurar, tarifaRestaurar } from './taller-restaurar.js';
 import { cotizacionEmitir, cotizacionDuplicar, cotizacionNuevaVersion } from './cotizaciones-emision.js';
 import { cotizacionCrear, cotizacionEditar } from './cotizaciones-escritura.js';
 import { cotizacionAceptar, cotizacionAnular, cotizacionMarcarEnviada, cotizacionRechazar } from './cotizaciones-estado.js';
@@ -34,6 +36,8 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   listaPrecioCrear,
   listaPrecioEditar,
   listaPrecioArchivar,
+  listaPrecioRestaurar,
+  listasPrecioAjustarEnBloque,
   precioConsultar,
   cotizadorProductosBuscar,
   ajustesClienteListar,
@@ -55,6 +59,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   maquinasListar, maquinaCrear, maquinaEditar, maquinaArchivar,
   tarifasListar, tarifaCrear, tarifaEditar, tarifaArchivar,
   itemsCuadroListar, itemCuadroCrear, itemCuadroEditar, itemCuadroArchivar, itemsCuadroReordenar,
+  formatoPliegoRestaurar, maquinaRestaurar, tarifaRestaurar, itemCuadroRestaurar,
   tallerSembrar,
   // Cuadro por partes (cot-s4).
   cuadroIniciar, cuadroVer, cuadroFijarTrabajo, cuadroFijarImposicion, cuadroLineaAgregar, cuadroLineaEditar, cuadroLineaQuitar,

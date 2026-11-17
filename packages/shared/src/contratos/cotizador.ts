@@ -116,6 +116,25 @@ export const editarListaDePrecioSchema = z
     error: 'Indica al menos un dato que cambiar.',
   });
 
+/** Subir o bajar en bloque: texto con signo, de -90 a 300, distinto de 0, hasta 2 decimales. */
+export const PORCENTAJE_EN_BLOQUE_MINIMO = -90;
+export const PORCENTAJE_EN_BLOQUE_MAXIMO = 300;
+export const porcentajeEnBloqueSchema = z
+  .string()
+  .trim()
+  .regex(/^[+-]?\d{1,3}(\.\d{1,2})?$/, { error: 'Escribe un porcentaje con hasta dos decimales, por ejemplo 8 o -5.' })
+  .refine((t) => Number(t) >= PORCENTAJE_EN_BLOQUE_MINIMO && Number(t) <= PORCENTAJE_EN_BLOQUE_MAXIMO, { error: 'El porcentaje va de -90 a 300.' })
+  .refine((t) => Number(t) !== 0, { error: 'El porcentaje no puede ser 0.' });
+export const ajustarListasEnBloqueSchema = z.strictObject({
+  /** Palabras del nombre, sin tildes y en cualquier orden; vacío = todas las listas activas. */
+  busqueda: texto(80).default(''),
+  porcentaje: porcentajeEnBloqueSchema,
+  /** El unitario deja de bajar con la cantidad en alguna lista: se guarda solo si la persona lo confirma. */
+  confirmarUnitarioNoBaja: z.boolean().default(false),
+});
+export const resultadoDeAjusteEnBloqueSchema = z.strictObject({ cambiadas: z.number().int(), porcentaje: z.string() });
+export type ResultadoDeAjusteEnBloqueDto = z.infer<typeof resultadoDeAjusteEnBloqueSchema>;
+
 /** El ajuste de UNA cotización; nunca toca la lista. */
 export const ajusteDePrecioSchema = z.discriminatedUnion('tipo', [
   z.strictObject({ tipo: z.literal('ninguno') }),
@@ -346,6 +365,8 @@ export const contratosDeCotizador = {
   lista_precio_crear: contrato(crearListaDePrecioSchema, listaDePrecioSchema),
   lista_precio_editar: contrato(editarListaDePrecioSchema, listaDePrecioSchema),
   lista_precio_archivar: contrato(soloId, listaDePrecioSchema),
+  lista_precio_restaurar: contrato(soloId, listaDePrecioSchema),
+  listas_precio_ajustar_en_bloque: contrato(ajustarListasEnBloqueSchema, resultadoDeAjusteEnBloqueSchema),
   precio_consultar: contrato(consultarPrecioSchema, precioConsultadoSchema),
   ajustes_cliente_listar: contrato(z.strictObject({}), listadoSchema(ajusteDeClienteSchema)),
   ajuste_cliente_fijar: contrato(

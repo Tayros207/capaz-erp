@@ -195,3 +195,7 @@ export function argumentosDeEdicionDeMaquina(o: MaquinaDelTallerDto, f: Formular
 }
 /** Resumen de las etapas para la lista: «Tiraje 3 %». */
 export const resumenDeEtapas = (m: MaquinaDelTallerDto): string => (m.etapas.length === 0 ? 'Sin etapas' : m.etapas.map((e) => `${e.nombre} ${mostrarDecimal(e.mermaPct)} %`).join(', '));
+
+const SUFIJO_DE_COPIA = ' (copia)';
+/** «70 × 100 cm» → «70 × 100 cm (copia)», recortando el nombre para no pasar del máximo del campo. */
+export const nombreDeCopia = (nombre: string, maximo: number): string => `${nombre.trim().slice(0, Math.max(0, maximo - SUFIJO_DE_COPIA.length)).trimEnd()}${SUFIJO_DE_COPIA}`;
