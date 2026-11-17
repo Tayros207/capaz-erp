@@ -164,6 +164,20 @@ describe('leerContratoConAdelanto', () => {
 })
 
 describe('inferirContacto', () => {
+  it.each([
+    'pagué el recibo de luz 180 soles ayer',
+    'Recibí 180 por el servicio de ayer',
+    'cobré 200 por el servicio',
+    'compré tinta a 50 soles',
+    'pagué el servicio de agua',
+  ])('palabras del dictado nunca son contacto: «%s»', (frase) => {
+    expect(inferirContacto(frase)).toBeNull()
+  })
+
+  it('un nombre real tras «pagué a» sigue saliendo', () => {
+    expect(inferirContacto('pagué a Rosa 80 soles')).toBe('Rosa')
+  })
+
   test('extrae el nombre tras "cliente" y tras "se llama"', () => {
     expect(inferirContacto('Contrato 240, adelanto 100, cliente Cristina')).toBe('Cristina')
     expect(

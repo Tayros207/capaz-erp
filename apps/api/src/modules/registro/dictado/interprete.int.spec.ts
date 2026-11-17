@@ -123,6 +123,9 @@ describe('movimientos', () => {
     expect(b.args).toMatchObject({ tipo: 'egreso', montoCentimos: 18_000, fecha: diaMas(-1, HOY.dia) });
     const cat = (await datosDe(dueno, 'categorias_listar', { tipo: 'egreso' })).items.find((c: any) => c.nombre === 'Servicios');
     expect(b.args.categoriaId).toBe(cat.id);
+    expect(b.args.contactoId).toBeUndefined();
+    expect(b.args.descripcion ?? '').not.toMatch(/·\s*Recibo/i);
+    expect(b.sugerencias).toEqual([]);
   });
 
   it('6 · «la señora Rosa»: sin contacto y con dos opciones', () => {
@@ -130,6 +133,7 @@ describe('movimientos', () => {
     expect(b.args).toMatchObject({ tipo: 'ingreso', montoCentimos: 8_000 });
     expect(b.args.contactoId).toBeUndefined();
     expect(b.sugerencias).toHaveLength(1);
+    expect(b.args.descripcion ?? '').not.toContain('· Rosa');
     expect(b.sugerencias[0].opciones.map((o: any) => o.id).sort()).toEqual([cli['Rosa Díaz'], cli['Rosa Diez']].sort());
   });
 

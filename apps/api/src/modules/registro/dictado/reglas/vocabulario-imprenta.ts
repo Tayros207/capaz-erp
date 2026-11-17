@@ -71,6 +71,15 @@ const COSAS = new Set([
   'otro', 'otra', 'otros', 'otras', 'mismo', 'misma', 'ambos', 'cada', 'casi',
   'tambien', 'ademas', 'entonces', 'porque', 'pero', 'aunque', 'mientras',
   'antes', 'despues', 'luego', 'ahora', 'siempre', 'nunca', 'aun', 'todavia',
+  // Verbos y sustantivos del propio dictado de dinero. «pagué el recibo de
+  // luz» dejaba el contacto «Recibo»: el patron de «pagué + nombre» aceptaba
+  // en minuscula la primera palabra que viniera detras.
+  'recibo', 'recibos', 'recibi', 'recibe', 'recibio', 'recibimos', 'recibir',
+  'cobre', 'cobro', 'cobra', 'cobramos', 'cobrar', 'pague', 'pago', 'pagos',
+  'paga', 'pagamos', 'pagar', 'compre', 'compra', 'compras', 'compramos',
+  'vendi', 'venta', 'ventas', 'gaste', 'gasto', 'gastos', 'ingreso', 'ingresos',
+  'egreso', 'egresos', 'deposito', 'depositos', 'comprobante', 'comprobantes',
+  'ticket', 'tickets', 'transferencia', 'transferencias', 'devolucion',
   // Los verbos con los que se le MANDA a la app. Nunca son un nombre, y sin
   // ellos «cliente juan registra…» dictado en minusculas dejaba el cliente en
   // «juan registra».

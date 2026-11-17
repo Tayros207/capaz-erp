@@ -25,7 +25,9 @@ const faltaElCliente = (d: Dictado): string => (d.contactoNombre ? `cliente nuev
 async function proponerMovimiento(tx: Transaccion, ctx: Ctx, d: Dictado, c: ContactoResuelto | null, sug: SugerenciaDeCaptura | null, origen: Origen): Promise<Parcial> {
   const tipo = d.tipo ?? 'ingreso';
   const categoriaId = await resolverCategoria(tx, ctx, tipo, d.categoriaDeCapaz, c?.id ?? null);
-  const descripcion = c ? d.descripcion : partes(d.descripcion, d.contactoNombre);
+  // Con varias opciones el nombre es dudoso: la sugerencia lo lleva, la descripcion no. Sin opciones es un cliente nuevo y el nombre se conserva.
+  const nombreDudoso = !c && (sug?.opciones.length ?? 0) > 0;
+  const descripcion = c || nombreDudoso ? d.descripcion : partes(d.descripcion, d.contactoNombre);
   const args = sinNulos({
     tipo,
     montoCentimos: d.montoCentimos,
