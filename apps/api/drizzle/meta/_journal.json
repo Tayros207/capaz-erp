@@ -225,6 +225,13 @@
       "when": 1794935309784,
       "tag": "0031_produccion_destino_adelanto",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1794936731244,
+      "tag": "0032_cotizador_origen_unidades_y_sistema",
+      "breakpoints": true
     }
   ]
 }

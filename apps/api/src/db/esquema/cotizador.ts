@@ -37,6 +37,8 @@ export const cotizadorConfiguracion = cotizador.table(
     igvPorcentaje: smallint('igv_porcentaje').notNull().default(18),
     condiciones: jsonb('condiciones').notNull().default(sql`'{}'::jsonb`),
     mensajeWhatsapp: text('mensaje_whatsapp'),
+    /** Unidades que ofrece la empresa al cotizar (1 a 40); se editan en Ajustes del Cotizador. */
+    unidades: text('unidades').array().notNull().default(sql`'{unidad,ciento,millar,pliego,m2,hora,juego,talonario}'::text[]`),
     actualizadoPor: text('actualizado_por'),
     creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
     actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
@@ -50,6 +52,7 @@ export const cotizadorConfiguracion = cotizador.table(
     check('configuracion_igv', sql`${t.igvPorcentaje} between 0 and 100`),
     check('configuracion_umbrales', sql`${t.umbralMinimoPct} < ${t.umbralVerdePct}`),
     check('configuracion_utilidad', sql`${t.utilidadBase} = 'costo' or ${t.utilidadPct} < 100`),
+    check('configuracion_unidades', sql`cardinality(${t.unidades}) between 1 and 40`),
   ],
 );
 
@@ -59,6 +62,9 @@ export const cotizadorListasDePrecio = cotizador.table(
     id: uuid('id').primaryKey().default(sql`uuidv7()`),
     tenantId: text('tenant_id').notNull(),
     productoId: uuid('producto_id'),
+    /** La cotización por partes de la que salieron estos precios (`cuadro_guardar_referencias`); nulos si se anotaron a mano. */
+    origenCotizacionId: uuid('origen_cotizacion_id'),
+    origenVersion: integer('origen_version'),
     nombre: text('nombre').notNull(),
     nombreNormalizado: text('nombre_normalizado').notNull(),
     unidad: text('unidad').notNull().default('unidad'),
@@ -86,6 +92,9 @@ export const cotizadorListasDePrecio = cotizador.table(
     uniqueIndex('uq_cotizador_listas_producto')
       .on(t.tenantId, t.productoId)
       .where(sql`${t.archivadoEn} is null and ${t.productoId} is not null`),
+    foreignKey({ name: 'listas_de_precio_origen_fk', columns: [t.tenantId, t.origenCotizacionId], foreignColumns: [cotizadorCotizaciones.tenantId, cotizadorCotizaciones.id] }),
+    check('lista_origen', sql`(${t.origenCotizacionId} is null) = (${t.origenVersion} is null)`),
+    index('idx_cotizador_listas_origen').on(t.tenantId, t.origenCotizacionId).where(sql`${t.origenCotizacionId} is not null`),
   ],
 );
 
