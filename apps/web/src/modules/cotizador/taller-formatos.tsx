@@ -4,17 +4,22 @@ import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
-import { archivarFormato, crearFormato, editarFormato, listarFormatos } from './api-taller.ts';
+import { archivarFormato, crearFormato, editarFormato, listarFormatos, restaurarFormato } from './api-taller.ts';
 import {
-  FORMATO_VACIO, TIPOS_DE_FORMATO, argumentosDeCreacionDeFormato, argumentosDeEdicionDeFormato, etiquetaDeTipo, formularioDeFormato, medidasDe, validarFormato,
+  FORMATO_VACIO, TIPOS_DE_FORMATO, nombreDeCopia, argumentosDeCreacionDeFormato, argumentosDeEdicionDeFormato, etiquetaDeTipo, formularioDeFormato, medidasDe, validarFormato,
   type ErroresDeFormato, type FormularioDeFormato, type TipoDeFormato,
 } from './logica-taller.ts';
 import { guardarEnTaller } from './taller-guardar.ts';
 import { PieDeHoja } from './taller-hoja-pie.tsx';
 import { PanelDelTaller } from './taller-panel.tsx';
 
-function Contenido({ formato, alCerrar }: { formato: FormatoDePliegoDto | null; alCerrar: () => void }) {
-  const [f, setF] = useState<FormularioDeFormato>(() => (formato ? formularioDeFormato(formato) : FORMATO_VACIO));
+type Hoja = { formato: FormatoDePliegoDto | null; copiaDe?: FormatoDePliegoDto };
+const formularioInicial = (h: Hoja): FormularioDeFormato =>
+  h.formato ? formularioDeFormato(h.formato) : h.copiaDe ? { ...formularioDeFormato(h.copiaDe), nombre: nombreDeCopia(h.copiaDe.nombre, 60) } : FORMATO_VACIO;
+
+function Contenido({ hoja, alCerrar }: { hoja: Hoja; alCerrar: () => void }) {
+  const formato = hoja.formato;
+  const [f, setF] = useState<FormularioDeFormato>(() => formularioInicial(hoja));
   const [errores, setErrores] = useState<ErroresDeFormato>({});
   const [guardando, setGuardando] = useState(false);
   const poner = <K extends keyof FormularioDeFormato>(k: K, v: FormularioDeFormato[K]) => setF((a) => ({ ...a, [k]: v }));
@@ -43,10 +48,10 @@ function Contenido({ formato, alCerrar }: { formato: FormatoDePliegoDto | null; 
   );
 }
 
-function HojaDeFormato({ abierto, formato, alCerrar }: { abierto: boolean; formato: FormatoDePliegoDto | null; alCerrar: () => void }) {
+function HojaDeFormato({ hoja, alCerrar }: { hoja: Hoja | null; alCerrar: () => void }) {
   return (
-    <HojaInferior abierto={abierto} alCerrar={alCerrar} titulo={formato ? 'Editar formato de pliego' : 'Nuevo formato de pliego'}>
-      {abierto ? <Contenido key={formato?.id ?? 'nuevo'} formato={formato} alCerrar={alCerrar} /> : null}
+    <HojaInferior abierto={hoja !== null} alCerrar={alCerrar} titulo={hoja?.formato ? 'Editar formato de pliego' : 'Nuevo formato de pliego'}>
+      {hoja ? <Contenido key={hoja.formato?.id ?? `nuevo-${hoja.copiaDe?.id ?? ''}`} hoja={hoja} alCerrar={alCerrar} /> : null}
     </HojaInferior>
   );
 }
@@ -59,7 +64,7 @@ const columnas: Array<Columna<FormatoDePliegoDto>> = [
 
 /** Formatos de pliego: el pliego madre que se compra y el tamaño de máquina al que se corta. */
 export function PanelDeFormatos({ puedeConfigurar }: { puedeConfigurar: boolean }) {
-  const [hoja, setHoja] = useState<{ formato: FormatoDePliegoDto | null } | null>(null);
+  const [hoja, setHoja] = useState<Hoja | null>(null);
   return (
     <>
       <PanelDelTaller<FormatoDePliegoDto>
@@ -73,9 +78,11 @@ export function PanelDeFormatos({ puedeConfigurar }: { puedeConfigurar: boolean 
         cargar={async (estado, buscar, cursor) => listarFormatos({ estado, ...(buscar !== '' && { buscar }) }, cursor)}
         onNuevo={() => setHoja({ formato: null })}
         onEditar={(f) => setHoja({ formato: f })}
+        onDuplicar={(f) => setHoja({ formato: null, copiaDe: f })}
         archivar={archivarFormato}
+        restaurar={restaurarFormato}
       />
-      <HojaDeFormato abierto={hoja !== null} formato={hoja?.formato ?? null} alCerrar={() => setHoja(null)} />
+      <HojaDeFormato hoja={hoja} alCerrar={() => setHoja(null)} />
     </>
   );
 }

@@ -5,13 +5,14 @@ import { Campo } from '../../shared/ui/campo.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { crearMaquina, editarMaquina } from './api-taller.ts';
 import {
-  ETAPA_VACIA, MAQUINA_VACIA, MAXIMO_DE_ETAPAS, argumentosDeCreacionDeMaquina, argumentosDeEdicionDeMaquina, formularioDeMaquina, validarMaquina,
+  ETAPA_VACIA, MAQUINA_VACIA, MAXIMO_DE_ETAPAS, nombreDeCopia, argumentosDeCreacionDeMaquina, argumentosDeEdicionDeMaquina, formularioDeMaquina, validarMaquina,
   type ErroresDeMaquina, type EtapaEnFormulario, type FormularioDeMaquina,
 } from './logica-taller.ts';
 import { guardarEnTaller } from './taller-guardar.ts';
 import { PieDeHoja } from './taller-hoja-pie.tsx';
 
-type Props = { abierto: boolean; maquina: MaquinaDelTallerDto | null; alCerrar: () => void };
+/** `copiaDe`: alta con los datos de otra máquina y «(copia)» en el nombre. */
+type Props = { abierto: boolean; maquina: MaquinaDelTallerDto | null; copiaDe?: MaquinaDelTallerDto | undefined; alCerrar: () => void };
 
 function Etapas({ etapas, error, alCambiar }: { etapas: EtapaEnFormulario[]; error?: string; alCambiar: (e: EtapaEnFormulario[]) => void }) {
   const cambiar = (i: number, parte: Partial<EtapaEnFormulario>) => alCambiar(etapas.map((e, j) => (j === i ? { ...e, ...parte } : e)));
@@ -48,8 +49,11 @@ function Medidas({ f, errores, poner }: { f: FormularioDeMaquina; errores: Error
   );
 }
 
-function Contenido({ maquina, alCerrar }: { maquina: MaquinaDelTallerDto | null; alCerrar: () => void }) {
-  const [f, setF] = useState<FormularioDeMaquina>(() => (maquina ? formularioDeMaquina(maquina) : MAQUINA_VACIA));
+const formularioInicial = (maquina: MaquinaDelTallerDto | null, copiaDe?: MaquinaDelTallerDto): FormularioDeMaquina =>
+  maquina ? formularioDeMaquina(maquina) : copiaDe ? { ...formularioDeMaquina(copiaDe), nombre: nombreDeCopia(copiaDe.nombre, 60) } : MAQUINA_VACIA;
+
+function Contenido({ maquina, copiaDe, alCerrar }: { maquina: MaquinaDelTallerDto | null; copiaDe?: MaquinaDelTallerDto | undefined; alCerrar: () => void }) {
+  const [f, setF] = useState<FormularioDeMaquina>(() => formularioInicial(maquina, copiaDe));
   const [errores, setErrores] = useState<ErroresDeMaquina>({});
   const [guardando, setGuardando] = useState(false);
   const poner = <K extends keyof FormularioDeMaquina>(k: K, v: FormularioDeMaquina[K]) => setF((a) => ({ ...a, [k]: v }));
@@ -74,10 +78,10 @@ function Contenido({ maquina, alCerrar }: { maquina: MaquinaDelTallerDto | null;
 }
 
 /** Alta o edición de una máquina con su formato máximo, medidas de trabajo y etapas de merma. */
-export function HojaDeMaquina({ abierto, maquina, alCerrar }: Props) {
+export function HojaDeMaquina({ abierto, maquina, copiaDe, alCerrar }: Props) {
   return (
     <HojaInferior abierto={abierto} alCerrar={alCerrar} titulo={maquina ? 'Editar máquina' : 'Nueva máquina'}>
-      {abierto ? <Contenido key={maquina?.id ?? 'nueva'} maquina={maquina} alCerrar={alCerrar} /> : null}
+      {abierto ? <Contenido key={maquina?.id ?? `nueva-${copiaDe?.id ?? ''}`} maquina={maquina} copiaDe={copiaDe} alCerrar={alCerrar} /> : null}
     </HojaInferior>
   );
 }

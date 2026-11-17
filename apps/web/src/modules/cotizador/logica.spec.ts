@@ -3,7 +3,7 @@ import { centimosSchema, type ListaDePrecioDto, type ProductoCotizableDto } from
 import {
   LISTA_VACIA, argumentosDeAjuste, argumentosDeConfiguracion, argumentosDeCotizacionRapida, argumentosDeCreacionDeLista, argumentosDeEdicionDeLista,
   formularioDeConfiguracion, formularioDeLista, pideConfirmarUnitario, rutaDeCotizacion, soles, textoDeAjuste, unitarioDeReferencia, validarAjusteDeCliente,
-  validarCantidadRapida, validarConfiguracion, validarLista,
+  validarCantidadRapida, validarConfiguracion, validarLista, argumentosDeBloque, mensajeDeBloqueAplicado, validarBloque,
 } from './logica.ts';
 
 const c = (n: number) => centimosSchema.parse(n);
@@ -120,5 +120,27 @@ describe('configuración', () => {
     expect(validarConfiguracion({ ...f, utilidadPct: 'x' }).utilidadPct).toMatch(/Utilidad/);
     expect(validarConfiguracion({ ...f, umbralMinimoPct: '30' }).umbralMinimoPct).toBe('El margen mínimo debe ser menor que el margen bueno.');
     expect(validarConfiguracion({ ...f, validezDias: '400' }).validezDias).toMatch(/1 a 365/);
+  });
+});
+
+describe('cambiar en bloque', () => {
+  it('valida el porcentaje: con signo, de -90 a 300, distinto de 0 y hasta dos decimales', () => {
+    expect(validarBloque({ busqueda: '', porcentaje: '8' })).toEqual({});
+    expect(validarBloque({ busqueda: 'couché', porcentaje: ' -5,25 % ' })).toEqual({});
+    expect(validarBloque({ busqueda: '', porcentaje: '+300' })).toEqual({});
+    expect(validarBloque({ busqueda: '', porcentaje: '' }).porcentaje).toMatch(/Escribe un porcentaje/);
+    expect(validarBloque({ busqueda: '', porcentaje: '1.234' }).porcentaje).toMatch(/Escribe un porcentaje/);
+    expect(validarBloque({ busqueda: '', porcentaje: '0' }).porcentaje).toBe('El porcentaje no puede ser 0.');
+    expect(validarBloque({ busqueda: '', porcentaje: '-91' }).porcentaje).toBe('El porcentaje va de -90 a 300.');
+    expect(validarBloque({ busqueda: '', porcentaje: '301' }).porcentaje).toBe('El porcentaje va de -90 a 300.');
+    expect(validarBloque({ busqueda: 'x'.repeat(81), porcentaje: '5' }).busqueda).toMatch(/80/);
+  });
+  it('arma los argumentos limpios: coma por punto, sin «+» ni «%» y la confirmación', () => {
+    expect(argumentosDeBloque({ busqueda: '  couché ', porcentaje: '+8,5 %' }, false)).toEqual({ busqueda: 'couché', porcentaje: '8.5', confirmarUnitarioNoBaja: false });
+    expect(argumentosDeBloque({ busqueda: '', porcentaje: '-5' }, true)).toEqual({ busqueda: '', porcentaje: '-5', confirmarUnitarioNoBaja: true });
+  });
+  it('el mensaje final cuenta las listas y recuerda que lo emitido no cambia', () => {
+    expect(mensajeDeBloqueAplicado(1, '8')).toBe('1 lista cambió +8 %. Las cotizaciones ya emitidas no cambian.');
+    expect(mensajeDeBloqueAplicado(3, '-5')).toBe('3 listas cambiaron -5 %. Las cotizaciones ya emitidas no cambian.');
   });
 });

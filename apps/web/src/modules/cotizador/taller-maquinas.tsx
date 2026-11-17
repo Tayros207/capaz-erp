@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { MaquinaDelTallerDto } from '@capaz/shared';
 import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
-import { archivarMaquina, listarMaquinas } from './api-taller.ts';
+import { archivarMaquina, listarMaquinas, restaurarMaquina } from './api-taller.ts';
 import { medidasDe, mostrarDecimal, resumenDeEtapas } from './logica-taller.ts';
 import { HojaDeMaquina } from './taller-hoja-maquina.tsx';
 import { PanelDelTaller } from './taller-panel.tsx';
@@ -15,7 +15,7 @@ const columnas: Array<Columna<MaquinaDelTallerDto>> = [
 
 /** Máquinas del taller: sus medidas de trabajo se copian al armar un cuadro. */
 export function PanelDeMaquinas({ puedeConfigurar }: { puedeConfigurar: boolean }) {
-  const [hoja, setHoja] = useState<{ maquina: MaquinaDelTallerDto | null } | null>(null);
+  const [hoja, setHoja] = useState<{ maquina: MaquinaDelTallerDto | null; copiaDe?: MaquinaDelTallerDto } | null>(null);
   return (
     <>
       <PanelDelTaller<MaquinaDelTallerDto>
@@ -29,9 +29,11 @@ export function PanelDeMaquinas({ puedeConfigurar }: { puedeConfigurar: boolean 
         cargar={async (estado, buscar, cursor) => listarMaquinas({ estado, ...(buscar !== '' && { buscar }) }, cursor)}
         onNuevo={() => setHoja({ maquina: null })}
         onEditar={(m) => setHoja({ maquina: m })}
+        onDuplicar={(m) => setHoja({ maquina: null, copiaDe: m })}
         archivar={archivarMaquina}
+        restaurar={restaurarMaquina}
       />
-      <HojaDeMaquina abierto={hoja !== null} maquina={hoja?.maquina ?? null} alCerrar={() => setHoja(null)} />
+      <HojaDeMaquina abierto={hoja !== null} maquina={hoja?.maquina ?? null} copiaDe={hoja?.copiaDe} alCerrar={() => setHoja(null)} />
     </>
   );
 }
