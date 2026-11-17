@@ -197,6 +197,34 @@
       "when": 1794932972536,
       "tag": "0027_cotizador_taller_y_enlaces",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1794933988019,
+      "tag": "0028_personal_contratos_vacaciones",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1794934887316,
+      "tag": "0029_produccion",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1794935298693,
+      "tag": "0030_produccion_lineas",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1794935309784,
+      "tag": "0031_produccion_destino_adelanto",
+      "breakpoints": true
     }
   ]
 }

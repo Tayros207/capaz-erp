@@ -18,4 +18,6 @@ export * from './insumos-operaciones.js';
 export * from './compras.js';
 export * from './compras-operaciones.js';
 export * from './personal.js';
+export * from './personal-contratos.js';
 export * from './cotizador.js';
+export * from './produccion.js';

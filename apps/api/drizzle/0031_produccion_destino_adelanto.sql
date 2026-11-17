@@ -1,0 +1,4 @@
+ALTER TABLE "produccion"."orden_eventos" DROP CONSTRAINT "orden_evento_tipo";--> statement-breakpoint
+ALTER TABLE "produccion"."ordenes" ADD COLUMN "destino_adelanto" text;--> statement-breakpoint
+ALTER TABLE "produccion"."orden_eventos" ADD CONSTRAINT "orden_evento_tipo" CHECK ("produccion"."orden_eventos"."tipo" IN ('creada', 'editada', 'estado', 'anulada', 'cobro'));--> statement-breakpoint
+ALTER TABLE "produccion"."ordenes" ADD CONSTRAINT "orden_destino_adelanto" CHECK ("produccion"."ordenes"."destino_adelanto" is null or "produccion"."ordenes"."destino_adelanto" IN ('devuelto', 'retenido'));

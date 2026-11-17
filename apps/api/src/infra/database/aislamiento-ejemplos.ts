@@ -176,6 +176,26 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into personal.colaboradores (id, tenant_id, nombre, nombre_normalizado, creado_por) values (md5($1::text || 'p1')::uuid, $1, 'Luis', 'luis', 'u1')`,
     modo: 'completo',
   },
+  'personal.contratos': {
+    sql: `insert into personal.contratos (id, tenant_id, colaborador_id, tipo, inicio, creado_por) values (md5($1::text || 'pc')::uuid, $1, md5($1::text || 'p1')::uuid, 'indeterminado', date '2026-01-01', 'u1')`,
+    modo: 'completo',
+  },
+  'personal.vacaciones': {
+    sql: `insert into personal.vacaciones (id, tenant_id, colaborador_id, desde, hasta, dias, creado_por) values (md5($1::text || 'pv')::uuid, $1, md5($1::text || 'p1')::uuid, date '2026-02-01', date '2026-02-07', 7, 'u1')`,
+    modo: 'completo',
+  },
+  'produccion.ordenes': {
+    sql: `insert into produccion.ordenes (id, tenant_id, numero, anio, fecha, cliente_id, total_centimos, creado_por) values (md5($1::text || 'op')::uuid, $1, 1, 2026, date '2026-03-01', md5($1::text || 'cl')::uuid, 24000, 'u1')`,
+    modo: 'completo',
+  },
+  'produccion.orden_items': {
+    sql: `insert into produccion.orden_items (id, tenant_id, orden_id, posicion, descripcion, cantidad_milesimas, precio_unitario_milesimas, subtotal_centimos) values (md5($1::text || 'oi')::uuid, $1, md5($1::text || 'op')::uuid, 0, 'Volantes', 1000, 24000, 2400)`,
+    modo: 'completo',
+  },
+  'produccion.orden_eventos': {
+    sql: `insert into produccion.orden_eventos (id, tenant_id, orden_id, tipo, estado_nuevo, usuario_id) values (md5($1::text || 'oe')::uuid, $1, md5($1::text || 'op')::uuid, 'creada', 'pendiente', 'u1')`,
+    modo: 'insercion',
+  },
   'personal.asistencias': {
     sql: `insert into personal.asistencias (tenant_id, colaborador_id, fecha, creado_por) values ($1, md5($1::text || 'p1')::uuid, date '2026-01-01', 'u1')`,
     modo: 'completo',

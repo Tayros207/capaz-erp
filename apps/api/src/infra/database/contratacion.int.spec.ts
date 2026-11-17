@@ -190,7 +190,7 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
       select n.nspname || '.' || c.relname as tabla, p.priv, has_table_privilege('capaz_sistema', c.oid, p.priv) as tiene
       from pg_class c join pg_namespace n on n.oid = c.relnamespace
       cross join (values ('select'), ('insert'), ('update'), ('delete')) as p(priv)
-      where c.relkind in ('r', 'v') and n.nspname in ('core', 'registro', 'cotizador', 'crm', 'ordenes', 'insumos', 'compras', 'personal', 'auth')`);
+      where c.relkind in ('r', 'v') and n.nspname in ('core', 'registro', 'cotizador', 'crm', 'ordenes', 'insumos', 'compras', 'personal', 'produccion', 'auth')`);
     const reales: Record<string, string[]> = {};
     for (const r of rows) if (r.tiene) (reales[r.tabla] ??= []).push(r.priv);
     const ordenar = (o: Record<string, string[]>) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => a.localeCompare(b)).map(([k, v]) => [k, [...v].sort()]));
@@ -222,7 +222,7 @@ describe('lista de plataforma: capaz_sistema tiene exactamente lo previsto', () 
       select cp.table_schema || '.' || cp.table_name as tabla, lower(cp.privilege_type) as priv, cp.column_name as columna
       from information_schema.column_privileges cp
       join pg_class c on c.relname = cp.table_name and c.relnamespace = cp.table_schema::regnamespace
-      where cp.grantee = 'capaz_sistema' and cp.table_schema in ('core', 'registro', 'cotizador', 'crm', 'ordenes', 'insumos', 'compras', 'personal', 'auth')
+      where cp.grantee = 'capaz_sistema' and cp.table_schema in ('core', 'registro', 'cotizador', 'crm', 'ordenes', 'insumos', 'compras', 'personal', 'produccion', 'auth')
         and lower(cp.privilege_type) in ('select', 'insert', 'update', 'delete')
         and not has_table_privilege('capaz_sistema', c.oid, cp.privilege_type)`);
     const reales: Record<string, Record<string, string[]>> = {};
