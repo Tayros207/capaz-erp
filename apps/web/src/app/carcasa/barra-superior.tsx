@@ -1,7 +1,8 @@
 import type { Yo } from '@capaz/shared';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { LogOut, Moon, Search, Sun } from 'lucide-react';
+import { LogOut, Mic, Moon, Search, Sun } from 'lucide-react';
 import { Link } from 'react-router';
+import { puedeEscribirEn } from '../../shared/sesion/acceso.ts';
 import { useTema } from '../../shared/estilos/use-tema.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Icono } from '../../shared/ui/icono.tsx';
@@ -47,6 +48,13 @@ export function BarraSuperior({ yo, migas, plegado, alPlegar, alSalir, alBuscar 
       </button>
       <div className="ml-auto flex min-w-0 items-center gap-1 md:ml-0">
         <Boton variante="fantasma" icono="buscar" aria-label="Buscar" className="md:hidden" onClick={alBuscar} />
+        {puedeEscribirEn(yo, 'registro') ? (
+          <Link to="/dictar" aria-label="Dictar un registro"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-control border border-borde px-2.5 text-sm text-texto hover:border-borde-fuerte hover:bg-superficie-alta">
+            <Mic aria-hidden className="size-4" strokeWidth={1.75} />
+            <span className="hidden sm:inline">Dictar</span>
+          </Link>
+        ) : null}
         <IndicadorDeGuardado />
         {yo.empresa ? <SelectorDeEmpresa activa={yo.empresa} empresas={yo.empresas} /> : null}
         <DropdownMenu.Root>
