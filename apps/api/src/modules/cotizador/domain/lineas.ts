@@ -1,5 +1,5 @@
 // Líneas de una cotización: de la lista (el servidor calcula el precio) o manuales. Precios SIN IGV; el IGV va por línea.
-import { importe, type LineaDeCotizacionEntrada } from '@capaz/shared';
+import { formatearSoles, importe, type AjusteDePrecio, type LineaDeCotizacionEntrada } from '@capaz/shared';
 import { igvDeImporte } from './igv.js';
 import { cotizarDesdeLista, type ListaParaCotizar, type RedondeoComercial } from './precios.js';
 
@@ -34,11 +34,25 @@ export type Totales = { subtotalCentimos: number; igvCentimos: number; totalCent
 
 const rechazoEn = (posicion: number, codigo: CodigoDeRechazoDeLinea, mensaje: string): RechazoDeLinea => ({ ok: false, codigo, mensaje: `Línea ${posicion + 1}: ${mensaje}` });
 
+/** El ajuste de una línea como lo guarda `detalle`: `ajusteTipo` y, si hay, `ajusteCentimos`. */
+export function detalleDeAjuste(a: AjusteDePrecio | undefined): Record<string, string | number> {
+  if (!a || a.tipo === 'ninguno') return { ajusteTipo: 'ninguno' };
+  return { ajusteTipo: a.tipo, ajusteCentimos: a.importeCentimos };
+}
+
+/** Lo contrario: el ajuste guardado en `detalle` (sin ajuste si falta o es inválido). */
+export function ajusteDeDetalle(d: Record<string, unknown> | null | undefined): AjusteDePrecio {
+  const tipo = d?.ajusteTipo;
+  const c = d?.ajusteCentimos;
+  if ((tipo === 'precio' || tipo === 'monto') && typeof c === 'number' && Number.isSafeInteger(c)) return { tipo, importeCentimos: c };
+  return { tipo: 'ninguno' };
+}
+
 function armarDeLista(e: Extract<LineaDeCotizacionEntrada, { tipo: 'lista' }>, i: number, c: ContextoDeLineas): { ok: true; linea: LineaArmada } | RechazoDeLinea {
   const lista = c.listas.get(e.listaId);
   if (!lista) return rechazoEn(i, 'no_encontrado', 'no existe esa lista de precios.');
   if (lista.archivada) return rechazoEn(i, 'conflicto', `la lista «${lista.nombre}» está archivada.`);
-  const r = cotizarDesdeLista(lista, { cantidadMilesimas: e.cantidadMilesimas, ajusteClientePct: c.ajusteClientePct, redondeo: c.redondeo, ajuste: { tipo: 'ninguno' }, igvPorcentaje: c.igvPorcentaje });
+  const r = cotizarDesdeLista(lista, { cantidadMilesimas: e.cantidadMilesimas, ajusteClientePct: c.ajusteClientePct, redondeo: c.redondeo, ajuste: e.ajuste ?? { tipo: 'ninguno' }, igvPorcentaje: c.igvPorcentaje });
   if (!r.ok) return rechazoEn(i, r.codigo, r.mensaje);
   const v = r.valor;
   return {
@@ -54,7 +68,7 @@ function armarDeLista(e: Extract<LineaDeCotizacionEntrada, { tipo: 'lista' }>, i
       importeCentimos: v.importeCentimos,
       igvCentimos: v.igvCentimos,
       totalCentimos: v.totalCentimos,
-      detalle: { precioListaCentimos: v.precioListaCentimos, minimoAplicado: v.minimoAplicado, ajusteClientePct: v.ajusteClientePct, redondeo: c.redondeo },
+      detalle: { precioListaCentimos: v.precioListaCentimos, minimoAplicado: v.minimoAplicado, ajusteClientePct: v.ajusteClientePct, redondeo: c.redondeo, ...detalleDeAjuste(e.ajuste) },
     },
   };
 }
@@ -104,10 +118,38 @@ export function totalesDe(lineas: readonly Pick<LineaArmada, 'importeCentimos' |
   return t;
 }
 
-export type LineaGuardada = Pick<LineaArmada, 'tipo' | 'productoId' | 'listaId' | 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas'>;
+export type LineaGuardada = Pick<LineaArmada, 'tipo' | 'productoId' | 'listaId' | 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas'> & { detalle?: Record<string, unknown> | null };
 
 /** Una línea ya guardada, vuelta a su forma de entrada (para recalcular las de lista con los precios de hoy). */
 export function entradaDeLineaGuardada(l: LineaGuardada): LineaDeCotizacionEntrada {
-  if (l.tipo === 'lista' && l.listaId) return { tipo: 'lista', listaId: l.listaId, cantidadMilesimas: l.cantidadMilesimas, descripcion: l.descripcion };
+  if (l.tipo === 'lista' && l.listaId) {
+    const ajuste = ajusteDeDetalle(l.detalle);
+    return { tipo: 'lista', listaId: l.listaId, cantidadMilesimas: l.cantidadMilesimas, descripcion: l.descripcion, ...(ajuste.tipo !== 'ninguno' && { ajuste }) };
+  }
   return { tipo: 'manual', productoId: l.productoId, descripcion: l.descripcion, unidad: l.unidad, cantidadMilesimas: l.cantidadMilesimas, precioUnitarioMilesimas: l.precioUnitarioMilesimas };
+}
+
+export type LineaPrevia = { tipo: string; descripcion: string; importeCentimos: number; detalle?: Record<string, unknown> | null };
+
+/** Compara las líneas de lista guardadas con las recalculadas de hoy (mismo orden): un aviso por cada precio que cambió. */
+export function avisosDeCambioDePrecio(guardadas: readonly LineaPrevia[], nuevas: readonly LineaArmada[]): string[] {
+  const avisos: string[] = [];
+  for (const [i, g] of guardadas.entries()) {
+    const n = nuevas[i];
+    if (g.tipo !== 'lista' || !n || n.tipo !== 'lista') continue;
+    const antes = typeof g.detalle?.precioListaCentimos === 'number' ? g.detalle.precioListaCentimos : g.importeCentimos;
+    const ahora = typeof n.detalle.precioListaCentimos === 'number' ? n.detalle.precioListaCentimos : n.importeCentimos;
+    if (antes === ahora && g.importeCentimos === n.importeCentimos) continue;
+    avisos.push(`El precio de lista de «${g.descripcion}» cambió: antes ${formatearSoles(antes)}, ahora ${formatearSoles(ahora)}`);
+  }
+  return avisos;
+}
+
+/** Al emitir: la foto de la lista (referencias, modo y mínimo) que dio cada precio, guardada en el rastro de la línea. */
+export function conFotoDeLista(lineas: readonly LineaArmada[], listas: ReadonlyMap<string, ListaDeLinea>): LineaArmada[] {
+  return lineas.map((l) => {
+    const lista = l.listaId ? listas.get(l.listaId) : undefined;
+    if (l.tipo !== 'lista' || !lista) return l;
+    return { ...l, detalle: { ...l.detalle, p100: lista.p100Centimos, p1000: lista.p1000Centimos, p5000: lista.p5000Centimos, modoIntermedio: lista.modoIntermedio, precioMinimo: lista.precioMinimoCentimos } };
+  });
 }

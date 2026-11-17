@@ -1,6 +1,7 @@
 // Fachada única de las herramientas al motor (R22): convierte céntimos y milésimas a texto con el adaptador,
 // llama al motor y devuelve céntimos. Solo este archivo y `lista.ts` importan de `./motor/`.
 import { centimosAImporte, importeACentimos, milesimasACantidad, porcentajeDeBase, unitarioAMilesimas } from './adaptador-de-dinero.js';
+import { CANTIDADES_DE_LA_TABLA_DE_PRECIOS, type FilaDePrecioDto } from '@capaz/shared';
 import { igvDeImporte } from './igv.js';
 import { ajustarPrecios } from './motor/escala/ajuste-en-bloque.js';
 import { precioDeRapida } from './motor/escala/precio-rapido.js';
@@ -114,4 +115,26 @@ export function ajustarPreciosDeLista(p: PreciosDeListaEnCentimos, porcentaje: s
     porcentaje,
   );
   return { p100Centimos: importeACentimos(r.p100), p1000Centimos: importeACentimos(r.p1000), p5000Centimos: importeACentimos(r.p5000), precioMinimoCentimos: r.precioMinimo === null ? null : importeACentimos(r.precioMinimo) };
+}
+
+const REFERENCIAS_EN_MILESIMAS = [100_000, 1_000_000, 5_000_000] as const;
+
+/** La cantidad no es 100, 1.000 ni 5.000: el precio sale de interpolar (o del escalón), no de una referencia. */
+export const esEstimacion = (cantidadMilesimas: number): boolean => !REFERENCIAS_EN_MILESIMAS.some((r) => r === cantidadMilesimas);
+
+/** Modo escalón: la cantidad (milésimas) de la mayor referencia que no supera la pedida, cuyo unitario rige; con curva, `null`. */
+export function escalonDe(modo: ModoIntermedio, cantidadMilesimas: number): number | null {
+  if (modo !== 'escalon') return null;
+  return [...REFERENCIAS_EN_MILESIMAS].reverse().find((r) => cantidadMilesimas >= r) ?? REFERENCIAS_EN_MILESIMAS[0];
+}
+
+/** Precios del lote a las cantidades frecuentes, con el ajuste del cliente y el redondeo (sin ajuste de cotización). */
+export function tablaDePrecios(lista: ListaParaCotizar, base: Omit<PedidoDePrecio, 'cantidadMilesimas' | 'ajuste'>): FilaDePrecioDto[] {
+  const filas: FilaDePrecioDto[] = [];
+  for (const unidades of CANTIDADES_DE_LA_TABLA_DE_PRECIOS) {
+    const cantidadMilesimas = unidades * 1000;
+    const r = cotizarDesdeLista(lista, { ...base, cantidadMilesimas, ajuste: { tipo: 'ninguno' } });
+    if (r.ok) filas.push({ cantidadMilesimas, importeCentimos: r.valor.importeCentimos, igvCentimos: r.valor.igvCentimos, totalCentimos: r.valor.totalCentimos, precioUnitarioMilesimas: r.valor.precioUnitarioMilesimas });
+  }
+  return filas;
 }

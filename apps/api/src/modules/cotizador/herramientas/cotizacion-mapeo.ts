@@ -1,5 +1,6 @@
 import { CONDICIONES_VACIAS, type CotizacionCompletaDto, type CotizacionDto, type VistaDelCuadroDto } from '@capaz/shared';
 import { codigoDeCotizacion } from '../domain/cotizacion.js';
+import { ajusteDeDetalle } from '../domain/lineas.js';
 import type { EstadoDeCotizacion } from '../domain/estados.js';
 import type { Cotizacion, CotizacionConTotales } from '../repositories/cotizaciones.repository.js';
 import type { EventoDeCotizacion, LineaDeVersion, Version } from '../repositories/versiones.repository.js';
@@ -31,9 +32,38 @@ export const aCotizacionDto = (c: CotizacionConTotales): CotizacionDto => ({
   actualizadoEn: c.actualizadoEn.toISOString(),
 });
 
-export type PartesDeCotizacion = { c: Cotizacion; version: Version; lineas: LineaDeVersion[]; versiones: Version[]; historial: EventoDeCotizacion[]; veCostos: boolean; cuadro?: VistaDelCuadroDto | null };
+/** Lo que el evento anotó, en texto: las opciones que eligió el cliente al aceptar. */
+function detalleDeEvento(h: EventoDeCotizacion): string | null {
+  const posiciones = (h.datos as { posiciones?: unknown } | null)?.posiciones;
+  if (h.tipo !== 'aceptada' || !Array.isArray(posiciones) || posiciones.length === 0) return null;
+  const n = posiciones.filter((p): p is number => typeof p === 'number').map((p) => p + 1);
+  return n.length === 1 ? `Eligió la línea ${n[0]}` : `Eligió las líneas ${n.slice(0, -1).join(', ')} y ${n.at(-1)}`;
+}
 
-export function aCotizacionCompleta({ c, version: v, lineas, versiones, historial, veCostos, cuadro = null }: PartesDeCotizacion): CotizacionCompletaDto {
+function aLineaDto(l: LineaDeVersion): CotizacionCompletaDto['lineas'][number] {
+  const detalle = (l.detalle ?? {}) as Record<string, unknown>;
+  const esLista = l.origenPrecio === 'lista';
+  const ajuste = ajusteDeDetalle(detalle);
+  return {
+    posicion: l.posicion,
+    tipo: l.origenPrecio as 'lista' | 'manual',
+    productoId: l.productoId,
+    listaId: l.listaId,
+    descripcion: l.descripcion,
+    unidad: l.unidad,
+    cantidadMilesimas: l.cantidadMilesimas,
+    precioUnitarioMilesimas: l.precioUnitarioMilesimas,
+    importeCentimos: l.importeCentimos,
+    igvCentimos: l.igvCentimos,
+    totalCentimos: l.totalCentimos,
+    precioListaCentimos: esLista && typeof detalle.precioListaCentimos === 'number' ? detalle.precioListaCentimos : null,
+    ajuste: esLista && ajuste.tipo !== 'ninguno' ? ajuste : null,
+  };
+}
+
+export type PartesDeCotizacion = { c: Cotizacion; version: Version; lineas: LineaDeVersion[]; versiones: Version[]; historial: EventoDeCotizacion[]; veCostos: boolean; cuadro?: VistaDelCuadroDto | null; avisos?: string[] };
+
+export function aCotizacionCompleta({ c, version: v, lineas, versiones, historial, veCostos, cuadro = null, avisos = [] }: PartesDeCotizacion): CotizacionCompletaDto {
   const base = aCotizacionDto({ ...c, conOpciones: v.conOpciones, igvPorcentaje: v.igvPorcentaje, subtotalCentimos: v.subtotalCentimos, igvCentimos: v.igvCentimos, totalCentimos: v.totalCentimos, cantidadDeLineas: lineas.length });
   return {
     ...base,
@@ -48,19 +78,7 @@ export function aCotizacionCompleta({ c, version: v, lineas, versiones, historia
     margenPct: veCostos ? v.margenPct : null,
     motivoMargenBajo: veCostos ? v.motivoMargenBajo : null,
     emitidaEn: iso(v.emitidaEn),
-    lineas: lineas.map((l) => ({
-      posicion: l.posicion,
-      tipo: l.origenPrecio as 'lista' | 'manual',
-      productoId: l.productoId,
-      listaId: l.listaId,
-      descripcion: l.descripcion,
-      unidad: l.unidad,
-      cantidadMilesimas: l.cantidadMilesimas,
-      precioUnitarioMilesimas: l.precioUnitarioMilesimas,
-      importeCentimos: l.importeCentimos,
-      igvCentimos: l.igvCentimos,
-      totalCentimos: l.totalCentimos,
-    })),
+    lineas: lineas.map(aLineaDto),
     lineasAceptadas: (c.lineasAceptadas as number[] | null) ?? null,
     totalAceptadoCentimos: c.totalAceptadoCentimos,
     aceptadaEn: iso(c.aceptadaEn),
@@ -68,6 +86,7 @@ export function aCotizacionCompleta({ c, version: v, lineas, versiones, historia
     anuladoEn: iso(c.anuladoEn),
     motivoAnulacion: c.motivoAnulacion,
     versiones: versiones.map((x) => ({ version: x.version, subtotalCentimos: x.subtotalCentimos, totalCentimos: x.totalCentimos, emitidaEn: iso(x.emitidaEn) })),
-    historial: historial.map((h) => ({ tipo: h.tipo as CotizacionCompletaDto['historial'][number]['tipo'], version: h.version, motivo: h.motivo, usuarioId: h.usuarioId, canal: h.canal as CotizacionCompletaDto['historial'][number]['canal'], creadoEn: h.creadoEn.toISOString() })),
+    avisos,
+    historial: historial.map((h) => ({ tipo: h.tipo as CotizacionCompletaDto['historial'][number]['tipo'], version: h.version, motivo: h.motivo, usuarioId: h.usuarioId, canal: h.canal as CotizacionCompletaDto['historial'][number]['canal'], detalle: detalleDeEvento(h), creadoEn: h.creadoEn.toISOString() })),
   };
 }

@@ -302,7 +302,7 @@ describe('emitir, nueva versión y duplicar un cuadro', () => {
     const id = await armarCasoDeReferencia(dueno, taller, cliente, 'Rojo');
     await datosDe(dueno, 'cuadro_fijar_precio_final', { id, precioCentimos: 25_000 });
     const sin = await emitir(id);
-    expect(codigoDe(sin)).toBe('argumentos_invalidos');
+    expect(codigoDe(sin)).toBe('conflicto');
     expect(sin.cuerpo.error.mensaje).toMatch(/margen.*por debajo del mínimo/);
     const e = (await emitir(id, 'Cliente recurrente')).cuerpo.datos;
     expect(e).toMatchObject({ estado: 'emitida', subtotalCentimos: 25_000, margenPct: '9.940', motivoMargenBajo: 'Cliente recurrente' });

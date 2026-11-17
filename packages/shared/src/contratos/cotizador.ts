@@ -152,6 +152,14 @@ export const consultarPrecioSchema = z.strictObject({
   clienteId: z.uuid().optional(),
   ajuste: ajusteDePrecioSchema.default({ tipo: 'ninguno' }),
 });
+export const filaDePrecioSchema = z.strictObject({
+  cantidadMilesimas: z.number().int(),
+  importeCentimos: z.number().int(),
+  igvCentimos: z.number().int(),
+  totalCentimos: z.number().int(),
+  precioUnitarioMilesimas: z.number().int(),
+});
+export type FilaDePrecioDto = z.infer<typeof filaDePrecioSchema>;
 export const precioConsultadoSchema = z.strictObject({
   listaId: z.string(),
   nombre: z.string(),
@@ -168,6 +176,12 @@ export const precioConsultadoSchema = z.strictObject({
   ajusteClientePct: z.string().nullable(),
   redondeoComercial: z.enum(REDONDEOS_COMERCIALES),
   igvPorcentaje: z.number().int(),
+  /** Precios del lote a 100, 200, 300, 500, 1.000, 2.000, 3.000 y 5.000 con el ajuste del cliente y el redondeo (sin el ajuste de esta consulta). */
+  tabla: z.array(filaDePrecioSchema),
+  /** La cantidad no es una de las tres referencias (100, 1.000, 5.000): el precio es una estimación entre ellas. */
+  estimacion: z.boolean(),
+  /** Con modo escalón: la cantidad (en milésimas) de la referencia cuyo unitario rige; con curva, `null`. */
+  escalon: z.number().int().nullable(),
 });
 export type PrecioConsultadoDto = z.infer<typeof precioConsultadoSchema>;
 
@@ -229,13 +243,21 @@ export const TIPOS_DE_EVENTO_DE_COTIZACION = ['creada', 'editada', 'emitida', 'e
 export const CANALES_DE_EVENTO_DE_COTIZACION = ['ui', 'enlace', 'sistema'] as const;
 export const FILTROS_DE_ESTADO_DE_COTIZACION = ['abiertas', ...ESTADOS_DE_COTIZACION, 'todas'] as const;
 export const MAXIMO_DE_LINEAS_DE_COTIZACION = 100;
+/** Cantidades de la tabla de precios de `precio_consultar`, en unidades. */
+export const CANTIDADES_DE_LA_TABLA_DE_PRECIOS = [100, 200, 300, 500, 1000, 2000, 3000, 5000] as const;
+/**
+ * Mensajes fijos de `cotizacion_emitir` (el catálogo `codigos.ts` no tiene `motivo_requerido`: va como `conflicto` con este texto;
+ * pendiente pedirlo como solicitud de cambio).
+ */
+export const MENSAJE_DE_MOTIVO_REQUERIDO = 'motivo_requerido: el margen está por debajo del mínimo configurado; indica el motivo para poder emitirla.';
+export const PREFIJO_DE_PRECIOS_CAMBIARON = 'Los precios de lista cambiaron desde que se armó la cotización.';
 
 const cantidadDeLinea = z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' });
 const dia = z.iso.date();
 
 /** Una línea que se anota: de la lista (el servidor calcula el precio) o manual (con precio unitario sin IGV). */
 export const lineaDeCotizacionEntradaSchema = z.discriminatedUnion('tipo', [
-  z.strictObject({ tipo: z.literal('lista'), listaId: z.uuid(), cantidadMilesimas: cantidadDeLinea, descripcion: texto(300).min(1).optional() }),
+  z.strictObject({ tipo: z.literal('lista'), listaId: z.uuid(), cantidadMilesimas: cantidadDeLinea, descripcion: texto(300).min(1).optional(), ajuste: ajusteDePrecioSchema.optional() }),
   z.strictObject({
     tipo: z.literal('manual'),
     productoId: z.uuid().nullish(),
@@ -264,6 +286,10 @@ export const lineaDeCotizacionSchema = z.strictObject({
   importeCentimos: z.number().int(),
   igvCentimos: z.number().int(),
   totalCentimos: z.number().int(),
+  /** Solo en líneas de lista: el precio de lista (sin IGV) antes del ajuste de esta cotización; `null` en una manual. */
+  precioListaCentimos: z.number().int().nullable(),
+  /** Solo en líneas de lista: el ajuste de esta cotización (`null` = sin ajuste). */
+  ajuste: ajusteDePrecioSchema.nullable(),
 });
 
 /** Lo que muestra una lista de cotizaciones: la versión vigente, sin sus líneas. */
@@ -304,6 +330,8 @@ export const eventoDeCotizacionSchema = z.strictObject({
   /** Nulo cuando el evento lo produjo el cliente desde el enlace público. */
   usuarioId: z.string().nullable(),
   canal: z.enum(CANALES_DE_EVENTO_DE_COTIZACION),
+  /** Lo que se anotó en el evento, en texto (la nota o las opciones elegidas); `null` si no hay. */
+  detalle: z.string().nullable(),
   creadoEn: z.iso.datetime(),
 });
 
@@ -334,6 +362,8 @@ export const cotizacionCompletaSchema = cotizacionSchema.extend({
   versiones: z.array(versionDeCotizacionSchema),
   /** Lo más reciente primero. */
   historial: z.array(eventoDeCotizacionSchema),
+  /** Avisos de la operación (p. ej. «el precio de lista de X cambió»); vacío casi siempre. */
+  avisos: z.array(z.string()),
 });
 export type CotizacionCompletaDto = z.infer<typeof cotizacionCompletaSchema>;
 
@@ -418,7 +448,10 @@ export const contratosDeCotizador = {
     }),
     listadoSchema(cotizacionSchema),
   ),
-  cotizacion_emitir: contrato(z.strictObject({ id: z.uuid(), motivoMargenBajo: texto(300).min(1).optional() }), cotizacionCompletaSchema),
+  cotizacion_emitir: contrato(
+    z.strictObject({ id: z.uuid(), motivoMargenBajo: texto(300).min(1).optional(), aceptarPreciosDeHoy: z.boolean().optional() }),
+    cotizacionCompletaSchema,
+  ),
   cotizacion_nueva_version: contrato(soloId, cotizacionCompletaSchema),
   cotizacion_duplicar: contrato(soloId, cotizacionCompletaSchema),
   cotizacion_marcar_enviada: contrato(soloId, cotizacionCompletaSchema),

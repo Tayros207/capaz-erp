@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { centimosSchema, type CotizacionCompletaDto } from '@capaz/shared';
+import { centimosSchema, MENSAJE_DE_MOTIVO_REQUERIDO, type CotizacionCompletaDto } from '@capaz/shared';
 import {
   FORMULARIO_VACIO, accionesVisibles, argumentosDeAceptar, argumentosDeAnulacion, argumentosDeCreacion, argumentosDeEdicion, argumentosDeEmision, argumentosDeRechazo,
   estaVencida, formularioDesdeCotizacion, hoyEnLima, rutaDeReenvio, sePuedeReenviar, lineaVacia, pideMotivoDeMargen, sePuede, textoDeAceptadas, textoDeEvento, textoDeMargen, validarAceptacion, validarFormulario, validarLinea,
@@ -52,7 +52,7 @@ describe('argumentos de las acciones', () => {
   it('emitir lleva el motivo solo si lo hay; el aviso de margen del servidor se reconoce', () => {
     expect(argumentosDeEmision('x')).toEqual({ id: 'x' });
     expect(argumentosDeEmision('x', ' Cliente grande ')).toEqual({ id: 'x', motivoMargenBajo: 'Cliente grande' });
-    expect(pideMotivoDeMargen('argumentos_invalidos', 'El margen de esta cotización está por debajo del mínimo configurado: indica el motivo.')).toBe(true);
+    expect(pideMotivoDeMargen('conflicto', MENSAJE_DE_MOTIVO_REQUERIDO)).toBe(true);
     expect(pideMotivoDeMargen('conflicto', 'margen')).toBe(false);
     expect(pideMotivoDeMargen('argumentos_invalidos', 'Falta el cliente')).toBe(false);
   });

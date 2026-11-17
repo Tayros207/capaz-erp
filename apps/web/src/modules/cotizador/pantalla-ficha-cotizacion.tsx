@@ -1,45 +1,40 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, type ReactNode } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { centimosSchema, type CotizacionCompletaDto } from '@capaz/shared';
 import { ChipDeCliente, EnlaceDeEntidad } from '../../shared/ui/entidades.tsx';
 import { datosOError } from '../../shared/api/consultas.ts';
-import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import { Lista } from '../../shared/ui/datos/lista.tsx';
-import type { Columna } from '../../shared/ui/datos/lista-tipos.ts';
 import { MenuDeAcciones, type AccionDeMenu } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { ResumenDelCuadro } from './cuadro/resumen-del-cuadro.tsx';
 import { refrescarCotizador, resolverAccion } from './acciones.ts';
 import { enviarPorWhatsApp, usePermisosDeCotizaciones } from './acciones-cotizacion.ts';
-import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, emitirCotizacion, listarPedidosDelCliente, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
+import { aceptarCotizacion, anularCotizacion, duplicarCotizacion, listarPedidosDelCliente, marcarEnviada, nuevaVersion, rechazarCotizacion, verCotizacion } from './api-cotizaciones.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { formatearDia } from './documento-cotizacion.ts';
+import { AvisoDePrecios } from './aviso-de-precios.tsx';
+import { CajaEmitida } from './caja-emitida.tsx';
+import { COLUMNAS_DE_LINEAS } from './ficha-lineas.tsx';
+import { HistorialDeCotizacion } from './ficha-historial.tsx';
+import { HojaPreciosDeHoy } from './hoja-precios-de-hoy.tsx';
 import { HojaAceptar } from './hoja-aceptar.tsx';
 import { HojaDeCotizacion } from './hoja-cotizacion.tsx';
 import { HojaEnlace } from './hoja-enlace.tsx';
 import { HojaMotivo } from './hoja-motivo.tsx';
 import { InsigniaDeCotizacion } from './insignia-cotizacion.tsx';
-import { mensajeDeRechazo, soles } from './logica.ts';
+import { soles } from './logica.ts';
 import {
-  accionesVisibles, argumentosDeAceptar, argumentosDeAnulacion, argumentosDeEmision, argumentosDeRechazo, formularioDesdeCotizacion,
-  pideMotivoDeMargen, rutaDeDocumento, rutaDeFicha, sePuedeImprimir, textoDeAceptadas, textoDeEvento, textoDeMargen,
+  accionesVisibles, argumentosDeAceptar, argumentosDeAnulacion, argumentosDeRechazo, formularioDesdeCotizacion,
+  rutaDeDocumento, rutaDeFicha, sePuedeImprimir, textoDeAceptadas, textoDeMargen,
 } from './logica-cotizaciones.ts';
 import { Cargando, SeccionesDelCotizador } from './marco.tsx';
+import { useEmision } from './use-emision.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
-
-type Linea = CotizacionCompletaDto['lineas'][number];
-const COLUMNAS: Array<Columna<Linea>> = [
-  { id: 'descripcion', titulo: 'Descripción', principal: true, celda: (l) => (l.productoId ? <span>{l.posicion + 1}. <EnlaceDeEntidad tipo="producto" id={l.productoId}>{l.descripcion}</EnlaceDeEntidad></span> : `${l.posicion + 1}. ${l.descripcion}`) },
-  { id: 'cantidad', titulo: 'Cantidad', alinear: 'derecha', celda: (l) => formatearCantidad(l.cantidadMilesimas, l.unidad) },
-  { id: 'precio', titulo: 'Cada una (sin IGV)', alinear: 'derecha', celda: (l) => `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}` },
-  { id: 'importe', titulo: 'Importe', alinear: 'derecha', celda: (l) => soles(l.importeCentimos) },
-  { id: 'total', titulo: 'Total con IGV', alinear: 'derecha', celda: (l) => soles(l.totalCentimos) },
-];
 
 function Dato({ etiqueta, valor }: { etiqueta: string; valor: ReactNode }) {
   return (
@@ -69,10 +64,17 @@ function DatoDePedido({ c }: { c: CotizacionCompletaDto }) {
   );
 }
 
-type Hoja = 'editar' | 'aceptar' | 'rechazar' | 'anular' | 'margen' | 'enlace' | null;
+type Hoja = 'editar' | 'aceptar' | 'rechazar' | 'anular' | 'margen' | 'enlace' | 'precios' | null;
+
+/** Los avisos de precios que dejó volver a cotizar (nueva versión, duplicar): viajan en el estado de la navegación. */
+const avisosDeNavegacion = (estado: unknown): string[] => {
+  const a = (estado as { avisos?: unknown } | null)?.avisos;
+  return Array.isArray(a) ? a.filter((x): x is string => typeof x === 'string') : [];
+};
 
 function Contenido({ c }: { c: CotizacionCompletaDto }) {
   const navegar = useNavigate();
+  const avisos = avisosDeNavegacion(useLocation().state);
   const permisos = usePermisosDeCotizaciones();
   const [hoja, setHoja] = useState<Hoja>(null);
   const [ocupado, setOcupado] = useState(false);
@@ -86,25 +88,25 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
     await fn();
     setOcupado(false);
   }
-  const emitir = (motivo?: string) =>
-    conOcupado(async () => {
-      const r = await emitirCotizacion(argumentosDeEmision(c.id, motivo));
-      if ('error' in r && !motivo && pideMotivoDeMargen(r.error.codigo, r.error.mensaje)) {
-        setHoja('margen');
-        return;
-      }
-      await resolverAccion(Promise.resolve(r), 'Cotización emitida.');
-    });
-  const emitirConMotivo = async (motivo: string) => {
-    const r = await emitirCotizacion(argumentosDeEmision(c.id, motivo));
-    if ('error' in r) { notificar(mensajeDeRechazo(r.error.codigo, r.error.mensaje), 'error'); return false; }
-    return resolverAccion(Promise.resolve(r), 'Cotización emitida.');
-  };
-  const simple = (llamada: () => ReturnType<typeof marcarEnviada>, ok: string, irA?: (id: string) => string) =>
+  const emision = useEmision(c.id, setHoja);
+  // «Reenviar» desde la lista llega con `?enlace=1`: se abre la hoja del enlace y se limpia el parámetro.
+  const [parametros, setParametros] = useSearchParams();
+  const pideEnlace = parametros.get('enlace') === '1';
+  useEffect(() => {
+    if (!pideEnlace) return;
+    if (permisos.emitir && sePuedeImprimir(c.estado)) setHoja('enlace');
+    setParametros((p) => { p.delete('enlace'); return p; }, { replace: true });
+  }, [pideEnlace, permisos.emitir, c.estado, setParametros]);
+  const emitir = () => conOcupado(emision.emitir);
+  const simple = (llamada: () => ReturnType<typeof marcarEnviada> | ReturnType<typeof nuevaVersion>, ok: string, irA?: (id: string) => string) =>
     conOcupado(async () => {
       const r = await llamada();
       const hecho = await resolverAccion(r, ok);
-      if (hecho && irA && r.ok && 'datos' in r) void navegar(irA(r.datos.id));
+      if (!hecho || !r.ok || !('datos' in r)) return;
+      // Volver a cotizar (nueva versión, duplicar) trae los precios de hoy: lo que cambió se avisa y se deja en la ficha.
+      const avisosDePrecios = 'avisos' in r.datos ? r.datos.avisos : [];
+      for (const a of avisosDePrecios) notificar(a, 'aviso');
+      if (irA || avisosDePrecios.length > 0) void navegar(irA ? irA(r.datos.id) : rutaDeFicha(r.datos.id), { state: { avisos: avisosDePrecios } });
     });
 
   const acciones: AccionDeMenu[] = [
@@ -145,6 +147,10 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
           </>
         }
       />
+      <AvisoDePrecios avisos={avisos} />
+      {c.estado === 'emitida' || c.estado === 'enviada' ? (
+        <CajaEmitida codigo={c.codigo} puedeEnlace={permisos.emitir} puedeNuevaVersion={visibles.has('nueva_version')} alImprimir={() => void navegar(rutaDeDocumento(c.id))} alEnlace={() => setHoja('enlace')} alNuevaVersion={() => void simple(() => nuevaVersion(c.id), 'Nueva versión creada como borrador.')} />
+      ) : null}
       <dl className="grid gap-4 sm:grid-cols-2">
         <Dato etiqueta="Cliente" valor={c.clienteId && c.clienteNombre ? <ChipDeCliente id={c.clienteId} nombre={c.clienteNombre} /> : 'Sin cliente todavía'} />
         {c.estado === 'aceptada' ? <DatoDePedido c={c} /> : null}
@@ -159,7 +165,7 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
       <ResumenDelCuadro c={c} />
       <section aria-label="Líneas de la cotización" className="flex flex-col gap-2">
         <h2 className="font-titulo font-semibold text-texto">Líneas</h2>
-        <Lista etiqueta="Líneas de la cotización" columnas={COLUMNAS} filas={c.lineas} clave={(l) => String(l.posicion)} vacio={<EstadoVacio titulo="Sin líneas todavía" descripcion="Edita el borrador para agregarlas." icono="caja" />} />
+        <Lista etiqueta="Líneas de la cotización" columnas={COLUMNAS_DE_LINEAS} filas={c.lineas} clave={(l) => String(l.posicion)} vacio={<EstadoVacio titulo="Sin líneas todavía" descripcion="Edita el borrador para agregarlas." icono="caja" />} />
         <GrupoDeCifras etiqueta="Totales de la cotización">
           <Cifra etiqueta="Subtotal" valor={soles(c.subtotalCentimos)} />
           <Cifra etiqueta={`IGV ${c.igvPorcentaje} %`} valor={soles(c.igvCentimos)} />
@@ -182,17 +188,7 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
           <Dato etiqueta="No incluye" valor={c.condiciones.noIncluye} />
         </dl>
       </section>
-      <section aria-label="Historial de la cotización" className="flex flex-col gap-2">
-        <h2 className="font-titulo font-semibold text-texto">Historial</h2>
-        <ol className="flex flex-col gap-2">
-          {c.historial.map((e, i) => (
-            <li key={`${e.creadoEn}-${i}`} className="flex flex-col gap-0.5">
-              <span className="break-words text-texto">{textoDeEvento(e)}</span>
-              <span className="text-sm text-texto-suave">{formatearFechaHora(e.creadoEn)}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <HistorialDeCotizacion historial={c.historial} />
       {hoja === 'editar' || visibles.has('editar') ? (
         <HojaDeCotizacion abierto={hoja === 'editar'} id={c.id} inicial={formularioDesdeCotizacion(c, (n) => centimosSchema.parse(n))} puedeVerCostos={permisos.costos} alCerrar={() => setHoja(null)} alGuardar={() => setHoja(null)} />
       ) : null}
@@ -200,7 +196,8 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
       <HojaMotivo abierto={hoja === 'rechazar'} titulo="Rechazar cotización" etiqueta="Motivo (opcional)" textoEnviar="Rechazar" obligatorio={false} alCerrar={() => setHoja(null)} alEnviar={(t) => resolverAccion(rechazarCotizacion(argumentosDeRechazo(c.id, t)), 'Cotización rechazada.')} />
       <HojaMotivo abierto={hoja === 'anular'} titulo="Anular cotización" etiqueta="Motivo de la anulación" textoEnviar="Continuar" obligatorio peligroso alCerrar={() => setHoja(null)} alEnviar={(t) => resolverAccion(anularCotizacion(argumentosDeAnulacion(c.id, t)), 'Cotización anulada.')} />
       <HojaEnlace abierto={hoja === 'enlace'} cotizacion={c} alCambiar={() => setEnlaceCambio(true)} alCerrar={() => { setHoja(null); if (enlaceCambio) { setEnlaceCambio(false); void refrescarCotizador(); } }} />
-      <HojaMotivo abierto={hoja === 'margen'} titulo="Margen por debajo del mínimo" etiqueta="¿Por qué se emite así?" ayuda="El margen está por debajo del mínimo de tus Ajustes. Anota el motivo para poder emitirla." textoEnviar="Continuar" obligatorio alCerrar={() => setHoja(null)} alEnviar={emitirConMotivo} />
+      <HojaMotivo abierto={hoja === 'margen'} titulo="Margen por debajo del mínimo" etiqueta="¿Por qué se emite así?" ayuda="El margen está por debajo del mínimo de tus Ajustes. Anota el motivo para poder emitirla." textoEnviar="Continuar" obligatorio alCerrar={() => setHoja(null)} alEnviar={emision.emitirConMotivo} />
+      <HojaPreciosDeHoy abierto={hoja === 'precios'} avisos={emision.avisos} alAceptar={emision.aceptarPreciosDeHoy} alCerrar={() => setHoja(null)} />
     </div>
   );
 }

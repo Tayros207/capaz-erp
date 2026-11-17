@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cotizarDesdeLista, validarLista, type ListaParaCotizar, type PedidoDePrecio } from './precios.js';
+import { cotizarDesdeLista, escalonDe, esEstimacion, tablaDePrecios, validarLista, type ListaParaCotizar, type PedidoDePrecio } from './precios.js';
 
 // Casos C7 a C11 de Cotizín a través de la fachada, en céntimos y milésimas.
 const C7: ListaParaCotizar = { p100Centimos: 19_000, p1000Centimos: 58_000, p5000Centimos: 120_000, modoIntermedio: 'curva', precioMinimoCentimos: null };
@@ -109,5 +109,19 @@ describe('validarLista', () => {
     expect(v.bloqueos).toEqual([]);
     expect(v.avisos).toHaveLength(1);
     expect(v.avisos[0]).toContain('El unitario no baja');
+  });
+});
+
+describe('tabla de precios, estimación y escalón', () => {
+  const lista = { p100Centimos: 19_000, p1000Centimos: 58_000, p5000Centimos: 120_000, modoIntermedio: 'curva' as const, precioMinimoCentimos: null };
+  it('la tabla da las 8 cantidades; las referencias salen exactas', () => {
+    const t = tablaDePrecios(lista, { ajusteClientePct: null, redondeo: 'ninguno', igvPorcentaje: 18 });
+    expect(t.map((f) => f.cantidadMilesimas / 1000)).toEqual([100, 200, 300, 500, 1000, 2000, 3000, 5000]);
+    expect(t.filter((f) => [100, 1000, 5000].includes(f.cantidadMilesimas / 1000)).map((f) => f.importeCentimos)).toEqual([19_000, 58_000, 120_000]);
+  });
+  it('estimación fuera de 100, 1.000 y 5.000; escalón solo en ese modo', () => {
+    expect([100_000, 1_000_000, 5_000_000, 2_500_000].map(esEstimacion)).toEqual([false, false, false, true]);
+    expect(escalonDe('curva', 2_500_000)).toBeNull();
+    expect([400_000, 1_000_000, 4_999_000, 5_000_000].map((c) => escalonDe('escalon', c))).toEqual([100_000, 1_000_000, 1_000_000, 5_000_000]);
   });
 });

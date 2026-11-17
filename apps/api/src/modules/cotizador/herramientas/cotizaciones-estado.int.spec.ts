@@ -113,7 +113,7 @@ describe('emitir', () => {
   it('con margen bajo el mínimo hace falta el motivo; con él se emite y queda guardado para quien ve costos', async () => {
     const b = await borrador({ costoCentimos: 30_000 }); // margen 13.39 % < 15 %
     const sin = await dueno.herramienta('cotizacion_emitir', { id: b.id });
-    expect(codigoDe(sin)).toBe('argumentos_invalidos');
+    expect(codigoDe(sin)).toBe('conflicto');
     const r = await confirmando(dueno, 'cotizacion_emitir', { id: b.id, motivoMargenBajo: 'Cliente grande, pedido recurrente' });
     expect(r.respuesta.cuerpo.datos).toMatchObject({ estado: 'emitida', costoCentimos: 30_000, margenPct: '13.390', motivoMargenBajo: 'Cliente grande, pedido recurrente' });
     const sano = await borrador({ costoCentimos: 22_515 }); // 35 %: el motivo no se guarda aunque llegue
