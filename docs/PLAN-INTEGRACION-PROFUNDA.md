@@ -7,7 +7,7 @@ Complementa `PLAN-DE-CIERRE-COTIZADOR-Y-VOZ.md` (qué se copió y qué falta) y 
 
 | Punto | Versión 1 decía | Verificado en el código y la base |
 |---|---|---|
-| B6 (Neon) | Faltan 0023 y 0024 | **Ya aplicadas** (`NEON-MIGRACION.md` §8, filas del 16 y 17 de noviembre). Lo pendiente es la **0025**, que es de la sesión de maestros ampliados |
+| B6 (Neon) | Faltan 0023 y 0024 | **Ya aplicadas** (`NEON-MIGRACION.md` §8, filas del 16 y 17 de noviembre). La **0025** (maestros ampliados, otra sesión) también quedó aplicada el 17 de noviembre; en Neon no falta nada de lo que hay en `main` |
 | B9 (sin commit) | Solo `CampoUnidad` | También: sesión de 4 horas en `core/auth/auth.ts` y la adopción de `CampoUnidad` en producto, pedidos, insumos y compras. **Y hay archivos de otra sesión** (0025, `core-maestros-ampliados.ts`, contrato `maestros-ampliados.ts`) que **no son nuestros** |
 | Fase 1 | Producto sin lista → obliga a «Fijar precio» antes de cotizar | `cotizacion_crear` ya acepta **líneas manuales con `productoId`**: un producto del catálogo se cotiza con su precio de catálogo sin crear nada. Fijar precios por escala pasa a ser opcional |
 | Fase 3 | «Construir» el puente y los eventos F2/F3 | El puente cotización aceptada → borrador de pedido **ya existe y es idempotente** (`ordenes/consumidores.ts`). Queda el recorrido manual y F3 |
@@ -29,12 +29,12 @@ El caso que lo mostró: en *Cotización rápida*, el campo «Producto» busca en
 | B3 | Datos de demostración sin precios de cotizar | `scripts/sembrar-demo.ts` no siembra nada de `cotizador` | Abierta |
 | B4 | Cadena cotización → pedido → deuda → cobro sin recorrer a mano | Puente existe y está probado por integración; nadie lo recorrió en pantalla | Abierta (solo verificación) |
 | B5 | Voz: HTTPS para el micrófono del celular; ruido de nombres | Informe s5c | Abierta, depende de HTTPS |
-| B6 | Neon sin 0023/0024 | **Cerrada** el 2026-11-17 | Pendiente solo la 0025 (otra sesión) |
+| B6 | Neon sin 0023/0024 | **Cerrada** el 2026-11-17 | La 0025 también está; pendientes solo las futuras 0026 y 0027 |
 | B7 | Pantallas nuevas sin revisión a 390/1280, claro/oscuro, PDF | Sesión integradora | Abierta (persona) |
 | B8 | Despliegue y seguridad de producción | §4 fase 7 | Abierta (Keny) |
 | B9 | Cambios hechos sin commit | `git status`: 8 archivos modificados y 2 nuevos nuestros | Abierta · fase 0 |
 | B10 | Unidad del catálogo (`UND`) y de la lista (`unidad`) no coinciden | `CampoUnidad` guarda `UND`; `listas_de_precio.unidad` por defecto `unidad` | **Nueva** · se resuelve en fase 1 |
-| B11 | Nada impide dos listas activas para el mismo producto | No hay índice ni comprobación sobre `producto_id` | **Nueva** · comprobación en código (fase 1) e índice en 0026 (fase 7) |
+| B11 | Nada impide dos listas activas para el mismo producto | No hay índice ni comprobación sobre `producto_id` | **Nueva** · comprobación en código (fase 1) e índice en 0027 (fase 7) |
 
 ## 3. Principios (no cambian)
 
@@ -74,7 +74,7 @@ El caso que lo mostró: en *Cotización rápida*, el campo «Producto» busca en
 - En `lista_precio_crear` y `lista_precio_editar`: si llega `productoId` y ya hay **otra** lista activa con ese producto → `conflicto` con el nombre de la lista existente. Repositorio: `listaActivaDeProducto(tx, ctx, productoId, salvo?)`.
 - Al crear con `productoId` y sin `unidad` explícita, la unidad se toma del producto (B10).
 - Prueba de integración para el conflicto y para la unidad heredada.
-- El índice único parcial `(tenant_id, producto_id) where archivado_en is null and producto_id is not null` va en la **migración 0026**, que escribe el carril de datos **después** de que la sesión de maestros ampliados libere `db:generar` (§5). Hasta entonces manda la comprobación en código.
+- El índice único parcial `(tenant_id, producto_id) where archivado_en is null and producto_id is not null` va en la **migración 0027** (la 0026 la reclamó la sesión de inventario y compras), que escribe el carril de datos tras enviar «reclamo 0027» a las demás sesiones (§5). Hasta entonces manda la comprobación en código.
 
 **1.3 Web · cotización rápida (`pantalla-rapida.tsx`).**
 - El selector «Producto» llama a `cotizador_productos_buscar`. Cada opción muestra el detalle: «precios por escala», «S/ X por UND, precio del catálogo» o «sin precio».
@@ -127,7 +127,7 @@ Igual que la versión 1: solo si el piloto de tres trabajos lo pide. **Hecho cua
 
 ### Fase 7 · Producción (B8) · con Keny
 
-1. **Migraciones:** la 0025 (maestros ampliados, otra sesión) y la **0026** (índice único de lista por producto, de este plan): ensayo en rama de Neon, revisión de Keny y confirmación del dueño; después production. Las 0023 y 0024 ya están.
+1. **Migraciones:** la 0026 (inventario y compras, otra sesión) y la **0027** (índice único de lista por producto, de este plan): ensayo en rama de Neon, revisión de Keny y confirmación del dueño; después production. Las 0023 y 0024 ya están.
 2. **Despliegue:** front estático con HTTPS automático; API NestJS en un host de procesos; front y API bajo el mismo dominio padre para cookies `Secure` + `SameSite`.
 3. **Seguridad:** HTTPS en el borde; `ORIGENES_PERMITIDOS` con el dominio real; secretos fuera del repo; sesión de 4 h (ya en código, se confirma en fase 0); contraseñas de demostración fuera de producción.
 4. Túnel con acceso por correo solo para probar el micrófono antes del despliegue.
@@ -143,11 +143,11 @@ Sin cambios respecto a la versión 1: el dinero se anota solo en Capaz desde el 
 |---|---|---|---|
 | **cot-1** (este plan) | Sonnet, esfuerzo medio, lanzado por el integrador | 0, 1 y 2 | `apps/api/src/modules/cotizador/**`, `apps/web/src/modules/cotizador/**`, `packages/shared/src/contratos/cotizador.ts`, `apps/api/scripts/demo/cotizador.ts` (nuevo) + una línea en `sembrar-demo.ts`, `apps/web/src/shared/ui/campo-unidad.tsx`, `apps/web/src/shared/formato/unidades.ts`, los cuatro formularios ya modificados de la fase 0, `core/auth/auth.ts` (solo el commit), **una `Edit` puntual** en `core/productos/pantalla-ficha.tsx` |
 | **maestros ampliados** | Sesión `modules-capaz-erp-9c` | ajena a este plan | Migración 0025, `db/esquema/core-maestros-ampliados.ts`, `contratos/maestros-ampliados.ts`, archivos nuevos en `core/clientes/**` y `core/productos/**` y sus pantallas; una línea en `db/esquema/index.ts`, `contratos/index.ts` y los `*.module.ts` |
-| **datos** | Carril de datos, cuando 9c libere `db:generar` | 0026 | `apps/api/drizzle/**`, `db/esquema/cotizador.ts` |
+| **datos** | Carril de datos, tras «reclamo 0027» | 0027 | `apps/api/drizzle/**`, `db/esquema/cotizador.ts` |
 | **personas** | Moisés, Keny | 3 a 8 | — |
 
 Reglas de convivencia:
-1. **Nadie corre `pnpm db:generar`** hasta que la sesión 9c avise. cot-1 no necesita migración.
+1. **Nadie corre `pnpm db:generar`** sin enviar antes «reclamo 00NN» a las demás sesiones (hay tres: cotizador, maestros ampliados e inventario-compras). cot-1 no necesita migración.
 2. Commits **solo por rutas explícitas** y solo de los archivos propios. Mensaje: `carril cot-1: <resumen>`.
 3. Pruebas de integración de cot-1 con `CAPAZ_TEST_DB=capaz_test_cot` (crearla con `pnpm db:preparar` tras exportar la variable) para no chocar con la base de pruebas de 9c.
 4. Si cot-1 necesita algo de un archivo ajeno: **solicitud de cambio** en su informe, no lo toca.
@@ -162,7 +162,7 @@ Reglas de convivencia:
 | D3 | ¿Quitar «· Wilfredo» del caso 7 del dictado? | Dejarlo hasta la pista V |
 | D4 | ¿Importar contactos o productos de Cotizín o Tairos.RC? | Solo contactos reales y productos que realmente se venden, por CSV (herramientas de intercambio ya existen) |
 | D5 | Host de la API en producción | Uno con despliegue desde GitHub y HTTPS incluido; lo define Keny |
-| D6 | ¿Lista activa única por producto? | **Sí** (comprobación en código ahora, índice en 0026 después) |
+| D6 | ¿Lista activa única por producto? | **Sí** (comprobación en código ahora, índice en 0027 después) |
 
 ## 7. Qué no se hace
 
@@ -180,5 +180,19 @@ Reglas de convivencia:
 | Redondeo al pasar el precio de catálogo (con IGV) a sin IGV y de vuelta en el pedido: diferencia de un céntimo | La conversión es una función pura con prueba; el recorrido de la fase 3 compara el total de la cotización con el del pedido y, si difieren, se anota el caso en `FICHAS-OLA-4.md` §11 y se decide (redondear al crear la lista o aceptar un céntimo) |
 | Dos sesiones en el mismo árbol | §5: propiedad exclusiva, commits por ruta, bases de prueba distintas, sin `db:generar` |
 | Listas de demo con precios inventados | Siempre derivadas del catálogo y marcadas «Revisar» por fecha; nunca se cargan en producción |
-| Dos listas activas para un producto antes de la 0026 | Comprobación en código en crear y editar, con prueba |
+| Dos listas activas para un producto antes de la 0027 | Comprobación en código en crear y editar, con prueba |
 | Confundir catálogo y lista de precios | Un solo selector en pantalla con el origen a la vista («precios por escala», «precio del catálogo», «sin precio») |
+
+## 9. Fase 6 ampliada y fase 9 · cuadro por partes (B2) y enlace público (B3)
+
+El dueño ordenó el 2026-11-17 avanzar ya con los dos, sin esperar el piloto. Especificación congelada en **`FICHAS-COTIZADOR-B2-B3.md`**: migración `0027_cotizador_taller_y_enlaces` (carril cot-db), ajustes del taller (cot-s3), cuadro por partes en el servidor (cot-s4) y su pantalla (cot-w2), y el enlace público servido por la API sin sesión ni JavaScript (cot-b3). Orden: cot-db → cot-s3 → cot-s4 → cot-w2, con cot-b3 en paralelo desde que la 0027 esté en `main`.
+
+## 10. División de trabajo entre sesiones (acordada el 2026-11-17)
+
+| Sesión | Lado | Archivos y tablas | Migraciones |
+|---|---|---|---|
+| **Esta (Cotizín)** | `modules/cotizador` (api y web), `contratos/cotizador*.ts`, catálogo ↔ Cotizador, cadena cotización → pedido → deuda → cobro, `scripts/demo/cotizador.ts`, tablas `cotizador.*` | 0027 y las que reclame después |
+| **e1 (SF / Tairos.RC)** | `modules/registro`, `core/captura`, maestros ampliados (0025) y operaciones de inventario y compras (0026); comparación de los modelos de SF contra `registro.*` | 0025, 0026 y las que reclame |
+| Compartido | `core/clientes`, `core/productos`, `modules/ordenes`, `modules/crm`: solo con aviso previo a la otra sesión y con `Edit` puntual | Antes de `db:generar`: «reclamo 00NN» a las demás |
+
+Ya integrados en `main` por esta sesión y que la otra no debe revertir: `registro_pedido_entregado` (`modules/registro/consumidores.ts`, commit 89b6a0e) y el puente sin duplicados (`modules/ordenes/consumidores.ts`, commit d38a7f4).
