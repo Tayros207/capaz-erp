@@ -5,12 +5,14 @@ import { PantallaDocumentoDeCotizacion } from './pantalla-documento-cotizacion.t
 import { PantallaFichaCotizacion } from './pantalla-ficha-cotizacion.tsx';
 import { PantallaPrecios } from './pantalla-precios.tsx';
 import { PantallaRapida } from './pantalla-rapida.tsx';
+import { PantallaTaller } from './pantalla-taller.tsx';
 
 // Cotizador: cotización rápida, lista de precios y ajustes (sesión A); cotizaciones, ficha y documento (sesión B).
 export const rutas: RouteObject[] = [
   { path: 'm/cotizador', element: <PantallaRapida /> },
   { path: 'm/cotizador/precios', element: <PantallaPrecios /> },
   { path: 'm/cotizador/ajustes', element: <PantallaAjustes /> },
+  { path: 'm/cotizador/taller', element: <PantallaTaller /> },
   { path: 'm/cotizador/cotizaciones', element: <PantallaCotizaciones /> },
   { path: 'm/cotizador/cotizaciones/:id', element: <PantallaFichaCotizacion /> },
   { path: 'm/cotizador/cotizaciones/:id/documento', element: <PantallaDocumentoDeCotizacion /> },

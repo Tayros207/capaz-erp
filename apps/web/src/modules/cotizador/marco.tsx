@@ -10,6 +10,7 @@ export function SeccionesDelCotizador() {
         { a: '/m/cotizador/cotizaciones', texto: 'Cotizaciones' },
         { a: '/m/cotizador/precios', texto: 'Lista de precios' },
         { a: '/m/cotizador/ajustes', texto: 'Ajustes' },
+        { a: '/m/cotizador/taller', texto: 'Taller' },
       ]}
     />
   );

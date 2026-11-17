@@ -17,6 +17,7 @@ export const manifiestoCotizador: ManifiestoDeEntrada = {
     { id: 'cotizaciones', nombre: 'Cotizaciones', ruta: '/m/cotizador/cotizaciones', construida: true },
     { id: 'precios', nombre: 'Lista de precios', ruta: '/m/cotizador/precios', construida: true },
     { id: 'ajustes', nombre: 'Ajustes', ruta: '/m/cotizador/ajustes', construida: true },
+    { id: 'taller', nombre: 'Taller', ruta: '/m/cotizador/taller', construida: true },
   ],
   familia: 'ventas',
   orden: 3,
