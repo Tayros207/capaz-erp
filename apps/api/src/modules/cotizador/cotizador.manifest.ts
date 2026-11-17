@@ -13,14 +13,13 @@ export const manifiestoCotizador: ManifiestoDeEntrada = {
     lectura: ['cotizador:ver'],
   },
   secciones: [
-    { id: 'rapida', nombre: 'Cotización rápida', ruta: '/m/cotizador', construida: false },
-    { id: 'cotizaciones', nombre: 'Cotizaciones', ruta: '/m/cotizador/cotizaciones', construida: false },
-    { id: 'precios', nombre: 'Lista de precios', ruta: '/m/cotizador/precios', construida: false },
-    { id: 'ajustes', nombre: 'Ajustes', ruta: '/m/cotizador/ajustes', construida: false },
+    { id: 'rapida', nombre: 'Cotización rápida', ruta: '/m/cotizador', construida: true },
+    { id: 'cotizaciones', nombre: 'Cotizaciones', ruta: '/m/cotizador/cotizaciones', construida: true },
+    { id: 'precios', nombre: 'Lista de precios', ruta: '/m/cotizador/precios', construida: true },
+    { id: 'ajustes', nombre: 'Ajustes', ruta: '/m/cotizador/ajustes', construida: true },
   ],
   familia: 'ventas',
   orden: 3,
   acento: 'cian',
   icono: 'cotizador',
-  enConstruccion: true,
 };
