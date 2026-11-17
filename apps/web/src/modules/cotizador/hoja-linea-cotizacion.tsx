@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import type { ProductoCotizableDto } from '@capaz/shared';
+import type { AjusteDePrecio as AjusteEnviado, ProductoCotizableDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -14,10 +14,12 @@ import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
+import { AjusteDePrecio } from './ajuste-de-precio.tsx';
 import { buscarProductosParaCotizar, consultarPrecio } from './api.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
 import { soles } from './logica.ts';
 import { opcionDeProducto } from './logica-catalogo.ts';
+import { ajusteParaEnviar } from './logica-precio.ts';
 import { validarLinea, type ErroresDeLinea, type LineaDeFormulario } from './logica-cotizaciones.ts';
 
 type Props = { linea: LineaDeFormulario; esNueva: boolean; clienteId: string | null; alGuardar: (l: LineaDeFormulario) => void; alQuitar: () => void; alCerrar: () => void };
@@ -25,10 +27,11 @@ type Props = { linea: LineaDeFormulario; esNueva: boolean; clienteId: string | n
 /** El precio de una línea de lista lo calcula el servidor (`precio_consultar`); aquí solo se muestra. */
 function PrecioDeLista({ l, clienteId }: { l: LineaDeFormulario; clienteId: string | null }) {
   const cantidad = useRetardo(l.cantidadMilesimas);
+  const ajuste = JSON.parse(useRetardo(JSON.stringify(ajusteParaEnviar(l.ajuste)))) as AjusteEnviado;
   const listo = l.lista !== null && cantidad !== null && cantidad === l.cantidadMilesimas && cantidad > 0;
   const q = useQuery({
-    queryKey: [...CLAVE_COTIZADOR, 'precio-linea', l.lista?.id, clienteId, cantidad],
-    queryFn: async () => datosOError(await consultarPrecio({ listaId: l.lista?.id ?? '', cantidadMilesimas: cantidad ?? 0, ...(clienteId && { clienteId }), ajuste: { tipo: 'ninguno' } })),
+    queryKey: [...CLAVE_COTIZADOR, 'precio-linea', l.lista?.id, clienteId, cantidad, ajuste],
+    queryFn: async () => datosOError(await consultarPrecio({ listaId: l.lista?.id ?? '', cantidadMilesimas: cantidad ?? 0, ...(clienteId && { clienteId }), ajuste })),
     enabled: listo,
     retry: false,
   });
@@ -37,7 +40,7 @@ function PrecioDeLista({ l, clienteId }: { l: LineaDeFormulario; clienteId: stri
   if (q.isError) return <p role="alert" className="text-sm font-medium text-peligro">{q.error.message}</p>;
   return (
     <GrupoDeCifras etiqueta="Precio de esta línea">
-      <Cifra etiqueta="Precio (sin IGV)" valor={soles(q.data.importeCentimos)} ayuda={`Cada ${q.data.unidad}: S/ ${milesimasATexto(q.data.precioUnitarioMilesimas)}`} />
+      <Cifra etiqueta="Precio (sin IGV)" valor={soles(q.data.importeCentimos)} ayuda={`Cada ${q.data.unidad}: S/ ${milesimasATexto(q.data.precioUnitarioMilesimas)}${q.data.importeCentimos !== q.data.precioListaCentimos ? ` · Precio de lista: ${soles(q.data.precioListaCentimos)}` : ''}`} />
       <Cifra etiqueta={`Total con IGV (${q.data.igvPorcentaje} %)`} valor={soles(q.data.totalCentimos)} />
     </GrupoDeCifras>
   );
@@ -114,6 +117,7 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
           </>
         ) : null}
       </div>
+      {l.tipo === 'lista' && l.lista ? <AjusteDePrecio ajuste={l.ajuste} error={errores.ajuste} alCambiar={(ajuste) => setL((a) => ({ ...a, ajuste }))} /> : null}
       {l.tipo === 'lista' ? <PrecioDeLista l={l} clienteId={clienteId} /> : null}
       <div className="flex flex-wrap justify-end gap-2">
         {esNueva ? null : <Boton variante="peligro" onClick={alQuitar}>Quitar línea</Boton>}

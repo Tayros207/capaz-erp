@@ -17,6 +17,7 @@ import { CLAVE_COTIZADOR } from './claves.ts';
 import { enlaceDeWhatsApp } from './documento-cotizacion.ts';
 import { DIAS_POR_DEFECTO, ETIQUETA_DE_ESTADO_DE_ENLACE, leerDias, mensajeConEnlace, sePuedeGenerarEnlace, textoDeVigencia, textoDeVistas, TONO_DE_ESTADO_DE_ENLACE } from './logica-enlace.ts';
 import { mensajeDeRechazo } from './logica.ts';
+import { VistaPreviaDeWhatsApp } from './vista-previa-whatsapp.tsx';
 
 type Props = { abierto: boolean; cotizacion: CotizacionCompletaDto; alCerrar: () => void; alCambiar: () => void };
 
@@ -102,6 +103,7 @@ function Contenido({ cotizacion: c, alCambiar }: Omit<Props, 'abierto' | 'alCerr
       ) : (
         <p className="text-sm text-texto-suave">Solo se genera un enlace de una cotización emitida o enviada.</p>
       )}
+      <VistaPreviaDeWhatsApp cotizacion={c} url={url} />
       <section aria-label="Enlaces de la cotización" className="flex flex-col gap-1">
         <h3 className="font-titulo font-semibold text-texto">Enlaces generados</h3>
         {lista.isPending ? <p className="text-sm text-texto-suave">Cargando…</p> : null}

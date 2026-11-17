@@ -1,10 +1,11 @@
 import {
-  ESTADOS_DE_COTIZACION, MAXIMO_DE_LINEAS_DE_COTIZACION,
+  ESTADOS_DE_COTIZACION, MAXIMO_DE_LINEAS_DE_COTIZACION, MENSAJE_DE_MOTIVO_REQUERIDO,
   type Centimos, type CotizacionCompletaDto, type EntradaDe, type LineaDeCotizacionEntrada,
 } from '@capaz/shared';
 import type { TonoDeInsignia } from '../../shared/ui/insignia.tsx';
 import type { Opcion } from '../../shared/ui/selector-de-registro.tsx';
 import { limpiarPorcentaje } from './logica.ts';
+import { ajusteDeFormulario, ajusteParaEnviar, SIN_AJUSTE, validarAjuste, type AjusteDeFormulario } from './logica-precio.ts';
 
 // Lógica pura de las pantallas de cotizaciones: qué acciones permite cada estado, qué se muestra y cómo se
 // arman los argumentos. Los precios y totales los calcula el servidor; aquí no se calcula ninguno.
@@ -65,10 +66,13 @@ export function argumentosDeAceptar(id: string, conOpciones: boolean, elegidas: 
 }
 export const argumentosDeRechazo = (id: string, motivo: string): EntradaDe<'cotizacion_rechazar'> => (motivo.trim() === '' ? { id } : { id, motivo: motivo.trim() });
 export const argumentosDeAnulacion = (id: string, motivo: string): EntradaDe<'cotizacion_anular'> => ({ id, motivo: motivo.trim() });
-export const argumentosDeEmision = (id: string, motivoMargenBajo?: string): EntradaDe<'cotizacion_emitir'> =>
-  motivoMargenBajo && motivoMargenBajo.trim() !== '' ? { id, motivoMargenBajo: motivoMargenBajo.trim() } : { id };
-/** El servidor pide un motivo cuando el margen queda bajo el mínimo: entonces la pantalla lo pregunta y reintenta. */
-export const pideMotivoDeMargen = (codigo: string, mensaje: string): boolean => codigo === 'argumentos_invalidos' && /margen/i.test(mensaje);
+export const argumentosDeEmision = (id: string, motivoMargenBajo?: string, aceptarPreciosDeHoy = false): EntradaDe<'cotizacion_emitir'> => ({
+  id,
+  ...(motivoMargenBajo && motivoMargenBajo.trim() !== '' && { motivoMargenBajo: motivoMargenBajo.trim() }),
+  ...(aceptarPreciosDeHoy && { aceptarPreciosDeHoy: true }),
+});
+/** El servidor pide un motivo cuando el margen queda bajo el mínimo (conflicto con mensaje fijo): la pantalla lo pregunta y reintenta. */
+export const pideMotivoDeMargen = (codigo: string, mensaje: string): boolean => codigo === 'conflicto' && mensaje === MENSAJE_DE_MOTIVO_REQUERIDO;
 
 /** Posiciones que aceptó el cliente, como texto: «Opciones 1 y 3». */
 export function textoDeAceptadas(posiciones: readonly number[] | null, totalDeLineas: number): string {
@@ -90,6 +94,13 @@ const TEXTO_DE_EVENTO: Readonly<Record<EventoDeCotizacionDto['tipo'], string>> =
 export const textoDeEvento = (e: Pick<EventoDeCotizacionDto, 'tipo' | 'version' | 'motivo'> & Partial<Pick<EventoDeCotizacionDto, 'canal'>>): string =>
   `${TEXTO_DE_EVENTO[e.tipo]}${e.canal === 'enlace' ? ' desde el enlace' : ''} (versión ${e.version})${e.motivo ? `: ${e.motivo}` : ''}`;
 
+const TEXTO_DE_CANAL: Readonly<Record<EventoDeCotizacionDto['canal'], string>> = { ui: '', enlace: 'por el enlace', sistema: 'por el sistema' };
+/** Una fila del historial: qué pasó, por dónde (solo si no fue la pantalla) y el detalle (nota del cliente, opciones elegidas). */
+export function filaDeHistorial(e: Pick<EventoDeCotizacionDto, 'tipo' | 'version' | 'motivo' | 'canal' | 'detalle'>): { titulo: string; canal: string; detalle: string[] } {
+  const nota = e.motivo ? [e.tipo === 'rechazada' || e.tipo === 'anulada' ? `Motivo: ${e.motivo}` : `Nota: ${e.motivo}`] : [];
+  return { titulo: `${TEXTO_DE_EVENTO[e.tipo]} (versión ${e.version})`, canal: TEXTO_DE_CANAL[e.canal], detalle: [...(e.detalle ? [e.detalle] : []), ...nota] };
+}
+
 // --- Formulario de cotización ---
 
 export type LineaDeFormulario = {
@@ -101,6 +112,8 @@ export type LineaDeFormulario = {
   unidad: string;
   cantidadMilesimas: number | null;
   precioUnitarioMilesimas: number | null;
+  /** Solo en líneas de lista: el ajuste de esta cotización. */
+  ajuste: AjusteDeFormulario;
 };
 export type FormularioDeCotizacion = {
   titulo: string;
@@ -118,19 +131,21 @@ export type FormularioDeCotizacion = {
 export type ErroresDeFormulario = Partial<Record<'titulo' | 'lineas' | 'validezDias', string>>;
 
 export const lineaVacia = (clave: string, tipo: 'lista' | 'manual' = 'lista'): LineaDeFormulario => ({
-  clave, tipo, lista: null, productoId: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: null, precioUnitarioMilesimas: null,
+  clave, tipo, lista: null, productoId: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: null, precioUnitarioMilesimas: null, ajuste: SIN_AJUSTE,
 });
 export const FORMULARIO_VACIO: FormularioDeCotizacion = {
   titulo: '', cliente: null, conOpciones: false, lineas: [], notas: '', validezDias: '', plazoEntrega: '', formaPago: '', tolerancia: '', noIncluye: '', costo: null,
 };
 
-export type ErroresDeLinea = Partial<Record<'lista' | 'descripcion' | 'cantidad' | 'precio', string>>;
+export type ErroresDeLinea = Partial<Record<'lista' | 'descripcion' | 'cantidad' | 'precio' | 'ajuste', string>>;
 export function validarLinea(l: LineaDeFormulario): ErroresDeLinea {
   const e: ErroresDeLinea = {};
   if (l.tipo === 'lista' && !l.lista) e.lista = 'Elige el producto de tu lista.';
   if (l.tipo === 'manual' && l.descripcion.trim() === '') e.descripcion = 'Escribe la descripción.';
   if (l.cantidadMilesimas === null || l.cantidadMilesimas <= 0) e.cantidad = 'Escribe la cantidad.';
   if (l.tipo === 'manual' && (l.precioUnitarioMilesimas === null || l.precioUnitarioMilesimas <= 0)) e.precio = 'Escribe el precio, sin IGV.';
+  const ajuste = l.tipo === 'lista' ? validarAjuste(l.ajuste) : undefined;
+  if (ajuste) e.ajuste = ajuste;
   return e;
 }
 
@@ -149,7 +164,8 @@ export function validarFormulario(f: FormularioDeCotizacion): ErroresDeFormulari
 export function lineaParaEnviar(l: LineaDeFormulario): LineaDeCotizacionEntrada {
   const cantidadMilesimas = l.cantidadMilesimas ?? 0;
   if (l.tipo === 'lista') {
-    return { tipo: 'lista', listaId: l.lista?.id ?? '', cantidadMilesimas, ...(l.descripcion.trim() !== '' && { descripcion: l.descripcion.trim() }) };
+    const ajuste = ajusteParaEnviar(l.ajuste);
+    return { tipo: 'lista', listaId: l.lista?.id ?? '', cantidadMilesimas, ...(l.descripcion.trim() !== '' && { descripcion: l.descripcion.trim() }), ...(ajuste.tipo !== 'ninguno' && { ajuste }) };
   }
   return {
     tipo: 'manual', descripcion: l.descripcion.trim(), unidad: l.unidad.trim() || 'unidad', cantidadMilesimas,
@@ -211,6 +227,7 @@ export function formularioDesdeCotizacion(c: CotizacionCompletaDto, centimos: (n
       unidad: l.unidad,
       cantidadMilesimas: l.cantidadMilesimas,
       precioUnitarioMilesimas: l.precioUnitarioMilesimas,
+      ajuste: ajusteDeFormulario(l.ajuste),
     })),
     notas: c.notas ?? '',
     validezDias: c.condiciones.validezDias === null ? '' : String(c.condiciones.validezDias),

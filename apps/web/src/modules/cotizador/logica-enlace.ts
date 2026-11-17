@@ -36,3 +36,10 @@ export function leerDias(texto: string): number | undefined {
   const n = Number(texto);
   return n >= 1 && n <= 365 ? n : undefined;
 }
+
+/** Lo que se pone donde irá el enlace mientras todavía no se generó. */
+export const ENLACE_DE_EJEMPLO = '[el enlace de tu cotización]';
+
+/** La vista previa del mensaje de WhatsApp: con el enlace real si ya se generó, y si no, con una marca. */
+export const vistaPreviaDeMensaje = (plantilla: string | null | undefined, url: string | null, c: { codigo: string; clienteNombre: string | null }): string =>
+  mensajeConEnlace(plantilla, url ?? ENLACE_DE_EJEMPLO, c);

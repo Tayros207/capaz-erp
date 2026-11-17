@@ -57,7 +57,7 @@ describe('cotizacion_crear', () => {
       validaHasta: null, cantidadDeLineas: 1, creadoPor: dueno.usuarioId, costoCentimos: null, margenPct: null, emitidaEn: null, lineasAceptadas: null,
     });
     expect(r.cuerpo.datos.lineas).toEqual([
-      { posicion: 0, tipo: 'lista', productoId: null, listaId: lista.id, descripcion: LISTA_C7.nombre, unidad: 'unidad', cantidadMilesimas: 2_500_000, precioUnitarioMilesimas: 351, importeCentimos: 87_739, igvCentimos: 15_793, totalCentimos: 103_532 },
+      { posicion: 0, tipo: 'lista', productoId: null, listaId: lista.id, descripcion: LISTA_C7.nombre, unidad: 'unidad', cantidadMilesimas: 2_500_000, precioUnitarioMilesimas: 351, importeCentimos: 87_739, igvCentimos: 15_793, totalCentimos: 103_532, precioListaCentimos: 87_739, ajuste: null },
     ]);
     expect(r.cuerpo.datos.historial.map((h: any) => h.tipo)).toEqual(['creada']);
     expect(await delCotizador(A)).toEqual([]);

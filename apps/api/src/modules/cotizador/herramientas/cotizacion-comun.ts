@@ -3,7 +3,7 @@ import type { ContextoDeHerramienta, DatosDeAuditoria } from '../../../core/herr
 import { alcanceDe } from '../../../core/modulos/alcance.js';
 import type { Transaccion } from '../../../infra/database/con-empresa.js';
 import { CONFIGURACION_POR_DEFECTO } from '../domain/configuracion.js';
-import { armarLineas, entradaDeLineaGuardada, totalesDe, type LineaArmada, type Totales } from '../domain/lineas.js';
+import { armarLineas, entradaDeLineaGuardada, totalesDe, type LineaArmada, type ListaDeLinea, type Totales } from '../domain/lineas.js';
 import type { RedondeoComercial } from '../domain/precios.js';
 import { ajusteDe } from '../repositories/ajustes.repository.js';
 import { leerConfiguracion } from '../repositories/configuracion.repository.js';
@@ -29,7 +29,7 @@ export const auditarCotizacion = (_args: unknown, d: CotizacionCompletaDto | nul
 });
 
 /** La cotización con la versión pedida (por defecto la vigente), sus líneas, versiones e historial. */
-export async function responderCotizacion(tx: Transaccion, ctx: ContextoDeHerramienta, id: string, numeroDeVersion?: number): Promise<Respuesta<CotizacionCompletaDto>> {
+export async function responderCotizacion(tx: Transaccion, ctx: ContextoDeHerramienta, id: string, numeroDeVersion?: number, avisos: string[] = []): Promise<Respuesta<CotizacionCompletaDto>> {
   const c = await verCotizacion(tx, ctx, id, { alcance: alcanceDeCotizaciones(ctx) });
   if (!c) return rechazo('no_encontrado', NO_EXISTE);
   const version = await versionDe(tx, ctx, id, numeroDeVersion ?? c.versionActual);
@@ -38,10 +38,10 @@ export async function responderCotizacion(tx: Transaccion, ctx: ContextoDeHerram
   // Una cotización por partes lleva la vista de su cuadro (costos y margen solo con `cotizador:costos`).
   const vista = version.modo === 'cuadro' ? await vistaDeVersion(tx, ctx, version, veCostos(ctx)) : null;
   if (vista && !vista.ok) return rechazo('conflicto', vista.mensaje);
-  return exito(aCotizacionCompleta({ c, version, lineas, versiones, historial, veCostos: veCostos(ctx), cuadro: vista?.vista ?? null }));
+  return exito(aCotizacionCompleta({ c, version, lineas, versiones, historial, veCostos: veCostos(ctx), cuadro: vista?.vista ?? null, avisos }));
 }
 
-export type Calculo = { lineas: LineaArmada[]; totales: Totales; igvPorcentaje: number };
+export type Calculo = { lineas: LineaArmada[]; totales: Totales; igvPorcentaje: number; listas: ReadonlyMap<string, ListaDeLinea> };
 export type Fallo = { ok: false; error: { codigo: 'conflicto' | 'argumentos_invalidos' | 'no_encontrado'; mensaje: string } };
 
 /** Cliente y productos que cita una cotización. Devuelve el motivo del rechazo o `null`. */
@@ -61,9 +61,9 @@ export async function calcularLineas(tx: Transaccion, ctx: ContextoDeHerramienta
   const ajuste = clienteId ? await ajusteDe(tx, ctx, clienteId) : null;
   const r = armarLineas(entradas, { listas, ajusteClientePct: ajuste?.porcentaje ?? null, redondeo, igvPorcentaje: igv });
   if (!r.ok) return { ok: false, error: { codigo: r.codigo, mensaje: r.mensaje } };
-  return { lineas: r.lineas, totales: totalesDe(r.lineas), igvPorcentaje: igv };
+  return { lineas: r.lineas, totales: totalesDe(r.lineas), igvPorcentaje: igv, listas };
 }
 
 /** Las líneas guardadas vueltas a entrada (para recalcular las de lista cuando cambia el cliente). */
 export const entradasDe = (lineas: readonly LineaDeVersion[]): LineaDeCotizacionEntrada[] =>
-  lineas.map((l) => entradaDeLineaGuardada({ ...l, tipo: l.origenPrecio as 'lista' | 'manual' }));
+  lineas.map((l) => entradaDeLineaGuardada({ ...l, tipo: l.origenPrecio as 'lista' | 'manual', detalle: l.detalle as Record<string, unknown> | null }));

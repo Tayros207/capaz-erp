@@ -1,7 +1,7 @@
 import { exito, rechazo } from '@capaz/shared';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { CONFIGURACION_POR_DEFECTO } from '../domain/configuracion.js';
-import { cotizarDesdeLista, type RedondeoComercial } from '../domain/precios.js';
+import { cotizarDesdeLista, escalonDe, esEstimacion, tablaDePrecios, type RedondeoComercial } from '../domain/precios.js';
 import { ajusteDe } from '../repositories/ajustes.repository.js';
 import { leerConfiguracion } from '../repositories/configuracion.repository.js';
 import { verLista } from '../repositories/listas.repository.js';
@@ -15,7 +15,7 @@ export const precioConsultar = definirHerramienta('precio_consultar', {
   criticidad: 'lectura',
   ayuda: {
     titulo: 'Consultar un precio',
-    paraQueSirve: 'Calcula lo que se cobra por una cantidad: la lista, el ajuste del cliente, el redondeo comercial y el ajuste de esta cotización. Muestra importe sin IGV, IGV y total.',
+    paraQueSirve: 'Calcula lo que se cobra por una cantidad: la lista, el ajuste del cliente, el redondeo comercial y el ajuste de esta cotización. Muestra importe sin IGV, IGV y total, y la tabla de precios a las cantidades frecuentes (100 a 5.000).',
     cuandoUsarla: 'Para dar un precio al instante, sin crear ninguna cotización.',
     campos: [
       { nombre: 'listaId', queSeAnota: 'El producto de la lista.', ejemplo: ID_DE_EJEMPLO },
@@ -36,10 +36,9 @@ export const precioConsultar = definirHerramienta('precio_consultar', {
     const redondeo = (config?.redondeoComercial ?? CONFIGURACION_POR_DEFECTO.redondeoComercial) as RedondeoComercial;
     const igvPorcentaje = config?.igvPorcentaje ?? CONFIGURACION_POR_DEFECTO.igvPorcentaje;
     const ajusteCliente = args.clienteId ? await ajusteDe(tx, ctx, args.clienteId) : null;
-    const r = cotizarDesdeLista(
-      { ...lista, modoIntermedio: lista.modoIntermedio as 'curva' | 'escalon' },
-      { cantidadMilesimas: args.cantidadMilesimas, ajusteClientePct: ajusteCliente?.porcentaje ?? null, redondeo, ajuste: args.ajuste, igvPorcentaje },
-    );
+    const paraCotizar = { ...lista, modoIntermedio: lista.modoIntermedio as 'curva' | 'escalon' };
+    const base = { ajusteClientePct: ajusteCliente?.porcentaje ?? null, redondeo, igvPorcentaje };
+    const r = cotizarDesdeLista(paraCotizar, { ...base, cantidadMilesimas: args.cantidadMilesimas, ajuste: args.ajuste });
     if (!r.ok) return rechazoDe(r);
     return exito({
       listaId: lista.id,
@@ -49,6 +48,9 @@ export const precioConsultar = definirHerramienta('precio_consultar', {
       ...r.valor,
       redondeoComercial: redondeo,
       igvPorcentaje,
+      tabla: tablaDePrecios(paraCotizar, base),
+      estimacion: esEstimacion(args.cantidadMilesimas),
+      escalon: escalonDe(paraCotizar.modoIntermedio, args.cantidadMilesimas),
     });
   },
 });

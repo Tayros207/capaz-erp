@@ -1,6 +1,6 @@
 import {
   CANTIDAD_MAXIMA_DE_LISTA_MILESIMAS, CANTIDAD_MINIMA_DE_LISTA_MILESIMAS, centimosSchema, formatearSoles,
-  type Centimos, type ConfiguracionDeCotizadorDto, type EntradaDe, type LineaDeCotizacionEntrada, type ListaDePrecioDto, type ProductoCotizableDto,
+  type AjusteDePrecio, type Centimos, type ConfiguracionDeCotizadorDto, type EntradaDe, type LineaDeCotizacionEntrada, type ListaDePrecioDto, type ProductoCotizableDto,
 } from '@capaz/shared';
 import { formatearCantidad } from '../../shared/formato/milesimas.ts';
 import { lineaManualDeCatalogo } from './logica-catalogo.ts';
@@ -123,8 +123,9 @@ export const tituloDeCotizacionRapida = (lista: Pick<ListaDePrecioDto, 'nombre'>
   (cliente ? `${lista.nombre} · ${cliente}` : lista.nombre).slice(0, 200);
 
 /** Con lista (de producto o heredada) la línea es de lista y el servidor calcula el precio; con precio de catálogo, manual con su `productoId`. */
-export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null): EntradaDe<'cotizacion_crear'> {
-  const linea: LineaDeCotizacionEntrada = elegido.origen === 'lista' && elegido.listaId ? { tipo: 'lista', listaId: elegido.listaId, cantidadMilesimas } : lineaManualDeCatalogo(elegido, cantidadMilesimas);
+export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null, ajuste?: AjusteDePrecio): EntradaDe<'cotizacion_crear'> {
+  const conAjuste = ajuste && ajuste.tipo !== 'ninguno' ? { ajuste } : {};
+  const linea: LineaDeCotizacionEntrada = elegido.origen === 'lista' && elegido.listaId ? { tipo: 'lista', listaId: elegido.listaId, cantidadMilesimas, ...conAjuste } : lineaManualDeCatalogo(elegido, cantidadMilesimas);
   return {
     titulo: tituloDeCotizacionRapida({ nombre: elegido.nombre }, cliente?.nombre ?? null),
     ...(cliente && { clienteId: cliente.id }),
