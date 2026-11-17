@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { aplicarAgregarLinea, aplicarEditarLinea, aplicarQuitarLinea } from './cuadro-comandos-lineas.js';
+import { aplicarAgregarItem, aplicarEditarItem, aplicarQuitarItem } from './cuadro-comandos-items.js';
 import { aplicarColumnasAEnviar, aplicarCostoDirecto, aplicarPrecioFinal, aplicarUtilidad } from './cuadro-comandos-directo.js';
 import { aplicarImposicion, aplicarTrabajo } from './cuadro-comandos-trabajo.js';
 import { configuracionDeMotor } from './cuadro-configuracion.js';
@@ -96,6 +97,27 @@ describe('filas', () => {
   });
 });
 
+describe('ítems de la cotización y descuento', () => {
+  it('agregar da id propio, nombre único (sin tildes ni mayúsculas) y tope de 12; editar y quitar por id o por nombre', () => {
+    let c = bien(aplicarAgregarItem(nuevo(), { nombre: 'Troquelado', factor: 'acabado' }));
+    expect(c.directo?.items.map((i) => [i.id, i.nombre, i.despuesDe])).toEqual([['i2', 'Troquelado', 'acabado'], ['i1', 'Plastificado', 'acabado']].reverse());
+    expect(RECHAZO(aplicarAgregarItem(c, { nombre: 'troquelado', factor: 'acabado' }))).toBe('conflicto');
+    expect(RECHAZO(aplicarEditarItem(c, 'i1', { nombre: 'TROQUELADO' }))).toBe('conflicto');
+    c = bien(aplicarEditarItem(c, 'troquelado', { nombre: 'Troquel', fija: true }));
+    expect(c.directo?.items.find((i) => i.id === 'i2')).toMatchObject({ nombre: 'Troquel', fija: true });
+    expect(bien(aplicarQuitarItem(c, 'i1')).directo?.items.map((i) => i.id)).toEqual(['i2']);
+    expect(RECHAZO(aplicarQuitarItem(c, 'zzz'))).toBe('no_encontrado');
+    for (let i = 0; i < 11; i++) c = bien(aplicarAgregarItem(c, { nombre: `X${i}`, factor: 'diseno' }));
+    expect(RECHAZO(aplicarAgregarItem(c, { nombre: 'Otro', factor: 'diseno' }))).toBe('conflicto');
+  });
+  it('el descuento se aplica al precio sugerido y vale 0 < d < 100', () => {
+    const c = bien(aplicarCostoDirecto(nuevo(), { celdas: [{ fila: 'material', columna: '1000', importeCentimos: 10_000 }] }));
+    const sin = bien(aplicarColumnasAEnviar(c, ['1000']));
+    expect(bien(aplicarPrecioFinal(sin, { descuentoPct: '10' }, config)).precioFinal).toBe('138.47');
+    for (const d of ['0', '100']) expect(RECHAZO(aplicarPrecioFinal(sin, { descuentoPct: d }, config))).toBe('argumentos_invalidos');
+  });
+});
+
 describe('cuadro directo', () => {
   it('escribe en céntimos como texto, la fila fija vale para las tres columnas y null la deja sin nada escrito', () => {
     let c = bien(aplicarCostoDirecto(nuevo(), { fijas: [{ fila: 'diseno', fija: false }], celdas: [{ fila: 'material', columna: '1000', importeCentimos: 25_050 }] }));
@@ -110,13 +132,13 @@ describe('cuadro directo', () => {
   it('la base siempre va entre las columnas; sin base no se elige; el precio final no vale con varias', () => {
     const c = bien(aplicarColumnasAEnviar(nuevo(), ['100', '5000']));
     expect(c.directo?.enviar).toEqual(['1000', '100', '5000']);
-    expect(RECHAZO(aplicarPrecioFinal(c, 30_000, config))).toBe('conflicto');
+    expect(RECHAZO(aplicarPrecioFinal(c, { precioCentimos: 30_000 }, config))).toBe('conflicto');
     const uno = bien(aplicarColumnasAEnviar(c, ['1000']));
-    expect(bien(aplicarPrecioFinal(uno, 30_000, config)).precioFinal).toBe('300.00');
+    expect(bien(aplicarPrecioFinal(uno, { precioCentimos: 30_000 }, config)).precioFinal).toBe('300.00');
     expect(RECHAZO(aplicarColumnasAEnviar(bien(aplicarTrabajo(uno, { cantidad: '2500' })), ['1000']))).toBe('conflicto');
     const dos = { ...uno, precioFinal: '300.00' };
     expect(RECHAZO(aplicarColumnasAEnviar(dos, ['100']))).toBe('conflicto');
-    expect(bien(aplicarPrecioFinal(dos, null, config)).precioFinal).toBeNull();
+    expect(bien(aplicarPrecioFinal(dos, { precioCentimos: null }, config)).precioFinal).toBeNull();
   });
   it('la utilidad sobre la venta no llega a 100; por columna se pone y se quita; cambiar la base prueba la general', () => {
     expect(RECHAZO(aplicarUtilidad(nuevo(), { pct: '100' }))).toBe('argumentos_invalidos');

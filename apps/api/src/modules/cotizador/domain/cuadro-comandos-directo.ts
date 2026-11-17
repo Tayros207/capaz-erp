@@ -1,6 +1,8 @@
 // Comandos del cuadro de costos directo (PRP-007): celdas escritas a mano, filas fijas, columnas que se envían, utilidad y
 // precio final. Los importes llegan en céntimos y se pasan al motor como texto con el adaptador (R22).
 import { centimosAImporte } from './adaptador-de-dinero.js';
+import { CERO, CIEN, aTexto, dividir, esMayor, esMenor, multiplicar, redondear, restar } from './motor/base/dinero.js';
+import { evaluarBorrador } from './cuadro-calculo.js';
 import { FACTORES, type Factor } from './motor/base/dominio.js';
 import { utilidadSchema, type ConfiguracionDeCosteo } from './motor/costeo/tipos/cotizacion.js';
 import { COLUMNAS, columnaDe, directoVacio, type Columna, type Directo } from './motor/costeo/tipos/cuadro-directo.js';
@@ -103,8 +105,20 @@ function avisosDeMargen(cuadro: Cuadro, config: ConfiguracionDeCosteo) {
   ];
 }
 
-export function aplicarPrecioFinal(cuadro: Cuadro, precioCentimos: number | null, config: ConfiguracionDeCosteo): ResultadoDeComando {
-  if (precioCentimos === null) {
+/** Un descuento sobre el precio SUGERIDO (se negocia el precio, no el margen): `descuentoPct` mayor que 0 y menor que 100. */
+function conDescuento(cuadro: Cuadro, descuentoPct: string, config: ConfiguracionDeCosteo): string | ReturnType<typeof rechazarCuadro> {
+  if (!esMayor(descuentoPct, CERO) || !esMenor(descuentoPct, CIEN)) return rechazarCuadro('argumentos_invalidos', 'El descuento debe ser mayor que 0 y menor que 100.');
+  const e = evaluarBorrador({ ...cuadro, precioFinal: null }, config as Parameters<typeof evaluarBorrador>[1]);
+  const sugerido = e.ok ? e.valor.rige?.precioSugerido : undefined;
+  if (!e.ok) return rechazarCuadro('argumentos_invalidos', e.error.mensaje);
+  if (!sugerido || !esMayor(sugerido, CERO)) return rechazarCuadro('conflicto', 'Todavía no hay un precio sugerido sobre el que aplicar un descuento.');
+  return aTexto(redondear(dividir(multiplicar(sugerido, restar(CIEN, descuentoPct)), CIEN), 2), 2);
+}
+
+export type DatosDePrecioFinal = { precioCentimos?: number | null | undefined; descuentoPct?: string | undefined };
+
+export function aplicarPrecioFinal(cuadro: Cuadro, a: DatosDePrecioFinal, config: ConfiguracionDeCosteo): ResultadoDeComando {
+  if (a.precioCentimos === null) {
     cuadro.precioFinal = null;
     return { ok: true, cuadro, avisos: [] };
   }
@@ -112,6 +126,12 @@ export function aplicarPrecioFinal(cuadro: Cuadro, precioCentimos: number | null
   if ((cuadro.directo?.enviar.length ?? 0) > 1) {
     return rechazarCuadro('conflicto', 'Se están enviando varias cantidades: el precio final a mano vale para una sola. Deja una sola cantidad para enviar y vuelve a intentarlo.');
   }
-  cuadro.precioFinal = centimosAImporte(precioCentimos);
+  if (a.descuentoPct !== undefined) {
+    const p = conDescuento(cuadro, a.descuentoPct, config);
+    if (typeof p !== 'string') return p;
+    cuadro.precioFinal = p;
+  } else {
+    cuadro.precioFinal = centimosAImporte(a.precioCentimos as number);
+  }
   return { ok: true, cuadro, avisos: avisosDeMargen(cuadro, config) };
 }

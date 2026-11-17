@@ -46,7 +46,7 @@ export function lineasDeCuadro(cuadro: Cuadro, enviadas: readonly CantidadEnviad
       importeCentimos,
       igvCentimos,
       totalCentimos: importeCentimos + igvCentimos,
-      detalle: { origen: 'cuadro', cantidad, margenPct: calculo.margenPct, semaforo: calculo.semaforo },
+      detalle: { origen: 'cuadro', opcion: cantidad, cantidad, margenPct: calculo.margenPct, semaforo: calculo.semaforo },
     };
   });
 }

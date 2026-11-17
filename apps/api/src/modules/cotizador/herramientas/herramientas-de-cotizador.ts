@@ -17,6 +17,7 @@ import { precioConsultar } from './precio-consultar.js';
 import { cotizadorProductosBuscar } from './productos-buscar.js';
 import { cuadroFijarCostoDirecto, cuadroFijarColumnasAEnviar, cuadroFijarPrecioFinal, cuadroFijarUtilidad } from './cuadro-costos.js';
 import { cuadroCalcular, cuadroIniciar, cuadroVer } from './cuadro-iniciar.js';
+import { cuadroItemAgregar, cuadroItemEditar, cuadroItemQuitar } from './cuadro-items.js';
 import { cuadroLineaAgregar, cuadroLineaEditar, cuadroLineaQuitar } from './cuadro-lineas.js';
 import { cuadroGenerarReferencias, cuadroGuardarReferencias } from './cuadro-referencias.js';
 import { cuadroFijarImposicion, cuadroFijarTrabajo } from './cuadro-trabajo.js';
@@ -56,7 +57,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   // Cuadro por partes (cot-s4).
   cuadroIniciar, cuadroVer, cuadroFijarTrabajo, cuadroFijarImposicion, cuadroLineaAgregar, cuadroLineaEditar, cuadroLineaQuitar,
   cuadroFijarCostoDirecto, cuadroFijarColumnasAEnviar, cuadroFijarUtilidad, cuadroFijarPrecioFinal, cuadroCalcular,
-  cuadroGenerarReferencias, cuadroGuardarReferencias,
+  cuadroItemAgregar, cuadroItemEditar, cuadroItemQuitar, cuadroGenerarReferencias, cuadroGuardarReferencias,
 ] as const;
 
 /** Todo lo que el módulo `cotizador` aporta al servidor en esta parte: herramientas (sin consumidores ni fuentes de tiempo). */

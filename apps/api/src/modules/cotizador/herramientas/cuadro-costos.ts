@@ -70,18 +70,18 @@ export const cuadroFijarUtilidad = definirHerramienta('cuadro_fijar_utilidad', {
 
 export const cuadroFijarPrecioFinal = definirHerramienta('cuadro_fijar_precio_final', {
   modulo: MODULO,
-  permiso: 'cotizador:editar',
+  permiso: 'cotizador:costos',
   criticidad: 'normal',
   ayuda: {
     titulo: 'Precio final',
     paraQueSirve: 'Fija el precio que se le dirá al cliente (sin IGV, en céntimos) en lugar del sugerido, o con null vuelve al sugerido. Se negocia el precio, no el margen: el recibo muestra el margen resultante y, si queda bajo el mínimo, avisa. Vale para una sola cantidad.',
     cuandoUsarla: 'Cuando el cliente pide rebaja o el precio se redondea distinto del sugerido.',
-    campos: [ID_DE_COTIZACION, { nombre: 'precioCentimos', queSeAnota: 'El precio del lote sin IGV en céntimos, o null para volver al sugerido.', ejemplo: '30000' }],
+    campos: [ID_DE_COTIZACION, { nombre: 'precioCentimos', queSeAnota: 'El precio del lote sin IGV en céntimos, o null para volver al sugerido.', ejemplo: '30000' }, { nombre: 'descuentoPct', queSeAnota: 'En lugar del precio: un descuento (mayor que 0 y menor que 100) sobre el precio sugerido.', ejemplo: '10' }],
     ejemploTecleado: 'precio final 300',
     ejemploHablado: 'déjalo en trescientos',
     erroresComunes: ['Fijarlo mientras se envían varias cantidades: vale para una sola.', 'Bajar el precio del mínimo sin pensar en el motivo: al emitir en rojo se exige uno.', 'Escribirlo en soles con decimales: va en céntimos.'],
     relacionadas: ['cuadro_fijar_utilidad', 'cuadro_calcular', 'cuadro_fijar_columnas_a_enviar', 'cotizacion_emitir'],
   },
   auditar: auditarCuadro,
-  ejecutar: (args, ctx, tx) => editarCuadro(tx, ctx, args.id, (cuadro, { config }) => aplicarPrecioFinal(cuadro, args.precioCentimos, config)),
+  ejecutar: (args, ctx, tx) => editarCuadro(tx, ctx, args.id, (cuadro, { config }) => aplicarPrecioFinal(cuadro, args, config)),
 });

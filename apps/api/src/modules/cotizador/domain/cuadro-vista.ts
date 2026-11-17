@@ -128,6 +128,7 @@ export function armarRecibo(e: CuadroEvaluado, meta: MetaDeVista, vista: VistaDe
     comercial: vista.comercial,
     pliegos: pliegosDe(e.calculado.imposicion),
     faltantes: e.calculado.faltantes,
+    directo: vista.directo,
     ...(meta.verCostos ? { interno: vista.interno?.costos ?? null } : {}),
   };
 }

@@ -367,3 +367,62 @@ describe('guardar referencias', () => {
     expect(codigoDe(await dueno.herramienta('cuadro_guardar_referencias', { id, listaId: lista.id, nombre: 'Y', extra: 1 }))).toBe('argumentos_invalidos');
   });
 });
+
+describe('ítems de la cotización, descuento y alta automática en la lista', () => {
+  it('agregar, editar y quitar ítems; escribir su costo con su id; guardarEnTaller crea el ítem de la empresa solo con permiso y si el nombre está libre', async () => {
+    const id = await armarCasoDeReferencia(dueno, taller, cliente, 'Ítems', '1000');
+    const a = await llamar('cuadro_item_agregar', { id, nombre: 'Troquelado', factor: 'acabado', guardarEnTaller: true });
+    expect(a.linea).toMatchObject({ id: 'i3', nombre: 'Troquelado' });
+    expect((await datosDe(dueno, 'items_cuadro_listar')).items.map((i: any) => i.nombre)).toContain('Troquelado');
+    const repetido = await llamar('cuadro_item_agregar', { id, nombre: 'Encolado extra', factor: 'acabado', guardarEnTaller: true });
+    expect(repetido.avisos).toEqual([]);
+    const sinTaller = await llamar('cuadro_item_agregar', { id, nombre: 'Plegado', factor: 'acabado', despuesDe: 'impresion' });
+    expect(sinTaller.cuadro.directo.interno.filas.find((f: any) => f.clave === 'i5')).toMatchObject({ nombre: 'Plegado', esItem: true });
+    expect(codigoDe(await dueno.herramienta('cuadro_item_agregar', { id, nombre: 'troquelado', factor: 'acabado' }))).toBe('conflicto');
+    await datosDe(dueno, 'cuadro_fijar_costo_directo', { id, celdas: [{ fila: 'i3', columna: '1000', importeCentimos: 2_000 }] });
+    const e = await datosDe(dueno, 'cuadro_item_editar', { id, item: 'troquelado', nombre: 'Troquel', fija: true });
+    expect(e.cuadro.directo.interno.filas.find((f: any) => f.clave === 'i3')).toMatchObject({ nombre: 'Troquel', fija: true });
+    const q = await datosDe(dueno, 'cuadro_item_quitar', { id, item: 'i3' });
+    expect(q.cuadro.directo.interno.filas.some((f: any) => f.clave === 'i3')).toBe(false);
+    for (const mal of [{ item: 'i1' }, { item: 'zzz', nombre: 'x' }]) expect(codigoDe(await dueno.herramienta('cuadro_item_editar', { id, ...mal }))).toMatch(/argumentos_invalidos|no_encontrado/);
+    expect(codigoDe(await ajeno.herramienta('cuadro_item_quitar', { id, item: 'i1' }))).toBe('no_encontrado');
+    const otro = await iniciar();
+    const propios = (await ver(otro)).directo.interno.filas.filter((f: any) => f.esItem).length;
+    for (let i = propios; i < 12; i++) await datosDe(dueno, 'cuadro_item_agregar', { id: otro, nombre: `Ítem ${i}`, factor: 'indirectos' });
+    expect(codigoDe(await dueno.herramienta('cuadro_item_agregar', { id: otro, nombre: 'Ítem 13', factor: 'indirectos' }))).toBe('conflicto');
+  });
+
+  it('descuentoPct baja el precio sobre el sugerido; precio y descuento a la vez o fuera de rango se rechazan', async () => {
+    const id = await armarCasoDeReferencia(dueno, taller, cliente, 'Descuento');
+    const r = await datosDe(dueno, 'cuadro_fijar_precio_final', { id, descuentoPct: '10' });
+    expect(r.cuadro.precioFinalCentimos).toBe(31_174); // 346.38 × 0.90 = 311.742
+    for (const mal of [{ descuentoPct: '10', precioCentimos: 100 }, { descuentoPct: '0' }, { descuentoPct: '100' }]) expect(codigoDe(await dueno.herramienta('cuadro_fijar_precio_final', { id, ...mal })), JSON.stringify(mal)).toBe('argumentos_invalidos');
+  });
+
+  it('cuadro_calcular devuelve los orígenes de celda, los motivos de «no se puede calcular» y la coherencia A/B', async () => {
+    const id = await iniciar({ plantilla: 'volantes' });
+    const r = await datosDe(dueno, 'cuadro_calcular', { id });
+    expect(r.directo.columnas['1000']).toMatchObject({ completa: false, motivo: expect.stringMatching(/papel aún no está calculado/) });
+    expect(r.directo.interno.filas.find((f: any) => f.clave === 'material').celdas['1000'].origen).toBe('no_calculable');
+    const caso = await armarCasoDeReferencia(dueno, taller, cliente, 'Orígenes', '1000');
+    const c = await datosDe(dueno, 'cuadro_calcular', { id: caso });
+    expect(c.directo.coherencia).toEqual({ bloqueos: [], avisos: expect.any(Array) });
+    expect(c.directo.interno.filas.find((f: any) => f.clave === 'planchas').celdas['1000'].origen).toBe('detalle');
+  });
+
+  it('al emitir se agrega solo a la lista de precios si no hay una activa con ese nombre; si existe no se toca; cada línea lleva su opción en el detalle', async () => {
+    const listas = async () => (await datosDe(dueno, 'listas_precio_listar', { buscar: 'alta automática' })).items as any[];
+    const id = await armarCasoDeReferencia(dueno, taller, cliente, 'Alta', '1000');
+    await datosDe(dueno, 'cuadro_fijar_trabajo', { id, producto: 'Alta automática' });
+    expect(await listas()).toHaveLength(0);
+    await emitir(id);
+    const [lista] = await listas();
+    expect(lista).toMatchObject({ nombre: 'Alta automática', productoId: null });
+    const editada = await datosDe(dueno, 'lista_precio_editar', { id: lista.id, p100Centimos: lista.p100Centimos + 1 }).catch(async () => (await confirmando(dueno, 'lista_precio_editar', { id: lista.id, p100Centimos: lista.p100Centimos + 1 })).respuesta.cuerpo.datos);
+    const otra = await armarCasoDeReferencia(dueno, taller, cliente, 'Alta 2', '1000');
+    await datosDe(dueno, 'cuadro_fijar_trabajo', { id: otra, producto: 'alta AUTOMÁTICA' });
+    await emitir(otra);
+    expect(await listas()).toHaveLength(1);
+    expect((await listas())[0].p100Centimos).toBe(editada.p100Centimos);
+  });
+});

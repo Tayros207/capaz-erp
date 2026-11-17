@@ -17,6 +17,7 @@ import {
   porcentajeDeCuadro,
   precioComercialSchema,
   costosDelPrecioSchema,
+  directoDelCuadroSchema,
   vistaDelCuadroSchema,
 } from './cotizador-cuadro-vista.js';
 
@@ -122,7 +123,22 @@ const utilidadSchema = z
   .refine((a) => a.pct !== undefined || a.base !== undefined, { error: 'Indica el porcentaje, la base, o los dos.' })
   .refine((a) => a.columna === undefined || (a.pct !== undefined && a.base === undefined), { error: 'Para una columna indica solo el porcentaje (o null para quitarlo): la base es una por cotización.' })
   .refine((a) => a.columna !== undefined || a.pct !== null, { error: 'La utilidad general no se puede quitar: indica un porcentaje.' });
-const precioFinalSchema = z.strictObject({ id: z.uuid(), precioCentimos: centimosPositivos.nullable() });
+const precioFinalSchema = z
+  .strictObject({ id: z.uuid(), precioCentimos: centimosPositivos.nullable().optional(), descuentoPct: porcentajeDeCuadro.optional() })
+  .refine((a) => (a.precioCentimos !== undefined) !== (a.descuentoPct !== undefined), { error: 'Indica una sola cosa: el precio (o null para quitarlo) o un descuento.' });
+const itemBase = { nombre: texto(60).min(1, { error: 'Falta el nombre del ítem.' }), factor: z.enum(FACTORES_DEL_CUADRO), despuesDe: z.enum(FACTORES_DEL_CUADRO), fija: z.boolean() };
+const itemAgregarSchema = z.strictObject({
+  id: z.uuid(),
+  ...itemBase,
+  despuesDe: itemBase.despuesDe.optional(),
+  fija: itemBase.fija.default(false),
+  /** También lo guarda en el cuadro de la empresa (taller) para que nazca en las cotizaciones nuevas; pide `cotizador:configurar`. */
+  guardarEnTaller: z.boolean().default(false),
+});
+const itemEditarSchema = z
+  .strictObject({ id: z.uuid(), item: texto(64).min(1), ...z.strictObject(itemBase).partial().shape })
+  .refine((a) => a.nombre !== undefined || a.factor !== undefined || a.despuesDe !== undefined || a.fija !== undefined, SIN_DATOS);
+const itemQuitarSchema = z.strictObject({ id: z.uuid(), item: texto(64).min(1) });
 
 /** El recibo de costos: lo comercial lo ve cualquiera; lo interno solo con `cotizador:costos`. */
 export const reciboDelCuadroSchema = z.strictObject({
@@ -134,6 +150,8 @@ export const reciboDelCuadroSchema = z.strictObject({
   /** El desglose de pliegos (poses, pliegos de máquina y pliegos madre); `null` si la imposición está incompleta. */
   pliegos: pliegosDelCuadroSchema.nullable(),
   faltantes: z.array(z.string()),
+  /** Las tres columnas con sus orígenes de celda (solo con costos), motivos de «no se puede calcular» y la coherencia A/B. */
+  directo: directoDelCuadroSchema,
   interno: costosDelPrecioSchema.nullable().optional(),
 });
 export type ReciboDelCuadroDto = z.infer<typeof reciboDelCuadroSchema>;
@@ -170,6 +188,9 @@ export const contratosDeCotizadorCuadro = {
   cuadro_fijar_columnas_a_enviar: contrato(columnasSchema, salidaDelCuadroSchema),
   cuadro_fijar_utilidad: contrato(utilidadSchema, salidaDelCuadroSchema),
   cuadro_fijar_precio_final: contrato(precioFinalSchema, salidaDelCuadroSchema),
+  cuadro_item_agregar: contrato(itemAgregarSchema, salidaDelCuadroSchema),
+  cuadro_item_editar: contrato(itemEditarSchema, salidaDelCuadroSchema),
+  cuadro_item_quitar: contrato(itemQuitarSchema, salidaDelCuadroSchema),
   cuadro_calcular: contrato(soloId, reciboDelCuadroSchema),
   cuadro_generar_referencias: contrato(soloId, referenciasGeneradasSchema),
   cuadro_guardar_referencias: contrato(guardarReferenciasSchema, listaDePrecioSchema),
