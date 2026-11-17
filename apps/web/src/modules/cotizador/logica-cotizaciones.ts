@@ -49,9 +49,23 @@ export function accionesVisibles(estado: EstadoDeCotizacion, permisos: PermisosD
 /** Se puede imprimir o enviar por WhatsApp una cotización que ya salió del borrador y no está anulada. */
 export const sePuedeImprimir = (estado: EstadoDeCotizacion): boolean => estado !== 'borrador' && estado !== 'anulada';
 
+// --- Vencida (derivada, solo en pantalla: el servidor no la guarda) ---
+
+/** El día de hoy en Lima, «2026-11-17», para comparar con `validaHasta`. */
+export const hoyEnLima = (ahora: Date = new Date()): string => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(ahora);
+
+/** Una cotización emitida o enviada cuya validez ya pasó. El mismo día de `validaHasta` todavía vale. */
+export const estaVencida = (c: { estado: EstadoDeCotizacion; validaHasta: string | null }, hoy: string = hoyEnLima()): boolean =>
+  (c.estado === 'emitida' || c.estado === 'enviada') && c.validaHasta !== null && c.validaHasta < hoy;
+
+/** «Reenviar» solo tiene sentido para lo que ya salió al cliente y sigue abierto. */
+export const sePuedeReenviar = (estado: EstadoDeCotizacion): boolean => estado === 'emitida' || estado === 'enviada';
+
 // --- Rutas ---
 
 export const rutaDeFicha = (id: string): string => `/m/cotizador/cotizaciones/${id}`;
+/** La ficha abre sola la hoja del enlace con `?enlace=1` (pendiente de la ficha: ver el informe del carril cot-p5). */
+export const rutaDeReenvio = (id: string): string => `${rutaDeFicha(id)}?enlace=1`;
 export const rutaDeDocumento = (id: string): string => `/m/cotizador/cotizaciones/${id}/documento`;
 
 // --- Aceptar, rechazar, emitir, anular ---

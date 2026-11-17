@@ -5,6 +5,7 @@ import { definirHerramienta, type ContextoDeHerramienta } from '../../../core/he
 import type { Transaccion } from '../../../infra/database/con-empresa.js';
 import { generarReferenciasDeCuadro } from '../domain/cuadro-referencias.js';
 import { evaluarReferencias, normalizarNombre, resumenDeCambioDePrecios, type EstadoDePrecios } from '../domain/lista.js';
+import { fijarOrigenDeLista } from '../repositories/listas-origen.repository.js';
 import { asegurarConfiguracion } from '../repositories/configuracion.repository.js';
 import { crearLista, editarLista, listaActivaConNombre, listaActivaDeProducto, productoVivo, verLista, type CambiosDeLista, type ListaDePrecio } from '../repositories/listas.repository.js';
 import { MODULO } from './comun.js';
@@ -56,6 +57,8 @@ type DatosDeGuardado = {
   antes: EstadoDePrecios | null;
   despues: EstadoDePrecios;
   aConfirmado: boolean;
+  /** La cotización por partes (y su versión) de donde salen los precios. */
+  origen: { cotizacionId: string; version: number };
 };
 
 const estadoDe = (l: ListaDePrecio): EstadoDePrecios => ({ p100Centimos: l.p100Centimos, p1000Centimos: l.p1000Centimos, p5000Centimos: l.p5000Centimos, modoIntermedio: l.modoIntermedio as EstadoDePrecios['modoIntermedio'], precioMinimoCentimos: l.precioMinimoCentimos });
@@ -99,7 +102,7 @@ async function prepararGuardado(tx: Transaccion, ctx: ContextoDeHerramienta, arg
   if (!v.ok) return rechazo(v.codigo, v.mensaje);
   const otra = await listaActivaConNombre(tx, ctx, normalizarNombre(nombre), actual?.id);
   if (otra) return nombreRepetido(otra);
-  return { ok: true, datos: { actual, nombre, unidad: destino.unidad ?? actual?.unidad ?? 'unidad', productoId: args.productoId ?? actual?.productoId ?? null, antes: actual ? estadoDe(actual) : null, despues, aConfirmado: v.aConfirmado } };
+  return { ok: true, datos: { actual, nombre, unidad: destino.unidad ?? actual?.unidad ?? 'unidad', productoId: args.productoId ?? actual?.productoId ?? null, antes: actual ? estadoDe(actual) : null, despues, aConfirmado: v.aConfirmado, origen: { cotizacionId: c.c.id, version: c.c.versionActual } } };
 }
 
 const soles = (c: number) => formatearSoles(c);
@@ -142,13 +145,20 @@ export const cuadroGuardarReferencias = definirHerramienta('cuadro_guardar_refer
     await asegurarConfiguracion(tx, ctx);
     const p = await prepararGuardado(tx, ctx, args);
     if (!p.ok) return p;
-    const { actual, nombre, unidad, productoId, despues, aConfirmado } = p.datos;
+    const { actual, nombre, unidad, productoId, despues, aConfirmado, origen } = p.datos;
     const hoy = await hoyDeLaEmpresa(tx);
+    let lista: ListaDePrecio;
     if (actual) {
       const cambios: CambiosDeLista = { ...despues, aConfirmado, preciosFijadosEn: new Date(), ...(args.productoId ? { productoId: args.productoId } : {}) };
-      return exito(await listaADto(tx, ctx, await editarLista(tx, ctx, actual.id, cambios), hoy));
+      lista = await editarLista(tx, ctx, actual.id, cambios);
+    } else {
+      const r = await crearLista(tx, ctx, { nombre, nombreNormalizado: normalizarNombre(nombre), unidad, productoId, ...despues, aConfirmado });
+      if (!r.creada) return nombreRepetido(r.existente);
+      lista = r.lista;
     }
-    const r = await crearLista(tx, ctx, { nombre, nombreNormalizado: normalizarNombre(nombre), unidad, productoId, ...despues, aConfirmado });
-    return r.creada ? exito(await listaADto(tx, ctx, r.lista, hoy)) : nombreRepetido(r.existente);
+    // Misma transacción: la lista y su origen se guardan juntos o no se guarda nada.
+    if (!(await fijarOrigenDeLista(tx, ctx, lista.id, origen))) return rechazo('error_interno', 'No se pudo anotar de qué cotización salen los precios.');
+    const guardada = await verLista(tx, ctx, lista.id);
+    return guardada ? exito(await listaADto(tx, ctx, guardada, hoy)) : rechazo('error_interno', 'No se pudo leer la lista guardada.');
   },
 });

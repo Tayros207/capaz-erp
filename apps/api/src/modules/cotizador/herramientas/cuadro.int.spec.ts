@@ -356,6 +356,11 @@ describe('guardar referencias', () => {
     const id = await armarCasoDeReferencia(dueno, taller, cliente, 'Refs', '1000');
     const lista = (await confirmando(dueno, 'cuadro_guardar_referencias', { id, nombre: 'Volantes del cuadro' })).respuesta.cuerpo.datos;
     expect(lista).toMatchObject({ nombre: 'Volantes del cuadro', productoId: null });
+    // El origen se anota en la misma transacción: la respuesta y lista_precio_ver devuelven la cotización y su código.
+    const origen = (await datosDe(dueno, 'lista_precio_ver', { id: lista.id })).origen;
+    expect(origen).toMatchObject({ cotizacionId: id, version: 1 });
+    expect(origen.codigo).toEqual(expect.any(String));
+    expect(lista.origen).toEqual(origen);
     expect(codigoDe((await confirmando(dueno, 'cuadro_guardar_referencias', { id, nombre: 'volantes DEL cuadro' })).respuesta)).toBe('conflicto');
     const otraLista = await datosDe(dueno, 'lista_precio_crear', { nombre: 'Otra', p100Centimos: 100, p1000Centimos: 500, p5000Centimos: 2_000 });
     const actualizada = (await confirmando(dueno, 'cuadro_guardar_referencias', { id, listaId: lista.id, nombre: 'Volantes del cuadro' })).respuesta.cuerpo.datos;
