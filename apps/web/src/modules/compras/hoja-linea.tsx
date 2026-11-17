@@ -4,6 +4,7 @@ import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Campo } from '../../shared/ui/campo.tsx';
+import { CampoUnidad } from '../../shared/ui/campo-unidad.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
 import { CampoPrecio } from '../../shared/ui/campo-precio.tsx';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
@@ -21,7 +22,7 @@ function CamposDeLinea({ l, errores, cambiar }: { l: LineaDeFormulario; errores:
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <CampoCantidad etiqueta="Cantidad" valor={l.cantidadMilesimas} unidad={l.unidad} error={errores.cantidad} alCambiar={(v) => cambiar((a) => ({ ...a, cantidadMilesimas: v }))} />
-      <Campo etiqueta="Unidad" value={l.unidad} maxLength={20} onChange={(e) => cambiar((a) => ({ ...a, unidad: e.target.value }))} />
+      <CampoUnidad valor={l.unidad} alCambiar={(unidad) => cambiar((a) => ({ ...a, unidad }))} />
       <CampoPrecio etiqueta="Costo unitario" valor={l.costoUnitarioMilesimas} error={errores.costo} ayuda="Lo que cobra el proveedor, con IGV incluido." alCambiar={(v) => cambiar((a) => ({ ...a, costoUnitarioMilesimas: v }))} />
       <CampoSelect etiqueta="IGV" value={l.afectoIgv ? 'si' : 'no'} onChange={(e) => cambiar((a) => ({ ...a, afectoIgv: e.target.value === 'si' }))}>
         <option value="si">Afecto (el costo lo incluye)</option>

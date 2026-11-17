@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { ArticuloDto } from '@capaz/shared';
 import { Boton } from '../../shared/ui/boton.tsx';
-import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
+import { CampoUnidad } from '../../shared/ui/campo-unidad.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
@@ -55,7 +55,7 @@ function Contenido({ articulo, alCerrar, alActivar }: Omit<Props, 'abierto'>) {
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <CampoCantidad etiqueta="Mínimo (opcional)" unidad={form.unidad || articulo?.unidad} valor={form.minimo} alCambiar={(minimo) => cambiar({ minimo })} ayuda="Por debajo de esta cantidad, el artículo aparece en «Bajo mínimo»." />
-        <Campo etiqueta="Unidad" maxLength={20} placeholder="La del producto" value={form.unidad} onChange={(e) => cambiar({ unidad: e.target.value })} error={errores.unidad} />
+        <CampoUnidad textoVacio="La del producto" valor={form.unidad} alCambiar={(unidad) => cambiar({ unidad })} error={errores.unidad} />
       </div>
       {fallo ? <p role="alert" className="text-sm font-medium text-peligro">{fallo}</p> : null}
       <div className="flex justify-end gap-2">

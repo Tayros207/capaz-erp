@@ -121,9 +121,9 @@ describe('el día se corta en la zona de la empresa', () => {
   afterEach(() => vi.useRealTimers());
 
   it('a las 23:30 de Lima todavía es «hoy» de Lima, aunque en UTC ya sea mañana', async () => {
-    // Próximas 04:30 UTC = 23:30 del día anterior en Lima (UTC−5).
+    // Últimas 04:30 UTC = 23:30 del día anterior en Lima (UTC−5). Hacia atrás: con la sesión de 4 h, adelantar el reloj la vencería.
     const utc = new Date();
-    utc.setUTCDate(utc.getUTCDate() + 1);
+    utc.setUTCDate(utc.getUTCDate() - 1);
     utc.setUTCHours(4, 30, 0, 0);
     const diaUtc = utc.toISOString().slice(0, 10);
     const diaLima = diaMas(-1, diaUtc);

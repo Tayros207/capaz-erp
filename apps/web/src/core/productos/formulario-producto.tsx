@@ -1,5 +1,6 @@
 import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
+import { CampoUnidad } from '../../shared/ui/campo-unidad.tsx';
 import { ETIQUETA_DE_TIPO, type ErroresDeProducto, type FormularioDeProducto, type TipoDeProducto } from './logica.ts';
 
 type Props = {
@@ -22,7 +23,7 @@ export function FormularioProducto({ valor, errores, alCambiar }: Props) {
       </CampoSelect>
       <Campo etiqueta="Código" autoComplete="off" value={valor.codigo} onChange={(e) => alCambiar({ codigo: e.target.value })} />
       <Campo etiqueta="Precio unitario (S/)" inputMode="decimal" autoComplete="off" value={valor.precio} error={errores.precio} ayuda="Hasta tres decimales." onChange={(e) => alCambiar({ precio: e.target.value })} />
-      <Campo etiqueta="Unidad" autoComplete="off" value={valor.unidad} ayuda="Por ejemplo: UND, m, kg." onChange={(e) => alCambiar({ unidad: e.target.value })} />
+      <CampoUnidad valor={valor.unidad || 'UND'} alCambiar={(unidad) => alCambiar({ unidad })} />
       <CampoSelect etiqueta="Afecto a IGV" value={valor.afectoIgv ? 'si' : 'no'} onChange={(e) => alCambiar({ afectoIgv: e.target.value === 'si' })}>
         <option value="si">Sí</option>
         <option value="no">No</option>

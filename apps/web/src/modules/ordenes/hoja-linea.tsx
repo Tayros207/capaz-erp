@@ -6,6 +6,7 @@ import { formatearSoles } from '../../shared/formato/soles.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
+import { CampoUnidad } from '../../shared/ui/campo-unidad.tsx';
 import { CampoPrecio } from '../../shared/ui/campo-precio.tsx';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
 import { Cifra } from '../../shared/ui/cifra.tsx';
@@ -56,7 +57,7 @@ function Contenido({ linea, esNueva, alGuardar, alQuitar, alCerrar }: Props) {
       <Campo etiqueta="Descripción" value={l.descripcion} maxLength={300} error={errores.descripcion} onChange={(e) => setL((a) => ({ ...a, descripcion: e.target.value }))} />
       <div className="grid gap-4 sm:grid-cols-2">
         <CampoCantidad etiqueta="Cantidad" valor={l.cantidadMilesimas} unidad={l.unidad} error={errores.cantidad} alCambiar={(v) => setL((a) => ({ ...a, cantidadMilesimas: v }))} />
-        <Campo etiqueta="Unidad" value={l.unidad} maxLength={20} onChange={(e) => setL((a) => ({ ...a, unidad: e.target.value }))} />
+        <CampoUnidad valor={l.unidad} alCambiar={(unidad) => setL((a) => ({ ...a, unidad }))} />
         <CampoPrecio etiqueta="Precio unitario" valor={l.precioUnitarioMilesimas} error={errores.precio} ayuda="Con IGV incluido." alCambiar={(v) => setL((a) => ({ ...a, precioUnitarioMilesimas: v }))} />
         <CampoSelect etiqueta="IGV" value={l.afectoIgv ? 'si' : 'no'} onChange={(e) => setL((a) => ({ ...a, afectoIgv: e.target.value === 'si' }))}>
           <option value="si">Afecto (el precio lo incluye)</option>

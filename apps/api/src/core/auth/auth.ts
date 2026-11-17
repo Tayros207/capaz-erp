@@ -15,6 +15,10 @@ import * as esquema from '../../db/esquema/auth.js';
 
 export const AUTH = Symbol('AUTH');
 
+/** Vida de la sesión: 4 horas. Mientras se usa, se renueva cada 30 min (vence a las 4 h sin actividad). */
+const VIDA_DE_SESION_S = 4 * 60 * 60;
+const RENOVACION_DE_SESION_S = 30 * 60;
+
 export function crearAuth(db: DatabaseService, config: Config) {
   const drizzleAuth = drizzle(db.auth);
   const intentos = config.INTENTOS_DE_ACCESO;
@@ -32,7 +36,7 @@ export function crearAuth(db: DatabaseService, config: Config) {
       maxPasswordLength: 128,
       revokeSessionsOnPasswordReset: true,
     },
-    session: { cookieCache: { enabled: true, maxAge: 5 * 60 } },
+    session: { expiresIn: VIDA_DE_SESION_S, updateAge: RENOVACION_DE_SESION_S, cookieCache: { enabled: true, maxAge: 5 * 60 } },
     rateLimit: {
       enabled: true,
       storage: 'database',
