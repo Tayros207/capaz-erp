@@ -83,7 +83,7 @@ describe('cotizacion.aceptada', () => {
     const propios = (await borradores()).filter((b) => b.origenRef === `cotizacion:${id}`);
     expect(propios).toHaveLength(1);
     expect(propios[0].resumen).toBe('Crear el pedido de la cotización COT-2026-0001 por S/ 408.73');
-    expect(propios[0].args.notas).toBe('Cotización COT-2026-0001 v1');
+    expect(propios[0].args.notas).toBe('Cotización COT-2026-0001');
 
     // Un segundo evento con la misma cotización, antes de aprobar el primero, deja otro borrador.
     await emitir(A, 'cotizacion.aceptada', aceptada(id, 408_730));

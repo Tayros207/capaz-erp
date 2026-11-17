@@ -20,7 +20,7 @@ export const ordenesCotizacionAceptada: Consumidor = {
     const carga = EVENTOS['cotizacion.aceptada'].parse(e.carga);
     if (await pedidoPorOrigen(tx, ctx, ORIGEN_COTIZACION, carga.id)) return;
     const igvAjeno = !IGV_ADMITIDOS.includes(carga.igvPorcentaje);
-    const nota = `Cotización ${carga.codigo} v${carga.version}`;
+    const nota = `Cotización ${carga.codigo}`; // el código ya lleva «vN» desde la segunda versión
     await proponerBorrador(tx, {
       herramienta: 'pedido_crear',
       args: {
