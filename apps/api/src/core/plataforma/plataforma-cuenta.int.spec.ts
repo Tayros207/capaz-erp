@@ -124,7 +124,7 @@ describe('módulos con nombre (A5)', () => {
   it('lista el catálogo con nombre, familia y bandera de construcción', async () => {
     const items = (await plat(operador, 'plataforma_modulos_listar', {})).cuerpo.datos.items as any[];
     const cot = items.find((m) => m.codigo === 'cotizador');
-    expect(cot).toMatchObject({ enConstruccion: true, nombre: expect.any(String), familia: expect.any(String), descripcion: expect.any(String) });
+    expect(cot).toMatchObject({ enConstruccion: false, nombre: expect.any(String), familia: expect.any(String), descripcion: expect.any(String) });
     expect(items.find((m) => m.codigo === 'compras').dependeDe).toEqual(['insumos']);
     expect(items.some((m) => m.codigo === 'core')).toBe(false);
   });
@@ -157,10 +157,9 @@ describe('alta guiada (A6)', () => {
     ]);
   });
 
-  it('rechaza módulo en construcción, módulo o plan inexistente sin crear la empresa', async () => {
+  it('rechaza módulo o plan inexistente (ya no queda ningún módulo en construcción) sin crear la empresa', async () => {
     const futura = await abrirSesion(app, 'Futura tres');
     const antes = (await sistema.query('select count(*)::int as n from core.v_empresas_plataforma')).rows[0].n;
-    expect(codigo(await plat(operador, 'plataforma_empresas_crear', { nombre: 'Taller Tres', correoDelDueno: futura.correo, modulos: [{ codigo: 'cotizador' }] }))).toBe('argumentos_invalidos');
     expect(codigo(await plat(operador, 'plataforma_empresas_crear', { nombre: 'Taller Tres', correoDelDueno: futura.correo, modulos: [{ codigo: 'no_existe' }] }))).toBe('argumentos_invalidos');
     expect(codigo(await plat(operador, 'plataforma_empresas_crear', { nombre: 'Taller Tres', correoDelDueno: futura.correo, plan: 'no_hay' }))).toBe('argumentos_invalidos');
     expect((await sistema.query('select count(*)::int as n from core.v_empresas_plataforma')).rows[0].n).toBe(antes);
