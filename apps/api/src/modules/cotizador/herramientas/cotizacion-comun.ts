@@ -10,6 +10,7 @@ import { leerConfiguracion } from '../repositories/configuracion.repository.js';
 import { clienteVigente, listasParaLineas, productosVigentes, verCotizacion, type Alcance } from '../repositories/cotizaciones.repository.js';
 import { historialDe, lineasDe, versionDe, versionesDe, type LineaDeVersion } from '../repositories/versiones.repository.js';
 import { aCotizacionCompleta } from './cotizacion-mapeo.js';
+import { vistaDeVersion } from './cuadro-version.js';
 
 // Lo que comparten las herramientas de cotizaciones. Precios y totales SIN IGV; el IGV se calcula por línea.
 
@@ -34,7 +35,10 @@ export async function responderCotizacion(tx: Transaccion, ctx: ContextoDeHerram
   const version = await versionDe(tx, ctx, id, numeroDeVersion ?? c.versionActual);
   if (!version) return rechazo('no_encontrado', 'No existe esa versión de la cotización.');
   const [lineas, versiones, historial] = [await lineasDe(tx, ctx, version.id), await versionesDe(tx, ctx, id), await historialDe(tx, ctx, id)];
-  return exito(aCotizacionCompleta({ c, version, lineas, versiones, historial, veCostos: veCostos(ctx) }));
+  // Una cotización por partes lleva la vista de su cuadro (costos y margen solo con `cotizador:costos`).
+  const vista = version.modo === 'cuadro' ? await vistaDeVersion(tx, ctx, version, veCostos(ctx)) : null;
+  if (vista && !vista.ok) return rechazo('conflicto', vista.mensaje);
+  return exito(aCotizacionCompleta({ c, version, lineas, versiones, historial, veCostos: veCostos(ctx), cuadro: vista?.vista ?? null }));
 }
 
 export type Calculo = { lineas: LineaArmada[]; totales: Totales; igvPorcentaje: number };
