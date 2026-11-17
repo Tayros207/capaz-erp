@@ -266,8 +266,9 @@ describe('módulo, sistema y empresas', () => {
 
   it('capaz_sistema no lee ninguna tabla de cotizador', async () => {
     const { rows } = await owner.query<{ tablename: string }>(`select tablename from pg_tables where schemaname = 'cotizador'`);
-    expect(rows.length).toBe(7);
-    for (const { tablename } of rows) {
+    expect(rows.length).toBe(12);
+    // `enlaces` es la única con lectura de columnas para el sistema (0027); el resto, nada.
+    for (const { tablename } of rows.filter((r) => r.tablename !== 'enlaces')) {
       await expect(sistema.query(`select 1 from cotizador.${tablename} limit 1`), tablename).rejects.toThrow(/permission denied/);
     }
   });

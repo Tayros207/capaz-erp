@@ -56,7 +56,9 @@ describe('catálogo: escalabilidad (ADR-013)', () => {
         and exists (select 1 from pg_attribute t where t.attrelid = c.oid and t.attname = 'tenant_id' and not t.attisdropped)`,
       [ESQUEMAS]);
     expect(rows.length).toBeGreaterThan(0);
-    const malos = rows.filter((r) => r.primera !== 'tenant_id');
+    // Excepción: el token del enlace público es único en toda la base (identifica a la empresa sin sesión).
+    const GLOBALES = ['uq_cotizador_enlaces_token'];
+    const malos = rows.filter((r) => r.primera !== 'tenant_id' && !GLOBALES.includes(r.indice));
     expect(malos, 'índices que no empiezan por tenant_id').toEqual([]);
   });
 });
