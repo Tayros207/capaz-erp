@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ESTADOS_DE_PEDIDO, type PedidoCompletoDto, type PedidoDto } from '@capaz/shared';
 import {
   FORMULARIO_VACIO, agruparEntregas, argumentosDeCreacion, argumentosDeEdicion, columnasDeTablero, conProducto, diaEnZona, formatearDia, formularioDesde,
-  importeDeLinea, lineaVacia, mensajeDeRechazo, otrosPasos, pasoActual, pasosPermitidos, sePuedeCancelar, siguientePaso, sumarDias, textoDeEvento, totalesDe,
+  importeDeLinea, lineaVacia, validarParaConfirmar, mensajeDeRechazo, otrosPasos, pasoActual, pasosPermitidos, sePuedeCancelar, siguientePaso, sumarDias, textoDeEvento, totalesDe,
   validarLinea, validarPedido, type LineaDeFormulario,
 } from './logica.ts';
 
@@ -75,8 +75,19 @@ describe('formulario del pedido', () => {
   it('exige cliente, entrega no anterior a la fecha y líneas completas', () => {
     expect(Object.keys(validarPedido(FORMULARIO_VACIO, '2026-03-10'))).toEqual(['cliente']);
     const f = { ...FORMULARIO_VACIO, cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '2026-03-09', lineas: [lineaVacia('a')] };
-    expect(Object.keys(validarPedido(f, '2026-03-10'))).toEqual(['entregaEl', 'lineas']);
+    expect(Object.keys(validarPedido(f, '2026-03-10'))).toEqual(['entregaEl']);
+    const incompleta = { ...f, lineas: [linea({ clave: 'x', descripcion: 'Algo', precioUnitarioMilesimas: null })] };
+    const e = validarPedido({ ...incompleta, entregaEl: '' }, '2026-03-10');
+    expect(e.lineas).toBe('Completa o borra las filas señaladas.');
+    expect(e.porLinea).toEqual({ x: { precio: expect.any(String) } });
+    expect(validarPedido({ ...f, entregaEl: '' }, '2026-03-10').porLinea).toBeUndefined();
     expect(validarPedido({ ...f, entregaEl: '2026-03-10', lineas: [linea()] }, '2026-03-10')).toEqual({});
+  });
+  it('confirmar exige al menos una fila con algo escrito', () => {
+    const f = { ...FORMULARIO_VACIO, cliente: { id: 'c1', nombre: 'Sol' }, lineas: [lineaVacia('a')] };
+    expect(validarParaConfirmar(f, '2026-03-10').lineas).toMatch(/al menos una fila/);
+    expect(validarParaConfirmar({ ...f, lineas: [] }, '2026-03-10').lineas).toMatch(/al menos una fila/);
+    expect(validarParaConfirmar({ ...f, lineas: [linea()] }, '2026-03-10')).toEqual({});
   });
   it('crear envía solo lo que tiene valor', () => {
     const args = argumentosDeCreacion({ cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '', responsableId: '', notas: '  ', lineas: [linea({ producto: { id: 'pr1', nombre: 'X' } })] });

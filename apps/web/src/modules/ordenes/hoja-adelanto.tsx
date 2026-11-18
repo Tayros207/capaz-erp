@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { centimosSchema, type Centimos } from '@capaz/shared';
 import { formatearSoles } from '../../shared/formato/soles.ts';
+import { notificar } from '../../shared/ui/notificar.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { CampoMonto } from '../../shared/ui/campo-monto.tsx';
 import { CampoSelect } from '../../shared/ui/campo-select.tsx';
@@ -16,6 +17,7 @@ type Props = {
   alCerrar: () => void;
 };
 
+/** Solo se muestra cuando algo quedó a medias: lo completo se cierra con un aviso. */
 function Resultado({ r, alCerrar }: { r: ResultadoDelAdelanto; alCerrar: () => void }) {
   const deuda = 'deuda' in r ? r.deuda : null;
   return (
@@ -41,8 +43,11 @@ function Formulario({ totalCentimos, alAceptar, alCerrar, alTerminar }: Omit<Pro
     setEnviando(true);
     const r = await alAceptar(cobrar && monto !== null ? { montoCentimos: monto, medio } : null);
     setEnviando(false);
-    if (r) alTerminar(r);
-    else alCerrar();
+    if (r && r.estado !== 'completo') alTerminar(r);
+    else {
+      if (r) notificar(r.mensaje, 'exito');
+      alCerrar();
+    }
   }
 
   return (

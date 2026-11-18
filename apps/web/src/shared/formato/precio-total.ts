@@ -29,3 +29,36 @@ export function unitarioDeTotal(totalCentimos: number | null, cantidadMilesimas:
     return null;
   }
 }
+
+/** Qué resulta de una fila donde se puede escribir el precio unitario o el importe: lo último escrito manda. */
+export type PrecioEImporte = {
+  /** Unitario en milésimas (el que se guarda); nulo si todavía no hay con qué calcularlo. */
+  precioUnitarioMilesimas: number | null;
+  /** Lo que da cantidad × unitario, en céntimos, con la cuenta del servidor; nulo si falta un dato. */
+  importeCentimos: number | null;
+  /** `false` cuando el unitario (tres decimales) no reproduce el importe escrito al céntimo. */
+  exacto: boolean;
+};
+
+/**
+ * Precio unitario e importe de una fila. Si manda el precio, el importe es cantidad × precio; si manda el importe,
+ * el unitario sale de repartirlo entre la cantidad (`unitarioDeTotal`) y el importe mostrado es el que da ese unitario.
+ */
+export function resolverPrecioEImporte(
+  cantidadMilesimas: number | null,
+  precioUnitarioMilesimas: number | null,
+  importeEscritoCentimos: number | null,
+  manda: 'precio' | 'importe',
+): PrecioEImporte {
+  if (manda === 'importe') {
+    const r = unitarioDeTotal(importeEscritoCentimos, cantidadMilesimas);
+    if (r) return { precioUnitarioMilesimas: r.precioUnitarioMilesimas, importeCentimos: r.importeCentimos, exacto: r.exacto };
+    return { precioUnitarioMilesimas: null, importeCentimos: importeEscritoCentimos, exacto: true };
+  }
+  if (precioUnitarioMilesimas === null || cantidadMilesimas === null || cantidadMilesimas <= 0) return { precioUnitarioMilesimas, importeCentimos: null, exacto: true };
+  try {
+    return { precioUnitarioMilesimas, importeCentimos: importe(cantidadMilesimas, precioUnitarioMilesimas), exacto: true };
+  } catch {
+    return { precioUnitarioMilesimas, importeCentimos: null, exacto: true };
+  }
+}

@@ -8,7 +8,7 @@ import { CampoSelect } from '../../shared/ui/campo-select.tsx';
 import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { buscarClientes, listarMiembros, primerosClientes } from './api.ts';
-import { LineasDePedido } from './lineas-de-pedido.tsx';
+import { FilasDePedido } from './filas-de-pedido.tsx';
 import type { ErroresDePedido, FormularioDePedido } from './logica.ts';
 
 type Props = {
@@ -67,7 +67,7 @@ export function FormularioPedido({ valor, errores, igvPorcentaje, fecha, alCambi
           <CampoTextarea etiqueta="Notas" filas={3} maxLength={4000} value={valor.notas} error={errores.notas} onChange={(e) => alCambiar({ notas: e.target.value })} />
         </div>
       </div>
-      <LineasDePedido lineas={valor.lineas} igvPorcentaje={igvPorcentaje} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
+      <FilasDePedido lineas={valor.lineas} igvPorcentaje={igvPorcentaje} errores={errores.porLinea} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
     </div>
   );
 }

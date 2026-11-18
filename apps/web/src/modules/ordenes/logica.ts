@@ -97,10 +97,14 @@ export type LineaDeFormulario = {
   cantidadMilesimas: number | null;
   precioUnitarioMilesimas: number | null;
   afectoIgv: boolean;
+  /** Qué se escribió al final: el unitario o el importe. El otro se calcula a partir de ese. */
+  manda: 'precio' | 'importe';
+  /** El importe tecleado (céntimos); solo cuenta cuando `manda` es `importe`. */
+  importeEscritoCentimos: number | null;
 };
 export type ErroresDeLinea = Partial<Record<'descripcion' | 'cantidad' | 'precio', string>>;
 
-export const lineaVacia = (clave: string): LineaDeFormulario => ({ clave, producto: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: null, afectoIgv: true });
+export const lineaVacia = (clave: string): LineaDeFormulario => ({ clave, producto: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: null, afectoIgv: true, manda: 'precio', importeEscritoCentimos: null });
 
 export const lineaDesdeDto = (l: LineaDePedidoDto): LineaDeFormulario => ({
   clave: l.id,
@@ -110,12 +114,20 @@ export const lineaDesdeDto = (l: LineaDePedidoDto): LineaDeFormulario => ({
   cantidadMilesimas: l.cantidadMilesimas,
   precioUnitarioMilesimas: l.precioUnitarioMilesimas,
   afectoIgv: l.afectoIgv,
+  manda: 'precio',
+  importeEscritoCentimos: null,
 });
+
+/** Una fila sin nada escrito (ni producto, ni descripción, ni precio): la hoja la ignora al validar y al guardar. */
+export const estaEnBlanco = (l: LineaDeFormulario): boolean =>
+  l.producto === null && l.descripcion.trim() === '' && l.precioUnitarioMilesimas === null && l.importeEscritoCentimos === null;
+
+export const sinFilasEnBlanco = (lineas: readonly LineaDeFormulario[]): LineaDeFormulario[] => lineas.filter((l) => !estaEnBlanco(l));
 
 /** Al elegir un producto, la línea toma su nombre, unidad, precio y afectación; la cantidad se conserva. */
 export function conProducto(l: LineaDeFormulario, p: { id: string; nombre: string; unidad: string; precioUnitarioMilesimas: number; afectoIgv: boolean } | null): LineaDeFormulario {
   if (!p) return { ...l, producto: null };
-  return { ...l, producto: { id: p.id, nombre: p.nombre }, descripcion: p.nombre, unidad: p.unidad, precioUnitarioMilesimas: p.precioUnitarioMilesimas, afectoIgv: p.afectoIgv };
+  return { ...l, producto: { id: p.id, nombre: p.nombre }, descripcion: p.nombre, unidad: p.unidad, precioUnitarioMilesimas: p.precioUnitarioMilesimas, afectoIgv: p.afectoIgv, manda: 'precio', importeEscritoCentimos: null };
 }
 
 export function validarLinea(l: LineaDeFormulario): ErroresDeLinea {
@@ -172,7 +184,10 @@ export type FormularioDePedido = {
   notas: string;
   lineas: LineaDeFormulario[];
 };
-export type ErroresDePedido = Partial<Record<'cliente' | 'entregaEl' | 'notas' | 'lineas', string>>;
+export type ErroresDePedido = Partial<Record<'cliente' | 'entregaEl' | 'notas' | 'lineas', string>> & {
+  /** Errores de cada fila por su clave; solo está si alguna fila los tiene. */
+  porLinea?: Record<string, ErroresDeLinea>;
+};
 
 export const FORMULARIO_VACIO: FormularioDePedido = { cliente: null, entregaEl: '', responsableId: '', notas: '', lineas: [] };
 
@@ -190,8 +205,26 @@ export function validarPedido(f: FormularioDePedido, fecha: string): ErroresDePe
   if (!f.cliente) e.cliente = 'Elige un cliente de la lista: escribe su nombre y haz clic en la opción que aparece.';
   if (f.entregaEl && f.entregaEl < fecha) e.entregaEl = 'La entrega no puede ser anterior a la fecha del pedido.';
   if (f.notas.trim().length > 4000) e.notas = 'Máximo 4000 caracteres.';
-  if (f.lineas.length > 100) e.lineas = 'Un pedido admite hasta 100 líneas.';
-  else if (f.lineas.some((l) => Object.keys(validarLinea(l)).length > 0)) e.lineas = 'Hay líneas incompletas: ábrelas y complétalas.';
+  const lineas = sinFilasEnBlanco(f.lineas);
+  if (lineas.length > 100) e.lineas = 'Un pedido admite hasta 100 líneas.';
+  else {
+    const porLinea: Record<string, ErroresDeLinea> = {};
+    for (const l of lineas) {
+      const el = validarLinea(l);
+      if (Object.keys(el).length > 0) porLinea[l.clave] = el;
+    }
+    if (Object.keys(porLinea).length > 0) {
+      e.lineas = 'Completa o borra las filas señaladas.';
+      e.porLinea = porLinea;
+    }
+  }
+  return e;
+}
+
+/** Para confirmar, además de lo anterior, hace falta al menos una fila con algo escrito. */
+export function validarParaConfirmar(f: FormularioDePedido, fecha: string): ErroresDePedido {
+  const e = validarPedido(f, fecha);
+  if (!e.lineas && sinFilasEnBlanco(f.lineas).length === 0) e.lineas = 'Agrega al menos una fila para confirmar el pedido.';
   return e;
 }
 
@@ -201,7 +234,7 @@ export function argumentosDeCreacion(f: FormularioDePedido): EntradaDe<'pedido_c
     ...(f.entregaEl && { entregaEl: f.entregaEl }),
     ...(f.responsableId && { responsableId: f.responsableId }),
     ...(f.notas.trim() && { notas: f.notas.trim() }),
-    lineas: f.lineas.map(aLineaDeEntrada),
+    lineas: sinFilasEnBlanco(f.lineas).map(aLineaDeEntrada),
   };
 }
 
@@ -216,7 +249,7 @@ export function argumentosDeEdicion(p: PedidoCompletoDto, f: FormularioDePedido)
   if ((f.entregaEl || null) !== p.entregaEl) args.entregaEl = f.entregaEl || null;
   if ((f.responsableId || null) !== p.responsableId) args.responsableId = f.responsableId || null;
   if ((f.notas.trim() || null) !== p.notas) args.notas = f.notas.trim() || null;
-  const lineas = f.lineas.map(aLineaDeEntrada);
+  const lineas = sinFilasEnBlanco(f.lineas).map(aLineaDeEntrada);
   if (lineas.length !== p.detalle.length || lineas.some((l, i) => !mismaLinea(l, p.detalle[i]!))) args.lineas = lineas;
   return Object.keys(args).length > 1 ? args : null;
 }

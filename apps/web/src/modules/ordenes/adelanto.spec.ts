@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
-  confirmarYCobrar, sePuedeCobrarAdelanto, sugerirAdelanto, validarAdelanto,
+  ADELANTO_INICIAL, confirmarYCobrar, montoDeAdelanto, sePuedeCobrarAdelanto, sugerirAdelanto, validarAdelanto,
   type DependenciasDelAdelanto, type DeudaDelAdelanto, type PedidoConfirmado, type Res,
 } from './adelanto.ts';
 
@@ -44,6 +44,17 @@ describe('monto y permisos', () => {
     expect(sePuedeCobrarAdelanto({ ...base, clienteId: null })).toBe(false);
     expect(sePuedeCobrarAdelanto({ ...base, totalCentimos: 0 })).toBe(false);
     expect(sePuedeCobrarAdelanto({ ...base, totalCentimos: null })).toBe(false);
+  });
+});
+
+describe('adelanto de la hoja', () => {
+  it('el monto sigue al total mientras nadie lo toque', () => {
+    expect(montoDeAdelanto(ADELANTO_INICIAL, 10_000)).toBe(5_000);
+    expect(montoDeAdelanto(ADELANTO_INICIAL, 20_000)).toBe(10_000);
+  });
+  it('tocado, se queda con lo escrito aunque cambie el total (incluso vacío)', () => {
+    expect(montoDeAdelanto({ ...ADELANTO_INICIAL, tocado: true, montoCentimos: 3_000 }, 20_000)).toBe(3_000);
+    expect(montoDeAdelanto({ ...ADELANTO_INICIAL, tocado: true, montoCentimos: null }, 20_000)).toBeNull();
   });
 });
 

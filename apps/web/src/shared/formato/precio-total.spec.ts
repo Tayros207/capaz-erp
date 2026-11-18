@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { unitarioDeTotal } from './precio-total.ts';
+import { resolverPrecioEImporte, unitarioDeTotal } from './precio-total.ts';
 
 describe('unitarioDeTotal', () => {
   it('reparte el total entre la cantidad: 580.00 entre 10 millares son 58.000 cada uno', () => {
@@ -35,5 +35,22 @@ describe('unitarioDeTotal', () => {
     expect(unitarioDeTotal(1_000, 0)).toBeNull();
     expect(unitarioDeTotal(1_000, -1)).toBeNull();
     expect(unitarioDeTotal(-1, 1_000)).toBeNull();
+  });
+});
+
+describe('resolverPrecioEImporte', () => {
+  it('manda el precio: el importe es cantidad × precio', () => {
+    expect(resolverPrecioEImporte(2_000, 12_500, 99, 'precio')).toEqual({ precioUnitarioMilesimas: 12_500, importeCentimos: 2_500, exacto: true });
+  });
+  it('manda el importe: el unitario sale de repartirlo entre la cantidad', () => {
+    expect(resolverPrecioEImporte(3_000, 1, 10_000, 'importe')).toEqual({ precioUnitarioMilesimas: 33_333, importeCentimos: 10_000, exacto: true });
+  });
+  it('manda el importe y no alcanzan tres decimales: el importe mostrado es el que da el unitario', () => {
+    expect(resolverPrecioEImporte(7_000_000, null, 10_000, 'importe')).toEqual({ precioUnitarioMilesimas: 14, importeCentimos: 9_800, exacto: false });
+  });
+  it('faltan datos: sin unitario ni importe calculado', () => {
+    expect(resolverPrecioEImporte(1_000, null, null, 'precio')).toEqual({ precioUnitarioMilesimas: null, importeCentimos: null, exacto: true });
+    expect(resolverPrecioEImporte(null, null, 5_000, 'importe')).toEqual({ precioUnitarioMilesimas: null, importeCentimos: 5_000, exacto: true });
+    expect(resolverPrecioEImporte(null, null, null, 'importe')).toEqual({ precioUnitarioMilesimas: null, importeCentimos: null, exacto: true });
   });
 });
