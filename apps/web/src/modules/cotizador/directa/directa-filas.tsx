@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
+import { MAXIMO_DE_LINEAS_DE_COTIZACION } from '@capaz/shared';
 import { milesimasATextoPlano, precioParaUsar } from '../../../shared/api/logica-precio-anterior.ts';
+import { milesimasATexto } from '../../../shared/formato/milesimas.ts';
 import { Boton } from '../../../shared/ui/boton.tsx';
 import { CLASES_DE_CONTROL } from '../../../shared/ui/campo-comun.ts';
 import { SugerenciaDePrecio } from '../../../shared/ui/sugerencia-de-precio.tsx';
 import { unir } from '../../../shared/ui/unir.ts';
-import { alEnterEnImporte, calcularFila, filaVacia, opcionesDeUnidad, quitarFila, type ErroresDeFila, type FilaDirecta } from './logica-directa.ts';
+import { alEnterEnImporte, calcularFila, filaVacia, opcionesDeUnidad, precioLeido, quitarFila, usarPrecioAnterior, type ErroresDeFila, type FilaDirecta } from './logica-directa.ts';
 
 type Props = {
   filas: FilaDirecta[];
@@ -32,6 +34,14 @@ function Celda({ etiqueta, error, children }: { etiqueta: string; error?: string
       {error ? <span role="alert" className="text-sm font-medium text-peligro">{error}</span> : null}
     </div>
   );
+}
+
+/** Cómo se leyó el precio tecleado («1.250» → «= S/ 1.25»), para que nadie emita S/ 1250 creyendo que escribió S/ 1.25. */
+function PrecioLeido({ id, fila }: { id: string; fila: Pick<FilaDirecta, 'precio' | 'manda'> }) {
+  const leido = precioLeido(fila);
+  if (leido === null) return null;
+  if (leido === 'ilegible') return <span id={id} className="text-right text-sm text-peligro">No se entiende</span>;
+  return <span id={id} className="whitespace-nowrap text-right text-sm tabular-nums text-texto-suave">= S/ {milesimasATexto(leido)}</span>;
 }
 
 /** Las filas de la hoja: descripción, cantidad, unidad, precio e importe; lo último que se escribe manda. */
@@ -73,7 +83,7 @@ export function DirectaFilas({ filas, incluyeIgv, igv, clienteId, unidades, erro
                     descripcion={f.descripcion}
                     conIgv={incluyeIgv}
                     precioActualMilesimas={c.precioMilesimas}
-                    alUsar={(p) => cambiar(f.clave, { precio: milesimasATextoPlano(precioParaUsar(p, incluyeIgv)), manda: 'precio', ...(f.unidad.trim() === '' && { unidad: p.unidad }) })}
+                    alUsar={(p) => cambiar(f.clave, usarPrecioAnterior(f, milesimasATextoPlano(precioParaUsar(p, incluyeIgv)), p.unidad))}
                   />
                 )}
               </Celda>
@@ -82,12 +92,13 @@ export function DirectaFilas({ filas, incluyeIgv, igv, clienteId, unidades, erro
                   <input inputMode="decimal" aria-label={`Cantidad de la fila ${i + 1}`} aria-invalid={e.cantidad ? true : undefined} className={unir(CONTROL, 'text-right tabular-nums')} value={f.cantidad} readOnly={soloLectura} onChange={(ev) => cambiar(f.clave, { cantidad: ev.target.value })} />
                 </Celda>
                 <Celda etiqueta="Unidad">
-                  <select aria-label={`Unidad de la fila ${i + 1}`} className={CONTROL} value={f.unidad} disabled={soloLectura} onChange={(ev) => cambiar(f.clave, { unidad: ev.target.value })}>
+                  <select aria-label={`Unidad de la fila ${i + 1}`} className={CONTROL} value={f.unidad} disabled={soloLectura} onChange={(ev) => cambiar(f.clave, { unidad: ev.target.value, unidadElegida: true })}>
                     {opciones.map((u) => <option key={u} value={u}>{u}</option>)}
                   </select>
                 </Celda>
                 <Celda etiqueta={incluyeIgv ? 'P. unitario (con IGV)' : 'P. unitario'} error={e.precio}>
-                  <input inputMode="decimal" aria-label={`Precio unitario de la fila ${i + 1}`} aria-invalid={e.precio ? true : undefined} className={unir(CONTROL, 'text-right tabular-nums')} value={textoPrecio} readOnly={soloLectura} onChange={(ev) => cambiar(f.clave, { precio: ev.target.value, manda: 'precio' })} />
+                  <input inputMode="decimal" aria-label={`Precio unitario de la fila ${i + 1}`} aria-describedby={soloLectura || precioLeido(f) === null ? undefined : `precio-leido-${f.clave}`} aria-invalid={e.precio ? true : undefined} className={unir(CONTROL, 'text-right tabular-nums')} value={textoPrecio} readOnly={soloLectura} onChange={(ev) => cambiar(f.clave, { precio: ev.target.value, manda: 'precio' })} />
+                  {soloLectura ? null : <PrecioLeido id={`precio-leido-${f.clave}`} fila={f} />}
                 </Celda>
                 <Celda etiqueta={incluyeIgv ? 'Importe (con IGV)' : 'Importe'} error={e.importe}>
                   <input
@@ -114,7 +125,7 @@ export function DirectaFilas({ filas, incluyeIgv, igv, clienteId, unidades, erro
         })}
       </div>
       {errorGeneral ? <p role="alert" className="text-sm font-medium text-peligro">{errorGeneral}</p> : null}
-      {soloLectura ? null : <div><Boton icono="mas" onClick={() => alCambiar([...filas, filaVacia(nuevaClave())])}>Agregar fila</Boton></div>}
+      {soloLectura ? null : <div><Boton icono="mas" disabled={filas.length >= MAXIMO_DE_LINEAS_DE_COTIZACION} onClick={() => alCambiar([...filas, filaVacia(nuevaClave())])}>Agregar fila</Boton></div>}
     </section>
   );
 }

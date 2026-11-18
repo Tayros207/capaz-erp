@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { baseMostrada, diaATexto, milesimasATextoPlano, precioParaUsar, puedeSugerir, rutaDelDocumento } from './logica-precio-anterior.ts';
+import { baseMostrada, diaATexto, milesimasATextoPlano, precioParaUsar, puedeSugerir, rutaDelDocumento, unidadAlUsar } from './logica-precio-anterior.ts';
+
+describe('unidadAlUsar', () => {
+  it('copia la unidad del precio anterior mientras la persona no eligió una', () => {
+    expect(unidadAlUsar('unidad', false, 'millar')).toBe('millar');
+  });
+  it('respeta la unidad que la persona eligió', () => {
+    expect(unidadAlUsar('ciento', true, 'millar')).toBe('ciento');
+  });
+  it('sin unidad en el precio anterior, deja la de la fila', () => {
+    expect(unidadAlUsar('unidad', false, '  ')).toBe('unidad');
+  });
+});
 
 const pedido = { baseDePrecio: 'con_igv', precioUnitarioMilesimas: 118_000, precioConIgvMilesimas: 118_000, precioSinIgvMilesimas: 100_000 } as const;
 const cotizado = { baseDePrecio: 'sin_igv', precioUnitarioMilesimas: 100_000, precioConIgvMilesimas: 118_000, precioSinIgvMilesimas: 100_000 } as const;

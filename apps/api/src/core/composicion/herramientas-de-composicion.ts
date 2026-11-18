@@ -15,7 +15,7 @@ export function crearHerramientasDeComposicion(ejecutor: EjecutorDeHerramientas,
       cuandoUsarla: 'Cuando un cliente recurrente vuelve a pedir algo y no recuerdas cuánto se le cobró.',
       campos: [
         { nombre: 'clienteTexto', queSeAnota: 'Nombre del cliente tal como lo dices (o clienteId si ya lo tienes).', ejemplo: 'Cristina' },
-        { nombre: 'texto', queSeAnota: 'El producto como lo dices (o productoId si es del catálogo).', ejemplo: 'cajas de bocaditos' },
+        { nombre: 'texto', queSeAnota: 'El producto como lo dices (o productoId si es del catálogo). Sin producto, con el cliente, lista lo último que se le cobró por cada cosa.', ejemplo: 'cajas de bocaditos' },
         { nombre: 'limite', queSeAnota: 'Cuántas veces anteriores mostrar, hasta 30 (por defecto 10).', ejemplo: '10' },
       ],
       ejemploTecleado: 'cuánto le cobramos a Cristina por las cajas de bocaditos',

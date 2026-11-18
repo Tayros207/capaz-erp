@@ -101,6 +101,8 @@ export type LineaDeFormulario = {
   manda: 'precio' | 'importe';
   /** El importe tecleado (céntimos); solo cuenta cuando `manda` es `importe`. */
   importeEscritoCentimos: number | null;
+  /** `true` si la unidad la eligió la persona (o vino del producto o del pedido guardado): «Usar» un precio anterior no la cambia. */
+  unidadElegida?: boolean;
 };
 export type ErroresDeLinea = Partial<Record<'descripcion' | 'cantidad' | 'precio', string>>;
 
@@ -116,6 +118,7 @@ export const lineaDesdeDto = (l: LineaDePedidoDto): LineaDeFormulario => ({
   afectoIgv: l.afectoIgv,
   manda: 'precio',
   importeEscritoCentimos: null,
+  unidadElegida: true,
 });
 
 /** Una fila sin nada escrito (ni producto, ni descripción, ni precio): la hoja la ignora al validar y al guardar. */
@@ -127,7 +130,7 @@ export const sinFilasEnBlanco = (lineas: readonly LineaDeFormulario[]): LineaDeF
 /** Al elegir un producto, la línea toma su nombre, unidad, precio y afectación; la cantidad se conserva. */
 export function conProducto(l: LineaDeFormulario, p: { id: string; nombre: string; unidad: string; precioUnitarioMilesimas: number; afectoIgv: boolean } | null): LineaDeFormulario {
   if (!p) return { ...l, producto: null };
-  return { ...l, producto: { id: p.id, nombre: p.nombre }, descripcion: p.nombre, unidad: p.unidad, precioUnitarioMilesimas: p.precioUnitarioMilesimas, afectoIgv: p.afectoIgv, manda: 'precio', importeEscritoCentimos: null };
+  return { ...l, producto: { id: p.id, nombre: p.nombre }, descripcion: p.nombre, unidad: p.unidad, precioUnitarioMilesimas: p.precioUnitarioMilesimas, afectoIgv: p.afectoIgv, manda: 'precio', importeEscritoCentimos: null, unidadElegida: true };
 }
 
 export function validarLinea(l: LineaDeFormulario): ErroresDeLinea {

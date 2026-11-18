@@ -1,6 +1,7 @@
 import {
   coincidenciaDeDescripcion,
   exito,
+  normalizarDescripcion,
   raicesDeBusqueda,
   salidaDePreciosAnterioresSchema,
   similitudDeDescripciones,
@@ -76,10 +77,37 @@ const esExacta = (f: FilaConCoincidencia): boolean => f.coincidencia === 'produc
  * (la pantalla la marca «Cotizado»). Las «parecidas» solo van al historial.
  */
 export function ordenarResultado(filas: readonly FilaConCoincidencia[], limite: number): { ultimo: FilaConCoincidencia | null; historial: FilaConCoincidencia[] } {
-  const origenes = new Set(filas.flatMap((f) => (f.fuente === 'pedido' && f.origen?.tipo === 'cotizacion' ? [f.origen.id] : [])));
-  const visibles = filas.filter((f) => !(f.fuente === 'cotizacion' && f.documento.estado === ESTADOS_DE_COTIZACION_ACEPTADA && origenes.has(f.documento.id))).sort(masNuevaPrimero);
+  const visibles = sinCotizacionesYaPedidas(filas).sort(masNuevaPrimero);
   const ultimo = visibles.find((f) => f.fuente !== 'cotizacion' && esExacta(f)) ?? visibles.find((f) => f.fuente === 'cotizacion' && esExacta(f)) ?? null;
   return { ultimo, historial: visibles.filter((f) => f !== ultimo).slice(0, limite) };
+}
+
+/** Quita la cotización aceptada que ya es origen de un pedido visible (sería contar dos veces lo mismo). */
+function sinCotizacionesYaPedidas<T extends FilaDePrecioAnterior>(filas: readonly T[]): T[] {
+  const origenes = new Set(filas.flatMap((f) => (f.fuente === 'pedido' && f.origen?.tipo === 'cotizacion' ? [f.origen.id] : [])));
+  return filas.filter((f) => !(f.fuente === 'cotizacion' && f.documento.estado === ESTADOS_DE_COTIZACION_ACEPTADA && origenes.has(f.documento.id)));
+}
+
+/** Qué es «la misma cosa» en la lista de un cliente: el producto del catálogo o la descripción normalizada, y la unidad. */
+const claveDeProducto = (f: FilaDePrecioAnterior): string => {
+  const unidad = f.unidad.trim().toLowerCase();
+  if (f.productoId) return `p:${f.productoId}|${unidad}`;
+  return `d:${normalizarDescripcion(f.descripcion) || f.descripcion.trim().toLowerCase()}|${unidad}`;
+};
+
+/**
+ * Sin producto buscado: lo último que se le cobró al cliente por cada cosa, una fila por producto (y unidad), de lo más
+ * reciente a lo más antiguo. Igual que el «último»: un pedido o una OT ganan a una cotización del mismo producto.
+ */
+export function ultimosPorProducto(filas: readonly FilaDePrecioAnterior[], limite: number): FilaConCoincidencia[] {
+  const grupos = new Map<string, FilaDePrecioAnterior>();
+  const porFecha = (a: FilaDePrecioAnterior, b: FilaDePrecioAnterior) => b.documento.fecha.localeCompare(a.documento.fecha);
+  for (const f of sinCotizacionesYaPedidas(filas).sort(porFecha)) {
+    const clave = claveDeProducto(f);
+    const actual = grupos.get(clave);
+    if (!actual || (actual.fuente === 'cotizacion' && f.fuente !== 'cotizacion')) grupos.set(clave, f);
+  }
+  return [...grupos.values()].sort(porFecha).slice(0, limite).map((f) => ({ ...f, coincidencia: 'del_cliente' as const, puntaje: 1 }));
 }
 
 const hace = (dia: string, anios: number): string => {
@@ -126,6 +154,26 @@ const vacio = (cliente: PrecioAnteriorDto['cliente'], candidatos: CandidatoDeCli
   fuentesConsultadas: fuentes,
 });
 
+/** La lista de un cliente: todas sus líneas recientes (sin prefiltro de descripción) reducidas a una por producto. */
+async function ultimosDelCliente(
+  ejecutor: EjecutorDeHerramientas,
+  tx: Transaccion,
+  ctx: ContextoDeHerramienta,
+  usables: readonly Subherramienta[],
+  sinAcceso: PrecioAnteriorDto['fuentesConsultadas'],
+  cliente: NonNullable<PrecioAnteriorDto['cliente']>,
+  limite: number,
+): Promise<PrecioAnteriorDto> {
+  const filas: FilaDePrecioAnterior[] = [];
+  const fuentes = [...sinAcceso];
+  for (const s of usables) {
+    const r = await consultarSubherramienta(ejecutor, tx, ctx, s, { clienteId: cliente.id, raices: [] });
+    filas.push(...r.filas);
+    fuentes.push({ fuente: s.fuente, incluida: r.aviso === null, aviso: r.aviso });
+  }
+  return { cliente, candidatosDeCliente: [], ultimo: null, historial: ultimosPorProducto(filas, limite), fuentesConsultadas: fuentes };
+}
+
 export async function consultarPrecioAnterior(
   ejecutor: EjecutorDeHerramientas,
   registro: RegistroDeHerramientas,
@@ -150,11 +198,16 @@ export async function consultarPrecioAnterior(
   }
   if ((args.clienteId || args.clienteTexto) && !cliente) return exito(vacio(null, [], sinAcceso));
 
+  const usables = subs.filter((s) => s.puede);
+  // Solo el cliente (sin producto): sus últimos precios, uno por producto. El contrato exige cliente o producto.
+  if (!args.productoId && !args.texto) {
+    return exito(cliente ? await ultimosDelCliente(ejecutor, tx, ctx, usables, sinAcceso, cliente, args.limite) : vacio(null, [], sinAcceso));
+  }
+
   // El producto: lo que se busca es su descripción; con un producto del catálogo, también su id.
   const producto = args.productoId ? await verProducto(tx, ctx, args.productoId) : null;
   const texto = args.texto ?? producto?.nombre ?? '';
   const raices = raicesDeBusqueda(texto);
-  const usables = subs.filter((s) => s.puede);
   if (usables.length === 0 || (raices.length === 0 && !args.productoId)) {
     return exito(vacio(cliente, [], [...sinAcceso, ...usables.map((s) => ({ fuente: s.fuente, incluida: true, aviso: null }))]));
   }

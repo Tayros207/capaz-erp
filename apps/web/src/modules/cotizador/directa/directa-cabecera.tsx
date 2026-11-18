@@ -38,6 +38,7 @@ function DatosDelCliente({ id }: { id: string }) {
 export function DirectaCabecera({ hoja, errores, emitida, alCambiar }: Props) {
   const { datos: empresa } = useDatosDeEmpresaParaImprimir();
   const [nuevoCliente, setNuevoCliente] = useState<string | null>(null);
+  const [hoy] = useState(() => new Date());
   async function elegirCreado(id: string) {
     setNuevoCliente(null);
     alCambiar({ cliente: { id, nombre: datosOError(await verCliente(id)).nombre } });
@@ -58,7 +59,7 @@ export function DirectaCabecera({ hoja, errores, emitida, alCambiar }: Props) {
         </div>
         <dl className="grid grid-cols-[auto_auto] gap-x-3 gap-y-0.5 text-sm">
           <dt className="text-texto-suave">Fecha</dt>
-          <dd className="text-texto">{formatearFecha(new Date())}</dd>
+          <dd className="text-texto">{formatearFecha(hoy)}</dd>
           <dt className="text-texto-suave">Número</dt>
           <dd className="font-medium text-texto">{emitida ? emitida.codigo : 'Se numera al emitir'}</dd>
         </dl>

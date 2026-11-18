@@ -64,11 +64,11 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
 }
 
 /** Las veces anteriores, de la más nueva a la más antigua; las «parecidas» se marcan para no confundirlas. */
-export function HistorialDePrecios({ filas, conCliente }: { filas: PrecioAnterior[]; conCliente: boolean }) {
+export function HistorialDePrecios({ filas, conCliente, titulo = 'Veces anteriores' }: { filas: PrecioAnterior[]; conCliente: boolean; titulo?: string }) {
   if (filas.length === 0) return null;
   return (
-    <section aria-label="Veces anteriores" className="flex flex-col gap-2">
-      <h2 className="font-titulo text-base font-semibold text-texto">Veces anteriores</h2>
+    <section aria-label={titulo} className="flex flex-col gap-2">
+      <h2 className="font-titulo text-base font-semibold text-texto">{titulo}</h2>
       <ul className="flex flex-col gap-2">
         {filas.map((f, i) => (
           <li key={`${f.documento.id}-${i}`} className="grid gap-x-4 gap-y-2 rounded-tarjeta border border-borde bg-superficie p-3 md:grid-cols-[6rem_9rem_minmax(0,1fr)_7rem_minmax(0,14rem)] md:items-center">

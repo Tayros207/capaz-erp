@@ -1,3 +1,4 @@
+import { unidadAlUsar } from '../../shared/api/logica-precio-anterior.ts';
 import { resolverPrecioEImporte } from '../../shared/formato/precio-total.ts';
 import { conProducto, estaEnBlanco, lineaVacia, sinFilasEnBlanco, type LineaDeFormulario } from './logica.ts';
 
@@ -18,6 +19,15 @@ export function cambiarCantidad(l: LineaDeFormulario, cantidadMilesimas: number 
 
 /** Escribir el unitario devuelve el mando al precio. */
 export const cambiarPrecio = (l: LineaDeFormulario, precioUnitarioMilesimas: number | null): LineaDeFormulario => ({ ...l, precioUnitarioMilesimas, manda: 'precio', importeEscritoCentimos: null });
+
+/** Elegir la unidad la fija: desde ahí «Usar» un precio anterior ya no la cambia. */
+export const cambiarUnidad = (l: LineaDeFormulario, unidad: string): LineaDeFormulario => ({ ...l, unidad, unidadElegida: true });
+
+/** «Usar» un precio anterior: pone el unitario (manda el precio) y, si nadie eligió la unidad, la del precio anterior. */
+export const usarPrecioAnterior = (l: LineaDeFormulario, precioUnitarioMilesimas: number, unidadDelPrecio: string): LineaDeFormulario => ({
+  ...cambiarPrecio(l, precioUnitarioMilesimas),
+  unidad: unidadAlUsar(l.unidad, l.unidadElegida === true, unidadDelPrecio),
+});
 
 /** Escribir el importe manda: el unitario sale de repartirlo entre la cantidad. */
 export function cambiarImporte(l: LineaDeFormulario, importeCentimos: number | null): LineaDeFormulario {

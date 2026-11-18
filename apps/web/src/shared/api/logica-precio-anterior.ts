@@ -20,6 +20,14 @@ export function precioParaUsar(f: Pick<PrecioAnterior, 'baseDePrecio' | 'precioU
   return (conIgv ? f.precioConIgvMilesimas : f.precioSinIgvMilesimas) ?? f.precioUnitarioMilesimas;
 }
 
+/**
+ * La unidad que queda en la fila al tocar «Usar»: el precio anterior vale POR su unidad (S/ 85 por millar no es S/ 85 por
+ * unidad), así que se copia mientras la persona no haya elegido una. Si ya la eligió, se respeta la suya.
+ */
+export function unidadAlUsar(actual: string, elegidaPorLaPersona: boolean, delPrecio: string): string {
+  return !elegidaPorLaPersona && delPrecio.trim() !== '' ? delPrecio : actual;
+}
+
 /** Con qué IGV se muestra el precio que ofrece `precioParaUsar`. */
 export function baseMostrada(f: Pick<PrecioAnterior, 'baseDePrecio'>, conIgv: boolean): 'con IGV' | 'sin IGV' | 'precio final acordado' {
   if (f.baseDePrecio === 'sin_desglose') return 'precio final acordado';

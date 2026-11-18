@@ -17,15 +17,20 @@ describe('destinoDePreguntaDePrecio', () => {
 });
 
 describe('leerDireccion y busquedaDe', () => {
-  it('lee los parámetros y exige el producto', () => {
+  it('lee los parámetros; pide producto o cliente', () => {
     const d = leerDireccion(new URLSearchParams('cliente= Cristina &q=cajas'));
     expect(d).toEqual({ clienteId: '', clienteNombre: '', clienteTexto: 'Cristina', texto: 'cajas' });
     expect(busquedaDe(d)).toEqual({ clienteTexto: 'Cristina', texto: 'cajas' });
-    expect(busquedaDe({ ...d, texto: ' ' })).toBeNull();
     expect(busquedaDe({ clienteId: 'c1', clienteTexto: 'x', texto: 'cajas' })).toEqual({ clienteId: 'c1', texto: 'cajas' });
     expect(busquedaDe({ texto: 'cajas' })).toEqual({ texto: 'cajas' });
+    expect(busquedaDe({ texto: ' ' })).toBeNull();
   });
-  it('los argumentos llevan el límite', () => {
+  it('solo con el cliente (la ficha del cliente abre así) busca sus últimos precios', () => {
+    expect(busquedaDe(leerDireccion(new URLSearchParams('clienteId=c1&nombre=Cristina')))).toEqual({ clienteId: 'c1' });
+    expect(busquedaDe({ clienteTexto: ' Cristina ', texto: 'c' })).toEqual({ clienteTexto: 'Cristina' });
+  });
+  it('los argumentos llevan el límite: 15 por producto, 30 solo con el cliente', () => {
     expect(argumentosDe({ texto: 'cajas' })).toEqual({ texto: 'cajas', limite: 15 });
+    expect(argumentosDe({ clienteId: 'c1' })).toEqual({ clienteId: 'c1', limite: 30 });
   });
 });

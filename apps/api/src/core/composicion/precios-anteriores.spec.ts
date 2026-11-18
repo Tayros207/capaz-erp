@@ -13,7 +13,7 @@ vi.mock('../clientes/repositories/clientes.repository.js', () => ({
 vi.mock('../productos/repositories/productos.repository.js', () => ({ verProducto: vi.fn(async () => ({ id: 'p1', nombre: 'Caja de bocaditos' })) }));
 vi.mock('../empresas/hoy.js', () => ({ hoyDeLaEmpresa: vi.fn(async () => ({ zona: 'America/Lima', dia: '2026-11-18', anio: 2026 })) }));
 
-const { clasificarFilas, consultarPrecioAnterior, elegirCliente, ordenarResultado, subherramientasDe } = await import('./precios-anteriores.js');
+const { clasificarFilas, consultarPrecioAnterior, elegirCliente, ordenarResultado, subherramientasDe, ultimosPorProducto } = await import('./precios-anteriores.js');
 
 const fila = (o: Partial<FilaDePrecioAnterior> & { fuente: FilaDePrecioAnterior['fuente'] }): FilaDePrecioAnterior => ({
   documento: { id: 'd', codigo: 'X-1', estado: 'confirmado', fecha: '2026-05-10' },
@@ -98,6 +98,44 @@ describe('ordenarResultado', () => {
   });
 });
 
+describe('ultimosPorProducto (solo cliente)', () => {
+  it('una fila por producto y unidad, la más reciente; el plural y las tildes cuentan como lo mismo', () => {
+    const r = ultimosPorProducto(
+      [
+        fila({ fuente: 'pedido', documento: doc('p1', '2026-03-01'), descripcion: 'Cajas de bocaditos' }),
+        fila({ fuente: 'pedido', documento: doc('p2', '2026-06-01'), descripcion: 'caja de bocaditos' }),
+        fila({ fuente: 'pedido', documento: doc('p3', '2026-05-01'), descripcion: 'Volantes A5', unidad: 'millar' }),
+        fila({ fuente: 'pedido', documento: doc('p4', '2026-04-01'), descripcion: 'Volantes A5', unidad: 'ciento' }),
+      ],
+      10,
+    );
+    expect(r.map((f) => f.documento.id)).toEqual(['p2', 'p3', 'p4']);
+    expect(r.every((f) => f.coincidencia === 'del_cliente' && f.puntaje === 1)).toBe(true);
+  });
+  it('el producto del catálogo agrupa aunque cambie la descripción; un pedido gana a una cotización más nueva', () => {
+    const r = ultimosPorProducto(
+      [
+        fila({ fuente: 'cotizacion', documento: doc('c1', '2026-09-01', 'emitida'), productoId: 'pr', descripcion: 'Tarjetas premium' }),
+        fila({ fuente: 'pedido', documento: doc('p1', '2026-02-01'), productoId: 'pr', descripcion: 'Tarjetas' }),
+      ],
+      10,
+    );
+    expect(r.map((f) => f.documento.id)).toEqual(['p1']);
+  });
+  it('oculta la cotización aceptada que ya es origen de un pedido y respeta el límite', () => {
+    const r = ultimosPorProducto(
+      [
+        fila({ fuente: 'cotizacion', documento: doc('cot', '2026-01-01', 'aceptada'), descripcion: 'Banner' }),
+        fila({ fuente: 'pedido', documento: doc('ped', '2026-01-02'), descripcion: 'Caja', origen: { tipo: 'cotizacion', id: 'cot' } }),
+        fila({ fuente: 'pedido', documento: doc('x', '2026-01-03'), descripcion: 'Sobre manila' }),
+      ],
+      1,
+    );
+    expect(r.map((f) => f.documento.id)).toEqual(['x']);
+    expect(ultimosPorProducto([fila({ fuente: 'cotizacion', documento: doc('cot', '2026-01-01', 'aceptada'), descripcion: 'Banner' }), fila({ fuente: 'pedido', documento: doc('ped', '2026-01-02'), descripcion: 'Caja', origen: { tipo: 'cotizacion', id: 'cot' } })], 10).map((f) => f.documento.id)).toEqual(['ped']);
+  });
+});
+
 // --- orquestación con subherramientas falsas ---
 
 const acceso = (codigo: string, puedeEntrar = true) => ({ codigo, motivo: 'activo', visible: true, puedeEntrar, puedeEscribir: true, nivel: 'completo', alcance: 'todos', diasDePrueba: null }) as const;
@@ -169,6 +207,23 @@ describe('consultarPrecioAnterior (subherramientas falsas)', () => {
     if (!n.ok || !('datos' in n)) throw new Error('se esperaba éxito');
     expect(n.datos).toMatchObject({ cliente: null, candidatosDeCliente: [], ultimo: null, historial: [] });
     expect(llamadas).toHaveLength(0);
+  });
+
+  it('solo con el cliente lista lo último por producto, sin prefiltro de descripción ni «último»', async () => {
+    const { ejecutor, llamadas } = ejecutorCon({
+      ordenes_precios_anteriores: [fila({ fuente: 'pedido', documento: doc('ped-1', '2026-03-01') }), fila({ fuente: 'pedido', documento: doc('ped-2', '2026-04-01'), descripcion: 'Volantes A5' })],
+    });
+    const r = await consultarPrecioAnterior(ejecutor, registroCon(TODOS), tx, ctx, { clienteId: 'c1', limite: 30 });
+    if (!r.ok || !('datos' in r)) throw new Error('se esperaba éxito');
+    expect(r.datos).toMatchObject({ cliente: { id: 'c1' }, ultimo: null });
+    expect(r.datos.historial.map((f) => [f.documento.id, f.coincidencia])).toEqual([['ped-2', 'del_cliente'], ['ped-1', 'del_cliente']]);
+    expect(llamadas).toHaveLength(3);
+    expect(llamadas[0]!.args).toEqual({ clienteId: 'c1', raices: [] });
+    // Un cliente que no existe no consulta nada.
+    const n = await consultarPrecioAnterior(ejecutor, registroCon(TODOS), tx, ctx, { clienteId: 'otro', limite: 30 });
+    if (!n.ok || !('datos' in n)) throw new Error('se esperaba éxito');
+    expect(n.datos.historial).toEqual([]);
+    expect(llamadas).toHaveLength(3);
   });
 
   it('sin cliente busca los últimos 2 años con hasta 200 documentos', async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { agregarDesdeCatalogo, alEnterEnImporte, cambiarCantidad, cambiarImporte, cambiarPrecio, cuadra, estaEnBlanco, importeMostrado, quitarFila, sinFilasEnBlanco } from './logica-filas.ts';
-import { argumentosDeCreacion, lineaVacia, validarPedido, type LineaDeFormulario } from './logica.ts';
+import { agregarDesdeCatalogo, alEnterEnImporte, cambiarCantidad, cambiarImporte, cambiarPrecio, cambiarUnidad, cuadra, estaEnBlanco, importeMostrado, quitarFila, sinFilasEnBlanco, usarPrecioAnterior } from './logica-filas.ts';
+import { argumentosDeCreacion, lineaDesdeDto, lineaVacia, validarPedido, type LineaDeFormulario } from './logica.ts';
 
 const fila = (clave: string, extra: Partial<LineaDeFormulario> = {}): LineaDeFormulario => ({ ...lineaVacia(clave), ...extra });
 const producto = { id: 'pr1', nombre: 'Tarjetas', unidad: 'millar', precioUnitarioMilesimas: 59_000, afectoIgv: true };
@@ -23,6 +23,22 @@ describe('lo último escrito manda', () => {
     expect(cuadra(l)).toBe(false);
     expect(importeMostrado(l)).toBe(9_800);
     expect(cuadra(cambiarImporte(fila('b', { cantidadMilesimas: 3_000 }), 10_000))).toBe(true);
+  });
+});
+
+describe('«Usar» un precio anterior', () => {
+  it('en una fila nueva copia el precio y la unidad del precio anterior (la fila nace con «unidad»)', () => {
+    const l = usarPrecioAnterior(cambiarImporte(fila('a', { cantidadMilesimas: 5_000 }), 10_000), 85_000, 'millar');
+    expect(l).toMatchObject({ unidad: 'millar', precioUnitarioMilesimas: 85_000, manda: 'precio', importeEscritoCentimos: null });
+  });
+  it('si la persona eligió la unidad, se respeta', () => {
+    expect(usarPrecioAnterior(cambiarUnidad(fila('a'), 'ciento'), 85_000, 'millar').unidad).toBe('ciento');
+  });
+  it('la unidad de un producto del catálogo o de un pedido guardado cuenta como elegida', () => {
+    const delCatalogo = agregarDesdeCatalogo([fila('a')], { ...producto, unidad: 'caja' }, 'n')[0]!;
+    expect(usarPrecioAnterior(delCatalogo, 85_000, 'millar').unidad).toBe('caja');
+    const guardada = lineaDesdeDto({ id: 'l1', productoId: null, descripcion: 'Volantes', unidad: 'ciento', cantidadMilesimas: 1_000, precioUnitarioMilesimas: 1_000, afectoIgv: true } as Parameters<typeof lineaDesdeDto>[0]);
+    expect(usarPrecioAnterior(guardada, 85_000, 'millar').unidad).toBe('ciento');
   });
 });
 

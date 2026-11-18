@@ -1,6 +1,6 @@
 import {
   BriefcaseBusiness, Building2, Calculator, ClipboardList, Handshake, ChartColumn, Clock3, Inbox, Link2, Lock, LogOut, MapPin, Network, PanelLeft, Package, ShieldCheck,
-  ShoppingCart, UserRound, Users, Wallet, Warehouse, Zap, Factory, type LucideIcon,
+  ShoppingCart, Tags, UserRound, Users, Wallet, Warehouse, Zap, Factory, type LucideIcon,
 } from 'lucide-react';
 import { Icono } from '../../shared/ui/icono.tsx';
 import { unir } from '../../shared/ui/unir.ts';
@@ -11,6 +11,7 @@ const GLIFOS: Record<string, LucideIcon> = {
   bandeja: Inbox,
   clientes: Users,
   productos: Package,
+  precios: Tags,
   empresa: Building2,
   sucursales: MapPin,
   conecta: Link2,

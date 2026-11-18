@@ -39,6 +39,7 @@ export const NUCLEO: readonly ItemDeMenu[] = [
   fijo('bandeja', 'Bandeja', '/bandeja', 'bandeja', 'Lo que espera tu aprobación'),
   fijo('clientes', 'Clientes', '/clientes', 'clientes', 'Tus clientes y contactos'),
   fijo('productos', 'Productos', '/productos', 'productos', 'Lo que vendes'),
+  fijo('precios', 'Precios', '/precios', 'precios', 'Precio anterior: ¿cuánto le cobramos la última vez?'),
 ];
 
 export const AJUSTES: readonly ItemDeMenu[] = [

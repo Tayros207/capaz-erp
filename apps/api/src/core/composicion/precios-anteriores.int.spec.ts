@@ -82,8 +82,20 @@ describe('precio_anterior_consultar', () => {
     expect(r.fuentesConsultadas.filter((f: any) => !f.incluida).map((f: any) => f.aviso).sort()).toEqual(['no incluye cotizaciones: sin acceso', 'no incluye órdenes de trabajo: sin acceso']);
   });
 
-  it('exige el producto; quien solo ve producción solo recibe órdenes de trabajo', async () => {
-    expect((await consultar(dueno, { clienteId: cristina })).cuerpo?.error?.codigo).toBe('argumentos_invalidos');
+  it('solo con el cliente lista lo último por producto (sin repetir) y sin cliente ni producto se rechaza', async () => {
+    const r = datos(await consultar(dueno, { clienteId: cristina, limite: 30 }));
+    expect(r.ultimo).toBeNull();
+    expect(r.historial.every((f: any) => f.coincidencia === 'del_cliente' && f.cliente.id === cristina)).toBe(true);
+    // La OT de cajas (agosto), la cotización de volantes y el pedido de cajas (mayo; su cotización origen se oculta).
+    expect(r.historial.map((f: any) => [f.fuente, f.descripcion])).toEqual([
+      ['cotizacion', 'Volantes A5 couché'],
+      ['orden_trabajo', 'Cajas de bocaditos'],
+      ['pedido', 'Caja de bocaditos surtidos'],
+    ]);
+    expect((await consultar(dueno, {})).cuerpo?.error?.codigo).toBe('argumentos_invalidos');
+  });
+
+  it('quien solo ve producción solo recibe órdenes de trabajo', async () => {
     const r = datos(await consultar(sinClientes, { texto: 'cajas de bocaditos' }));
     expect(r.ultimo?.fuente).toBe('orden_trabajo');
     expect(r.historial).toEqual([]);

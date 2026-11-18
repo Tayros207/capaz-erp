@@ -12,7 +12,7 @@ import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { SugerenciaDePrecio } from '../../shared/ui/sugerencia-de-precio.tsx';
 import { unir } from '../../shared/ui/unir.ts';
 import { buscarProductos, primerosProductos } from './api.ts';
-import { MAXIMO_DE_FILAS, agregarDesdeCatalogo, alEnterEnImporte, cambiarCantidad, cambiarImporte, cambiarPrecio, cuadra, importeMostrado, quitarFila } from './logica-filas.ts';
+import { MAXIMO_DE_FILAS, agregarDesdeCatalogo, alEnterEnImporte, cambiarCantidad, cambiarImporte, cambiarPrecio, cambiarUnidad, cuadra, importeMostrado, quitarFila, usarPrecioAnterior } from './logica-filas.ts';
 import { lineaVacia, totalesDe, type ErroresDeLinea, type LineaDeFormulario } from './logica.ts';
 
 type Props = {
@@ -137,7 +137,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                   descripcion={l.descripcion}
                   conIgv
                   precioActualMilesimas={l.precioUnitarioMilesimas}
-                  alUsar={(p) => cambiar(l.clave, (a) => ({ ...cambiarPrecio(a, precioParaUsar(p, true)), ...(a.unidad.trim() === '' && { unidad: p.unidad }) }))}
+                  alUsar={(p) => cambiar(l.clave, (a) => usarPrecioAnterior(a, precioParaUsar(p, true), p.unidad))}
                 />
               </Celda>
               <div className="grid grid-cols-2 gap-3 md:contents">
@@ -145,7 +145,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                   <CeldaNumerica aria-label={`Cantidad del ítem ${n}`} aria-invalid={e.cantidad ? true : undefined} valor={l.cantidadMilesimas} aTexto={(v) => formatearCantidad(v)} aValor={deMilesimas} alCambiar={(v) => cambiar(l.clave, (a) => cambiarCantidad(a, v))} />
                 </Celda>
                 <Celda etiqueta="Unidad">
-                  <select aria-label={`Unidad del ítem ${n}`} className={CONTROL} value={l.unidad} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, unidad: ev.target.value }))}>
+                  <select aria-label={`Unidad del ítem ${n}`} className={CONTROL} value={l.unidad} onChange={(ev) => cambiar(l.clave, (a) => cambiarUnidad(a, ev.target.value))}>
                     {unidadFuera ? <option value={l.unidad}>{l.unidad}</option> : null}
                     {GRUPOS_DE_UNIDADES.map((g) => (
                       <optgroup key={g.grupo} label={g.grupo}>

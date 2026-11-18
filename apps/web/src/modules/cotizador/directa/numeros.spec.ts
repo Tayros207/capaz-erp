@@ -1,5 +1,31 @@
 import { describe, expect, it } from 'vitest';
-import { leerDecimal, textoDeDecimal } from './numeros.ts';
+import { leerDecimal, leerPrecio, textoDeDecimal } from './numeros.ts';
+
+describe('leerPrecio (precio unitario: un separador único siempre es decimal)', () => {
+  it.each([
+    ['1.250', 1_250],
+    ['1,250', 1_250],
+    ['0.085', 85],
+    ['0,085', 85],
+    ['12.505', 12_505],
+    ['14,286', 14_286],
+    ['1.25', 1_250],
+    ['85', 85_000],
+    ['1.250.000', 1_250_000_000],
+    ['1,250.50', 1_250_500],
+    ['1.250,50', 1_250_500],
+    ['1.2500', 1_250],
+  ])('«%s» → %i milésimas', (texto, esperado) => expect(leerPrecio(texto)).toBe(esperado));
+
+  it('rechaza más de tres decimales y lo mal escrito', () => {
+    for (const t of ['0.0855', '1.2.3', 'abc', '', '1,5,']) expect(leerPrecio(t)).toBeNull();
+  });
+
+  it('cantidad e importe conservan la regla de miles: «1.250» es 1250', () => {
+    expect(leerDecimal('1.250', 3)).toBe(1_250_000);
+    expect(leerDecimal('1.250', 2)).toBe(125_000);
+  });
+});
 
 describe('leerDecimal', () => {
   it.each([

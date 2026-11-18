@@ -15,13 +15,16 @@ import { argumentosDeHojaDirecta, condicionesIniciales, filaVacia, IGV_POR_DEFEC
 /** El estado de la hoja Directa: lo escrito, las condiciones de Ajustes (una sola vez) y el camino crear → emitir. */
 export function useHojaDirecta() {
   const navegar = useNavigate();
+  // La primera fila nace con la clave «f0»; las siguientes, f1, f2… (las claves solo se piden en eventos).
   const contador = useRef(0);
   const nuevaClave = () => `f${(contador.current += 1)}`;
   const config = useQuery({ queryKey: [...CLAVE_COTIZADOR, 'configuracion'], queryFn: async () => datosOError(await verConfiguracion()), retry: false });
-  const [hoja, setHoja] = useState<HojaDirecta>(() => ({ cliente: null, referencia: '', filas: [filaVacia(nuevaClave())], incluyeIgv: false, ...condicionesIniciales(undefined) }));
+  const [hoja, setHoja] = useState<HojaDirecta>(() => ({ cliente: null, referencia: '', filas: [filaVacia('f0')], incluyeIgv: false, ...condicionesIniciales(undefined) }));
   const [verErrores, setVerErrores] = useState(false);
   const [emitiendo, setEmitiendo] = useState(false);
   const [emitida, setEmitida] = useState<CotizacionCompletaDto | null>(null);
+  // El estado no basta contra el doble clic (dos clics pueden ver el mismo render): la bandera sí.
+  const enCurso = useRef(false);
   // Las condiciones de Ajustes se copian una sola vez y solo si la persona no las tocó antes de que llegaran.
   const condicionesTocadas = useRef(false);
   const condicionesCopiadas = useRef(false);
@@ -41,7 +44,8 @@ export function useHojaDirecta() {
 
   async function emitir() {
     setVerErrores(true);
-    if (!validacion.ok || emitiendo || emitida) return;
+    if (!validacion.ok || enCurso.current || emitida) return;
+    enCurso.current = true;
     setEmitiendo(true);
     try {
       const r = await crearCotizacion(argumentosDeHojaDirecta(hoja, igv));
@@ -62,6 +66,7 @@ export function useHojaDirecta() {
       else notificar('Se guardó como borrador. Puedes emitirla desde su ficha.', 'aviso');
       void navegar(rutaDeFicha(id));
     } finally {
+      enCurso.current = false;
       setEmitiendo(false);
     }
   }

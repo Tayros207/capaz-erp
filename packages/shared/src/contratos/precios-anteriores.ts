@@ -11,7 +11,8 @@ const texto = (max: number) => z.string().trim().max(max);
 
 export const FUENTES_DE_PRECIO_ANTERIOR = ['pedido', 'cotizacion', 'orden_trabajo'] as const;
 export const BASES_DE_PRECIO = ['con_igv', 'sin_igv', 'sin_desglose'] as const;
-export const COINCIDENCIAS_DE_PRECIO = ['producto', 'misma_descripcion', 'parecida'] as const;
+/** `del_cliente`: sin producto buscado, lo último que se le cobró al cliente por cada cosa (una fila por producto). */
+export const COINCIDENCIAS_DE_PRECIO = ['producto', 'misma_descripcion', 'parecida', 'del_cliente'] as const;
 export const MAXIMO_DE_RAICES = 12;
 export const LIMITE_DE_DOCUMENTOS_POR_DEFECTO = 60;
 export const MAXIMO_DE_DOCUMENTOS = 200;
@@ -68,7 +69,8 @@ export const entradaDePrecioAnteriorSchema = z
     texto: texto(300).min(1).optional(),
     limite: z.number().int().min(1).max(MAXIMO_DEL_HISTORIAL).default(10),
   })
-  .refine((v) => v.productoId || v.texto, { error: 'Indica el producto.' });
+  // Solo con el cliente se listan sus últimos precios, uno por producto; sin cliente hace falta el producto.
+  .refine((v) => v.productoId || v.texto || v.clienteId || v.clienteTexto, { error: 'Indica el cliente o el producto.' });
 
 export const salidaDePrecioAnteriorSchema = z.strictObject({
   /** El cliente resuelto; `null` si se buscó solo por producto o si hubo que elegir entre candidatos. */

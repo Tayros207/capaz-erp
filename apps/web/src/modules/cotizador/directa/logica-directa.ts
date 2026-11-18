@@ -1,6 +1,7 @@
 import { importe, MAXIMO_DE_LINEAS_DE_COTIZACION, quitarIgv, type ConfiguracionDeCotizadorDto, type EntradaDe, type LineaDeCotizacionEntrada } from '@capaz/shared';
+import { unidadAlUsar } from '../../../shared/api/logica-precio-anterior.ts';
 import { unitarioDeTotal } from '../../../shared/formato/precio-total.ts';
-import { leerDecimal, textoDeDecimal } from './numeros.ts';
+import { leerDecimal, leerPrecio, textoDeDecimal } from './numeros.ts';
 
 // Lógica pura de la hoja «Directa»: la cotización escrita como en papel. Cantidad y precio en milésimas, importe en céntimos.
 // Lo último que se escribe (precio o importe) manda y el otro se recalcula.
@@ -14,6 +15,8 @@ export type FilaDirecta = {
   importe: string;
   /** Cuál de los dos escribió la persona por última vez. */
   manda: 'precio' | 'importe';
+  /** `true` cuando la persona eligió la unidad: «Usar» un precio anterior ya no la cambia. */
+  unidadElegida?: boolean;
 };
 export type ClienteDeHoja = { id: string; nombre: string };
 export type HojaDirecta = {
@@ -78,7 +81,7 @@ export function calcularFila(f: FilaDirecta, incluyeIgv: boolean, igvPorcentaje:
   let exacto = true;
   let textoDelOtro = '';
   if (f.manda === 'precio') {
-    precio = leerDecimal(f.precio, 3);
+    precio = leerPrecio(f.precio);
     if (precio !== null && precio >= 1) {
       try {
         bruto = importe(cantidad, precio);
@@ -129,6 +132,20 @@ export function alEnterEnImporte(filas: readonly FilaDirecta[], clave: string, c
 /** Quita una fila; siempre queda al menos una. */
 export const quitarFila = (filas: readonly FilaDirecta[], clave: string): FilaDirecta[] => (filas.length <= 1 ? [...filas] : filas.filter((f) => f.clave !== clave));
 
+/** «Usar» un precio anterior: pone el unitario (manda el precio) y, si la persona no eligió la unidad, la del precio anterior. */
+export function usarPrecioAnterior(f: FilaDirecta, precioTexto: string, unidadDelPrecio: string): FilaDirecta {
+  return { ...f, precio: precioTexto, manda: 'precio', unidad: unidadAlUsar(f.unidad, f.unidadElegida === true, unidadDelPrecio) };
+}
+
+/**
+ * Cómo se leyó el precio que escribió la persona, para mostrarlo junto al campo: así «1.250» se ve como S/ 1.25 antes de
+ * emitir. `null` si el precio no lo escribió la persona (manda el importe) o está vacío; `'ilegible'` si no se entiende.
+ */
+export function precioLeido(f: Pick<FilaDirecta, 'precio' | 'manda'>): number | 'ilegible' | null {
+  if (f.manda !== 'precio' || f.precio.trim() === '') return null;
+  return leerPrecio(f.precio) ?? 'ilegible';
+}
+
 // --- Condiciones ---
 
 export type CondicionesDeHoja = Pick<HojaDirecta, 'validezDias' | 'plazoEntrega' | 'formaPago'>;
@@ -154,7 +171,8 @@ function erroresDeFila(f: FilaDirecta, incluyeIgv: boolean, igv: number): Errore
   const c = calcularFila(f, incluyeIgv, igv);
   if (f.descripcion.trim() === '') e.descripcion = 'Escribe la descripción.';
   if (c.cantidadMilesimas === null) e.cantidad = 'Escribe una cantidad mayor que cero.';
-  else if (f.manda === 'precio' && (leerDecimal(f.precio, 3) ?? 0) < 1) e.precio = 'Escribe el precio o el importe.';
+  else if (f.manda === 'precio' && f.precio.trim() !== '' && leerPrecio(f.precio) === null) e.precio = 'No se entiende el precio: usa números y hasta 3 decimales.';
+  else if (f.manda === 'precio' && (leerPrecio(f.precio) ?? 0) < 1) e.precio = 'Escribe el precio o el importe.';
   else if (f.manda === 'importe' && (leerDecimal(f.importe, 2) ?? 0) < 1) e.importe = 'Escribe el precio o el importe.';
   else if (c.neto === null) e[f.manda] = 'El importe no es válido.';
   else if (c.neto < 1) e[f.manda] = 'El importe queda en menos de un céntimo.';

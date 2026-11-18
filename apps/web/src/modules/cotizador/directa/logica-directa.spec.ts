@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { alEnterEnImporte, argumentosDeHojaDirecta, calcularFila, condicionesIniciales, filaVacia, opcionesDeUnidad, opcionesDeValidez, quitarFila, tituloDeHoja, totalesDeHoja, validarHoja, type FilaDirecta, type HojaDirecta } from './logica-directa.ts';
+import { milesimasATextoPlano } from '../../../shared/api/logica-precio-anterior.ts';
+import { alEnterEnImporte, argumentosDeHojaDirecta, calcularFila, condicionesIniciales, filaVacia, opcionesDeUnidad, opcionesDeValidez, precioLeido, quitarFila, tituloDeHoja, totalesDeHoja, usarPrecioAnterior, validarHoja, type FilaDirecta, type HojaDirecta } from './logica-directa.ts';
 
 const fila = (extra: Partial<FilaDirecta> = {}): FilaDirecta => ({ ...filaVacia('a'), descripcion: 'Volantes', cantidad: '1.000', precio: '0,42', ...extra });
 const hoja = (extra: Partial<HojaDirecta> = {}): HojaDirecta => ({ cliente: { id: 'c1', nombre: 'Sol' }, referencia: '', filas: [fila()], incluyeIgv: false, validezDias: 15, plazoEntrega: '', formaPago: '', ...extra });
@@ -26,6 +27,37 @@ describe('calcularFila', () => {
   it('sin cantidad o sin precio no hay importe', () => {
     expect(calcularFila(fila({ cantidad: '' }), false).neto).toBeNull();
     expect(calcularFila(fila({ precio: '' }), false).neto).toBeNull();
+  });
+  it('el precio «1.250» es S/ 1.25 (no S/ 1250): 1000 × 1,25 = 1250,00; la cantidad «1.000» sigue siendo mil', () => {
+    const c = calcularFila(fila({ precio: '1.250' }), false);
+    expect(c).toMatchObject({ cantidadMilesimas: 1_000_000, precioMilesimas: 1_250, importeBrutoCentimos: 125_000 });
+  });
+  it('el unitario calculado que se muestra («14,286») se vuelve a leer igual si la persona lo retoca', () => {
+    const otro = calcularFila(fila({ cantidad: '7', precio: '', importe: '100', manda: 'importe' }), false).textoDelOtro;
+    expect(calcularFila(fila({ cantidad: '7', precio: otro, manda: 'precio' }), false).precioMilesimas).toBe(14_286);
+  });
+});
+
+describe('precio anterior y precio leído', () => {
+  it('el texto de «Usar» se lee como el mismo precio (nunca ×1000)', () => {
+    for (const m of [12_505, 1_085, 85, 240, 118_000, 1_234_500]) {
+      expect(calcularFila(fila({ precio: milesimasATextoPlano(m) }), false).precioMilesimas).toBe(m);
+    }
+  });
+  it('«Usar» copia la unidad del precio anterior si la persona no eligió una; si la eligió, la respeta', () => {
+    expect(usarPrecioAnterior(filaVacia('a'), '85', 'millar')).toMatchObject({ precio: '85', manda: 'precio', unidad: 'millar' });
+    expect(usarPrecioAnterior({ ...filaVacia('a'), unidad: 'ciento', unidadElegida: true }, '85', 'millar').unidad).toBe('ciento');
+    expect(usarPrecioAnterior({ ...filaVacia('a'), manda: 'importe', importe: '10' }, '0.085', 'unidad')).toMatchObject({ manda: 'precio', precio: '0.085' });
+  });
+  it('precioLeido: lo interpretado, «ilegible» o nada si manda el importe', () => {
+    expect(precioLeido({ precio: '1.250', manda: 'precio' })).toBe(1_250);
+    expect(precioLeido({ precio: '0.0855', manda: 'precio' })).toBe('ilegible');
+    expect(precioLeido({ precio: '', manda: 'precio' })).toBeNull();
+    expect(precioLeido({ precio: '5', manda: 'importe' })).toBeNull();
+  });
+  it('un precio que no se entiende se señala como tal', () => {
+    const r = validarHoja(hoja({ filas: [fila({ precio: '0.0855' })] }));
+    expect(r.errores.porFila.a?.precio).toMatch(/No se entiende/);
   });
 });
 

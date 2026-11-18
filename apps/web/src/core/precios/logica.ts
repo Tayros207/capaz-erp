@@ -2,7 +2,8 @@ import { detectarPreguntaDePrecio, type EntradaDe } from '@capaz/shared';
 
 // Lógica pura de la pantalla «¿Cuánto le cobramos?»: qué se busca según la dirección y a qué dirección lleva una pregunta dictada.
 
-export type Busqueda = { clienteId?: string; clienteTexto?: string; texto: string };
+/** Sin `texto` (solo el cliente) se listan los últimos precios del cliente, uno por producto. */
+export type Busqueda = { clienteId?: string; clienteTexto?: string; texto?: string };
 
 export const RUTA_DE_PRECIOS = '/precios';
 
@@ -31,11 +32,20 @@ export function leerDireccion(params: URLSearchParams): DesdeLaDireccion {
   return { clienteId: leer('clienteId'), clienteNombre: leer('nombre'), clienteTexto: leer('cliente'), texto: leer('q') };
 }
 
-/** La búsqueda que se envía, o `null` mientras falte el producto (sin él no hay nada que preguntar). */
+/**
+ * La búsqueda que se envía: producto (2 letras o más) con o sin cliente, o solo el cliente (sus últimos precios por producto).
+ * `null` si no hay ni cliente ni producto.
+ */
 export function busquedaDe(d: { clienteId?: string; clienteTexto?: string; texto: string }): Busqueda | null {
   const texto = d.texto.trim();
-  if (texto.length < 2) return null;
-  return { ...(d.clienteId ? { clienteId: d.clienteId } : d.clienteTexto?.trim() ? { clienteTexto: d.clienteTexto.trim() } : {}), texto };
+  const cliente = d.clienteId ? { clienteId: d.clienteId } : d.clienteTexto?.trim() ? { clienteTexto: d.clienteTexto.trim() } : null;
+  if (texto.length >= 2) return { ...cliente, texto };
+  return cliente;
 }
 
-export const argumentosDe = (b: Busqueda, limite = 15): EntradaDe<'precio_anterior_consultar'> => ({ ...b, limite });
+/** Solo con el cliente se piden más filas: una por producto. */
+export const LIMITE_POR_PRODUCTO = 15;
+export const LIMITE_DEL_CLIENTE = 30;
+export const esSoloCliente = (b: Busqueda): boolean => !b.texto;
+
+export const argumentosDe = (b: Busqueda): EntradaDe<'precio_anterior_consultar'> => ({ ...b, limite: esSoloCliente(b) ? LIMITE_DEL_CLIENTE : LIMITE_POR_PRODUCTO });

@@ -24,7 +24,8 @@ const yoCon = (modulos: ModuloDeYo[], operador = false): Yo => ({
 describe('menuDesdeYo', () => {
   it('trae núcleo y ajustes fijos', () => {
     const m = menuDesdeYo(yoCon([]));
-    expect(m.nucleo.map((i) => i.nombre)).toEqual(['Inicio', 'Bandeja', 'Clientes', 'Productos']);
+    expect(m.nucleo.map((i) => i.nombre)).toEqual(['Inicio', 'Bandeja', 'Clientes', 'Productos', 'Precios']);
+    expect(m.nucleo.find((i) => i.clave === 'precios')).toMatchObject({ ruta: '/precios', estado: 'entra' });
     expect(m.ajustes.map((i) => i.nombre)).toEqual(['Empresa', 'Usuarios', 'Sucursales', 'Conecta', 'Automatizaciones', 'Historial']);
   });
 

@@ -16,7 +16,7 @@ type Props = {
   alUsar: (precio: PrecioAnterior) => void;
 };
 
-/** «Última vez: S/ 118.00 c/u · 50 caja · 10/05/2026 · PED-… [Usar]» bajo la descripción de una fila. */
+/** «Última vez: S/ 118.00 por caja · 50 caja · 10/05/2026 · PED-… [Usar]» bajo la descripción de una fila. */
 export function SugerenciaDePrecio({ clienteId, productoId, descripcion, conIgv, precioActualMilesimas, alUsar }: Props) {
   const { precio } = usePrecioAnterior({ clienteId, productoId, descripcion });
   if (!precio) return null;
@@ -27,7 +27,7 @@ export function SugerenciaDePrecio({ clienteId, productoId, descripcion, conIgv,
     <p role="status" className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-control border border-borde bg-superficie-alta px-3 py-2 text-sm text-texto-suave">
       <span>
         {cotizado ? 'Cotizado: ' : 'Última vez: '}
-        <strong className="font-semibold tabular-nums text-texto">S/ {milesimasATexto(sugerido)} c/u</strong> ({baseMostrada(precio, conIgv)})
+        <strong className="font-semibold tabular-nums text-texto">S/ {milesimasATexto(sugerido)} por {precio.unidad || 'unidad'}</strong> ({baseMostrada(precio, conIgv)})
         {' · '}{formatearCantidad(precio.cantidadMilesimas, precio.unidad)}
         {' · '}{diaATexto(precio.documento.fecha)}
         {' · '}{precio.documento.codigo}
