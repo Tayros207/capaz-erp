@@ -14,6 +14,7 @@ import { SucursalesModule } from './core/sucursales/sucursales.module.js';
 import { MiembrosModule } from './core/miembros/miembros.module.js';
 import { BorradoresModule } from './core/borradores/borradores.module.js';
 import { CapturaModule } from './core/captura/captura.module.js';
+import { ComposicionModule } from './core/composicion/composicion.module.js';
 import { PlataformaModule } from './core/plataforma/plataforma.module.js';
 import { ConectoresModule } from './core/conectores/conectores.module.js';
 import { AutomatizacionesModule } from './core/automatizaciones/automatizaciones.module.js';
@@ -71,6 +72,7 @@ import { LoggerModule } from './infra/logger/logger.module.js';
     MiembrosModule,
     BorradoresModule,
     CapturaModule,
+    ComposicionModule,
     PlataformaModule,
     ConectoresModule,
     AutomatizacionesModule,

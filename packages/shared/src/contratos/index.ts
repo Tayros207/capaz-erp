@@ -31,6 +31,7 @@ import { contratosDeCotizador, eventosDeCotizador } from './cotizador.js';
 import { contratosDeCotizadorCuadro } from './cotizador-cuadro.js';
 import { contratosDeCotizadorTaller } from './cotizador-taller.js';
 import { contratosDeCotizadorEnlaces } from './cotizador-enlaces.js';
+import { contratosDePreciosAnteriores } from './precios-anteriores.js';
 
 export * from './empresa.js';
 export * from './modulos.js';
@@ -64,6 +65,7 @@ export * from './cotizador-cuadro.js';
 export * from './cotizador-cuadro-vista.js';
 export * from './cotizador-taller.js';
 export * from './cotizador-enlaces.js';
+export * from './precios-anteriores.js';
 
 // Cada área aporta sus contratos y sus eventos; agregar uno solo obliga a editar el archivo del área.
 export const CONTRATOS = {
@@ -97,6 +99,7 @@ export const CONTRATOS = {
   ...contratosDeCotizadorTaller,
   ...contratosDeCotizadorEnlaces,
   ...contratosDeCotizadorCuadro,
+  ...contratosDePreciosAnteriores,
 } as const satisfies Record<string, ContratoDeHerramienta>;
 
 /** Herramientas de la consola de plataforma: viven aparte (rol de plataforma). */

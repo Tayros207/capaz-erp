@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { MODOS_DE_COTIZACION, vistaDelCuadroSchema } from './cotizador-cuadro-vista.js';
+import { entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema } from './precios-anteriores.js';
 
 // Contratos del área «cotizador»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo. Precios de la lista y de la cotización SIN IGV.
@@ -416,6 +417,7 @@ const editarCotizacionSchema = z
   .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
 
 export const contratosDeCotizador = {
+  cotizador_precios_anteriores: contrato(entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema),
   cotizador_iniciar: contrato(z.strictObject({}), z.strictObject({ configuracionCreada: z.boolean() })),
   cotizador_configuracion_ver: contrato(z.strictObject({}), configuracionDeCotizadorSchema),
   cotizador_configurar: contrato(configurarSchema, configuracionDeCotizadorSchema),

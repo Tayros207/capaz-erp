@@ -10,6 +10,7 @@ import { rutas as clientes } from '../core/clientes/rutas.tsx';
 import { rutas as productos } from '../core/productos/rutas.tsx';
 import { rutas as bandeja } from '../core/bandeja/rutas.tsx';
 import { rutas as captura } from '../core/captura/rutas.tsx';
+import { rutas as precios } from '../core/precios/rutas.tsx';
 import { rutas as conecta } from '../core/conecta/rutas.tsx';
 import { rutas as automatizaciones } from '../core/automatizaciones/rutas.tsx';
 import { rutas as invitaciones } from '../core/invitaciones/rutas.tsx';
@@ -33,7 +34,7 @@ import { rutas as plataforma } from '../plataforma/rutas.tsx';
 // `lazy` dentro de su propio `rutas.tsx`.
 
 const DE_AREAS: RouteObject[] = [
-  ...acceso, ...inicio, ...clientes, ...productos, ...bandeja, ...captura, ...conecta, ...automatizaciones, ...invitaciones,
+  ...acceso, ...inicio, ...clientes, ...productos, ...bandeja, ...captura, ...precios, ...conecta, ...automatizaciones, ...invitaciones,
   ...ajustesEmpresa, ...ajustesHistorial, ...ajustesUsuarios, ...ajustesSucursales,
   ...registro, ...crm, ...ordenes, ...insumos, ...compras, ...personal, ...produccion, ...reportes, ...cotizador,
   ...plataforma,

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import type { Candidata, ClienteDto } from '@capaz/shared';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { puede } from '../../shared/sesion/sesion.ts';
@@ -19,6 +19,7 @@ import { CLAVE_CLIENTES } from './claves.ts';
 import { FormularioCliente } from './formulario-cliente.tsx';
 import { SeccionesAmpliadasDeCliente } from './secciones-ampliadas.tsx';
 import { Extensiones } from '../../shared/ui/extensiones.tsx';
+import { rutaDePrecios } from '../precios/logica.ts';
 import {
   argumentosDeEdicion,
   ETIQUETA_DE_CLASE,
@@ -110,6 +111,7 @@ function Contenido({ cliente }: { cliente: ClienteDto }) {
         accionesSecundarias={
           <>
             {archivado ? <Insignia tono="neutro">Archivado</Insignia> : null}
+            <Link to={rutaDePrecios({ clienteId: cliente.id, clienteNombre: cliente.nombre })} className="inline-flex min-h-(--alto-control) items-center rounded-control px-3 font-medium text-accion underline-offset-2 hover:underline">Precios anteriores</Link>
             {puedeEditar ? <Boton variante={archivado ? 'secundario' : 'peligro'} onClick={() => void alternarArchivo()}>{archivado ? 'Restaurar' : 'Archivar'}</Boton> : null}
           </>
         }

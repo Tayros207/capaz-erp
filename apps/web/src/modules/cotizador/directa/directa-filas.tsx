@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
+import { milesimasATextoPlano, precioParaUsar } from '../../../shared/api/logica-precio-anterior.ts';
 import { Boton } from '../../../shared/ui/boton.tsx';
 import { CLASES_DE_CONTROL } from '../../../shared/ui/campo-comun.ts';
+import { SugerenciaDePrecio } from '../../../shared/ui/sugerencia-de-precio.tsx';
 import { unir } from '../../../shared/ui/unir.ts';
 import { alEnterEnImporte, calcularFila, filaVacia, opcionesDeUnidad, quitarFila, type ErroresDeFila, type FilaDirecta } from './logica-directa.ts';
 
@@ -8,6 +10,8 @@ type Props = {
   filas: FilaDirecta[];
   incluyeIgv: boolean;
   igv: number;
+  /** El cliente de la hoja: con él, cada fila puede sugerir lo que se le cobró la última vez. */
+  clienteId?: string | null;
   unidades: readonly string[];
   errores: Record<string, ErroresDeFila>;
   errorGeneral?: string;
@@ -31,7 +35,7 @@ function Celda({ etiqueta, error, children }: { etiqueta: string; error?: string
 }
 
 /** Las filas de la hoja: descripción, cantidad, unidad, precio e importe; lo último que se escribe manda. */
-export function DirectaFilas({ filas, incluyeIgv, igv, unidades, errores, errorGeneral, soloLectura, nuevaClave, alCambiar }: Props) {
+export function DirectaFilas({ filas, incluyeIgv, igv, clienteId, unidades, errores, errorGeneral, soloLectura, nuevaClave, alCambiar }: Props) {
   const raiz = useRef<HTMLDivElement>(null);
   const foco = useRef<string | null>(null);
   useEffect(() => {
@@ -63,6 +67,15 @@ export function DirectaFilas({ filas, incluyeIgv, igv, unidades, errores, errorG
             <div key={f.clave} data-clave={f.clave} className={unir(COLUMNAS, 'flex flex-col gap-3 rounded-tarjeta border border-borde bg-superficie p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0')}>
               <Celda etiqueta="Descripción" error={e.descripcion}>
                 <input data-campo="descripcion" aria-label={`Descripción de la fila ${i + 1}`} aria-invalid={e.descripcion ? true : undefined} className={CONTROL} maxLength={300} value={f.descripcion} readOnly={soloLectura} onChange={(ev) => cambiar(f.clave, { descripcion: ev.target.value })} />
+                {soloLectura ? null : (
+                  <SugerenciaDePrecio
+                    clienteId={clienteId}
+                    descripcion={f.descripcion}
+                    conIgv={incluyeIgv}
+                    precioActualMilesimas={c.precioMilesimas}
+                    alUsar={(p) => cambiar(f.clave, { precio: milesimasATextoPlano(precioParaUsar(p, incluyeIgv)), manda: 'precio', ...(f.unidad.trim() === '' && { unidad: p.unidad }) })}
+                  />
+                )}
               </Celda>
               <div className="grid grid-cols-2 gap-3 md:contents">
                 <Celda etiqueta="Cantidad" error={e.cantidad}>

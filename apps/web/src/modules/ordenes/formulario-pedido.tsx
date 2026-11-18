@@ -67,7 +67,7 @@ export function FormularioPedido({ valor, errores, igvPorcentaje, fecha, alCambi
           <CampoTextarea etiqueta="Notas" filas={3} maxLength={4000} value={valor.notas} error={errores.notas} onChange={(e) => alCambiar({ notas: e.target.value })} />
         </div>
       </div>
-      <FilasDePedido lineas={valor.lineas} igvPorcentaje={igvPorcentaje} errores={errores.porLinea} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
+      <FilasDePedido lineas={valor.lineas} igvPorcentaje={igvPorcentaje} clienteId={valor.cliente?.id} errores={errores.porLinea} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decidirOrigen, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
+import { decidirOrigen, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs, destinoSiEsPreguntaDePrecio } from './logica.ts';
 
 describe('origen', () => {
   it('voz aunque se retoque; texto si se escribió', () => {
@@ -44,5 +44,12 @@ describe('hayTexto', () => {
   it('ignora espacios', () => {
     expect(hayTexto('  ')).toBe(false);
     expect(hayTexto(' a ')).toBe(true);
+  });
+});
+
+describe('destinoSiEsPreguntaDePrecio', () => {
+  it('una pregunta de precio abre /precios; un movimiento dictado sigue su camino', () => {
+    expect(destinoSiEsPreguntaDePrecio('¿Cuánto le cobramos a Imprenta Sur por volantes?')).toBe('/precios?cliente=Imprenta+Sur&q=volantes');
+    expect(destinoSiEsPreguntaDePrecio('Egreso 80 soles, papel bond')).toBeNull();
   });
 });

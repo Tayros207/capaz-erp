@@ -6,6 +6,7 @@ import { CONSUMIDORES_DE_ORDENES } from '../consumidores.js';
 import { entregaVence } from '../fuentes.js';
 import { pedidoAnotar, pedidoCrear, pedidoEditar } from './pedidos-escritura.js';
 import { pedidoCambiarEstado, pedidoCancelar, pedidoConfirmar } from './pedidos-estado.js';
+import { pedidosPreciosAnteriores } from './pedidos-precios-anteriores.js';
 import { ordenesResumen, pedidoVer, pedidosListar } from './pedidos-lectura.js';
 
 /** Las herramientas, la fuente de tiempo del módulo de pedidos. y los consumidores del puente cotización → pedido. */
@@ -18,7 +19,7 @@ export class HerramientasDeOrdenes implements OnModuleInit {
   ) {}
 
   onModuleInit(): void {
-    this.registro.agregar([pedidoCrear, pedidoEditar, pedidoVer, pedidosListar, pedidoAnotar, pedidoConfirmar, pedidoCambiarEstado, pedidoCancelar, ordenesResumen]);
+    this.registro.agregar([pedidoCrear, pedidoEditar, pedidoVer, pedidosListar, pedidoAnotar, pedidoConfirmar, pedidoCambiarEstado, pedidoCancelar, ordenesResumen, pedidosPreciosAnteriores]);
     this.consumidores.agregar(CONSUMIDORES_DE_ORDENES);
     this.fuentes.agregar([entregaVence]);
   }

@@ -17,7 +17,7 @@ export {
   type Recibo,
   type Respuesta,
 } from './respuesta.js';
-export { aCentimos, centimosSchema, formatearSoles, importe, milesimasSchema, type Centimos, type Milesimas } from './dinero.js';
+export { aCentimos, centimosSchema, formatearSoles, importe, milesimasSchema, ponerIgv, type Centimos, type Milesimas } from './dinero.js';
 export { listadoSchema, paginaSchema, type Pagina } from './listado.js';
 export {
   ARGUMENTOS_DE_CONTEXTO,
@@ -62,3 +62,14 @@ export {
   type ManifiestoDeModulo,
   type MotivoDeAcceso,
 } from './modulos.js';
+export {
+  UMBRAL_MISMA_DESCRIPCION,
+  UMBRAL_PARECIDA,
+  coincidenciaDeDescripcion,
+  normalizarDescripcion,
+  plegarParaBuscar,
+  raicesDeBusqueda,
+  similitudDeDescripciones,
+  type Coincidencia,
+} from './similitud-descripciones.js';
+export { detectarPreguntaDePrecio, type PreguntaDePrecio } from './pregunta-de-precio.js';

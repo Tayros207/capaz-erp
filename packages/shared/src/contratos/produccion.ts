@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { importe } from '../dinero.js';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema } from './precios-anteriores.js';
 
 // Producción: órdenes de trabajo del taller (el modelo de SF/Tairos.RC en Capaz). Una orden es de un cliente, lleva una o
 // más líneas (cantidad, valor, material, medida, colores, acabado), un adelanto y lo que falta cancelar (saldo).
@@ -134,6 +135,7 @@ export const listarOrdenesDeProduccionSchema = z.strictObject({
 });
 
 export const contratosDeProduccion = {
+  produccion_precios_anteriores: contrato(entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema),
   produccion_ordenes_listar: contrato(listarOrdenesDeProduccionSchema, listadoSchema(ordenDeProduccionSchema)),
   produccion_orden_ver: contrato(z.strictObject({ id }), ordenDeProduccionCompletaSchema),
   produccion_orden_crear: contrato(crearOrdenDeProduccionSchema, ordenDeProduccionCompletaSchema),

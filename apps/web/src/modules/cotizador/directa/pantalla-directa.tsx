@@ -25,6 +25,7 @@ export function PantallaDirecta() {
             filas={h.hoja.filas}
             incluyeIgv={h.hoja.incluyeIgv}
             igv={h.igv}
+            clienteId={h.hoja.cliente?.id}
             unidades={h.config?.unidades ?? []}
             errores={h.errores.porFila}
             errorGeneral={h.errores.filas}

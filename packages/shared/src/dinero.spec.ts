@@ -84,3 +84,19 @@ describe('importe', () => {
     expect(milesimasSchema.safeParse(1.5).success).toBe(false);
   });
 });
+
+import { ponerIgv } from './dinero.js';
+import { quitarIgv } from './contratos/cotizador.js';
+
+describe('ponerIgv', () => {
+  it('suma el IGV con mitad hacia arriba y es la inversa de quitarIgv en montos redondos', () => {
+    expect(ponerIgv(10_000, 18)).toBe(11_800);
+    expect(ponerIgv(8_475, 18)).toBe(10_001);
+    expect(ponerIgv(500, 0)).toBe(500);
+    expect(quitarIgv(ponerIgv(10_000, 18), 18)).toBe(10_000);
+  });
+  it('rechaza lo que no es entero seguro o IGV fuera de rango', () => {
+    expect(() => ponerIgv(1.5, 18)).toThrow(RangeError);
+    expect(() => ponerIgv(100, 101)).toThrow(RangeError);
+  });
+});

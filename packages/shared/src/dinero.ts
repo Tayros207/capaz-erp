@@ -47,3 +47,10 @@ export function importe(cantidadMilesimas: number, precioUnitarioMilesimas: numb
   const piso = resto < 0n ? cociente - 1n : cociente;
   return centimosSchema.parse(Number(piso));
 }
+
+/** Suma el IGV a un monto que no lo trae: `round(monto × (100 + igv) / 100)`, mitad hacia arriba. Sirve para céntimos y milésimas. */
+export function ponerIgv(montoSinIgv: number, igvPorcentaje: number): number {
+  if (!Number.isSafeInteger(montoSinIgv) || montoSinIgv < 0) throw new RangeError('El monto no es un entero seguro no negativo.');
+  if (!Number.isInteger(igvPorcentaje) || igvPorcentaje < 0 || igvPorcentaje > 100) throw new RangeError('El IGV debe ser un entero de 0 a 100.');
+  return Number((BigInt(montoSinIgv) * BigInt(100 + igvPorcentaje) + 50n) / 100n);
+}

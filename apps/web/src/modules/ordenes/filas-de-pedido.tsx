@@ -6,8 +6,10 @@ import { formatearSoles, centimosATexto, textoACentimos } from '../../shared/for
 import { GRUPOS_DE_UNIDADES, unidadConocida } from '../../shared/formato/unidades.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { CLASES_DE_CONTROL } from '../../shared/ui/campo-comun.ts';
+import { precioParaUsar } from '../../shared/api/logica-precio-anterior.ts';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
+import { SugerenciaDePrecio } from '../../shared/ui/sugerencia-de-precio.tsx';
 import { unir } from '../../shared/ui/unir.ts';
 import { buscarProductos, primerosProductos } from './api.ts';
 import { MAXIMO_DE_FILAS, agregarDesdeCatalogo, alEnterEnImporte, cambiarCantidad, cambiarImporte, cambiarPrecio, cuadra, importeMostrado, quitarFila } from './logica-filas.ts';
@@ -16,6 +18,8 @@ import { lineaVacia, totalesDe, type ErroresDeLinea, type LineaDeFormulario } fr
 type Props = {
   lineas: LineaDeFormulario[];
   igvPorcentaje: number;
+  /** El cliente del pedido: con él, cada fila puede sugerir lo que se le cobró la última vez. */
+  clienteId?: string | null;
   /** Errores por clave de fila. */
   errores?: Record<string, ErroresDeLinea>;
   error?: string;
@@ -89,7 +93,7 @@ function BuscadorDeCatalogo({ alElegir, alCerrar }: { alElegir: (p: ProductoDto)
 }
 
 /** Las filas del pedido en línea (con sus totales): lo último que se escribe, precio o importe, manda. */
-export function FilasDePedido({ lineas, igvPorcentaje, errores = {}, error, alCambiar }: Props) {
+export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, error, alCambiar }: Props) {
   const raiz = useRef<HTMLDivElement>(null);
   const foco = useRef<string | null>(null);
   const [catalogo, setCatalogo] = useState(false);
@@ -127,6 +131,14 @@ export function FilasDePedido({ lineas, igvPorcentaje, errores = {}, error, alCa
               </span>
               <Celda etiqueta="Descripción" error={e.descripcion}>
                 <input data-campo="descripcion" aria-label={`Descripción del ítem ${n}`} aria-invalid={e.descripcion ? true : undefined} className={CONTROL} maxLength={300} value={l.descripcion} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, descripcion: ev.target.value }))} />
+                <SugerenciaDePrecio
+                  clienteId={clienteId}
+                  productoId={l.producto?.id}
+                  descripcion={l.descripcion}
+                  conIgv
+                  precioActualMilesimas={l.precioUnitarioMilesimas}
+                  alUsar={(p) => cambiar(l.clave, (a) => ({ ...cambiarPrecio(a, precioParaUsar(p, true)), ...(a.unidad.trim() === '' && { unidad: p.unidad }) }))}
+                />
               </Celda>
               <div className="grid grid-cols-2 gap-3 md:contents">
                 <Celda etiqueta="Cantidad" error={e.cantidad}>

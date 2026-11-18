@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { importe } from '../dinero.js';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema } from './precios-anteriores.js';
 
 // Contratos del área «ordenes»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -221,6 +222,7 @@ export const contratosDeOrdenes = {
     z.strictObject({ desde: dia, hasta: dia }).refine((v) => v.desde <= v.hasta, { error: 'El período empieza antes de terminar.' }),
     resumenDeOrdenesSchema,
   ),
+  ordenes_precios_anteriores: contrato(entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema),
 } as const;
 
 export const eventosDeOrdenes = {

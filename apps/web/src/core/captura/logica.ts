@@ -1,4 +1,5 @@
 import { MAXIMO_DE_ESPERA_DE_CAPTURA_MS, type MetricasDeBorradores, type OrigenDeCaptura } from '@capaz/shared';
+import { destinoDePreguntaDePrecio } from '../precios/logica.ts';
 
 // Lógica pura de la pantalla de dictado.
 
@@ -42,3 +43,6 @@ export function mensajeDeErrorDeCaptura(codigo: string, mensaje: string): string
 }
 
 export const hayTexto = (texto: string): boolean => texto.trim().length > 0;
+
+/** Una pregunta como «cuánto le cobramos a Cristina por las cajas» no crea un borrador: abre `/precios` ya buscada. `null` si es otra cosa. */
+export const destinoSiEsPreguntaDePrecio = (texto: string): string | null => destinoDePreguntaDePrecio(texto);

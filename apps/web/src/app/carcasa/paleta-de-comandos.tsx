@@ -7,6 +7,7 @@ import { datosOError } from '../../shared/api/consultas.ts';
 import { useBusqueda } from '../../shared/ui/use-busqueda.ts';
 import { IconoMenu } from './iconos-menu.tsx';
 import type { ItemDeMenu, MenuDeYo } from './menu.ts';
+import { destinoDePreguntaDePrecio, RUTA_DE_PRECIOS } from '../../core/precios/logica.ts';
 import { accionesRapidas, normalizar } from './paleta-logica.ts';
 
 type Cliente = { id: string; nombre: string; documentoNumero: string | null; telefono: string | null };
@@ -45,6 +46,9 @@ export function PaletaDeComandos({ menu, abierta, alCambiar, puedeVerClientes }:
   const q = normalizar(texto);
   const visibles = pantallas.filter((p) => !q || normalizar(`${p.item.nombre} ${p.grupo} ${p.item.descripcion}`).includes(q));
   const accionesVisibles = acciones.filter((a) => !q || normalizar(a.nombre).includes(q));
+  // «cuánto le cobramos a X por Y» lleva directo a /precios con la búsqueda hecha; el atajo fijo abre la pantalla vacía.
+  const preguntaDePrecio = puedeVerClientes ? destinoDePreguntaDePrecio(texto) : null;
+  const atajoDePrecios = puedeVerClientes && (!q || normalizar('Precio anterior ¿Cuánto le cobramos? precios').includes(q));
   const clientes = useBusqueda(texto, abierta && puedeVerClientes && q.length >= 2, buscarClientes, 250);
 
   function ir(ruta: string) {
@@ -66,6 +70,23 @@ export function PaletaDeComandos({ menu, abierta, alCambiar, puedeVerClientes }:
         <Command.Empty className="px-3 py-8 text-center text-sm text-texto-suave">
           {clientes.cargando ? 'Buscando…' : 'No hay resultados.'}
         </Command.Empty>
+        {preguntaDePrecio || atajoDePrecios ? (
+          <Command.Group heading="Precios" className={CLASE_GRUPO}>
+            {preguntaDePrecio ? (
+              <Command.Item value="precio-pregunta" onSelect={() => ir(preguntaDePrecio)} className={CLASE_ITEM}>
+                <IconoMenu nombre="ventas" className="text-texto-suave" />
+                <span className="flex-1 truncate">Ver precio anterior: «{texto.trim()}»</span>
+                <CornerDownLeft aria-hidden className="size-3.5 text-texto-suave opacity-0 group-data-[selected=true]:opacity-100" />
+              </Command.Item>
+            ) : null}
+            {atajoDePrecios ? (
+              <Command.Item value="precio-atajo" onSelect={() => ir(RUTA_DE_PRECIOS)} className={CLASE_ITEM}>
+                <IconoMenu nombre="ventas" className="text-texto-suave" />
+                <span className="flex-1">Precio anterior: ¿cuánto le cobramos?</span>
+              </Command.Item>
+            ) : null}
+          </Command.Group>
+        ) : null}
         {accionesVisibles.length > 0 ? (
           <Command.Group heading="Acciones rápidas" className={CLASE_GRUPO}>
             {accionesVisibles.map((a) => (

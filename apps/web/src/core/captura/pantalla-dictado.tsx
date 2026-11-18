@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import type { CapturaPropuesta } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -8,7 +9,7 @@ import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { CLAVE_BANDEJA } from '../bandeja/claves.ts';
 import { CLAVE_CAPTURA, medirDictados, proponerCaptura } from './api.ts';
-import { decidirOrigen, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
+import { decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
 import { recortarTexto, unirConBase } from './logica-reconocedor.ts';
 import { TarjetaDeBorrador, type Resolucion } from './tarjeta-de-borrador.tsx';
 import { useReconocedorWebSpeech } from './use-reconocedor-web-speech.ts';
@@ -31,6 +32,7 @@ export function LineaDeMedicion({ alineacion = 'centro' }: { alineacion?: 'centr
 /** Dictado por voz o texto: el texto es siempre el respaldo. Interpreta, propone borradores y la persona los aprueba. */
 export function PantallaDictado() {
   const cliente = useQueryClient();
+  const navegar = useNavigate();
   const voz = useReconocedorWebSpeech();
   const [texto, setTexto] = useState('');
   const [modo, setModo] = useState<Modo | null>(null);
@@ -85,6 +87,12 @@ export function PantallaDictado() {
   async function enviar() {
     if (enviando || !hayTexto(texto)) return;
     if (escuchando) voz.detener();
+    // «¿Cuánto le cobramos a X por Y?» es una pregunta, no un movimiento: se responde en /precios y no se crea ningún borrador.
+    const destino = destinoSiEsPreguntaDePrecio(texto);
+    if (destino) {
+      void navegar(destino);
+      return;
+    }
     setEnviando(true);
     setFallo('');
     const origen: OrigenDeCaptura = decidirOrigen(vinoDeVoz.current);
