@@ -14,6 +14,7 @@ import { mensajeDeRechazo } from '../logica.ts';
 import { SeccionesDelCotizador } from '../marco.tsx';
 import { usePermisosDelCotizador } from '../use-cotizador.ts';
 import { iniciarCuadro } from './api-cuadro.ts';
+import { clientesIniciales } from '../clientes-iniciales.ts';
 import { ETIQUETA_DE_PLANTILLA, argumentosDeInicio, type PlantillaDelCuadro } from './logica-cuadro-inicio.ts';
 import { rutaDeCuadro } from './logica-cuadro.ts';
 
@@ -49,7 +50,7 @@ export function PantallaCuadroNuevo() {
             {(Object.keys(ETIQUETA_DE_PLANTILLA) as PlantillaDelCuadro[]).map((p) => <option key={p} value={p}>{ETIQUETA_DE_PLANTILLA[p]}</option>)}
           </CampoSelect>
           <Campo etiqueta="Título (opcional)" maxLength={200} value={titulo} onChange={(e) => setTitulo(e.target.value)} />
-          <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={setCliente} buscar={buscar} textoSinResultados="Ningún cliente se parece a eso" ayuda="Puedes ponerlo después." />
+          <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={setCliente} buscar={buscar} buscarSinTexto={clientesIniciales} textoSinResultados="Ningún cliente se parece a eso" ayuda="Puedes ponerlo después." />
           <div className="flex justify-end"><Boton type="submit" variante="primario" cargando={creando}>Empezar el cuadro</Boton></div>
         </form>
       ) : <EstadoVacio titulo="No puedes crear cotizaciones" descripcion="Pide el permiso de edición del Cotizador." icono="caja" />}

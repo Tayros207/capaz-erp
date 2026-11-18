@@ -420,7 +420,8 @@ export const contratosDeCotizador = {
     listadoSchema(listaDePrecioSchema),
   ),
   cotizador_productos_buscar: contrato(
-    z.strictObject({ texto: texto(120).min(1, { error: 'Escribe qué buscar.' }), limite: z.number().int().min(1).max(20).default(8) }),
+    /** Sin texto devuelve los primeros del catálogo por orden alfabético: así el campo muestra algo al abrirse. */
+    z.strictObject({ texto: texto(120).default(''), limite: z.number().int().min(1).max(20).default(8) }),
     z.strictObject({ items: z.array(productoCotizableSchema) }),
   ),
   lista_precio_ver: contrato(soloId, listaDePrecioSchema),

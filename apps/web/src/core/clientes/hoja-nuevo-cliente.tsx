@@ -11,11 +11,18 @@ import { FormularioCliente } from './formulario-cliente.tsx';
 import { argumentosDeCreacion, FORMULARIO_VACIO, mensajeDeRechazo, validarCliente, type ErroresDeCliente, type FormularioDeCliente } from './logica.ts';
 import { useRetardo } from './use-retardo.ts';
 
-type Props = { abierto: boolean; alCerrar: () => void; alAbrirExistente: (id: string) => void; alCrear: (id: string) => void };
+type Props = {
+  abierto: boolean;
+  alCerrar: () => void;
+  alAbrirExistente: (id: string) => void;
+  alCrear: (id: string) => void;
+  /** Nombre con el que arranca el formulario (por ejemplo, lo que la persona ya tecleó en un buscador). */
+  nombreInicial?: string;
+};
 
-function ContenidoNuevo({ alCerrar, alAbrirExistente, alCrear }: Omit<Props, 'abierto'>) {
+function ContenidoNuevo({ alCerrar, alAbrirExistente, alCrear, nombreInicial }: Omit<Props, 'abierto'>) {
   const consultas = useQueryClient();
-  const [form, setForm] = useState<FormularioDeCliente>(FORMULARIO_VACIO);
+  const [form, setForm] = useState<FormularioDeCliente>({ ...FORMULARIO_VACIO, nombre: nombreInicial ?? '' });
   const [errores, setErrores] = useState<ErroresDeCliente>({});
   const [aviso, setAviso] = useState<string | undefined>();
   const [conflicto, setConflicto] = useState<Candidata[]>([]);

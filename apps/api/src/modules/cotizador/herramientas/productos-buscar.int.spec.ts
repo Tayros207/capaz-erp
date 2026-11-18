@@ -67,11 +67,22 @@ describe('cotizador_productos_buscar', () => {
     expect(items[0].lista.productoNombre).toBeNull();
   });
 
-  it('el límite se respeta, el texto vacío o el límite de más son argumentos_invalidos y un lector puede buscar', async () => {
+  it('el límite se respeta, un límite de más es argumentos_invalidos y un lector puede buscar', async () => {
     expect((await buscar(dueno, 'banner', 2)).length).toBe(2);
-    expect(codigoDe(await dueno.herramienta('cotizador_productos_buscar', { texto: '  ' }))).toBe('argumentos_invalidos');
     expect(codigoDe(await dueno.herramienta('cotizador_productos_buscar', { texto: 'a', limite: 21 }))).toBe('argumentos_invalidos');
     expect((await buscar(lector, 'banner')).length).toBeGreaterThan(0);
+  });
+
+  it('sin texto (vacío o solo espacios) devuelve los primeros del catálogo, sin archivados ni de otra empresa, y respeta el límite', async () => {
+    for (const texto of ['', '   ']) {
+      const nombres = (await buscar(dueno, texto, 20)).map((x) => x.nombre);
+      expect(nombres).toEqual(expect.arrayContaining(['Banner con lista', 'Banner de catálogo', 'Banner exonerado', 'Banner sin precio']));
+      expect(nombres).not.toContain('Banner archivado');
+      expect(nombres).not.toContain('Banner de la ajena');
+    }
+    expect((await buscar(dueno, '', 2)).length).toBe(2);
+    expect((await buscar(lector, '')).length).toBeGreaterThan(0);
+    expect((await buscar(ajeno, '')).map((x) => x.nombre)).toEqual(['Banner de la ajena']);
   });
 });
 

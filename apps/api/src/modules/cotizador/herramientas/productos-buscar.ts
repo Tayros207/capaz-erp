@@ -1,10 +1,10 @@
-import { exito, rechazo, type ProductoCotizableDto } from '@capaz/shared';
+import { exito, type ProductoCotizableDto } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { precioDeCatalogoSinIgv } from '../domain/catalogo.js';
 import { CONFIGURACION_POR_DEFECTO } from '../domain/configuracion.js';
 import { normalizarNombre } from '../domain/lista.js';
-import { buscarProductosParaCotizar, listasActivasDeProductos, listasSinProductoPorNombre, type ProductoDeCatalogo } from '../repositories/catalogo.repository.js';
+import { buscarProductosParaCotizar, listasActivasDeProductos, primerosProductosParaCotizar, listasSinProductoPorNombre, type ProductoDeCatalogo } from '../repositories/catalogo.repository.js';
 import { leerConfiguracion } from '../repositories/configuracion.repository.js';
 import { MODULO } from './comun.js';
 import { listasADto } from './listas-respuesta.js';
@@ -32,7 +32,7 @@ export const cotizadorProductosBuscar = definirHerramienta('cotizador_productos_
     paraQueSirve: 'Busca en el catálogo de productos y en las listas de precios heredadas, y dice con qué precio se cotiza cada resultado: por escala, del catálogo o sin precio.',
     cuandoUsarla: 'Al empezar una cotización: elegir el producto sin importar si ya tiene lista de precios.',
     campos: [
-      { nombre: 'texto', queSeAnota: 'Parte del nombre o el código del producto.', ejemplo: 'volantes' },
+      { nombre: 'texto', queSeAnota: 'Parte del nombre o el código del producto. Sin texto, devuelve los primeros del catálogo.', ejemplo: 'volantes' },
       { nombre: 'limite', queSeAnota: 'Cuántos resultados, hasta 20 (por defecto 8).', ejemplo: '8' },
     ],
     ejemploTecleado: 'buscar volantes para cotizar',
@@ -42,9 +42,8 @@ export const cotizadorProductosBuscar = definirHerramienta('cotizador_productos_
   },
   async ejecutar(args, ctx, tx) {
     const texto = normalizarNombre(args.texto);
-    if (!texto) return rechazo('argumentos_invalidos', 'Escribe qué buscar.');
     const igv = (await leerConfiguracion(tx, ctx))?.igvPorcentaje ?? CONFIGURACION_POR_DEFECTO.igvPorcentaje;
-    const encontrados = await buscarProductosParaCotizar(tx, ctx, texto, args.limite);
+    const encontrados = texto ? await buscarProductosParaCotizar(tx, ctx, texto, args.limite) : await primerosProductosParaCotizar(tx, ctx, args.limite);
     const conLista = await listasActivasDeProductos(tx, ctx, encontrados.map((p) => p.id));
     const sueltas = await listasSinProductoPorNombre(tx, ctx, texto, args.limite);
     const hoy = await hoyDeLaEmpresa(tx);

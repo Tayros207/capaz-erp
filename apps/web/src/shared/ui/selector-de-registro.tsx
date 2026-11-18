@@ -13,6 +13,8 @@ type Props = {
   valor: Opcion | null;
   alCambiar: (o: Opcion | null) => void;
   buscar: (texto: string) => Promise<Opcion[]>;
+  /** Qué mostrar al abrir el campo sin haber escrito nada (por ejemplo los primeros de la lista). Sin él, pide escribir. */
+  buscarSinTexto?: () => Promise<Opcion[]>;
   error?: string;
   ayuda?: string;
   textoSinResultados?: string;
@@ -21,12 +23,12 @@ type Props = {
 };
 
 /** Elige un registro buscándolo por texto. Quien lo usa aporta `buscar`; no conoce ninguna API. */
-export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear' }: Props) {
+export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarSinTexto, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear' }: Props) {
   const id = useId();
   const [texto, setTexto] = useState('');
   const [abierto, setAbierto] = useState(false);
   const [activo, setActivo] = useState(-1);
-  const { cargando, falla, opciones } = useBusqueda(texto, abierto && valor === null, buscar);
+  const { cargando, falla, opciones } = useBusqueda(texto, abierto && valor === null, buscar, 300, buscarSinTexto);
   const puedeCrear = alCrear !== undefined && texto.trim() !== '';
   const total = opciones.length + (puedeCrear ? 1 : 0);
 
@@ -74,7 +76,7 @@ export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, error, 
           ))}
           {cargando ? <p role="status" className="px-3 py-3 text-texto-suave">Buscando…</p> : null}
           {falla ? <p role="alert" className="px-3 py-3 font-medium text-peligro">No se pudo buscar. Intenta de nuevo.</p> : null}
-          {!cargando && !falla && opciones.length === 0 ? <p role="status" className="px-3 py-3 text-texto-suave">{textoSinResultados}</p> : null}
+          {!cargando && !falla && opciones.length === 0 ? <p role="status" className="px-3 py-3 text-texto-suave">{texto.trim() === '' && !buscarSinTexto ? 'Escribe para buscar.' : textoSinResultados}</p> : null}
         </div>
       </div>
     </ContenedorDeCampo>

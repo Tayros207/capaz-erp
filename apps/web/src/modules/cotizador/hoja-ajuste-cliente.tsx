@@ -7,6 +7,7 @@ import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { SelectorDeRegistro, type Opcion } from '../../shared/ui/selector-de-registro.tsx';
 import { resolverAccion } from './acciones.ts';
 import { buscarClientes, fijarAjuste } from './api.ts';
+import { clientesIniciales } from './clientes-iniciales.ts';
 import { argumentosDeAjuste, validarAjusteDeCliente } from './logica.ts';
 
 type Props = { abierto: boolean; ajuste: AjusteDeClienteDto | null; alCerrar: () => void };
@@ -37,7 +38,7 @@ function Contenido({ ajuste, alCerrar }: { ajuste: AjusteDeClienteDto | null; al
       {ajuste ? (
         <p className="font-medium text-texto">{ajuste.clienteNombre}</p>
       ) : (
-        <SelectorDeRegistro etiqueta="Cliente" valor={cliente} alCambiar={setCliente} buscar={buscar} error={errores.cliente} textoSinResultados="Ningún cliente se parece a eso" />
+        <SelectorDeRegistro etiqueta="Cliente" valor={cliente} alCambiar={setCliente} buscar={buscar} buscarSinTexto={clientesIniciales} error={errores.cliente} textoSinResultados="Ningún cliente se parece a eso" />
       )}
       <Campo etiqueta="Porcentaje" inputMode="decimal" value={porcentaje} error={errores.porcentaje} ayuda="Negativo es descuento (-5); positivo es recargo (10). Vacío o 0 lo quita." onChange={(e) => setPorcentaje(e.target.value)} />
       <Campo etiqueta="Nota (opcional)" maxLength={200} value={nota} onChange={(e) => setNota(e.target.value)} />

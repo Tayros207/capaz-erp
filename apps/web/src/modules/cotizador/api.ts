@@ -34,3 +34,4 @@ export const listarAjustes = () => llamar('ajustes_cliente_listar', {});
 export const fijarAjuste = (args: EntradaDe<'ajuste_cliente_fijar'>) => llamar('ajuste_cliente_fijar', args);
 
 export const buscarClientes = (texto: string) => llamar('clientes_buscar', { texto, limite: 8 });
+export const primerosClientes = () => llamar('clientes_listar', { estado: 'activos', limite: 8 });

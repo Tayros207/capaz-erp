@@ -9,6 +9,7 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { AjusteDePrecio } from './ajuste-de-precio.tsx';
 import { buscarClientes, buscarProductosParaCotizar } from './api.ts';
+import { clientesIniciales } from './clientes-iniciales.ts';
 import { HojaDeLista } from './hoja-lista.tsx';
 import { productoParaLista, opcionDeProducto, textoSinPrecio } from './logica-catalogo.ts';
 import { SeccionesDelCotizador } from './marco.tsx';
@@ -52,11 +53,12 @@ export function PantallaRapida() {
           valor={elegido ? opcionDeProducto(elegido) : null}
           alCambiar={(o) => r.elegirProducto(o ? (encontrados.current.get(o.id) ?? null) : null)}
           buscar={buscarQueCotizar}
+          buscarSinTexto={() => buscarQueCotizar('')}
           ayuda="Busca en tu catálogo de productos."
           textoSinResultados="Ningún producto se parece a eso"
           {...(configurar && { alCrear: () => void navegar('/productos'), textoCrear: 'Crear un producto en el catálogo' })}
         />
-        <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={r.setCliente} buscar={buscarDeClientes} ayuda="Si tiene un precio especial, se aplica." textoSinResultados="Ningún cliente se parece a eso" />
+        <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={r.setCliente} buscar={buscarDeClientes} buscarSinTexto={clientesIniciales} ayuda="Si tiene un precio especial, se aplica." textoSinResultados="Ningún cliente se parece a eso" />
       </div>
       {cliente ? <div><ChipDeCliente id={cliente.id} nombre={cliente.nombre} /></div> : null}
       {elegido?.origen === 'lista' && elegido.lista ? <PreciosDeLista lista={elegido.lista} /> : null}

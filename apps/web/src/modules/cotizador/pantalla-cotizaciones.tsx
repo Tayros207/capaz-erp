@@ -17,6 +17,7 @@ import type { CotizacionDto } from '@capaz/shared';
 import { resolverAccion } from './acciones.ts';
 import { usePermisosDeCotizaciones } from './acciones-cotizacion.ts';
 import { buscarClientes } from './api.ts';
+import { clientesIniciales } from './clientes-iniciales.ts';
 import { volverACotizar } from './api-lista-cotizaciones.ts';
 import { listarCotizaciones } from './api-cotizaciones.ts';
 import { CLAVE_COTIZADOR } from './claves.ts';
@@ -86,7 +87,7 @@ export function PantallaCotizaciones() {
           {FILTROS.map((f) => <option key={f} value={f}>{etiquetaDeFiltro(f)}</option>)}
         </CampoSelect>
         <BarraDeBusqueda valor={texto} onCambio={setTexto} etiqueta="Buscar cotizaciones" placeholder="Buscar por título, código o cliente…" />
-        <SelectorDeRegistro etiqueta="Cliente" valor={cliente} alCambiar={setCliente} buscar={buscarElCliente} textoSinResultados="Ningún cliente se parece a eso" />
+        <SelectorDeRegistro etiqueta="Cliente" valor={cliente} alCambiar={setCliente} buscar={buscarElCliente} buscarSinTexto={clientesIniciales} textoSinResultados="Ningún cliente se parece a eso" />
       </div>
       {lista.isPending ? (
         <Cargando etiqueta="Cargando cotizaciones" />

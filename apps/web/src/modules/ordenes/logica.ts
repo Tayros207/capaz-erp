@@ -187,7 +187,7 @@ export const formularioDesde = (p: PedidoCompletoDto): FormularioDePedido => ({
 /** `fecha` es el día del pedido (hoy en uno nuevo): la entrega no puede ser anterior. */
 export function validarPedido(f: FormularioDePedido, fecha: string): ErroresDePedido {
   const e: ErroresDePedido = {};
-  if (!f.cliente) e.cliente = 'Elige el cliente.';
+  if (!f.cliente) e.cliente = 'Elige un cliente de la lista: escribe su nombre y haz clic en la opción que aparece.';
   if (f.entregaEl && f.entregaEl < fecha) e.entregaEl = 'La entrega no puede ser anterior a la fecha del pedido.';
   if (f.notas.trim().length > 4000) e.notas = 'Máximo 4000 caracteres.';
   if (f.lineas.length > 100) e.lineas = 'Un pedido admite hasta 100 líneas.';

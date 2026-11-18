@@ -15,6 +15,7 @@ import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { resolverAccion } from './acciones.ts';
 import { editarCotizacion } from './api-cotizaciones.ts';
 import { buscarClientes, crearCotizacion } from './api.ts';
+import { clientesIniciales } from './clientes-iniciales.ts';
 import { HojaLineaDeCotizacion } from './hoja-linea-cotizacion.tsx';
 import {
   argumentosDeCreacion, argumentosDeEdicion, lineaVacia, validarFormulario,
@@ -68,7 +69,7 @@ function Contenido({ id, inicial, puedeVerCostos, alGuardar, alCerrar }: Omit<Pr
     <>
     <form noValidate className="flex flex-col gap-4" onSubmit={(ev) => { ev.preventDefault(); ev.stopPropagation(); void guardar(); }}>
       <Campo etiqueta="Título" maxLength={200} value={f.titulo} error={errores.titulo} ayuda="Para reconocerla en la lista, por ejemplo «Volantes para la feria»." onChange={(e) => poner('titulo', e.target.value)} />
-      <SelectorDeRegistro etiqueta="Cliente" valor={f.cliente} alCambiar={(o) => poner('cliente', o)} buscar={buscar} ayuda="Hace falta para emitirla." textoSinResultados="Ningún cliente se parece a eso" />
+      <SelectorDeRegistro etiqueta="Cliente" valor={f.cliente} alCambiar={(o) => poner('cliente', o)} buscar={buscar} buscarSinTexto={clientesIniciales} ayuda="Hace falta para emitirla." textoSinResultados="Ningún cliente se parece a eso" />
       <section aria-label="Líneas de la cotización" className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="font-titulo font-semibold text-texto">Líneas</h3>

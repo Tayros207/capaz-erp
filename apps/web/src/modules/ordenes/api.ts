@@ -23,4 +23,7 @@ export const cancelarPedido = (id: string, motivo: string) =>
 
 export const buscarClientes = (texto: string) => llamar('clientes_buscar', { texto, limite: 8 });
 export const buscarProductos = (texto: string) => llamar('productos_buscar', { texto, limite: 8 });
+/** Lo que muestran los selectores al abrirse sin haber escrito nada: los primeros por orden alfabético. */
+export const primerosClientes = () => llamar('clientes_listar', { estado: 'activos', limite: 8 });
+export const primerosProductos = () => llamar('productos_listar', { estado: 'activos', limite: 8 });
 export const listarMiembros = () => llamar('miembros_listar', {});

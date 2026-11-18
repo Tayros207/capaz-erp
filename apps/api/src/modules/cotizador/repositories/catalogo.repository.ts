@@ -23,6 +23,16 @@ export async function buscarProductosParaCotizar(tx: Transaccion, ctx: ContextoD
     .limit(limite);
 }
 
+/** Los primeros productos activos por orden alfabético: lo que se ofrece al abrir el buscador sin haber escrito nada. */
+export async function primerosProductosParaCotizar(tx: Transaccion, ctx: ContextoDeEmpresa, limite: number): Promise<ProductoDeCatalogo[]> {
+  return tx
+    .select(getTableColumns(productos))
+    .from(productos)
+    .where(and(eq(productos.tenantId, ctx.empresaId), isNull(productos.archivadoEn)))
+    .orderBy(asc(productos.nombreNormalizado), asc(productos.id))
+    .limit(limite);
+}
+
 /** La lista activa de cada producto (si hay dos, la más antigua; la comprobación de «una por producto» evita que ocurra). */
 export async function listasActivasDeProductos(tx: Transaccion, ctx: ContextoDeEmpresa, productoIds: string[]): Promise<Map<string, ListaDePrecio>> {
   if (productoIds.length === 0) return new Map();
