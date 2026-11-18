@@ -239,3 +239,20 @@ describe('formas de la confirmación de las críticas', () => {
     expect(emitida.respuesta.cuerpo.datos).toMatchObject({ estado: 'emitida', codigo: expect.stringMatching(/^COT-\d{4}-\d{4}$/) });
   });
 });
+
+describe('hoja Directa: importe escrito, IGV incluido y condiciones', () => {
+  it('crea con preciosIncluyenIgv e importe, y al emitir da código COT, totales, validaHasta y el evento cotizacion.emitida', async () => {
+    const d = await datosDe(dueno, 'cotizacion_crear', {
+      titulo: 'Hoja directa',
+      clienteId: cliente,
+      preciosIncluyenIgv: true,
+      lineas: [{ tipo: 'manual', descripcion: 'Trabajo', unidad: 'servicio', cantidadMilesimas: 1000, importeCentimos: 11_800 }],
+      condiciones: { validezDias: 15, plazoEntrega: '3 días', formaPago: 'Contado' },
+    });
+    expect(d.estado).toBe('borrador');
+    expect(d.lineas[0]).toMatchObject({ importeCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800, precioUnitarioMilesimas: 100_000 });
+    const emitida = await confirmando(dueno, 'cotizacion_emitir', { id: d.id });
+    expect(emitida.respuesta.cuerpo.datos).toMatchObject({ estado: 'emitida', codigo: expect.stringMatching(/^COT-\d{4}-\d{4}$/), subtotalCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800, validaHasta: expect.any(String) });
+    expect((await delCotizador(A)).some((e) => e.tipo === 'cotizacion.emitida')).toBe(true);
+  });
+});

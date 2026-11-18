@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ajusteDeDetalle, armarLineas, avisosDeCambioDePrecio, conFotoDeLista, detalleDeAjuste, entradaDeLineaGuardada, totalesDe, type ContextoDeLineas, type ListaDeLinea } from './lineas.js';
+import { ajusteDeDetalle, armarLineas, avisosDeCambioDePrecio, conFotoDeLista, detalleDeAjuste, entradaDeLineaGuardada, totalesDe, unitarioDeImporte, type ContextoDeLineas, type ListaDeLinea } from './lineas.js';
 
 const C7: ListaDeLinea = { id: 'l1', nombre: 'Volantes A5 4/4 couché 150 g', unidad: 'unidad', productoId: null, archivada: false, p100Centimos: 19_000, p1000Centimos: 58_000, p5000Centimos: 120_000, modoIntermedio: 'curva', precioMinimoCentimos: null };
 const contexto = (extra: Partial<ContextoDeLineas> = {}): ContextoDeLineas => ({ listas: new Map([['l1', C7], ['l2', { ...C7, id: 'l2', archivada: true }]]), ajusteClientePct: null, redondeo: 'ninguno', igvPorcentaje: 18, ...extra });
@@ -84,5 +84,45 @@ describe('precios al día', () => {
     const r = armarLineas([{ tipo: 'lista', listaId: 'l1', cantidadMilesimas: 1_000_000 }], contexto());
     if (!r.ok) throw new Error('no armó');
     expect(conFotoDeLista(r.lineas, contexto().listas)[0]?.detalle).toMatchObject({ p100: 19_000, p1000: 58_000, p5000: 120_000, modoIntermedio: 'curva', precioMinimo: null });
+  });
+});
+
+describe('línea manual con importe (hoja Directa)', () => {
+  const base = { tipo: 'manual', descripcion: 'Trabajo', unidad: 'unidad' } as const;
+  it('7 unidades con importe 10000: importe 10000, unitario 14286 e importeFijo', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 7_000, importeCentimos: 10_000 }], contexto());
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 10_000, precioUnitarioMilesimas: 14_286, igvCentimos: 1_800, detalle: { importeFijo: true } });
+  });
+  it('1.000.000 de unidades con importe 420000 sale exacto', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 1_000_000_000, importeCentimos: 420_000 }], contexto());
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 420_000, precioUnitarioMilesimas: 4 });
+  });
+  it('con IGV incluido: 11800 → 10000 + 1800', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 1_000, importeCentimos: 11_800 }], contexto({ preciosIncluyenIgv: true }));
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800 });
+  });
+  it('con IGV incluido: 10000 → 8475 + 1526 (el céntimo se documenta: 8475 × 18 % = 1525,5 sube a 1526, total 10001)', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 1_000, importeCentimos: 10_000 }], contexto({ preciosIncluyenIgv: true }));
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 8_475, igvCentimos: 1_526, totalCentimos: 10_001 });
+  });
+  it('con precio y la casilla de IGV incluido, el precio por la cantidad pierde el IGV', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 1_000, precioUnitarioMilesimas: 118_000 }], contexto({ preciosIncluyenIgv: true }));
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 10_000, detalle: { importeFijo: true } });
+  });
+  it('sin precio ni importe rechaza', () => {
+    expect(armarLineas([{ ...base, cantidadMilesimas: 1_000 }], contexto())).toMatchObject({ ok: false, codigo: 'argumentos_invalidos' });
+  });
+  it('la línea manual de hoy no cambia: detalle vacío y unitario tal cual', () => {
+    const r = armarLineas([{ ...base, cantidadMilesimas: 2_500, precioUnitarioMilesimas: 40_000 }], contexto());
+    expect(r.ok && r.lineas[0]).toMatchObject({ importeCentimos: 10_000, precioUnitarioMilesimas: 40_000, detalle: {} });
+  });
+  it('entradaDeLineaGuardada conserva el importe fijo', () => {
+    const g = { tipo: 'manual', productoId: null, listaId: null, descripcion: 'T', unidad: 'unidad', cantidadMilesimas: 7_000, precioUnitarioMilesimas: 14_286, importeCentimos: 10_000, detalle: { importeFijo: true } } as const;
+    expect(entradaDeLineaGuardada(g)).toMatchObject({ tipo: 'manual', importeCentimos: 10_000 });
+    expect(entradaDeLineaGuardada({ ...g, detalle: {} })).not.toHaveProperty('importeCentimos');
+  });
+  it('unitarioDeImporte redondea la mitad hacia arriba', () => {
+    expect(unitarioDeImporte(10_000, 7_000)).toBe(14_286);
+    expect(unitarioDeImporte(1, 2_000)).toBe(5);
   });
 });

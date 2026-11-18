@@ -13,7 +13,7 @@ import { alcanceDeCotizaciones, auditarCotizacion, calcularLineas, CAMPO_ID, com
 const SIN_COSTOS = 'Para anotar el costo necesitas el permiso de costos.';
 const CAMPO_LINEAS = {
   nombre: 'lineas',
-  queSeAnota: 'De 1 a 100 líneas: de la lista (listaId y cantidad en milésimas; el servidor calcula el precio) o manuales (descripción, cantidad y precio unitario sin IGV).',
+  queSeAnota: 'De 1 a 100 líneas: de la lista (listaId y cantidad en milésimas; el servidor calcula el precio) o manuales (descripción, cantidad y precio unitario sin IGV, o el importe de la línea: manda el importe y el unitario se deduce).',
   ejemplo: '[{ "tipo": "lista", "listaId": "0192f0c4-7b1e-7000-8000-000000000001", "cantidadMilesimas": 2500000 }]',
 };
 
@@ -30,6 +30,7 @@ export const cotizacionCrear = definirHerramienta('cotizacion_crear', {
       { nombre: 'titulo', queSeAnota: 'Cómo la reconoces.', ejemplo: 'Volantes para la campaña de marzo' },
       { nombre: 'clienteId', queSeAnota: 'Cliente (obligatorio para emitirla; si lo pones, se aplica su ajuste de precio).', ejemplo: '0192f0c4-7b1e-7000-8000-000000000001' },
       CAMPO_LINEAS,
+      { nombre: 'preciosIncluyenIgv', queSeAnota: 'true si los precios o importes de las líneas manuales ya incluyen IGV: el servidor se lo quita (por defecto false).', ejemplo: 'false' },
       { nombre: 'conOpciones', queSeAnota: 'true si las líneas son alternativas (el documento no suma un total general).', ejemplo: 'false' },
       { nombre: 'costoCentimos', queSeAnota: 'Costo en céntimos (opcional; solo con permiso de costos).', ejemplo: '22515' },
     ],
@@ -44,7 +45,7 @@ export const cotizacionCrear = definirHerramienta('cotizacion_crear', {
     if (args.costoCentimos != null && !veCostos(ctx)) return rechazo('sin_permiso', SIN_COSTOS);
     const falta = await comprobarReferencias(tx, ctx, args);
     if (falta) return rechazo('argumentos_invalidos', falta);
-    const calc = await calcularLineas(tx, ctx, args.lineas, args.clienteId ?? null);
+    const calc = await calcularLineas(tx, ctx, args.lineas, args.clienteId ?? null, undefined, { preciosIncluyenIgv: args.preciosIncluyenIgv });
     if ('error' in calc) return calc;
     const id = await crearCotizacion(tx, ctx, { titulo: args.titulo, clienteId: args.clienteId ?? null, notas: args.notas || null });
     const costoCentimos = args.costoCentimos ?? null;

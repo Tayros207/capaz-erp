@@ -53,13 +53,13 @@ export async function comprobarReferencias(tx: Transaccion, ctx: ContextoDeHerra
 }
 
 /** Arma las líneas con los precios de hoy: lista → ajuste del cliente → redondeo → IGV de la configuración. */
-export async function calcularLineas(tx: Transaccion, ctx: ContextoDeHerramienta, entradas: readonly LineaDeCotizacionEntrada[], clienteId: string | null, igvPorcentaje?: number): Promise<Calculo | Fallo> {
+export async function calcularLineas(tx: Transaccion, ctx: ContextoDeHerramienta, entradas: readonly LineaDeCotizacionEntrada[], clienteId: string | null, igvPorcentaje?: number, opciones: { preciosIncluyenIgv?: boolean } = {}): Promise<Calculo | Fallo> {
   const config = await leerConfiguracion(tx, ctx);
   const igv = igvPorcentaje ?? config?.igvPorcentaje ?? CONFIGURACION_POR_DEFECTO.igvPorcentaje;
   const redondeo = (config?.redondeoComercial ?? CONFIGURACION_POR_DEFECTO.redondeoComercial) as RedondeoComercial;
   const listas = await listasParaLineas(tx, ctx, entradas.flatMap((l) => (l.tipo === 'lista' ? [l.listaId] : [])));
   const ajuste = clienteId ? await ajusteDe(tx, ctx, clienteId) : null;
-  const r = armarLineas(entradas, { listas, ajusteClientePct: ajuste?.porcentaje ?? null, redondeo, igvPorcentaje: igv });
+  const r = armarLineas(entradas, { listas, ajusteClientePct: ajuste?.porcentaje ?? null, redondeo, igvPorcentaje: igv, preciosIncluyenIgv: opciones.preciosIncluyenIgv });
   if (!r.ok) return { ok: false, error: { codigo: r.codigo, mensaje: r.mensaje } };
   return { lineas: r.lineas, totales: totalesDe(r.lineas), igvPorcentaje: igv, listas };
 }

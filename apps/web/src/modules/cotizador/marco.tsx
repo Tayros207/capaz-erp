@@ -7,6 +7,7 @@ export function SeccionesDelCotizador() {
       etiqueta="Secciones del Cotizador"
       secciones={[
         { a: '/m/cotizador', texto: 'Cotización rápida', fin: true },
+        { a: '/m/cotizador/directa', texto: 'Directa' },
         { a: '/m/cotizador/cuadro/nuevo', texto: 'Por partes' },
         { a: '/m/cotizador/cotizaciones', texto: 'Cotizaciones' },
         { a: '/m/cotizador/precios', texto: 'Lista de precios' },

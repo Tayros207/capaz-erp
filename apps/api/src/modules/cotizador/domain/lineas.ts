@@ -1,5 +1,5 @@
 // Líneas de una cotización: de la lista (el servidor calcula el precio) o manuales. Precios SIN IGV; el IGV va por línea.
-import { formatearSoles, importe, type AjusteDePrecio, type LineaDeCotizacionEntrada } from '@capaz/shared';
+import { formatearSoles, importe, quitarIgv, type AjusteDePrecio, type LineaDeCotizacionEntrada } from '@capaz/shared';
 import { igvDeImporte } from './igv.js';
 import { cotizarDesdeLista, type ListaParaCotizar, type RedondeoComercial } from './precios.js';
 
@@ -29,6 +29,8 @@ export type ContextoDeLineas = {
   ajusteClientePct: string | null;
   redondeo: RedondeoComercial;
   igvPorcentaje: number;
+  /** Los precios e importes de las líneas manuales ya traen IGV (hoja Directa): se les quita. */
+  preciosIncluyenIgv?: boolean;
 };
 export type Totales = { subtotalCentimos: number; igvCentimos: number; totalCentimos: number };
 
@@ -73,10 +75,20 @@ function armarDeLista(e: Extract<LineaDeCotizacionEntrada, { tipo: 'lista' }>, i
   };
 }
 
-function armarManual(e: Extract<LineaDeCotizacionEntrada, { tipo: 'manual' }>, i: number, igvPorcentaje: number): { ok: true; linea: LineaArmada } | RechazoDeLinea {
-  let importeCentimos: number;
+/** Precio unitario en milésimas que da `importe` (céntimos) con `cantidad` (milésimas): `round(importe × 10000 / cantidad)`, mitad hacia arriba. */
+export function unitarioDeImporte(importeCentimos: number, cantidadMilesimas: number): number {
+  if (!Number.isSafeInteger(importeCentimos) || importeCentimos < 0 || !Number.isSafeInteger(cantidadMilesimas) || cantidadMilesimas < 1) throw new RangeError('Importe o cantidad inválidos.');
+  const c = BigInt(cantidadMilesimas);
+  return Number((BigInt(importeCentimos) * 10000n + c / 2n) / c);
+}
+
+function armarManual(e: Extract<LineaDeCotizacionEntrada, { tipo: 'manual' }>, i: number, igvPorcentaje: number, preciosIncluyenIgv = false): { ok: true; linea: LineaArmada } | RechazoDeLinea {
+  if (e.precioUnitarioMilesimas === undefined && e.importeCentimos === undefined) return rechazoEn(i, 'argumentos_invalidos', 'escribe el precio o el importe.');
   try {
-    importeCentimos = importe(e.cantidadMilesimas, e.precioUnitarioMilesimas);
+    const bruto = e.importeCentimos ?? importe(e.cantidadMilesimas, e.precioUnitarioMilesimas as number);
+    const importeCentimos = preciosIncluyenIgv ? quitarIgv(bruto, igvPorcentaje) : bruto;
+    const fijo = e.importeCentimos !== undefined || preciosIncluyenIgv;
+    const precioUnitarioMilesimas = fijo ? unitarioDeImporte(importeCentimos, e.cantidadMilesimas) : (e.precioUnitarioMilesimas as number);
     const igvCentimos = igvDeImporte(importeCentimos, igvPorcentaje);
     return {
       ok: true,
@@ -87,11 +99,11 @@ function armarManual(e: Extract<LineaDeCotizacionEntrada, { tipo: 'manual' }>, i
         descripcion: e.descripcion,
         unidad: e.unidad,
         cantidadMilesimas: e.cantidadMilesimas,
-        precioUnitarioMilesimas: e.precioUnitarioMilesimas,
+        precioUnitarioMilesimas,
         importeCentimos,
         igvCentimos,
         totalCentimos: importeCentimos + igvCentimos,
-        detalle: {},
+        detalle: fijo ? { importeFijo: true } : {},
       },
     };
   } catch {
@@ -103,7 +115,7 @@ function armarManual(e: Extract<LineaDeCotizacionEntrada, { tipo: 'manual' }>, i
 export function armarLineas(entradas: readonly LineaDeCotizacionEntrada[], c: ContextoDeLineas): { ok: true; lineas: LineaArmada[] } | RechazoDeLinea {
   const lineas: LineaArmada[] = [];
   for (const [i, e] of entradas.entries()) {
-    const r = e.tipo === 'lista' ? armarDeLista(e, i, c) : armarManual(e, i, c.igvPorcentaje);
+    const r = e.tipo === 'lista' ? armarDeLista(e, i, c) : armarManual(e, i, c.igvPorcentaje, c.preciosIncluyenIgv);
     if (!r.ok) return r;
     lineas.push(r.linea);
   }
@@ -118,7 +130,7 @@ export function totalesDe(lineas: readonly Pick<LineaArmada, 'importeCentimos' |
   return t;
 }
 
-export type LineaGuardada = Pick<LineaArmada, 'tipo' | 'productoId' | 'listaId' | 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas'> & { detalle?: Record<string, unknown> | null };
+export type LineaGuardada = Pick<LineaArmada, 'tipo' | 'productoId' | 'listaId' | 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas'> & { importeCentimos?: number; detalle?: Record<string, unknown> | null };
 
 /** Una línea ya guardada, vuelta a su forma de entrada (para recalcular las de lista con los precios de hoy). */
 export function entradaDeLineaGuardada(l: LineaGuardada): LineaDeCotizacionEntrada {
@@ -126,7 +138,9 @@ export function entradaDeLineaGuardada(l: LineaGuardada): LineaDeCotizacionEntra
     const ajuste = ajusteDeDetalle(l.detalle);
     return { tipo: 'lista', listaId: l.listaId, cantidadMilesimas: l.cantidadMilesimas, descripcion: l.descripcion, ...(ajuste.tipo !== 'ninguno' && { ajuste }) };
   }
-  return { tipo: 'manual', productoId: l.productoId, descripcion: l.descripcion, unidad: l.unidad, cantidadMilesimas: l.cantidadMilesimas, precioUnitarioMilesimas: l.precioUnitarioMilesimas };
+  // Una línea de importe fijo conserva su importe (ya sin IGV): recalcularla desde el unitario podría mover un céntimo.
+  const fijo = l.detalle?.importeFijo === true && l.importeCentimos !== undefined;
+  return { tipo: 'manual', productoId: l.productoId, descripcion: l.descripcion, unidad: l.unidad, cantidadMilesimas: l.cantidadMilesimas, precioUnitarioMilesimas: l.precioUnitarioMilesimas, ...(fijo && { importeCentimos: l.importeCentimos }) };
 }
 
 export type LineaPrevia = { tipo: string; descripcion: string; importeCentimos: number; detalle?: Record<string, unknown> | null };

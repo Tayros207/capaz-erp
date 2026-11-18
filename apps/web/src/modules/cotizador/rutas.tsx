@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router';
 import { registrarExtension } from '../../shared/ui/extensiones.tsx';
+import { PantallaDirecta } from './directa/pantalla-directa.tsx';
 import { PantallaCuadro } from './cuadro/pantalla-cuadro.tsx';
 import { PantallaCuadroNuevo } from './cuadro/pantalla-cuadro-nuevo.tsx';
 import { PantallaAjustes } from './pantalla-ajustes.tsx';
@@ -17,6 +18,7 @@ registrarExtension('ficha-cliente', ({ clienteId }) => <SeccionCotizacionesDeCli
 // Cotizador: cotización por partes (cuadro), cotización rápida, lista de precios y ajustes (sesión A); cotizaciones, ficha y documento (sesión B).
 export const rutas: RouteObject[] = [
   { path: 'm/cotizador', element: <PantallaRapida /> },
+  { path: 'm/cotizador/directa', element: <PantallaDirecta /> },
   { path: 'm/cotizador/cuadro/nuevo', element: <PantallaCuadroNuevo /> },
   { path: 'm/cotizador/cuadro/:id', element: <PantallaCuadro /> },
   { path: 'm/cotizador/precios', element: <PantallaPrecios /> },

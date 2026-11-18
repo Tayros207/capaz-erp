@@ -252,6 +252,14 @@ export const CANTIDADES_DE_LA_TABLA_DE_PRECIOS = [100, 200, 300, 500, 1000, 2000
 export const MENSAJE_DE_MOTIVO_REQUERIDO = 'motivo_requerido: el margen está por debajo del mínimo configurado; indica el motivo para poder emitirla.';
 export const PREFIJO_DE_PRECIOS_CAMBIARON = 'Los precios de lista cambiaron desde que se armó la cotización.';
 
+/** Quita el IGV a un monto que lo trae: `round(monto × 100 / (100 + igv))`, mitad hacia arriba. */
+export function quitarIgv(montoConIgv: number, igvPorcentaje: number): number {
+  if (!Number.isSafeInteger(montoConIgv) || montoConIgv < 0) throw new RangeError('El monto no es un entero seguro no negativo.');
+  if (!Number.isInteger(igvPorcentaje) || igvPorcentaje < 0 || igvPorcentaje > 100) throw new RangeError('El IGV debe ser un entero de 0 a 100.');
+  const divisor = BigInt(100 + igvPorcentaje);
+  return Number((BigInt(montoConIgv) * 100n + divisor / 2n) / divisor);
+}
+
 const cantidadDeLinea = z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' });
 const dia = z.iso.date();
 
@@ -264,8 +272,11 @@ export const lineaDeCotizacionEntradaSchema = z.discriminatedUnion('tipo', [
     descripcion: texto(300).min(1, { error: 'La descripción es obligatoria.' }),
     unidad: texto(20).min(1).default('unidad'),
     cantidadMilesimas: cantidadDeLinea,
-    precioUnitarioMilesimas: z.number().int().safe().min(1, { error: 'El precio debe ser mayor que cero.' }),
-  }),
+    /** Precio unitario sin IGV; opcional si llega `importeCentimos` (el servidor deduce el unitario). */
+    precioUnitarioMilesimas: z.number().int().safe().min(1, { error: 'El precio debe ser mayor que cero.' }).optional(),
+    /** Importe de la línea tal como se escribió (céntimos); manda sobre cantidad × precio. */
+    importeCentimos: z.number().int().safe().min(1, { error: 'El importe debe ser mayor que cero.' }).optional(),
+  }).refine((l) => l.precioUnitarioMilesimas !== undefined || l.importeCentimos !== undefined, { error: 'Escribe el precio o el importe.', path: ['precioUnitarioMilesimas'] }),
 ]);
 export type LineaDeCotizacionEntrada = z.infer<typeof lineaDeCotizacionEntradaSchema>;
 
@@ -382,6 +393,8 @@ const crearCotizacionSchema = z.strictObject({
   titulo,
   clienteId: z.uuid().nullish(),
   lineas: lineasDeEntrada,
+  /** Los precios e importes de las líneas manuales ya traen IGV: el servidor lo quita. */
+  preciosIncluyenIgv: z.boolean().default(false),
   conOpciones: z.boolean().default(false),
   notas: texto(1000).nullish(),
   observaciones: texto(1000).nullish(),
