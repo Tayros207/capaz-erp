@@ -1050,9 +1050,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/cotizador.manifest.ts": {
-    "mtime": 1794935230.398701,
-    "seen": 1794935565.87622,
-    "ast_hash": "defd551ea06d8acd9118c46a78d0c637",
+    "mtime": 1794940401.842525,
+    "seen": 1794940484.35836,
+    "ast_hash": "2a71a318e5ff44d3d9c22b7d5d866336",
     "semantic_hash": ""
   },
   "apps/api/src/modules/crm/crm.manifest.ts": {
@@ -1398,9 +1398,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/rutas.tsx": {
-    "mtime": 1794939685.1732972,
-    "seen": 1794939861.1536005,
-    "ast_hash": "10bcc35a537302ca3c4045a43bdb5db3",
+    "mtime": 1794940417.9475677,
+    "seen": 1794940484.3612695,
+    "ast_hash": "2ea4d3947ae384b1406a1f7b0de5124f",
     "semantic_hash": ""
   },
   "apps/web/src/modules/crm/rutas.tsx": {
@@ -1800,9 +1800,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/cotizador.ts": {
-    "mtime": 1794938834.2668512,
-    "seen": 1794938944.1515553,
-    "ast_hash": "ac7bc28d30143887d68e00226892fba8",
+    "mtime": 1794976528.0849378,
+    "seen": 1794976909.692606,
+    "ast_hash": "c0bc65122223537fe4c483ef7dce8519",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/crm.ts": {
@@ -2682,9 +2682,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/hoja-nuevo-cliente.tsx": {
-    "mtime": 1794783667.2841983,
-    "seen": 1794784071.9696484,
-    "ast_hash": "49b48c0b63c2366e53ba6eac61cc4294",
+    "mtime": 1794976484.7335482,
+    "seen": 1794976909.690801,
+    "ast_hash": "fb11a7fb86db5bf641b46a69b9d7e1c4",
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/logica.spec.ts": {
@@ -3936,9 +3936,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/api.ts": {
-    "mtime": 1794794259.7376766,
-    "seen": 1794794523.3447547,
-    "ast_hash": "99aba09743d8d59cdc9f6006608710a6",
+    "mtime": 1794976442.0144582,
+    "seen": 1794976909.6916971,
+    "ast_hash": "ce8287728de899f2b40fb61eb6a4d2fc",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/claves.ts": {
@@ -3954,15 +3954,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/formulario-pedido.tsx": {
-    "mtime": 1794794259.7376766,
-    "seen": 1794794523.344763,
-    "ast_hash": "e981c222ccae01e1ff74dd429923ad9d",
+    "mtime": 1794976484.7338257,
+    "seen": 1794976909.6917179,
+    "ast_hash": "ee2ad5d945da6516760df27a6bbb7531",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/hoja-linea.tsx": {
-    "mtime": 1794853889.9452887,
-    "seen": 1794889935.4907408,
-    "ast_hash": "5aba1fe64425e97cff385b88660a88aa",
+    "mtime": 1794976442.0147133,
+    "seen": 1794976909.691724,
+    "ast_hash": "63290592a450883bd34e6072d6aa5aae",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/hoja-texto.tsx": {
@@ -3984,9 +3984,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/logica.ts": {
-    "mtime": 1794794259.7376766,
-    "seen": 1794794523.3447762,
-    "ast_hash": "11560caf9ca8f14ffd5f996498996cb2",
+    "mtime": 1794976484.734094,
+    "seen": 1794976909.6917372,
+    "ast_hash": "7d6ad717061e38d830c0365b2dd1df0b",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/marco.tsx": {
@@ -4182,9 +4182,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/selector-de-registro.tsx": {
-    "mtime": 1794788868.2322483,
-    "seen": 1794794523.3451555,
-    "ast_hash": "abfd445773500e100a472929c49f40a7",
+    "mtime": 1794976390.6220255,
+    "seen": 1794976909.6924765,
+    "ast_hash": "6dfd3cf98363f4bb33e66c25fdf35cc4",
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/tablero.tsx": {
@@ -4194,9 +4194,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/use-busqueda.ts": {
-    "mtime": 1794788868.2322483,
-    "seen": 1794794523.3451664,
-    "ast_hash": "b8d323daa41582948cad081b1dd2b0d2",
+    "mtime": 1794976395.7999847,
+    "seen": 1794976909.6924896,
+    "ast_hash": "830f49d9eb1776686c88bebf0065cb10",
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/use-retardo.ts": {
@@ -6780,15 +6780,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/domain/precios.spec.ts": {
-    "mtime": 1794889102.1773133,
-    "seen": 1794889935.4893575,
-    "ast_hash": "f901e9301ac8aec275b06dffc2189a2b",
+    "mtime": 1794940616.6417048,
+    "seen": 1794940714.9071255,
+    "ast_hash": "e4688f21c3805c0b12d071a93c014e13",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/domain/precios.ts": {
-    "mtime": 1794938551.6076212,
-    "seen": 1794938651.0239813,
-    "ast_hash": "943b5ce9b9387142bc334ac31d74af55",
+    "mtime": 1794940631.6047022,
+    "seen": 1794940714.907129,
+    "ast_hash": "f3c84e010dacedfebcf8f6592de15784",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/ajustes-herramientas.ts": {
@@ -6816,9 +6816,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/herramientas-de-cotizador.spec.ts": {
-    "mtime": 1794938834.2675765,
-    "seen": 1794938944.1242418,
-    "ast_hash": "8446f6b35f78149c0da2bfaa2d323460",
+    "mtime": 1794940401.843525,
+    "seen": 1794940484.3588436,
+    "ast_hash": "1bb57a53206964e5a9e29a3721595e5d",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/herramientas-de-cotizador.ts": {
@@ -6858,9 +6858,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/precio-consultar.ts": {
-    "mtime": 1794889102.1789596,
-    "seen": 1794889935.4894383,
-    "ast_hash": "5acf9392b9dc5991427ed4ff5aaa8203",
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.907296,
+    "ast_hash": "13b1453bfc7df604f27b2837c1412289",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/pruebas-de-cotizador.ts": {
@@ -7068,15 +7068,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/domain/lineas.spec.ts": {
-    "mtime": 1794890942.908732,
-    "seen": 1794891824.7343137,
-    "ast_hash": "22729f4b34e8b7e7242b2f27d0f8c956",
+    "mtime": 1794940616.6411498,
+    "seen": 1794940714.9069157,
+    "ast_hash": "9af902b6b7d1ea1bf1328621e700476a",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/domain/lineas.ts": {
-    "mtime": 1794890942.908732,
-    "seen": 1794891824.7343173,
-    "ast_hash": "10220af6fca9c847d5cde3d5159e01e8",
+    "mtime": 1794940616.6415002,
+    "seen": 1794940714.9069207,
+    "ast_hash": "406ed83053cc4268f5bc75d369e35d5b",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/domain/margen.spec.ts": {
@@ -7092,21 +7092,21 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizacion-comun.ts": {
-    "mtime": 1794938057.0273843,
-    "seen": 1794938226.4357786,
-    "ast_hash": "83673d2b04385041451e7c504c4aa29a",
+    "mtime": 1794940616.6421115,
+    "seen": 1794940714.9071646,
+    "ast_hash": "c9ee613d14880bda9d1348369b563853",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizacion-mapeo.ts": {
-    "mtime": 1794938057.0287664,
-    "seen": 1794938226.4357822,
-    "ast_hash": "43eb0ee03e6e947a789b4c9e938d4a86",
+    "mtime": 1794940616.6423037,
+    "seen": 1794940714.9071681,
+    "ast_hash": "4679585f265bc596c5e1fc7d89df8a82",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-emision.ts": {
-    "mtime": 1794938057.0295734,
-    "seen": 1794938226.4357853,
-    "ast_hash": "8ea27fbed7e8872f8d9d3069f93ba84b",
+    "mtime": 1794940616.642661,
+    "seen": 1794940714.9071755,
+    "ast_hash": "b9c9ddd65226b09cdff648c893c9114e",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-escritura.ts": {
@@ -7116,9 +7116,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-estado.int.spec.ts": {
-    "mtime": 1794890942.9097319,
-    "seen": 1794891824.734623,
-    "ast_hash": "10619faafcb2c3d3cb7e67c7a5943f3a",
+    "mtime": 1794940616.642984,
+    "seen": 1794940714.907183,
+    "ast_hash": "5183122e89f4101e84555598dece2e1a",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-estado.ts": {
@@ -7134,9 +7134,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones.int.spec.ts": {
-    "mtime": 1794890942.9097319,
-    "seen": 1794891824.734631,
-    "ast_hash": "b91509a6aebfba591d0de1135ceb0b2b",
+    "mtime": 1794940616.6432254,
+    "seen": 1794940714.907197,
+    "ast_hash": "5bbaff2674910862df07ee16a3e1248e",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/repositories/cotizaciones.repository.ts": {
@@ -7194,9 +7194,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/api.ts": {
-    "mtime": 1794938834.2653704,
-    "seen": 1794938944.1502075,
-    "ast_hash": "8fdb1b731785be1edd59c4f6c442fba1",
+    "mtime": 1794976639.6560428,
+    "seen": 1794976909.6911306,
+    "ast_hash": "9791d7e8916f54a000f72919a395abee",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/claves.ts": {
@@ -7224,21 +7224,21 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/hoja-ajuste-cliente.tsx": {
-    "mtime": 1794892191.4791582,
-    "seen": 1794892800.7274206,
-    "ast_hash": "e0fdac081518831a57d85dce71aed46f",
+    "mtime": 1794976639.6568117,
+    "seen": 1794976909.6912928,
+    "ast_hash": "e80ef048d9888d81a24bcd9cc288b546",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/hoja-cotizacion.tsx": {
-    "mtime": 1794892618.6013575,
-    "seen": 1794892800.7274227,
-    "ast_hash": "19d8c2edfc08e8285591639c64aac469",
+    "mtime": 1794976639.656614,
+    "seen": 1794976909.6912994,
+    "ast_hash": "ef6f6c7e21446f305ee6d222db02b97b",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/hoja-linea-cotizacion.tsx": {
-    "mtime": 1794938799.2482774,
-    "seen": 1794938944.150256,
-    "ast_hash": "0507d4c7d7cf68d8657f0bdd197574a5",
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9092684,
+    "ast_hash": "870b9eb3c9cd9de443da638e7bcf1ba3",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/hoja-lista.tsx": {
@@ -7260,15 +7260,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-cotizaciones.spec.ts": {
-    "mtime": 1794939639.681505,
-    "seen": 1794939861.1535468,
-    "ast_hash": "bf83aff09f8565bc5a0491db377f5658",
+    "mtime": 1794940616.644132,
+    "seen": 1794940714.909294,
+    "ast_hash": "fe70b38ddf0f12aa1049fd1045ec8e26",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-cotizaciones.ts": {
-    "mtime": 1794939639.683505,
-    "seen": 1794939861.153549,
-    "ast_hash": "32f0670cfda1e008d752cec8d1db3ab3",
+    "mtime": 1794940616.644132,
+    "seen": 1794940714.9092968,
+    "ast_hash": "e17f0def08db831b53cc1ddbc2882e06",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica.spec.ts": {
@@ -7278,15 +7278,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica.ts": {
-    "mtime": 1794938799.250367,
-    "seen": 1794938944.1503222,
-    "ast_hash": "c6dee87b93dcfa50a0e5e2fd71969093",
+    "mtime": 1794940616.645556,
+    "seen": 1794940714.9093301,
+    "ast_hash": "005717bde9ed8d4f44e35ed0a868a344",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/marco.tsx": {
-    "mtime": 1794935230.4027755,
-    "seen": 1794935565.882782,
-    "ast_hash": "dc8e0ff0290cbe63f47a93723538132b",
+    "mtime": 1794940401.8475251,
+    "seen": 1794940484.3612328,
+    "ast_hash": "dc81463482fabaaac882fa5c7f31bdf1",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/panel-ajustes-cliente.tsx": {
@@ -7308,9 +7308,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/pantalla-cotizaciones.tsx": {
-    "mtime": 1794939639.683505,
-    "seen": 1794939861.153583,
-    "ast_hash": "bc563c2261438cba9537ae7ef09b972f",
+    "mtime": 1794976639.6570125,
+    "seen": 1794976909.6913867,
+    "ast_hash": "c5219380c947d4b28cb961c45206cc72",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/pantalla-documento-cotizacion.tsx": {
@@ -7320,9 +7320,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/pantalla-ficha-cotizacion.tsx": {
-    "mtime": 1794935461.572752,
-    "seen": 1794935565.8828082,
-    "ast_hash": "59e3d4113cb35eff4b6515ad7ec1b14a",
+    "mtime": 1794940616.6461468,
+    "seen": 1794940714.909355,
+    "ast_hash": "4cabb72aed01ba0df62a10398b22ac08",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/pantalla-precios.tsx": {
@@ -7332,9 +7332,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/pantalla-rapida.tsx": {
-    "mtime": 1794931421.189009,
-    "seen": 1794932023.3165834,
-    "ast_hash": "556e68eb2bb36d09a786f4cb307ac8b0",
+    "mtime": 1794976639.6577876,
+    "seen": 1794976909.6914008,
+    "ast_hash": "0602cd3b750d544ce8078ab552516b1d",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/use-cotizador.ts": {
@@ -7416,15 +7416,15 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/productos-buscar.ts": {
-    "mtime": 1794929129.3989973,
-    "seen": 1794929458.915267,
-    "ast_hash": "5196d5cbc340e0241611df83fa6af03c",
+    "mtime": 1794976528.0857196,
+    "seen": 1794976909.6894302,
+    "ast_hash": "50fa058647c56ae1f2df8ed8aca213a4",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/repositories/catalogo.repository.ts": {
-    "mtime": 1794929154.97404,
-    "seen": 1794929458.915276,
-    "ast_hash": "df78661c4a8718f221003aa2585c540b",
+    "mtime": 1794976528.0855305,
+    "seen": 1794976909.689482,
+    "ast_hash": "18f66cd0e8e967304e3c4e2512e08b44",
     "semantic_hash": ""
   },
   "apps/web/src/core/clientes/api-ampliados.ts": {
@@ -7530,9 +7530,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/productos-buscar.int.spec.ts": {
-    "mtime": 1794929715.131981,
-    "seen": 1794930457.6937542,
-    "ast_hash": "029867cd16dee3d89221bcf17de03c8c",
+    "mtime": 1794976612.6198628,
+    "seen": 1794976909.689427,
+    "ast_hash": "00d1c0bb48570618ae19128f43e8d615",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-catalogo.spec.ts": {
@@ -8274,9 +8274,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/hoja-enlace.tsx": {
-    "mtime": 1794935461.5711715,
-    "seen": 1794935565.8827298,
-    "ast_hash": "b5a07f6e7a2034762240f2de3131912d",
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.909262,
+    "ast_hash": "c37c0accb70e23a5f536ba380df0cbe6",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-enlace.spec.ts": {
@@ -8286,9 +8286,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-enlace.ts": {
-    "mtime": 1794935461.5720072,
-    "seen": 1794935565.882765,
-    "ast_hash": "20c7b8121a55ce9c0c01d757e7502a48",
+    "mtime": 1794940616.6453326,
+    "seen": 1794940714.9093032,
+    "ast_hash": "826edf6eb6485a592f8f55b1be245783",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/logica-taller.spec.ts": {
@@ -8460,9 +8460,9 @@
     "semantic_hash": ""
   },
   "docs/PARIDAD-COTIZIN.md": {
-    "mtime": 1794936494.303333,
-    "seen": 1794936592.6008534,
-    "ast_hash": "55c93cefd9ef4e78bef5c45340d85113",
+    "mtime": 1794942366.1680841,
+    "seen": 1794942403.498205,
+    "ast_hash": "b733b9c7b69b0e75553ae696aced3a78",
     "semantic_hash": ""
   },
   "apps/api/drizzle/0032_cotizador_origen_unidades_y_sistema.sql": {
@@ -8622,9 +8622,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cuadro.int.spec.ts": {
-    "mtime": 1794939639.678718,
-    "seen": 1794939861.1513596,
-    "ast_hash": "41944f257233dddf0c1e8a962ba79863",
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9072342,
+    "ast_hash": "0c3a267d995e9d2b0ecdeb1d8ae1629e",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/pruebas-de-cuadro.ts": {
@@ -8769,6 +8769,384 @@
     "mtime": 1794939685.0456252,
     "seen": 1794939861.156608,
     "ast_hash": "bf4c0f1e285566e586299998f4f559b0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/api-cuadro.ts": {
+    "mtime": 1794940401.843525,
+    "seen": 1794940484.361035,
+    "ast_hash": "34c1ef138cbcc9444872904be52cfe4c",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/barra-inferior.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.361041,
+    "ast_hash": "58c951935b53c24110bc536dc0b9e591",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/cabecera-de-columnas.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610446,
+    "ast_hash": "15d6d5078e3a10227b88f4d17e978b4d",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/caja-emitida.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610477,
+    "ast_hash": "09b15f079c9304d4304b0658b17ed819",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/campo-al-salir.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610508,
+    "ast_hash": "c8cb0fdcde61779de4f59127db2456b1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/campos-de-fila.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610535,
+    "ast_hash": "d459e92967df5a18216865479ea3f9e8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/cuadro-directo.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610566,
+    "ast_hash": "89cce2c9aa7b007615890343fc0112f4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/desglose-de-pliegos.tsx": {
+    "mtime": 1794940401.8442802,
+    "seen": 1794940484.3610597,
+    "ast_hash": "5276ea1849119cdda1121349961aecdc",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/elegir-tarifa.tsx": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610623,
+    "ast_hash": "9c13f5f4ba88024844a1e86926b57be4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/enviar-fila.ts": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610654,
+    "ast_hash": "600cf09b9c9a509b4b3820a2ddb148ac",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/hoja-celda.tsx": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610685,
+    "ast_hash": "874cc2291c0d01d8d30482d01c65bbf1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/hoja-fila.tsx": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610716,
+    "ast_hash": "19dbd69b691bdca88632ca11c4d135bf",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/hoja-item.tsx": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610744,
+    "ast_hash": "094edf33691ad14425abd1cd35d87cb1",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/hoja-referencias.tsx": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610775,
+    "ast_hash": "cf670b569db5c108bacf90ec0091e685",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-filas.spec.ts": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610804,
+    "ast_hash": "2520712780cb1684053c26658d7208d0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-filas.ts": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610835,
+    "ast_hash": "f80acf5cc0caf67ce6097579e8d8c057",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-inicio.spec.ts": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610861,
+    "ast_hash": "7255948d32c0329c14b5f5e1ee3b10aa",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-inicio.ts": {
+    "mtime": 1794940401.844525,
+    "seen": 1794940484.3610895,
+    "ast_hash": "19907911b045c3727abb60a61188b519",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-precio.spec.ts": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.361093,
+    "ast_hash": "a7bda79640e5894194ac856dc18082ef",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro-precio.ts": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3610966,
+    "ast_hash": "e6ce288bea3461f6981711f69c553338",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro.spec.ts": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3610997,
+    "ast_hash": "624bebe65470e942706f15f800770077",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/logica-cuadro.ts": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611026,
+    "ast_hash": "5ee668688a82f9912d8dacd91a3e18af",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/panel-factores.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611054,
+    "ast_hash": "d2c296d7467e53490addb7c2a298f763",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/panel-imposicion.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611093,
+    "ast_hash": "8aca67f11d04b98ce97fbf1c61673d03",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/panel-trabajo.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611128,
+    "ast_hash": "2f86e5e117451759e9e5fca4b156b50b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/panel-utilidad.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611155,
+    "ast_hash": "c8462edfcc96153961bb4d7953c94a02",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/pantalla-cuadro-nuevo.tsx": {
+    "mtime": 1794976639.657617,
+    "seen": 1794976909.691246,
+    "ast_hash": "6c5ec0d62e5aa9a0d92fe1ed69369d36",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/pantalla-cuadro.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.361121,
+    "ast_hash": "f4e105825ec899a1567d6831136c15d7",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/pestanas-del-cuadro.tsx": {
+    "mtime": 1794940401.845525,
+    "seen": 1794940484.3611238,
+    "ast_hash": "8127b90dd0e17faf4304eba7a823ca9e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/precios-de-referencia.tsx": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.3611271,
+    "ast_hash": "4af6ce623fa9bbbe5701c42b58e66c47",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/recibo.tsx": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.3611305,
+    "ast_hash": "c3c2da9a9c7a49ceb1dee07e41517b58",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/resumen-del-cuadro.tsx": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.361133,
+    "ast_hash": "e5d678e9d030740ba0e69580f5b717af",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/seccion.tsx": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.361136,
+    "ast_hash": "136fadb0afdba64efa6e5722a81e955b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/use-cuadro.ts": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.3611383,
+    "ast_hash": "aa4feb24f00f5e8d065329670d1653b9",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/cuadro/use-emision.ts": {
+    "mtime": 1794940401.846525,
+    "seen": 1794940484.3611422,
+    "ast_hash": "96d9a1cf9139bf357222be31eb7dc197",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/cotizacion-precios.ts": {
+    "mtime": 1794940616.642413,
+    "seen": 1794940714.9071715,
+    "ast_hash": "7a9a5a986701bf5e13880e8b0311590e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/cotizaciones-precios.int.spec.ts": {
+    "mtime": 1794940616.6431246,
+    "seen": 1794940714.9071934,
+    "ast_hash": "1ea608bbf6be6d498f5f9aaebf83a8cf",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/ajuste-de-precio.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9090757,
+    "ast_hash": "f0ed8c0dd42c00a48bd8dd27600077b0",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/aviso-de-precios.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.909098,
+    "ast_hash": "f8b6c0c11f7609e90049fab2164913aa",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/caja-emitida.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9091012,
+    "ast_hash": "caa0ae7f14e4983881365417d811b96b",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/control-segmentado.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9091086,
+    "ast_hash": "e5f13020cea04ecd3b7b28a25885bf22",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/ficha-historial.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9092405,
+    "ast_hash": "707e8f850148223b16721a3b97b5f65a",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/ficha-lineas.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9092438,
+    "ast_hash": "330052f13b420297617bbec33987f1a4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/hoja-precios-de-hoy.tsx": {
+    "mtime": 1794940616.643701,
+    "seen": 1794940714.9092798,
+    "ast_hash": "e999d9e9d5c32cc3bdc628dbdb498415",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/logica-precio.spec.ts": {
+    "mtime": 1794940616.645556,
+    "seen": 1794940714.9093063,
+    "ast_hash": "601e0ed25e2d93f08737bf73c7e964ee",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/logica-precio.ts": {
+    "mtime": 1794940616.645556,
+    "seen": 1794940714.9093096,
+    "ast_hash": "4a7b0ec04de3f6f006a66b0709967f6d",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/precios-intermedios.tsx": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.9093692,
+    "ast_hash": "6aa43b601d13628f538c597e25d26815",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/rapida-cantidad.tsx": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.909372,
+    "ast_hash": "9dee6d8b577bb03f9826a49185b0b33e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/rapida-precios.tsx": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.909375,
+    "ast_hash": "41eacc57d8e8c7a0b4e1fd6a085ec580",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/rapida-resultado.tsx": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.9093778,
+    "ast_hash": "b700baac924f578d42faa11f9348d7b4",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/use-cotizacion-rapida.ts": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.9094226,
+    "ast_hash": "af08f2a00cc752ef5fb01a378966117f",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/use-emision.ts": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.9094286,
+    "ast_hash": "e0332cc4434547201865268707938d54",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/vista-previa-whatsapp.tsx": {
+    "mtime": 1794940616.646294,
+    "seen": 1794940714.9094336,
+    "ast_hash": "1d84a37ed5a935e9d8e1e9075cb8b31d",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-bloque.int.spec.ts": {
+    "mtime": 1794942292.7310848,
+    "seen": 1794942403.4956226,
+    "ast_hash": "86aecf10d1404f2e856c7c2f28174614",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-ciclo-de-vida.int.spec.ts": {
+    "mtime": 1794942292.7313466,
+    "seen": 1794942403.4956257,
+    "ast_hash": "a31367676704303a1f3c500cd165ca32",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-cuadro-imposicion.int.spec.ts": {
+    "mtime": 1794942292.7315898,
+    "seen": 1794942403.4956284,
+    "ast_hash": "1f9147776061518779e578ba5288e82b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-cuadro-precios.int.spec.ts": {
+    "mtime": 1794942292.73183,
+    "seen": 1794942403.4956305,
+    "ast_hash": "4645f8715622793271e4fe21fdafd72a",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-entrega.int.spec.ts": {
+    "mtime": 1794942292.7322893,
+    "seen": 1794942403.495633,
+    "ast_hash": "c07aa7307bef98cc3fe0cc53582597f1",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-precio-escala.int.spec.ts": {
+    "mtime": 1794942292.7325487,
+    "seen": 1794942403.4956353,
+    "ast_hash": "5fae854858aa88cf7387bdbefbc09235",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/herramientas/paridad-recorridos.int.spec.ts": {
+    "mtime": 1794942292.7328324,
+    "seen": 1794942403.495637,
+    "ast_hash": "e635f0679442119b3555554622519448",
+    "semantic_hash": ""
+  },
+  "apps/web/src/modules/cotizador/clientes-iniciales.ts": {
+    "mtime": 1794976639.626801,
+    "seen": 1794976909.691145,
+    "ast_hash": "9c5cca230733de4d8d034d3f9d8e91b8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/formato/precio-total.spec.ts": {
+    "mtime": 1794976424.4278266,
+    "seen": 1794976909.6921964,
+    "ast_hash": "992bef805824c918b4e62922a9cdfbd8",
+    "semantic_hash": ""
+  },
+  "apps/web/src/shared/formato/precio-total.ts": {
+    "mtime": 1794976424.4228268,
+    "seen": 1794976909.6921997,
+    "ast_hash": "71f6d40aa1a2649f24366cf10cc28e34",
     "semantic_hash": ""
   }
 }
