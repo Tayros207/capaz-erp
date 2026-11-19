@@ -1,7 +1,8 @@
-import type { EstadoDePedido, LineaDePedidoDto, PedidoCompletoDto } from '@capaz/shared';
-import { formatearCantidad } from '../../shared/formato/milesimas.ts';
+import type { CorreccionDePedidoDto, EstadoDePedido, LineaDePedidoDto, PedidoCompletoDto, VersionDePedidoDto } from '@capaz/shared';
+import { formatearFecha } from '../../shared/formato/fechas.ts';
+import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
-import { filasDeTotales, type FilaDeTotal } from '../../shared/impresion/logica-impresion.ts';
+import { filasDeTotales, formatoDeHoja, renglonesDeDocumento, type FilaDeTotal, type FormatoDeHoja } from '../../shared/impresion/logica-impresion.ts';
 import { formatearDia, sumarDias } from './logica.ts';
 
 // Lógica pura de los documentos imprimibles del pedido: sin React ni red, nada se guarda.
@@ -39,14 +40,14 @@ export function textoDeVigencia(fecha: string, dias = DIAS_DE_VIGENCIA): string 
 
 export type FilaDeDocumento = { n: number; descripcion: string; cantidad: string; precio?: string; importe?: string };
 
-/** Filas por posición. Sin precios (orden de trabajo) las filas no llevan ni precio ni importe. */
+/** Filas por posición. El unitario se imprime con sus milésimas (S/ 0.085, no 0.09) para que la cuenta cuadre con el importe. Sin precios (orden de trabajo) las filas no llevan ni precio ni importe. */
 export function filasDelDocumento(detalle: readonly LineaDePedidoDto[], conPrecios: boolean): FilaDeDocumento[] {
   return [...detalle]
     .sort((a, b) => a.posicion - b.posicion)
     .map((l, i) => {
       const base: FilaDeDocumento = { n: i + 1, descripcion: l.descripcion, cantidad: formatearCantidad(l.cantidadMilesimas, l.unidad) };
       if (!conPrecios) return base;
-      return { ...base, precio: formatearSoles(Math.round(l.precioUnitarioMilesimas / 10)), importe: formatearSoles(l.importeCentimos) };
+      return { ...base, precio: `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`, importe: formatearSoles(l.importeCentimos) };
     });
 }
 
@@ -75,7 +76,8 @@ export function telefonoParaWhatsApp(telefono: string | null | undefined): strin
   return d.length >= 8 && d.length <= 15 ? d : null;
 }
 
-export function mensajeDeWhatsApp(p: Pick<PedidoCompletoDto, 'codigo' | 'clienteNombre' | 'totalCentimos' | 'estado'>): string {
+export function mensajeDeWhatsApp(p: Pick<PedidoCompletoDto, 'codigo' | 'clienteNombre' | 'totalCentimos' | 'estado'> & { version?: number }): string {
+  if ((p.version ?? 1) > 1 && p.estado !== 'borrador') return `Hola ${p.clienteNombre}, te enviamos la versión ${p.version} del pedido ${p.codigo}, que reemplaza a la anterior, por un total de ${formatearSoles(p.totalCentimos)}. Te adjuntamos el documento en PDF.`;
   const documento = p.estado === 'borrador' ? 'la proforma' : 'el pedido';
   return `Hola ${p.clienteNombre}, te enviamos ${documento} ${p.codigo} por un total de ${formatearSoles(p.totalCentimos)}. Te adjuntamos el documento en PDF.`;
 }
@@ -85,3 +87,46 @@ export function enlaceDeWhatsApp(telefono: string | null | undefined, mensaje: s
   const numero = telefonoParaWhatsApp(telefono);
   return numero ? `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}` : null;
 }
+
+/** Lo pagado y lo que falta de un pedido corregido, tomado de su deuda. */
+export type PagosParaMensaje = { abonadoCentimos: number; saldoCentimos: number; aFavorCentimos: number };
+
+/** «versión 2 del pedido PED-…, reemplaza a la anterior: total S/ X, ya dejaste S/ Y, falta S/ Z» (o «a tu favor S/ W»). */
+export function mensajeDeWhatsAppDeVersion(p: Pick<PedidoCompletoDto, 'codigo' | 'clienteNombre' | 'totalCentimos' | 'version'>, pagos: PagosParaMensaje | null): string {
+  const base = `Hola ${p.clienteNombre}, versión ${p.version} del pedido ${p.codigo}, reemplaza a la anterior: total ${formatearSoles(p.totalCentimos)}`;
+  if (!pagos) return `${base}. Te adjuntamos el documento en PDF.`;
+  const resto = pagos.aFavorCentimos > 0 ? `a tu favor ${formatearSoles(pagos.aFavorCentimos)}` : `falta ${formatearSoles(pagos.saldoCentimos)}`;
+  return `${base}, ya dejaste ${formatearSoles(pagos.abonadoCentimos)}, ${resto}. Te adjuntamos el documento en PDF.`;
+}
+
+// --- Versiones: el pedido corregido («versión 2») y la reimpresión de una versión reemplazada ---
+
+export const textoDeReemplazada = (versionNueva: number): string => `REEMPLAZADA por la versión ${versionNueva}`;
+
+/** El pedido tal como era en la versión `version` (la foto guardada), para reimprimirlo; `null` si esa versión no existe. */
+export function pedidoDeVersion(p: PedidoCompletoDto, version: number): PedidoCompletoDto | null {
+  const v = p.versiones.find((x) => x.version === version);
+  if (!v) return null;
+  const f = v.foto;
+  return { ...p, version, estado: f.estado, clienteId: f.clienteId, clienteNombre: f.clienteNombre, fecha: f.fecha, entregaEl: f.entregaEl, notas: f.notas, igvPorcentaje: f.igvPorcentaje, subtotalCentimos: f.subtotalCentimos, igvCentimos: f.igvCentimos, totalCentimos: f.totalCentimos, detalle: f.lineas };
+}
+
+/** «Versión 2 · reemplaza a la del 18/11/2026»; `null` en la versión 1. La fecha es la de la versión anterior (el pedido, o cuando esa se creó). */
+export function textoDeVersion(version: number, fecha: string, versiones: readonly Pick<VersionDePedidoDto, 'version' | 'creadoEn'>[]): string | null {
+  if (version <= 1) return null;
+  const anterior = version - 1 === 1 ? formatearDia(fecha) : formatearFecha(versiones.find((v) => v.version === version - 2)?.creadoEn ?? fecha);
+  return `Versión ${version} · reemplaza a la del ${anterior}`;
+}
+
+/** La corrección que dio origen a la versión vigente (la última `corregido` del historial). */
+export function correccionVigente(p: Pick<PedidoCompletoDto, 'version' | 'historial'>): CorreccionDePedidoDto | null {
+  for (const e of [...p.historial].reverse()) {
+    const c = e.tipo === 'corregido' ? e.detalle?.correccion : undefined;
+    if (c && c.versionNueva === p.version) return c;
+  }
+  return null;
+}
+
+/** La orden de trabajo (sin precios) admite más líneas por hoja que la proforma y la nota. */
+export const formatoDelDocumento = (tipo: TipoDeDocumento, p: Pick<PedidoCompletoDto, 'detalle' | 'notas'>): FormatoDeHoja =>
+  formatoDeHoja(tipo === 'orden-de-trabajo' ? 'sin-precios' : 'con-precios', renglonesDeDocumento(p.detalle.map((x) => x.descripcion), p.notas));

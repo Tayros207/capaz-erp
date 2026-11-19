@@ -3,6 +3,7 @@ import { PantallaDocumentoDePedido } from './pantalla-documento.tsx';
 import { PantallaGuia } from './pantalla-guia.tsx';
 import { PantallaGuias } from './pantalla-guias.tsx';
 import { PantallaNuevaGuia, RedirigirAGuiaNueva } from './pantalla-guia-nueva.tsx';
+import { PantallaCorrecciones } from './pantalla-correcciones.tsx';
 import { PantallaEntregas } from './pantalla-entregas.tsx';
 import { PantallaFichaPedido } from './pantalla-ficha.tsx';
 import { PantallaPedidos } from './pantalla-lista.tsx';
@@ -15,6 +16,7 @@ export const rutas: RouteObject[] = [
   { path: 'm/ordenes/tablero', element: <PantallaTableroDePedidos /> },
   { path: 'm/ordenes/entregas', element: <PantallaEntregas /> },
   { path: 'm/ordenes/nuevo', element: <PantallaNuevoPedido /> },
+  { path: 'm/ordenes/correcciones', element: <PantallaCorrecciones /> },
   { path: 'm/ordenes/guias', element: <PantallaGuias /> },
   { path: 'm/ordenes/guias/nueva', element: <PantallaNuevaGuia /> },
   { path: 'm/ordenes/guias/:guiaId', element: <PantallaGuia /> },

@@ -23,6 +23,8 @@ type Props = {
   /** Errores por clave de fila. */
   errores?: Record<string, ErroresDeLinea>;
   error?: string;
+  /** Pedido entregado: solo se tocan precio, importe e IGV; lo demás queda fijo. */
+  soloPrecio?: boolean;
   alCambiar: (lineas: LineaDeFormulario[]) => void;
 };
 
@@ -93,7 +95,7 @@ function BuscadorDeCatalogo({ alElegir, alCerrar }: { alElegir: (p: ProductoDto)
 }
 
 /** Las filas del pedido en línea (con sus totales): lo último que se escribe, precio o importe, manda. */
-export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, error, alCambiar }: Props) {
+export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, error, soloPrecio = false, alCambiar }: Props) {
   const raiz = useRef<HTMLDivElement>(null);
   const foco = useRef<string | null>(null);
   const [catalogo, setCatalogo] = useState(false);
@@ -130,7 +132,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                 <span aria-hidden="true" className="hidden md:inline">{n}</span>
               </span>
               <Celda etiqueta="Descripción" error={e.descripcion}>
-                <input data-campo="descripcion" aria-label={`Descripción del ítem ${n}`} aria-invalid={e.descripcion ? true : undefined} className={CONTROL} maxLength={300} value={l.descripcion} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, descripcion: ev.target.value }))} />
+                <input data-campo="descripcion" disabled={soloPrecio} aria-label={`Descripción del ítem ${n}`} aria-invalid={e.descripcion ? true : undefined} className={CONTROL} maxLength={300} value={l.descripcion} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, descripcion: ev.target.value }))} />
                 <SugerenciaDePrecio
                   clienteId={clienteId}
                   productoId={l.producto?.id}
@@ -142,10 +144,10 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
               </Celda>
               <div className="grid grid-cols-2 gap-3 md:contents">
                 <Celda etiqueta="Cantidad" error={e.cantidad}>
-                  <CeldaNumerica aria-label={`Cantidad del ítem ${n}`} aria-invalid={e.cantidad ? true : undefined} valor={l.cantidadMilesimas} aTexto={(v) => formatearCantidad(v)} aValor={deMilesimas} alCambiar={(v) => cambiar(l.clave, (a) => cambiarCantidad(a, v))} />
+                  <CeldaNumerica disabled={soloPrecio} aria-label={`Cantidad del ítem ${n}`} aria-invalid={e.cantidad ? true : undefined} valor={l.cantidadMilesimas} aTexto={(v) => formatearCantidad(v)} aValor={deMilesimas} alCambiar={(v) => cambiar(l.clave, (a) => cambiarCantidad(a, v))} />
                 </Celda>
                 <Celda etiqueta="Unidad">
-                  <select aria-label={`Unidad del ítem ${n}`} className={CONTROL} value={l.unidad} onChange={(ev) => cambiar(l.clave, (a) => cambiarUnidad(a, ev.target.value))}>
+                  <select disabled={soloPrecio} aria-label={`Unidad del ítem ${n}`} className={CONTROL} value={l.unidad} onChange={(ev) => cambiar(l.clave, (a) => cambiarUnidad(a, ev.target.value))}>
                     {unidadFuera ? <option value={l.unidad}>{l.unidad}</option> : null}
                     {GRUPOS_DE_UNIDADES.map((g) => (
                       <optgroup key={g.grupo} label={g.grupo}>
@@ -166,7 +168,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                 <span className="text-sm font-medium text-texto md:sr-only">Afecto a IGV</span>
               </label>
               <div className="flex justify-end md:justify-center">
-                <Boton variante="fantasma" icono="cerrar" aria-label={`Quitar el ítem ${n}`} disabled={lineas.length <= 1} onClick={() => alCambiar(quitarFila(lineas, l.clave))} />
+                <Boton variante="fantasma" icono="cerrar" aria-label={`Quitar el ítem ${n}`} disabled={soloPrecio || lineas.length <= 1} onClick={() => alCambiar(quitarFila(lineas, l.clave))} />
               </div>
               {!cuadra(l) ? <p className="text-sm text-texto-suave md:col-span-8">El unitario guarda tres decimales: el importe queda en {soles(importeMostrado(l))}</p> : null}
             </div>
@@ -174,11 +176,11 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
         })}
       </div>
       {error ? <p role="alert" className="text-sm font-medium text-peligro">{error}</p> : null}
-      <div className="flex flex-wrap gap-2">
+      {soloPrecio ? null : <div className="flex flex-wrap gap-2">
         <Boton icono="mas" disabled={llena} onClick={() => alCambiar([...lineas, lineaVacia(crypto.randomUUID())])}>Agregar fila</Boton>
         <Boton icono="caja" disabled={llena} aria-expanded={catalogo} onClick={() => setCatalogo((a) => !a)}>Agregar desde el catálogo</Boton>
-      </div>
-      {catalogo ? <BuscadorDeCatalogo alCerrar={() => setCatalogo(false)} alElegir={(p) => { alCambiar(agregarDesdeCatalogo(lineas, p, crypto.randomUUID())); setCatalogo(false); }} /> : null}
+      </div>}
+      {catalogo && !soloPrecio ? <BuscadorDeCatalogo alCerrar={() => setCatalogo(false)} alElegir={(p) => { alCambiar(agregarDesdeCatalogo(lineas, p, crypto.randomUUID())); setCatalogo(false); }} /> : null}
       <GrupoDeCifras etiqueta="Totales del pedido">
         <Cifra etiqueta="Subtotal" valor={soles(totales?.subtotalCentimos ?? null)} />
         <Cifra etiqueta={`IGV ${igvPorcentaje} %`} valor={soles(totales?.igvCentimos ?? null)} />

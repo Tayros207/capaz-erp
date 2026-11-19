@@ -32,6 +32,18 @@ export function llamar<N extends NombreDeHerramienta>(
 }
 
 /**
+ * Herramienta crítica en dos pasos con la pregunta a medida: `preguntar` recibe el resumen del servidor y decide
+ * (p. ej. una hoja propia con botones) si se sigue. Es la misma lógica de tokens y vencimientos que `llamarConfirmando`.
+ */
+export function llamarConfirmandoCon<N extends NombreDeHerramienta>(
+  nombre: N,
+  args: EntradaDe<N>,
+  preguntar: (resumen: string, vencio: boolean) => Promise<boolean>,
+): Promise<ResultadoConfirmado<SalidaDe<N>>> {
+  return ejecutarConConfirmacion((confirmacion) => llamarEnSerie(nombre, args, confirmacion), preguntar) as Promise<ResultadoConfirmado<SalidaDe<N>>>;
+}
+
+/**
  * Herramienta crítica en dos pasos: pide el resumen, lo muestra con `confirmar()` y, si la persona
  * acepta, reenvía el token. Si el token venció, lo pide otra vez. `{ cancelada: true }` si desiste.
  */
@@ -40,14 +52,9 @@ export function llamarConfirmando<N extends NombreDeHerramienta>(
   args: EntradaDe<N>,
   textos: { titulo: string; textoConfirmar?: string; peligroso?: boolean },
 ): Promise<ResultadoConfirmado<SalidaDe<N>>> {
-  return ejecutarConConfirmacion(
-    (confirmacion) => llamarEnSerie(nombre, args, confirmacion),
-    (resumen, vencio) =>
-      confirmar(textos.titulo, vencio ? `La confirmación anterior venció. ${resumen}` : resumen, {
-        textoConfirmar: textos.textoConfirmar,
-        peligroso: textos.peligroso,
-      }),
-  ) as Promise<ResultadoConfirmado<SalidaDe<N>>>;
+  return llamarConfirmandoCon(nombre, args, (resumen, vencio) =>
+    confirmar(textos.titulo, vencio ? `La confirmación anterior venció. ${resumen}` : resumen, { textoConfirmar: textos.textoConfirmar, peligroso: textos.peligroso }),
+  );
 }
 
 export type { ResultadoConfirmado };

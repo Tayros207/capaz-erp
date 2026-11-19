@@ -1,4 +1,5 @@
 import type { DetalleDeEventoDePedido, EntradaDe, PedidoDto } from '@capaz/shared';
+import { lineasDeHuellaDeCorreccion } from './huella-de-correccion.ts';
 import { formatearDia } from './logica.ts';
 
 // Lógica pura de «Editar datos» de un pedido confirmado: qué se envía, qué se valida y cómo se lee la huella en el historial.
@@ -48,6 +49,7 @@ function valorLegible(campo: keyof typeof NOMBRE_DE_CAMPO, valor: string | null,
 /** Una línea por campo cambiado, «Entrega: 10/03/2026 → 15/03/2026», y el motivo al final si lo hay. */
 export function lineasDeHuella(d: DetalleDeEventoDePedido | null): string[] {
   if (!d) return [];
+  if (d.correccion) return lineasDeHuellaDeCorreccion(d.correccion);
   const lineas = d.cambios.map((c) => `${NOMBRE_DE_CAMPO[c.campo]}: ${valorLegible(c.campo, c.antes, c.antesEtiqueta)} → ${valorLegible(c.campo, c.despues, c.despuesEtiqueta)}`);
   return d.motivo ? [...lineas, `Motivo: ${d.motivo}`] : lineas;
 }

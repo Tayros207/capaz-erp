@@ -1,5 +1,5 @@
 import type { EntradaDe } from '@capaz/shared';
-import { llamar, llamarConfirmando } from '../../shared/api/herramientas.ts';
+import { llamar, llamarConfirmando, llamarConfirmandoCon } from '../../shared/api/herramientas.ts';
 
 // Las pantallas de pedidos solo hablan con el servidor por herramientas tipadas.
 
@@ -21,6 +21,16 @@ export const cambiarEstado = (id: string, estado: EntradaDe<'pedido_cambiar_esta
 /** Crítica: el servidor devuelve el resumen y la persona confirma antes de cancelar. */
 export const cancelarPedido = (id: string, motivo: string) =>
   llamarConfirmando('pedido_cancelar', { id, motivo }, { titulo: 'Cancelar pedido', textoConfirmar: 'Cancelar pedido', peligroso: true });
+
+/**
+ * Crítica: corrige el pedido y ajusta su deuda con UNA sola confirmación. `preguntar` recibe el resumen del servidor
+ * (la hoja «Qué cambia» lo muestra con sus botones) y devuelve si la persona acepta.
+ */
+export const corregirVenta = (args: EntradaDe<'venta_corregir'>, preguntar: (resumen: string, vencio: boolean) => Promise<boolean>) => llamarConfirmandoCon('venta_corregir', args, preguntar);
+
+export function listarCorrecciones(filtros: Omit<EntradaDe<'correcciones_listar'>, 'cursor'>, cursor?: string) {
+  return llamar('correcciones_listar', { limite: POR_PAGINA, ...filtros, ...(cursor && { cursor }) });
+}
 
 export const buscarProductos = (texto: string) => llamar('productos_buscar', { texto, limite: 8 });
 /** Lo que muestran los selectores al abrirse sin haber escrito nada: los primeros por orden alfabético. */

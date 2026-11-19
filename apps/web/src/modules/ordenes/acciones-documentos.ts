@@ -16,13 +16,13 @@ export function accionesDeImpresion(p: Pick<PedidoCompletoDto, 'id' | 'estado'>,
  * Abre WhatsApp con el mensaje armado (el documento lo adjunta la persona desde el PDF). Pide el
  * teléfono del cliente por `clientes_ver`; sin teléfono avisa. Sin servicios externos desde el servidor.
  */
-export async function enviarPorWhatsApp(p: Pick<PedidoCompletoDto, 'clienteId' | 'codigo' | 'clienteNombre' | 'totalCentimos' | 'estado'>): Promise<void> {
+export async function enviarPorWhatsApp(p: Pick<PedidoCompletoDto, 'clienteId' | 'codigo' | 'clienteNombre' | 'totalCentimos' | 'estado'> & { version?: number }, mensaje?: string): Promise<void> {
   const r = await llamar('clientes_ver', { id: p.clienteId });
   if (!r.ok || !('datos' in r)) {
     notificar('No pudimos leer los datos del cliente.', 'error');
     return;
   }
-  const enlace = enlaceDeWhatsApp(datosOError(r).telefono, mensajeDeWhatsApp(p));
+  const enlace = enlaceDeWhatsApp(datosOError(r).telefono, mensaje ?? mensajeDeWhatsApp(p));
   if (!enlace) {
     notificar('El cliente no tiene un teléfono válido registrado.', 'error');
     return;

@@ -13,16 +13,18 @@ export function SeccionesDePedidos() {
         { a: '/m/ordenes/tablero', texto: 'Por estado' },
         { a: '/m/ordenes/entregas', texto: 'Entregas' },
         { a: '/m/ordenes/guias', texto: 'Guías' },
+        { a: '/m/ordenes/correcciones', texto: 'Correcciones' },
       ]}
     />
   );
 }
 
 /** El estado en una insignia y, si corresponde, el aviso de atraso (texto además de color). */
-export function InsigniasDePedido({ pedido }: { pedido: Pick<PedidoDto, 'estado' | 'atrasado'> }) {
+export function InsigniasDePedido({ pedido }: { pedido: Pick<PedidoDto, 'estado' | 'atrasado'> & Partial<Pick<PedidoDto, 'version'>> }) {
   return (
     <span className="inline-flex flex-wrap items-center gap-2">
       <Insignia tono={TONO_DE_ESTADO[pedido.estado]}>{ETIQUETA_DE_ESTADO[pedido.estado]}</Insignia>
+      {(pedido.version ?? 1) > 1 ? <Insignia tono="info">{`v${pedido.version}`}</Insignia> : null}
       {pedido.atrasado ? <Insignia tono="peligro">Atrasado</Insignia> : null}
     </span>
   );

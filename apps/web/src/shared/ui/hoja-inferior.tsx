@@ -7,11 +7,13 @@ type Props = {
   abierto: boolean;
   alCerrar: () => void;
   titulo: string;
+  /** Más ancha en pantallas grandes, para contenido en tabla (p. ej. las filas de un pedido). */
+  ancha?: boolean;
   children: ReactNode;
 };
 
 /** Panel que sube desde abajo (pensado para el móvil); en pantallas anchas queda centrado y acotado. */
-export function HojaInferior({ abierto, alCerrar, titulo, children }: Props) {
+export function HojaInferior({ abierto, alCerrar, titulo, ancha = false, children }: Props) {
   const ref = useDialogo(abierto, alCerrar);
   const idTitulo = useId();
   // Va a `document.body`: si la hoja se abre desde dentro de un formulario, su propio <form> no queda anidado en el de la
@@ -23,7 +25,7 @@ export function HojaInferior({ abierto, alCerrar, titulo, children }: Props) {
       ref={ref}
       aria-labelledby={idTitulo}
       onClick={(e) => e.target === e.currentTarget && alCerrar()}
-      className="mx-auto mt-auto mb-0 max-h-[85dvh] w-full max-w-xl rounded-t-tarjeta border border-borde bg-superficie p-0 text-texto shadow-elevada backdrop:bg-black/40 backdrop:backdrop-blur-[2px] open:animate-[subir_200ms_cubic-bezier(0.22,1,0.36,1)]"
+      className={`mx-auto mt-auto mb-0 max-h-[85dvh] w-full ${ancha ? 'max-w-5xl' : 'max-w-xl'} rounded-t-tarjeta border border-borde bg-superficie p-0 text-texto shadow-elevada backdrop:bg-black/40 backdrop:backdrop-blur-[2px] open:animate-[subir_200ms_cubic-bezier(0.22,1,0.36,1)]`}
     >
       <div className="flex items-center justify-between gap-2 border-b border-borde px-5 py-3">
         <h2 id={idTitulo} className="font-titulo text-base font-semibold tracking-tight">
