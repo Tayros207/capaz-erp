@@ -92,3 +92,16 @@ describe('protección de fórmulas en el CSV', () => {
     expect(csv).toContain("'=hyperlink");
   });
 });
+
+describe('listas con la misma etiqueta en dos filas', () => {
+  it('la misma categoría como ingreso y como egreso no se confunde ni repite su identificador', () => {
+    const r = indicadoresDe({
+      porCategoria: [
+        { categoriaId: null, nombre: 'Sin categoría', tipo: 'ingreso', totalCentimos: 5_000 },
+        { categoriaId: null, nombre: 'Sin categoría', tipo: 'egreso', totalCentimos: 3_000 },
+      ],
+    });
+    expect(new Set(r.map((i) => i.id)).size).toBe(2);
+    expect(new Set(r.map((i) => i.etiqueta)).size).toBe(2);
+  });
+});

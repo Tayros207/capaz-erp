@@ -37,10 +37,14 @@ const esObjeto = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 const tipoDe = (clave: string): TipoDeIndicador => (clave.endsWith('Centimos') ? 'dinero' : 'cantidad');
 const CLAVES_RESERVADAS = new Set(['desde', 'hasta', 'serie']);
 
-/** El texto que nombra a un elemento de una lista (estado, nombre…): el primer texto que no sea un identificador. */
+/**
+ * El texto que nombra a un elemento de una lista: todos sus textos que no sean identificadores, unidos («Sin categoría ·
+ * ingreso»). Con solo el primero, dos filas que difieren en otro texto (la misma categoría como ingreso y como egreso)
+ * quedaban con el mismo nombre y el mismo identificador.
+ */
 const rotuloDe = (fila: Record<string, unknown>): string | null => {
-  for (const [k, v] of Object.entries(fila)) if (typeof v === 'string' && !/Id$/.test(k) && k !== 'id') return v;
-  return null;
+  const textos = Object.entries(fila).flatMap(([k, v]) => (typeof v === 'string' && !/Id$/.test(k) && k !== 'id' && v !== '' ? [v] : []));
+  return textos.length > 0 ? textos.join(' · ') : null;
 };
 
 function deNumeros(prefijo: string, titulo: string, o: Record<string, unknown>, sal: IndicadorDto[]): void {
