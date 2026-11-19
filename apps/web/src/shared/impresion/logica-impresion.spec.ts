@@ -3,10 +3,12 @@ import {
   AVISO_DOCUMENTO_INTERNO,
   alineacionPorDefecto,
   filasDeTotales,
+  formatoDeHoja,
   formatearCelda,
   lineasDelEncabezado,
   lineasDelPie,
   normalizarEmpresa,
+  renglonesDeDocumento,
   totalesConIgv,
   totalesDesdeTotal,
 } from './logica-impresion.ts';
@@ -64,5 +66,24 @@ describe('crédito del ERP', () => {
   it('dice quién generó el documento', async () => {
     const { TEXTO_DE_CREDITO } = await import('./logica-impresion.ts');
     expect(TEXTO_DE_CREDITO).toBe('Generado por ERP Capaz, un producto de Datayros');
+  });
+});
+
+describe('formato de hoja', () => {
+  it('sin precios: A6 hasta 2, A5 hasta 8, luego A4', () => {
+    expect([0, 1, 2, 3, 8, 9].map((n) => formatoDeHoja('sin-precios', n))).toEqual(['a6', 'a6', 'a6', 'a5', 'a5', 'a4']);
+  });
+  it('con precios: A6 hasta 1, A5 hasta 6, luego A4', () => {
+    expect([1, 2, 6, 7].map((n) => formatoDeHoja('con-precios', n))).toEqual(['a6', 'a5', 'a5', 'a4']);
+  });
+  it('cuenta renglones por líneas, texto largo y notas', () => {
+    expect(renglonesDeDocumento(['Polo'])).toBe(1);
+    expect(renglonesDeDocumento(['x'.repeat(80)])).toBe(1);
+    expect(renglonesDeDocumento(['x'.repeat(81)])).toBe(2);
+    expect(renglonesDeDocumento(['', '  Polo  '])).toBe(2);
+    expect(renglonesDeDocumento([], null)).toBe(0);
+    expect(renglonesDeDocumento(['Polo'], '   ')).toBe(1);
+    expect(renglonesDeDocumento(['Polo'], 'x'.repeat(100))).toBe(2);
+    expect(renglonesDeDocumento(['Polo'], 'x'.repeat(101))).toBe(3);
   });
 });

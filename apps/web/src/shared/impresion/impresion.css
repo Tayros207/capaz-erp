@@ -84,10 +84,23 @@
 .hoja-a6 [role='group'] { width: 38mm !important; margin-top: 7mm !important; }
 .hoja-a5 [role='group'] { width: 56mm !important; margin-top: 9mm !important; }
 .hoja-a6 [role='group'] p, .hoja-a5 [role='group'] p { font-size: 6.5pt !important; }
+/* Logo más chico en las hojas compactas. */
+.hoja-a5 header img { max-height: 16mm !important; max-width: 40mm !important; }
+.hoja-a6 header img { max-height: 12mm !important; max-width: 30mm !important; }
+.hoja-a6 header { padding-bottom: 2mm !important; }
+/* Tablas angostas: montos y cantidades no se parten («S/» junto a su cifra); el texto largo sí, aunque sea una palabra sin espacios. */
+.hoja-a5 th.text-right, .hoja-a5 td.text-right, .hoja-a6 th.text-right, .hoja-a6 td.text-right { white-space: nowrap; }
+.hoja-a5 td, .hoja-a6 td { overflow-wrap: anywhere; }
+.hoja-a6 .credito-erp { padding-top: 2mm; }
+/* Recuadro para escribir a mano (Especificaciones de la orden de trabajo): más bajo en las hojas compactas. */
+.hoja-imprimible .caja-a-mano { height: 42mm; }
+.hoja-a5 .caja-a-mano { height: 34mm; }
+.hoja-a6 .caja-a-mano { height: 26mm; }
 
 @media print {
-  .hoja-a5 { page: a5; }
-  .hoja-a6 { page: a6; }
-  @page a5 { size: 148mm 210mm; margin: 6mm; }
-  @page a6 { size: 105mm 148mm; margin: 4mm; }
+  /* En papel, la hoja compacta mide justo el área útil de su página, sin el relleno de la vista previa, para que el navegador no la achique. */
+  .hoja-a5 { page: a5; width: 132mm; padding: 0; }
+  .hoja-a6 { page: a6; width: 95mm; padding: 0; }
+  @page a5 { size: 148mm 210mm; margin: 8mm; }
+  @page a6 { size: 105mm 148mm; margin: 5mm; }
 }

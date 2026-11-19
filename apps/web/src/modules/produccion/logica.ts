@@ -7,6 +7,7 @@ import {
   type LineaDeOrdenDto,
   type OrdenDeProduccionCompletaDto,
 } from '@capaz/shared';
+import { formatoDeHoja, renglonesDeDocumento, type FormatoDeHoja } from '../../shared/impresion/logica-impresion.ts';
 import type { Opcion } from '../../shared/ui/selector-de-registro.tsx';
 import type { TonoDeInsignia } from '../../shared/ui/insignia.tsx';
 
@@ -193,3 +194,12 @@ export function coincide(o: Pick<OrdenDeProduccionCompletaDto, 'clienteNombre' |
   const q = limpio(texto.trim());
   return q === '' || [o.clienteNombre, o.codigo, o.resumen, o.notas ?? ''].some((c) => limpio(c).includes(q));
 }
+
+/** El trabajo con su receta, tal como se imprime: «Tarjetas — Couché 300 g · 9 × 5.5 cm». */
+export function textoDeTrabajo(l: Pick<LineaDeOrdenDto, 'descripcion' | 'material' | 'medida' | 'colores' | 'acabado'>): string {
+  const receta = [l.material, l.medida, l.colores, l.acabado].filter(Boolean).join(' · ');
+  return receta ? `${l.descripcion} — ${receta}` : l.descripcion;
+}
+
+export const formatoDeLaOrden = (o: Pick<OrdenDeProduccionCompletaDto, 'lineas' | 'notas'>): FormatoDeHoja =>
+  formatoDeHoja('con-precios', renglonesDeDocumento(o.lineas.map(textoDeTrabajo), o.notas));

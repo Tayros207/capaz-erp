@@ -10,7 +10,7 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { verOrden } from './api.ts';
 import { CLAVE_PRODUCCION } from './claves.ts';
 import { Cargando } from './marco.tsx';
-import { ETIQUETA_DE_ESTADO } from './logica.ts';
+import { ETIQUETA_DE_ESTADO, formatoDeLaOrden, textoDeTrabajo } from './logica.ts';
 
 // Documento imprimible de una orden de trabajo del taller: lo que se le pasa al cliente (qué pidió, la receta, cuánto dejó
 // a cuenta y cuánto falta) y a quien produce. Se imprime o se guarda como PDF desde el navegador.
@@ -18,9 +18,9 @@ import { ETIQUETA_DE_ESTADO } from './logica.ts';
 const COLUMNAS = [
   { clave: 'n', titulo: 'N.º', ancho: '10mm' },
   { clave: 'trabajo', titulo: 'Trabajo' },
-  { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha', ancho: '28mm' },
-  { clave: 'valor', titulo: 'V. unitario', alineacion: 'derecha', ancho: '28mm' },
-  { clave: 'subtotal', titulo: 'Subtotal', alineacion: 'derecha', ancho: '30mm' },
+  { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha' },
+  { clave: 'valor', titulo: 'V. unitario', alineacion: 'derecha' },
+  { clave: 'subtotal', titulo: 'Subtotal', alineacion: 'derecha' },
 ] as const;
 
 const dia = (d: string | null): string => {
@@ -35,8 +35,7 @@ function filasDe(o: OrdenDeProduccionCompletaDto) {
   return [...o.lineas]
     .sort((a, b) => a.posicion - b.posicion)
     .map((l, i) => {
-      const receta = [l.material, l.medida, l.colores, l.acabado].filter(Boolean).join(' · ');
-      return { n: i + 1, trabajo: receta ? `${l.descripcion} — ${receta}` : l.descripcion, cantidad: `${formatearCantidad(l.cantidadMilesimas)} ${l.unidad}`, valor: valorUnitario(l.precioUnitarioMilesimas), subtotal: formatearSoles(l.subtotalCentimos) };
+      return { n: i + 1, trabajo: textoDeTrabajo(l), cantidad: `${formatearCantidad(l.cantidadMilesimas)} ${l.unidad}`, valor: valorUnitario(l.precioUnitarioMilesimas), subtotal: formatearSoles(l.subtotalCentimos) };
     });
 }
 
@@ -60,7 +59,7 @@ function Documento({ o }: { o: OrdenDeProduccionCompletaDto }) {
         </p>
       )}
       <VistaPreviaDeHoja>
-        <HojaImprimible titulo={`Orden de trabajo ${o.codigo}`} empresa={datos}>
+        <HojaImprimible titulo={`Orden de trabajo ${o.codigo}`} empresa={datos} formato={formatoDeLaOrden(o)}>
           <BloqueDeDatos
             titulo="Datos de la orden"
             pares={[

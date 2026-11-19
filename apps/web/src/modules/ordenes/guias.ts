@@ -1,4 +1,4 @@
-import type { FormatoDeHoja } from '../../shared/impresion/logica-impresion.ts';
+import { formatoDeHoja, type FormatoDeHoja } from '../../shared/impresion/logica-impresion.ts';
 import type { GuiaCompletaDto, EstadoDeGuia, MotivoDeTraslado, ModalidadDeTraslado } from '@capaz/shared';
 import { formatearCantidad } from '../../shared/formato/milesimas.ts';
 import type { TonoDeInsignia } from '../../shared/ui/insignia.tsx';
@@ -142,7 +142,4 @@ export const filasDeGuia = (lineas: readonly LineaParaImprimir[]): FilaDeGuia[] 
   lineas.map((l, i) => ({ n: i + 1, pedido: l.pedido ?? '—', descripcion: l.descripcion, cantidad: formatearCantidad(l.cantidadMilesimas, l.unidad) }));
 
 /** Una guía de pocas líneas sale en un cuarto de hoja (A6), una mediana en media hoja (A5) y una larga en A4. */
-export function formatoDeGuia(lineas: number): FormatoDeHoja {
-  if (lineas <= 2) return 'a6';
-  return lineas <= 8 ? 'a5' : 'a4';
-}
+export const formatoDeGuia = (lineas: number): FormatoDeHoja => formatoDeHoja('sin-precios', lineas);

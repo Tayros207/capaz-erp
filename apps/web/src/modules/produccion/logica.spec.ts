@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { centimosSchema } from '@capaz/shared';
+import { centimosSchema, type LineaDeOrdenDto } from '@capaz/shared';
 import {
   accionesDeOrden,
   argumentosDeCrear,
@@ -8,10 +8,12 @@ import {
   avanceDe,
   coincide,
   faltaCancelar,
+  formatoDeLaOrden,
   lineaVacia,
   mensajeDeRechazo,
   subtotalDeLinea,
   sumarDias,
+  textoDeTrabajo,
   textoDeEntrega,
   totalDeFormulario,
   validarOrden,
@@ -124,5 +126,23 @@ describe('búsqueda y mensajes', () => {
   it('conserva el mensaje del servidor en los conflictos', () => {
     expect(mensajeDeRechazo('conflicto', 'La orden ya se entregó y no se puede editar.')).toBe('La orden ya se entregó y no se puede editar.');
     expect(mensajeDeRechazo('sin_permiso', 'x')).toMatch(/No tienes permiso/);
+  });
+});
+
+describe('hoja de la orden de trabajo', () => {
+  const linea = (extra: Partial<LineaDeOrdenDto> = {}): LineaDeOrdenDto => ({
+    posicion: 1, descripcion: 'Tarjetas', unidad: 'millar', cantidadMilesimas: 1000, precioUnitarioMilesimas: 1000, subtotalCentimos: 100,
+    material: null, medida: null, colores: null, acabado: null, ...extra,
+  });
+  const orden = (lineas: LineaDeOrdenDto[], notas: string | null = null) => ({ lineas, notas });
+  it('el trabajo lleva su receta', () => {
+    expect(textoDeTrabajo(linea({ material: 'Couché 300 g', medida: '9 × 5.5 cm' }))).toBe('Tarjetas — Couché 300 g · 9 × 5.5 cm');
+    expect(textoDeTrabajo(linea())).toBe('Tarjetas');
+  });
+  it('elige la hoja más chica que cabe', () => {
+    expect(formatoDeLaOrden(orden([linea()]))).toBe('a6');
+    expect(formatoDeLaOrden(orden([linea({ material: 'x'.repeat(90) })]))).toBe('a5');
+    expect(formatoDeLaOrden(orden([linea()], 'Recoge el sábado'))).toBe('a5');
+    expect(formatoDeLaOrden(orden(Array.from({ length: 7 }, () => linea())))).toBe('a4');
   });
 });

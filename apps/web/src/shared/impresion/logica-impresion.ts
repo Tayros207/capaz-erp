@@ -14,6 +14,30 @@ export type DatosDeEmpresaImpresion = {
 /** Tamaños de hoja: A4 completo, A5 (media hoja) y A6 (cuarto de hoja, para documentos de pocas líneas). */
 export type FormatoDeHoja = 'a4' | 'a5' | 'a6';
 
+/** Cuánto ocupa la hoja además de sus líneas: sin precios (guía, orden de trabajo del pedido) o con precios, totales y adelanto. */
+export type PerfilDeHoja = 'sin-precios' | 'con-precios';
+
+/** Hasta cuántos renglones cabe cada perfil en A6 y en A5; con más, A4. */
+export const RENGLONES_POR_FORMATO: Readonly<Record<PerfilDeHoja, { a6: number; a5: number }>> = {
+  'sin-precios': { a6: 2, a5: 8 },
+  'con-precios': { a6: 1, a5: 6 },
+};
+export const CARACTERES_POR_RENGLON = 80;
+export const CARACTERES_DE_NOTA_POR_RENGLON = 100;
+
+/** La hoja más chica en la que cabe el documento sin cortarse. */
+export function formatoDeHoja(perfil: PerfilDeHoja, renglones: number): FormatoDeHoja {
+  const limite = RENGLONES_POR_FORMATO[perfil];
+  if (renglones <= limite.a6) return 'a6';
+  return renglones <= limite.a5 ? 'a5' : 'a4';
+}
+
+/** Cada línea cuenta 1, y 1 más por cada 80 caracteres de descripción; las notas cuentan 1 por cada 100 caracteres. */
+export function renglonesDeDocumento(descripciones: readonly string[], notas?: string | null): number {
+  const deLineas = descripciones.reduce((s, d) => s + Math.max(1, Math.ceil(d.trim().length / CARACTERES_POR_RENGLON)), 0);
+  return deLineas + Math.ceil((notas?.trim() ?? '').length / CARACTERES_DE_NOTA_POR_RENGLON);
+}
+
 /** Crédito que va al pie de todo documento que sale del ERP hacia un cliente. */
 export const TEXTO_DE_CREDITO = 'Generado por ERP Capaz, un producto de Datayros';
 
