@@ -5,6 +5,10 @@ describe('entidades compartidas', () => {
   it('lleva cada entidad a su ficha', () => {
     expect(rutaDeEntidad('cliente', 'a1')).toBe('/clientes/a1');
     expect(rutaDeEntidad('pedido', 'p1')).toBe('/m/ordenes/p1');
+    expect(rutaDeEntidad('orden_trabajo', 'o1')).toBe('/m/produccion/o1');
+    expect(rutaDeEntidad('articulo', 'a1')).toBe('/m/insumos/articulos/a1');
+    expect(rutaDeEntidad('oportunidad', 'op1')).toBe('/m/crm/oportunidades/op1');
+    expect(rutaDeEntidad('borrador', 'b1')).toBe('/bandeja/b1');
     expect(rutaDeEntidad('deuda', 'd1')).toBe('/m/registro/deudas/d1');
     expect(rutaDeEntidad('movimiento', 'm1')).toBe('/m/registro/movimientos/m1');
     expect(rutaDeEntidad('producto', 'r1')).toBe('/productos/r1');

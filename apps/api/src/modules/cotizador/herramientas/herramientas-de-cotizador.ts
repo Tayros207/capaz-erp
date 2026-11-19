@@ -20,6 +20,7 @@ import { tallerSembrar } from './taller-sembrar.js';
 import { tarifaArchivar, tarifaCrear, tarifaEditar, tarifasListar } from './taller-tarifas.js';
 import { precioConsultar } from './precio-consultar.js';
 import { cotizadorPreciosAnteriores } from './precios-anteriores.js';
+import { cotizadorPendientes } from './cotizaciones-pendientes.js';
 import { cotizadorProductosBuscar } from './productos-buscar.js';
 import { cuadroFijarCostoDirecto, cuadroFijarColumnasAEnviar, cuadroFijarPrecioFinal, cuadroFijarUtilidad } from './cuadro-costos.js';
 import { cuadroCalcular, cuadroIniciar, cuadroVer } from './cuadro-iniciar.js';
@@ -58,6 +59,7 @@ export const HERRAMIENTAS_DE_COTIZADOR = [
   cotizacionAnular,
   cotizadorResumen,
   cotizadorPreciosAnteriores,
+  cotizadorPendientes,
   // Taller (cot-s3): formatos, máquinas, tarifas, ítems del cuadro y la carga de ejemplo.
   formatosPliegoListar, formatoPliegoCrear, formatoPliegoEditar, formatoPliegoArchivar,
   maquinasListar, maquinaCrear, maquinaEditar, maquinaArchivar,

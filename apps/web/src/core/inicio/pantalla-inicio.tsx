@@ -9,7 +9,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { unir } from '../../shared/ui/unir.ts';
 import { LineaDeMedicion } from '../captura/pantalla-dictado.tsx';
-import { Pendientes } from './pendientes.tsx';
+import { PantallaMiDia } from './pantalla-mi-dia.tsx';
 
 const COLOR_ACENTO: Record<string, string> = {
   esmeralda: 'bg-acento-esmeralda', cian: 'bg-acento-cian', ambar: 'bg-acento-ambar', rosa: 'bg-acento-rosa', gris: 'bg-acento-gris',
@@ -54,32 +54,31 @@ function TarjetaDeDictado() {
   );
 }
 
-/** `/inicio`: saludo y las mismas familias del menú, como tarjetas con el estado de cada módulo. */
+/** `/inicio`: «Mi día» (lo que hay que atender hoy) y, debajo, las familias del menú como «Tus módulos». */
 export function PantallaInicio() {
   const yo = useYo();
   if (!yo?.empresa) return null;
   const menu = menuDesdeYo(yo);
   const primerNombre = yo.usuario.nombre.trim().split(/\s+/)[0] ?? '';
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <header>
-        <p className="text-sm font-medium tracking-wide text-texto-suave uppercase">{yo.empresa.nombre}</p>
-        <h1 className="font-titulo text-3xl font-semibold text-texto">Hola, {primerNombre}</h1>
-      </header>
-      <Pendientes yo={yo} />
-      {puedeEscribirEn(yo, 'registro') ? <TarjetaDeDictado /> : null}
-      {menu.familias.map((f) => (
-        <section key={f.familia} aria-labelledby={`fam-${f.familia}`} className="flex flex-col gap-2">
-          <h2 id={`fam-${f.familia}`} className="font-titulo text-sm font-semibold tracking-wide text-texto-suave uppercase">{f.nombre}</h2>
-          {f.items.length === 0 ? (
-            <p className="rounded-tarjeta border border-dashed border-borde-fuerte p-3 text-sm text-texto-suave">Sin módulos disponibles todavía.</p>
-          ) : (
-            <ul className="grid list-none gap-3 p-0 sm:grid-cols-2 xl:grid-cols-3">
-              {f.items.map((i) => <li key={i.clave} className="flex *:flex-1"><Tarjeta item={i} /></li>)}
-            </ul>
-          )}
-        </section>
-      ))}
+    <div className="mx-auto flex max-w-5xl flex-col gap-8">
+      <PantallaMiDia empresa={yo.empresa.nombre} saludo={`Hola, ${primerNombre}`} />
+      <section aria-labelledby="tus-modulos" className="flex flex-col gap-4">
+        <h2 id="tus-modulos" className="font-titulo text-xl font-semibold text-texto">Tus módulos</h2>
+        {puedeEscribirEn(yo, 'registro') ? <TarjetaDeDictado /> : null}
+        {menu.familias.map((f) => (
+          <section key={f.familia} aria-labelledby={`fam-${f.familia}`} className="flex flex-col gap-2">
+            <h3 id={`fam-${f.familia}`} className="font-titulo text-sm font-semibold tracking-wide text-texto-suave uppercase">{f.nombre}</h3>
+            {f.items.length === 0 ? (
+              <p className="rounded-tarjeta border border-dashed border-borde-fuerte p-3 text-sm text-texto-suave">Sin módulos disponibles todavía.</p>
+            ) : (
+              <ul className="grid list-none gap-3 p-0 sm:grid-cols-2 xl:grid-cols-3">
+                {f.items.map((i) => <li key={i.clave} className="flex *:flex-1"><Tarjeta item={i} /></li>)}
+              </ul>
+            )}
+          </section>
+        ))}
+      </section>
     </div>
   );
 }

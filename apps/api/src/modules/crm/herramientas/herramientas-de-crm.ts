@@ -8,6 +8,7 @@ import { crmIniciar, etapaArchivar, etapaCrear, etapaEditar, etapasOrdenar } fro
 import { etapasListar, oportunidadesListar, oportunidadVer } from './lectura.js';
 import { oportunidadCrear, oportunidadEditar, oportunidadMover } from './oportunidades-escritura.js';
 import { actividadesListar, crmResumen } from './seguimiento-lectura.js';
+import { crmPendientes } from './actividades-pendientes.js';
 
 /** Herramientas y fuentes de tiempo de `crm` (R1). El módulo no consume eventos en esta ola (§5.3). */
 @Injectable()
@@ -37,6 +38,7 @@ export class HerramientasDeCrm implements OnModuleInit {
       actividadCompletar,
       actividadesListar,
       crmResumen,
+      crmPendientes,
     ]);
     this.fuentes.agregar(FUENTES_DE_CRM);
   }

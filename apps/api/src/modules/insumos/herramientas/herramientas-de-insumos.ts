@@ -6,6 +6,7 @@ import { articuloActivar, articuloArchivar, articuloEditar } from './articulos-e
 import { articuloVer, articulosListar } from './articulos-lectura.js';
 import { existenciaAjustar, existenciaMover } from './existencias-escritura.js';
 import { existenciasListar, existenciasMovimientosListar, insumosResumen } from './existencias-lectura.js';
+import { insumosPendientes } from './insumos-pendientes.js';
 import { existenciasRecibir } from './existencias-recibir.js';
 import { conteoAbrir, conteoAnular, conteoCerrar, conteoRegistrar, conteoVer, conteosListar } from './operaciones-conteos.js';
 import { existenciasKardex } from './operaciones-kardex.js';
@@ -23,6 +24,7 @@ export const HERRAMIENTAS_DE_INSUMOS = [
   existenciaAjustar,
   existenciasMovimientosListar,
   insumosResumen,
+  insumosPendientes,
   transferenciaCrear,
   transferenciaVer,
   transferenciasListar,

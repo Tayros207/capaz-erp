@@ -3,8 +3,9 @@ import { RegistroDeHerramientas } from '../../../core/herramientas/registro.js';
 import { ordenAnular, ordenCobrar, ordenCrear, ordenEditar, ordenEstado } from './ordenes-escritura.js';
 import { ordenesListar, ordenVer } from './ordenes-lectura.js';
 import { ordenesPreciosAnteriores } from './precios-anteriores.js';
+import { produccionPendientes } from './ordenes-pendientes.js';
 
-export const HERRAMIENTAS_DE_PRODUCCION = [ordenesListar, ordenVer, ordenCrear, ordenEditar, ordenEstado, ordenCobrar, ordenAnular, ordenesPreciosAnteriores] as const;
+export const HERRAMIENTAS_DE_PRODUCCION = [ordenesListar, ordenVer, ordenCrear, ordenEditar, ordenEstado, ordenCobrar, ordenAnular, ordenesPreciosAnteriores, produccionPendientes] as const;
 
 /** Las herramientas del módulo de producción. No consume eventos: los emite para Finanzas. */
 @Injectable()

@@ -2,6 +2,7 @@ import { Inject, Injectable, type OnModuleInit } from '@nestjs/common';
 import { EjecutorDeHerramientas } from '../herramientas/ejecutor.js';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import { definirHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
+import { consultarMiDia } from './mi-dia.js';
 import { consultarPrecioAnterior } from './precios-anteriores.js';
 
 export function crearHerramientasDeComposicion(ejecutor: EjecutorDeHerramientas, registro: RegistroDeHerramientas): HerramientaRegistrada[] {
@@ -30,7 +31,24 @@ export function crearHerramientasDeComposicion(ejecutor: EjecutorDeHerramientas,
     auditar: (a, d) => ({ resumen: { conCliente: !!(a.clienteId || a.clienteTexto), ...(d && { historial: d.historial.length, hayUltimo: d.ultimo !== null }) } }),
     ejecutar: (args, ctx, tx) => consultarPrecioAnterior(ejecutor, registro, tx, ctx, args),
   });
-  return [precioAnterior];
+  const miDia = definirHerramienta('mi_dia_ver', {
+    modulo: 'core',
+    permiso: null,
+    criticidad: 'lectura',
+    ayuda: {
+      titulo: 'Mi día',
+      paraQueSirve: 'Junta lo que hay que atender hoy: entregas de hoy, de mañana y atrasadas, a quién cobrar, cotizaciones sin respuesta, borradores por aprobar y alertas de insumos, solo de los módulos a los que tienes acceso.',
+      cuandoUsarla: 'Cada mañana, al abrir el sistema. No envía ni cobra nada solo: cada tarjeta lleva a su ficha o propone una acción de un clic.',
+      campos: [{ nombre: 'fecha', queSeAnota: 'El día que se toma como hoy (AAAA-MM-DD); por defecto, hoy.', ejemplo: '2026-11-18' }],
+      ejemploTecleado: 'qué tengo que hacer hoy',
+      ejemploHablado: 'mi día',
+      erroresComunes: ['Un módulo al que no tienes acceso no aparece; el aviso de «fuentes consultadas» dice cuál falta.', 'Con acceso solo a tus propios registros, ves únicamente lo tuyo.'],
+      relacionadas: ['borradores_listar', 'precio_anterior_consultar'],
+    },
+    auditar: (_a, d) => ({ ...(d && { resumen: { total: d.total, porAprobar: d.resumen.porAprobar } }) }),
+    ejecutar: (args, ctx, tx) => consultarMiDia(ejecutor, registro, tx, ctx, args),
+  });
+  return [precioAnterior, miDia];
 }
 
 /** La herramienta compuesta del núcleo: descubre las subherramientas de los módulos por su nombre, no las importa. */

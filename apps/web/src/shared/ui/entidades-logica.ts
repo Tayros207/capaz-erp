@@ -1,6 +1,6 @@
 import type { TonoDeInsignia } from './insignia.tsx';
 
-export type TipoDeEntidad = 'cliente' | 'pedido' | 'deuda' | 'movimiento' | 'producto' | 'cotizacion';
+export type TipoDeEntidad = 'cliente' | 'pedido' | 'deuda' | 'movimiento' | 'producto' | 'cotizacion' | 'orden_trabajo' | 'articulo' | 'oportunidad' | 'borrador';
 
 // Rutas verificadas en `core/clientes/rutas.tsx`, `modules/ordenes/rutas.tsx` y `modules/registro/rutas.tsx`, `core/productos/rutas.tsx` y `modules/cotizador/rutas.tsx`.
 // Un solo lugar: si una ficha cambia de dirección, cambia aquí y todos los enlaces del sistema la siguen.
@@ -11,6 +11,10 @@ const RUTAS: Record<TipoDeEntidad, (id: string) => string> = {
   movimiento: (id) => `/m/registro/movimientos/${id}`,
   producto: (id) => `/productos/${id}`,
   cotizacion: (id) => `/m/cotizador/cotizaciones/${id}`,
+  orden_trabajo: (id) => `/m/produccion/${id}`,
+  articulo: (id) => `/m/insumos/articulos/${id}`,
+  oportunidad: (id) => `/m/crm/oportunidades/${id}`,
+  borrador: (id) => `/bandeja/${id}`,
 };
 
 export const rutaDeEntidad = (tipo: TipoDeEntidad, id: string): string => RUTAS[tipo](id);
