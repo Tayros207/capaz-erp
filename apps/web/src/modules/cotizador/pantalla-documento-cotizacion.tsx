@@ -17,10 +17,10 @@ import { Cargando } from './marco.tsx';
 const COLUMNAS = [
   { clave: 'n', titulo: 'N.º', ancho: '10mm' },
   { clave: 'descripcion', titulo: 'Descripción' },
-  { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha' },
-  { clave: 'precio', titulo: 'P. unitario', alineacion: 'derecha' },
-  { clave: 'importe', titulo: 'Importe', alineacion: 'derecha' },
-  { clave: 'total', titulo: 'Con IGV', alineacion: 'derecha' },
+  { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha', ancho: '24mm' },
+  { clave: 'precio', titulo: 'P. unitario', alineacion: 'derecha', ancho: '27mm' },
+  { clave: 'importe', titulo: 'Importe', alineacion: 'derecha', ancho: '29mm' },
+  { clave: 'total', titulo: 'Con IGV', alineacion: 'derecha', ancho: '29mm' },
 ] as const;
 
 function AvisoDeEmpresa({ razonSocial, ruc }: { razonSocial: string | null; ruc: string | null }) {

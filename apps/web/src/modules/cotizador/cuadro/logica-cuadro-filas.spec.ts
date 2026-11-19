@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TarifaDelTallerDto } from '@capaz/shared';
 import type { Vista } from './logica-cuadro.ts';
-import { FILA_VACIA, argumentosDeFilaNueva, cambioDeMedida, cambioDeTrabajo, cambiosDeFila, formularioDeFila, validarFila } from './logica-cuadro-filas.ts';
+import { FILA_VACIA, argumentosDeFilaNueva, cambioDeMedida, cambioDeTrabajo, cambiosDeFila, formularioDeFila, medidasDeTexto, validarFila } from './logica-cuadro-filas.ts';
 
 const ID = '0192f0c4-7b1e-7000-8000-000000000001';
 const vista = {
@@ -47,9 +47,25 @@ describe('trabajo e imposición', () => {
     expect(cambioDeTrabajo(vista, ID, 'caras', '2')).toBeNull();
     expect(cambioDeTrabajo(vista, ID, 'anchoCm', '10,5')).toEqual({ args: { id: ID, pieza: { anchoCm: '10.5', altoCm: '21.00' } } });
   });
+  it('sin pieza guardada, la primera medida espera a la otra y no es un error', () => {
+    const sinPieza = { ...vista, trabajo: { ...vista.trabajo, pieza: null } } as unknown as Vista;
+    expect(cambioDeTrabajo(sinPieza, ID, 'anchoCm', '10,5')).toEqual({ pendiente: { campo: 'anchoCm', valor: '10.5' } });
+    expect(cambioDeTrabajo(sinPieza, ID, 'altoCm', '21', { anchoCm: '10.5' })).toEqual({ args: { id: ID, pieza: { anchoCm: '10.5', altoCm: '21' } } });
+    expect(cambioDeTrabajo(sinPieza, ID, 'anchoCm', 'abc')).toEqual({ error: 'Escribe una medida con hasta 2 decimales.' });
+  });
   it('las medidas de la imposición se comparan con lo guardado', () => {
     expect(cambioDeMedida(vista, ID, 'sangradoCm', '0.30')).toBeNull();
     expect(cambioDeMedida(vista, ID, 'calleCm', '0,5')).toEqual({ args: { id: ID, calleCm: '0.5' } });
     expect(cambioDeMedida(vista, ID, 'pinzaCm', 'abc')).toEqual({ error: 'Escribe una medida con hasta 2 decimales.' });
+  });
+});
+
+describe('pliego tecleado a mano', () => {
+  it('entiende las formas habituales de escribir una medida', () => {
+    for (const t of ['70x100', '70X100', '70 x 100', '70×100', '70*100', '70 por 100', '70 x 100 cm']) expect(medidasDeTexto(t), t).toEqual({ anchoCm: '70', altoCm: '100' });
+    expect(medidasDeTexto('64,5 x 90.25')).toEqual({ anchoCm: '64.5', altoCm: '90.25' });
+  });
+  it('rechaza lo que no es una medida', () => {
+    for (const t of ['', 'GTO', '70', '70x', 'x100', '0x100', '70x100x5', '70.123x100']) expect(medidasDeTexto(t), t).toBeNull();
   });
 });

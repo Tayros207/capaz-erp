@@ -17,12 +17,25 @@ export const formatearDia = (dia: string | null): string => {
 
 export type FilaDeDocumento = { n: number; descripcion: string; cantidad: string; precio: string; importe: string; total: string };
 
+/**
+ * El precio unitario que se imprime. Si el guardado (3 decimales) multiplicado por la cantidad da el importe, ese; si no
+ * (un cuadro por partes da S/ 5,386.50 por 1,000 y el precio guardado es 5.387), el exacto con hasta 4 decimales:
+ * así el cliente que multiplica no encuentra una diferencia.
+ */
+export function precioQueCuadra(l: Pick<CotizacionCompletaDto['lineas'][number], 'cantidadMilesimas' | 'precioUnitarioMilesimas' | 'importeCentimos'>): string {
+  if (Math.round((l.cantidadMilesimas * l.precioUnitarioMilesimas) / 10_000) === l.importeCentimos || l.cantidadMilesimas <= 0) return `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`;
+  const diezmilesimas = Math.round((l.importeCentimos * 100_000) / l.cantidadMilesimas);
+  const enteros = Math.trunc(diezmilesimas / 10_000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const decimales = String(diezmilesimas % 10_000).padStart(4, '0').replace(/(\d{2}\d*?)0+$/, '$1');
+  return `S/ ${enteros}.${decimales}`;
+}
+
 export function filasDelDocumento(lineas: CotizacionCompletaDto['lineas']): FilaDeDocumento[] {
   return [...lineas].sort((a, b) => a.posicion - b.posicion).map((l, i) => ({
     n: i + 1,
     descripcion: l.descripcion,
     cantidad: formatearCantidad(l.cantidadMilesimas, l.unidad),
-    precio: `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`,
+    precio: precioQueCuadra(l),
     importe: soles(l.importeCentimos),
     total: soles(l.totalCentimos),
   }));

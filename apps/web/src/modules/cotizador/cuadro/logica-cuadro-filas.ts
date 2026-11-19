@@ -61,12 +61,14 @@ export const argumentosDeQuitarFila = (id: string, f: Fila): EntradaDe<'cuadro_l
 // --- Trabajo e imposición ---
 
 export type CampoDeTrabajo = 'producto' | 'descripcion' | 'cantidad' | 'anchoCm' | 'altoCm' | 'tintas' | 'caras';
-export type CambioDeTrabajo = { args: EntradaDe<'cuadro_fijar_trabajo'> } | { error: string } | null;
+/** `pendiente`: se tecleó una medida de la pieza pero falta la otra; se guarda en cuanto estén las dos. */
+export type MedidasPendientes = { anchoCm?: string; altoCm?: string };
+export type CambioDeTrabajo = { args: EntradaDe<'cuadro_fijar_trabajo'> } | { error: string } | { pendiente: { campo: 'anchoCm' | 'altoCm'; valor: string } } | null;
 
 const entero = (t: string, min: number, max: number): number | null => (/^\d{1,2}$/.test(t.trim()) && Number(t) >= min && Number(t) <= max ? Number(t) : null);
 
 /** Lo que se tecleó en un campo del trabajo, hecho llamada al servidor; `null` si no cambió nada. */
-export function cambioDeTrabajo(v: Vista, id: string, campo: CampoDeTrabajo, texto: string): CambioDeTrabajo {
+export function cambioDeTrabajo(v: Vista, id: string, campo: CampoDeTrabajo, texto: string, pendientes: MedidasPendientes = {}): CambioDeTrabajo {
   const t = v.trabajo;
   const limpio = limpiarEntrada(texto);
   if (campo === 'producto' || campo === 'descripcion') {
@@ -82,10 +84,23 @@ export function cambioDeTrabajo(v: Vista, id: string, campo: CampoDeTrabajo, tex
     return n === t[campo] ? null : { args: { id, [campo]: n } };
   }
   if (!MEDIDA.test(limpio)) return { error: 'Escribe una medida con hasta 2 decimales.' };
-  const otra = campo === 'anchoCm' ? t.pieza?.altoCm : t.pieza?.anchoCm;
-  if (!otra) return { error: 'Indica primero la otra medida de la pieza.' };
+  // Sin pieza guardada, la otra medida puede estar tecleada y pendiente; si tampoco, esta queda pendiente (no es un error).
+  const otra = campo === 'anchoCm' ? (t.pieza?.altoCm ?? pendientes.altoCm) : (t.pieza?.anchoCm ?? pendientes.anchoCm);
+  if (!otra) return { pendiente: { campo, valor: limpio } };
   const pieza = campo === 'anchoCm' ? { anchoCm: limpio, altoCm: otra } : { anchoCm: otra, altoCm: limpio };
   return t.pieza && pieza.anchoCm === t.pieza.anchoCm && pieza.altoCm === t.pieza.altoCm ? null : { args: { id, pieza } };
+}
+
+/**
+ * Un pliego tecleado a mano como «70x100», «70 X 100», «70×100», «70*100» o «70 por 100 cm»: ancho y alto en cm.
+ * `null` si no se entiende o alguna medida es cero (el pliego se elige del taller o se escribe así).
+ */
+export function medidasDeTexto(texto: string): { anchoCm: string; altoCm: string } | null {
+  const partes = texto.trim().toLowerCase().replace(/\s*cm\.?$/, '').split(/\s*(?:x|×|\*|\bpor\b)\s*/);
+  if (partes.length !== 2) return null;
+  const [anchoCm, altoCm] = partes.map((p) => limpiarEntrada(p));
+  const bien = (m: string | undefined): m is string => m !== undefined && MEDIDA.test(m) && !/^0+(\.0+)?$/.test(m);
+  return bien(anchoCm) && bien(altoCm) ? { anchoCm, altoCm } : null;
 }
 
 export type CampoDeMedida = 'sangradoCm' | 'calleCm' | 'pinzaCm';

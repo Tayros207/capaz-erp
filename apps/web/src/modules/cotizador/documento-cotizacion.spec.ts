@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CotizacionCompletaDto } from '@capaz/shared';
-import { condicionesParaDocumento, enlaceDeWhatsApp, filasDelDocumento, mensajeDeWhatsApp, telefonoParaWhatsApp, totalesDelDocumento } from './documento-cotizacion.ts';
+import { condicionesParaDocumento, enlaceDeWhatsApp, filasDelDocumento, mensajeDeWhatsApp, precioQueCuadra, telefonoParaWhatsApp, totalesDelDocumento } from './documento-cotizacion.ts';
 
 const linea = (posicion: number, extra = {}) => ({
   posicion, tipo: 'manual', productoId: null, listaId: null, descripcion: `L${posicion}`, unidad: 'millar', cantidadMilesimas: 2500, precioUnitarioMilesimas: 138_552, importeCentimos: 34_638, igvCentimos: 6235, totalCentimos: 40_873, ...extra,
@@ -45,5 +45,18 @@ describe('WhatsApp', () => {
     expect(telefonoParaWhatsApp('123')).toBeNull();
     expect(enlaceDeWhatsApp('987654321', 'Hola Ana')).toBe('https://wa.me/51987654321?text=Hola%20Ana');
     expect(enlaceDeWhatsApp(null, 'x')).toBeNull();
+  });
+});
+
+describe('precio unitario que cuadra con el importe', () => {
+  it('conserva el guardado cuando multiplicado da el importe', () => {
+    expect(precioQueCuadra({ cantidadMilesimas: 2500, precioUnitarioMilesimas: 138_552, importeCentimos: 34_638 })).toBe('S/ 138.552');
+  });
+  it('un cuadro por partes (S/ 5,386.50 por 1,000 unidades) muestra 5.3865 y no 5.387', () => {
+    expect(precioQueCuadra({ cantidadMilesimas: 1_000_000, precioUnitarioMilesimas: 5_387, importeCentimos: 538_650 })).toBe('S/ 5.3865');
+  });
+  it('no pierde los miles ni deja ceros de más', () => {
+    expect(precioQueCuadra({ cantidadMilesimas: 3_000, precioUnitarioMilesimas: 1_234_567, importeCentimos: 370_370 })).toBe('S/ 1,234.567');
+    expect(precioQueCuadra({ cantidadMilesimas: 1_000_000, precioUnitarioMilesimas: 5_400, importeCentimos: 540_030 })).toBe('S/ 5.4003');
   });
 });

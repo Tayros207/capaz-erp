@@ -8,7 +8,8 @@ import { medidasDe, mostrarDecimal } from '../logica-taller.ts';
 import { fijarImposicion } from './api-cuadro.ts';
 import { CampoAlSalir } from './campo-al-salir.tsx';
 import { avisosDeImposicion, filaDePapel } from './logica-cuadro.ts';
-import { cambioDeMedida, textoDeDimensiones, type CampoDeMedida } from './logica-cuadro-filas.ts';
+import { notificar } from '../../../shared/ui/notificar.ts';
+import { cambioDeMedida, medidasDeTexto, textoDeDimensiones, type CampoDeMedida } from './logica-cuadro-filas.ts';
 import { Seccion } from './seccion.tsx';
 import type { ContextoDelCuadro } from './use-cuadro.ts';
 
@@ -53,6 +54,12 @@ export function PanelImposicion(ctx: ContextoDelCuadro) {
     return items.map((f) => ({ id: f.id, nombre: f.nombre, detalle: medidasDe(f.anchoCm, f.altoCm) }));
   };
   const papel = filaDePapel(vista);
+  // Un pliego que no está en el taller se escribe por sus medidas («70x100»): el servidor lo acepta tal cual.
+  const usarMedida = (campo: 'pliegoMadre' | 'pliegoMaquina') => (texto: string) => {
+    const medidas = medidasDeTexto(texto);
+    if (!medidas) return notificar('Escribe la medida como ancho x alto en cm, por ejemplo 70 x 100.', 'error');
+    if (editable) void aplicar(fijarImposicion({ id, [campo]: medidas }));
+  };
 
   return (
     <Seccion titulo="Imposición">
@@ -62,11 +69,11 @@ export function PanelImposicion(ctx: ContextoDelCuadro) {
         alCambiar={(o) => { setMaquina(o); if (o && editable) void aplicar(fijarImposicion({ id, maquinaId: o.id })); }}
       />
       <SelectorDeRegistro
-        etiqueta="Pliego madre (el que se compra)" valor={dePliego(p.pliegoMadre)} buscar={buscarPliegos('madre')} textoSinResultados="Ningún pliego se parece a eso"
+        etiqueta="Pliego madre (el que se compra)" valor={dePliego(p.pliegoMadre)} buscar={buscarPliegos('madre')} textoSinResultados="Ningún pliego se parece a eso" alCrear={usarMedida('pliegoMadre')} textoCrear="Usar la medida"
         alCambiar={(o) => { if (o && o.id !== 'actual' && editable) void aplicar(fijarImposicion({ id, pliegoMadreId: o.id })); }}
       />
       <SelectorDeRegistro
-        etiqueta="Pliego de máquina (al que se corta)" valor={dePliego(p.pliegoMaquina)} buscar={buscarPliegos('maquina')} textoSinResultados="Ningún pliego se parece a eso"
+        etiqueta="Pliego de máquina (al que se corta)" valor={dePliego(p.pliegoMaquina)} buscar={buscarPliegos('maquina')} textoSinResultados="Ningún pliego se parece a eso" alCrear={usarMedida('pliegoMaquina')} textoCrear="Usar la medida"
         alCambiar={(o) => { if (o && o.id !== 'actual' && editable) void aplicar(fijarImposicion({ id, pliegoMaquinaId: o.id })); }}
       />
       <MedidasDeImposicion {...ctx} />
