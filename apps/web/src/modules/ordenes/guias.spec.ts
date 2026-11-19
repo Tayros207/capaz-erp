@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GuiaCompletaDto } from '@capaz/shared';
-import { filasDeGuia, guiaParaImprimirDesde, paresDeDestinatario, paresDeTraslado, tituloDeGuia, trasladoInicial } from './guias.ts';
+import { filasDeGuia, guiaParaImprimirDesde, paresDeDestinatario, paresDeTraslado, tituloDeGuia, trasladoInicial, formatoDeGuia } from './guias.ts';
 
 const guia = (extra: Partial<GuiaCompletaDto> = {}): GuiaCompletaDto => ({
   id: 'g1', codigo: 'G001-000007', serie: 'G001', numero: 7, estado: 'emitida', clienteId: 'c1', destinatarioNombre: 'Imprenta Sol', destinatarioDocumento: 'RUC 20123456789',
@@ -69,5 +69,15 @@ describe('título', () => {
     expect(tituloDeGuia({ codigo: 'G001-000007', estado: 'emitida' })).toBe('Guía de remisión G001-000007');
     expect(tituloDeGuia({ codigo: 'G001-000007', estado: 'anulada' })).toBe('Guía de remisión G001-000007 — ANULADA');
     expect(tituloDeGuia({ codigo: null, estado: 'emitida' })).toBe('Guía de remisión (por emitir)');
+  });
+});
+
+describe('formatoDeGuia', () => {
+  it('cuarto de hoja con 1 o 2 líneas, media hoja hasta 8 y A4 con más', () => {
+    expect(formatoDeGuia(1)).toBe('a6');
+    expect(formatoDeGuia(2)).toBe('a6');
+    expect(formatoDeGuia(3)).toBe('a5');
+    expect(formatoDeGuia(8)).toBe('a5');
+    expect(formatoDeGuia(9)).toBe('a4');
   });
 });

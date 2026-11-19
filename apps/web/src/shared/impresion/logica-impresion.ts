@@ -11,6 +11,12 @@ export type DatosDeEmpresaImpresion = {
   logoDataUrl: string | null;
 };
 
+/** Tamaños de hoja: A4 completo, A5 (media hoja) y A6 (cuarto de hoja, para documentos de pocas líneas). */
+export type FormatoDeHoja = 'a4' | 'a5' | 'a6';
+
+/** Crédito que va al pie de todo documento que sale del ERP hacia un cliente. */
+export const TEXTO_DE_CREDITO = 'Generado por ERP Capaz, un producto de Datayros';
+
 export const AVISO_DOCUMENTO_INTERNO = 'Documento interno, no válido como comprobante de pago';
 
 const VACIA: DatosDeEmpresaImpresion = {

@@ -12,6 +12,8 @@ import {
   type FilaDeTotal,
   type FormatoDeColumna,
   type ValorDeCelda,
+  TEXTO_DE_CREDITO,
+  type FormatoDeHoja,
 } from './logica-impresion.ts';
 import { unir } from '../ui/unir.ts';
 import { Boton } from '../ui/boton.tsx';
@@ -27,15 +29,17 @@ type PropsHoja = {
   pie?: string | null;
   /** Aviso final; `null` lo quita. Por defecto: «Documento interno, no válido como comprobante de pago». */
   aviso?: string | null;
+  /** Tamaño de la hoja. Por defecto A4; A5 y A6 achican la hoja, la letra y el vacío. */
+  formato?: FormatoDeHoja;
 };
 
 /** Hoja A4 con encabezado de la empresa, título, contenido y pie. En pantalla es la vista previa. */
-export function HojaImprimible({ titulo, empresa, children, pie, aviso = AVISO_DOCUMENTO_INTERNO }: PropsHoja) {
+export function HojaImprimible({ titulo, empresa, children, pie, aviso = AVISO_DOCUMENTO_INTERNO, formato = 'a4' }: PropsHoja) {
   const datos = normalizarEmpresa(empresa);
   const encabezado = lineasDelEncabezado(datos);
   const lineasPie = lineasDelPie(pie ?? datos.pieDeDocumento, aviso);
   return (
-    <article className="hoja-imprimible" aria-label={`Vista previa: ${titulo}`}>
+    <article className={unir('hoja-imprimible', formato !== 'a4' && `hoja-${formato}`)} aria-label={`Vista previa: ${titulo}`}>
       <header className="flex items-start gap-4 border-b border-black pb-3" style={{ borderBottomWidth: '0.4mm' }}>
         {datos.logoDataUrl && <img src={datos.logoDataUrl} alt="Logo de la empresa" className="max-h-20 max-w-40 object-contain" />}
         <div className="min-w-0 flex-1">
@@ -54,6 +58,7 @@ export function HojaImprimible({ titulo, empresa, children, pie, aviso = AVISO_D
           ))}
         </footer>
       )}
+      <p className="credito-erp">{TEXTO_DE_CREDITO}</p>
     </article>
   );
 }

@@ -59,3 +59,10 @@ describe('celdas y totales', () => {
     expect(f[2]).toMatchObject({ valor: 'S/ 118.00', destacado: true });
   });
 });
+
+describe('crédito del ERP', () => {
+  it('dice quién generó el documento', async () => {
+    const { TEXTO_DE_CREDITO } = await import('./logica-impresion.ts');
+    expect(TEXTO_DE_CREDITO).toBe('Generado por ERP Capaz, un producto de Datayros');
+  });
+});

@@ -13,7 +13,7 @@ import { anular } from './acciones-guias.ts';
 import { verGuia } from './api.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { CuerpoDeGuia } from './cuerpo-de-guia.tsx';
-import { AVISO_DE_GUIA, ETIQUETA_DE_ESTADO_DE_GUIA, TONO_DE_ESTADO_DE_GUIA, guiaParaImprimirDesde, tituloDeGuia } from './guias.ts';
+import { AVISO_DE_GUIA, ETIQUETA_DE_ESTADO_DE_GUIA, TONO_DE_ESTADO_DE_GUIA, formatoDeGuia, guiaParaImprimirDesde, tituloDeGuia } from './guias.ts';
 import { HojaTexto } from './hoja-texto.tsx';
 import { Cargando } from './marco.tsx';
 
@@ -53,7 +53,7 @@ function Guia({ guia }: { guia: GuiaCompletaDto }) {
         <div className="no-imprimir m-2"><Boton variante="peligro" onClick={() => setAnulando(true)}>Anular guía</Boton></div>
       ) : null}
       <VistaPreviaDeHoja>
-        <HojaImprimible titulo={tituloDeGuia(paraImprimir)} empresa={datos} aviso={AVISO_DE_GUIA}>
+        <HojaImprimible titulo={tituloDeGuia(paraImprimir)} empresa={datos} aviso={AVISO_DE_GUIA} formato={formatoDeGuia(paraImprimir.lineas.length)}>
           <CuerpoDeGuia guia={paraImprimir} />
         </HojaImprimible>
       </VistaPreviaDeHoja>

@@ -10,7 +10,7 @@ import { emitir } from './acciones-guias.ts';
 import { argumentosDeEmision, hayErrores, leerRutaDeGuiaNueva, validarGuia, vistaPreviaDeGuia, type Armado } from './armado-de-guia.ts';
 import { CuerpoDeGuia } from './cuerpo-de-guia.tsx';
 import { FormularioDeTraslado } from './formulario-de-traslado.tsx';
-import { AVISO_DE_GUIA, tituloDeGuia } from './guias.ts';
+import { AVISO_DE_GUIA, formatoDeGuia, tituloDeGuia } from './guias.ts';
 import { AgregarPedido, LineasLibres, PedidosDeLaGuia } from './lineas-de-guia.tsx';
 import { Cargando } from './marco.tsx';
 import { useArmadoDeGuia } from './use-armado-de-guia.ts';
@@ -62,7 +62,7 @@ function Armador({ origen }: { origen: ReturnType<typeof leerRutaDeGuiaNueva> })
         <h2 className="font-titulo font-semibold text-texto">Vista previa</h2>
       </div>
       <VistaPreviaDeHoja>
-        <HojaImprimible titulo={tituloDeGuia(previa)} empresa={a.empresa} aviso={AVISO_DE_GUIA}>
+        <HojaImprimible titulo={tituloDeGuia(previa)} empresa={a.empresa} aviso={AVISO_DE_GUIA} formato={formatoDeGuia(previa.lineas.length)}>
           <CuerpoDeGuia guia={previa} />
         </HojaImprimible>
       </VistaPreviaDeHoja>
