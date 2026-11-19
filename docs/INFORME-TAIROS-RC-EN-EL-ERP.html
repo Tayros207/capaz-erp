@@ -1,0 +1,303 @@
+<title>Tairos.RC en el ERP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Concepto: pliego de imprenta. Fondo neutro frío, tinta azul marino, y los cuatro colores de proceso (cian, amarillo, magenta, gris) como semáforo de estado. */
+:root{
+  --bg:#f2f4f6; --surface:#ffffff; --fg:#14181d; --muted:#56626e; --line:#d8dde2;
+  --accent:#1f3a5f; --accent-soft:#e6ecf4;
+  --ok:#0a7886; --par:#a8670d; --falta:#b5174f; --ver:#66727e;
+  --font-display:"Space Grotesk","Inter",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1216; --surface:#161c22; --fg:#e8ecef; --muted:#98a4af; --line:#27303a;
+  --accent:#8fb4e8; --accent-soft:#1b2736;
+  --ok:#3cc4d4; --par:#e0a73c; --falta:#f06aa0; --ver:#8a97a3; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1216; --surface:#161c22; --fg:#e8ecef; --muted:#98a4af; --line:#27303a;
+  --accent:#8fb4e8; --accent-soft:#1b2736;
+  --ok:#3cc4d4; --par:#e0a73c; --falta:#f06aa0; --ver:#8a97a3; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--font-body);
+  padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--font-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,5vw,42px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:700}
+h3{font-size:16px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font:600 11px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.lead{font-size:17px;max-width:62ch}
+
+/* Encabezado con marca de registro */
+.hero{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+.hero-text{display:flex;flex-direction:column;gap:14px;min-width:0}
+.reg{width:84px;height:84px;color:var(--accent);flex:none}
+@media (max-width:560px){.hero{grid-template-columns:1fr}.reg{display:none}}
+
+/* Estado: píldoras */
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-body);padding:5px 9px;border-radius:999px;white-space:nowrap;
+  color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.s-ok{--c:var(--ok)}.s-parcial{--c:var(--par)}.s-falta{--c:var(--falta)}.s-ver{--c:var(--ver)}
+
+/* Resumen */
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:18px}
+.bar{display:flex;height:16px;border-radius:4px;overflow:hidden;gap:2px}
+.bar span{background:var(--c);min-width:4px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:640px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{display:flex;flex-direction:column;gap:2px;padding-left:12px;border-left:3px solid var(--c)}
+.stat b{font:700 30px/1.1 var(--font-display);font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:13px}
+
+/* Filtros */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.filters button{font:500 13px var(--font-body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.filters button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Tabla de capacidades */
+.grupo{display:flex;flex-direction:column;gap:8px}
+.grupo>h3{font:600 12px/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:10px}
+.fila{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.5fr) auto;gap:8px 20px;align-items:start}
+.fila .cap{font-weight:600}
+.fila .det{display:flex;flex-direction:column;gap:6px;min-width:0;color:var(--muted);font-size:14px}
+.fila .det b{color:var(--fg);font-weight:600}
+@media (max-width:700px){.fila{grid-template-columns:1fr}.fila .pill{justify-self:start;order:-1}}
+
+/* Flujo */
+.flujos{display:flex;flex-direction:column;gap:14px}
+.flujo{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.pasos{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px 0}
+.paso{flex:1 1 130px;min-width:120px;background:var(--accent-soft);border-radius:6px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:3px}
+.paso b{font:700 14px var(--font-display)}
+.paso.fin{background:var(--accent);color:var(--bg)}
+.paso.fin b{color:var(--bg)}
+.paso.gate{background:color-mix(in srgb,var(--par) 16%,transparent);border:1px dashed var(--par)}
+.flecha{flex:0 0 26px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px}
+@media (max-width:640px){.paso{flex-basis:100%}.flecha{flex-basis:100%;height:22px;transform:rotate(90deg)}}
+
+/* Tarjetas */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.card p{font-size:14px;color:var(--muted)}
+
+/* Prioridades */
+.prio{display:flex;flex-direction:column;gap:10px}
+.prio-item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px}
+.prio-item .tag{grid-row:span 2;align-self:start;font:700 12px var(--font-display);letter-spacing:.05em;text-transform:uppercase;padding:5px 9px;border-radius:4px;color:var(--bg);background:var(--c)}
+.prio-item p{font-size:14px;color:var(--muted)}
+.t-alta{--c:var(--falta)}.t-media{--c:var(--par)}.t-baja{--c:var(--ver)}
+
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px}
+summary{cursor:pointer;font-weight:600}
+details ul{margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:6px}
+.nota{border-left:3px solid var(--par);padding:4px 0 4px 14px;color:var(--muted);font-size:14px;max-width:70ch}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:16px}
+code{font:12.5px var(--font-mono);background:var(--accent-soft);padding:1px 5px;border-radius:3px;overflow-wrap:anywhere}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Informe para el dueño · 18 de noviembre de 2026</span>
+      <h1>Qué de Tairos.RC ya vive en el ERP</h1>
+      <p class="lead">Se replicó lo central: dictar, deudas, adelantos, órdenes de trabajo y cotizaciones. Faltan dos piezas claras, la papelera y el tutor, y hay cuatro que están a medias.</p>
+    </div>
+    <svg class="reg" viewBox="0 0 84 84" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="42" cy="42" r="22"/><circle cx="42" cy="42" r="8"/>
+      <path d="M42 4v26M42 54v26M4 42h26M54 42h26"/>
+    </svg>
+  </header>
+
+  <section class="summary" aria-label="Resumen">
+    <h2>Resultado en una mirada</h2>
+    <div class="bar" id="bar" role="img" aria-label="Proporción de capacidades por estado"></div>
+    <div class="stats" id="stats"></div>
+    <p class="muted" id="resumen-texto"></p>
+  </section>
+
+  <section>
+    <h2>Dos aplicaciones, dos tamaños</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="eyebrow">Antes</span>
+        <h3>Tairos.RC (SF)</h3>
+        <p>Una sola aplicación para una imprenta: anotar ingresos y egresos hablando, cobrar deudas, hacer proformas y llevar la cola del taller. Pensada para un dueño, sin módulos.</p>
+      </div>
+      <div class="card">
+        <span class="eyebrow">Ahora</span>
+        <h3>Capaz ERP</h3>
+        <p>Una plataforma con nueve módulos (Finanzas, CRM, Pedidos, Inventario, Compras, Personal, Producción, Cotizador, Reportes), varias empresas, roles y auditoría. Tairos.RC quedó como una parte: el módulo de Finanzas, la captura por voz y el módulo de Producción.</p>
+      </div>
+    </div>
+    <p class="nota">Por eso puede parecer que «faltan recursos»: lo que era una sola pantalla ahora está repartido en módulos, y algunos detalles pequeños del día a día no se trasladaron.</p>
+  </section>
+
+  <section>
+    <h2>Cómo circula el dinero hoy</h2>
+    <p class="muted">En Tairos.RC la orden de trabajo escribía el ingreso directamente. En el ERP cambió un detalle de fondo: todo efecto sobre el dinero llega como <b>borrador</b> y una persona lo aprueba.</p>
+    <div class="flujos">
+      <div class="flujo">
+        <h3>Camino 1: hablas o escribes</h3>
+        <div class="pasos">
+          <div class="paso"><b>Dictado</b>«Ingreso 500, cliente Wilfredo, millar de volantes»</div><div class="flecha">→</div>
+          <div class="paso"><b>Reglas de imprenta</b>Monto, fecha, categoría, cliente</div><div class="flecha">→</div>
+          <div class="paso gate"><b>Borrador</b>Tú lo revisas y apruebas</div><div class="flecha">→</div>
+          <div class="paso fin"><b>Finanzas</b>Caja, deudas, recibo</div>
+        </div>
+      </div>
+      <div class="flujo">
+        <h3>Camino 2: de la cotización al cobro</h3>
+        <div class="pasos">
+          <div class="paso"><b>Cotización</b>Precios 100 / 1.000 / 5.000</div><div class="flecha">→</div>
+          <div class="paso"><b>Aceptada</b>Pasa a borrador de pedido</div><div class="flecha">→</div>
+          <div class="paso"><b>Pedido y orden de trabajo</b>Pendiente, en máquina, listo, entregado</div><div class="flecha">→</div>
+          <div class="paso gate"><b>Borrador de deuda o ingreso</b>Tú lo apruebas</div><div class="flecha">→</div>
+          <div class="paso fin"><b>Finanzas</b>Cobros y saldos</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Capacidad por capacidad</h2>
+    <p class="muted">Cada fila es algo que Tairos.RC hacía. Filtra por estado para ver solo lo que te interesa.</p>
+    <div class="filters" id="filtros" role="group" aria-label="Filtrar por estado"></div>
+    <div id="lista" class="flujos"></div>
+  </section>
+
+  <section>
+    <h2>Lo que el ERP tiene y Tairos.RC no tenía</h2>
+    <div class="cards">
+      <div class="card"><h3>Cotizador completo</h3><p>Cuadro de costos por partes (pliegos, imposición, mermas), lista de precios, ajuste por cliente y enlace para que el cliente acepte. Tairos.RC solo tenía proformas simples.</p></div>
+      <div class="card"><h3>Inventario y Compras</h3><p>Existencias por sucursal, kardex, alertas de mínimo, órdenes de compra y recepción. Tairos.RC dejó el inventario fuera del alcance.</p></div>
+      <div class="card"><h3>Clientes y seguimiento (CRM)</h3><p>Oportunidades en tablero por etapas y actividades de seguimiento.</p></div>
+      <div class="card"><h3>Personal</h3><p>Colaboradores, asistencia, adelantos de sueldo, contratos y vacaciones. Sin planilla completa por ahora.</p></div>
+      <div class="card"><h3>Varias cuentas de dinero</h3><p>Efectivo, banco y Yape, con transferencias entre ellas, caja del día y antigüedad de las deudas.</p></div>
+      <div class="card"><h3>Empresas, roles y auditoría</h3><p>Cada empresa ve solo lo suyo, cada usuario tiene permisos y cada acción queda registrada.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Qué recomiendo completar</h2>
+    <div class="prio">
+      <div class="prio-item"><span class="tag t-alta">Alta</span><h3>Papelera con restaurar</h3><p>En Tairos.RC se decidió que nada se destruye: lo que sobra va a la papelera y se puede recuperar entera. Es lo que protege tu contabilidad de errores de prueba. En el ERP hoy solo se puede anular.</p></div>
+      <div class="prio-item"><span class="tag t-alta">Alta</span><h3>Corregir un movimiento ya aprobado</h3><p>Hoy hay que anular y volver a registrar. Tairos.RC dejaba corregir monto, categoría, fecha y cliente, con la regla de no bajar el monto por debajo de lo ya cobrado.</p></div>
+      <div class="prio-item"><span class="tag t-media">Media</span><h3>Excel para el contador</h3><p>Tairos.RC entregaba hojas de ingresos, egresos y resúmenes por categoría y por cliente. En el ERP vi exportación en CSV, no ese Excel.</p></div>
+      <div class="prio-item"><span class="tag t-media">Media</span><h3>Categorías de imprenta de fábrica</h3><p>Las reglas de dictado ya reconocen el vocabulario de imprenta. Falta confirmar que una empresa nueva reciba las 16 categorías (papel, tintas, planchas, acabados, offset, digital, gran formato…) y una pantalla para clasificar en lote lo que quedó sin categoría.</p></div>
+      <div class="prio-item"><span class="tag t-baja">Baja</span><h3>Tutor de 12 lecciones</h3><p>Ayuda guiada sin IA para que alguien nuevo aprenda a usar el sistema. Útil cuando entren más empleados o clientes.</p></div>
+      <div class="prio-item"><span class="tag t-baja">Oportunidad</span><h3>Datos de taller en la orden</h3><p>Los documentos de la industria gráfica piden operario o máquina asignada y aprobación de prueba de color. Tairos.RC tampoco los tenía; el ERP podría incluirlos en Producción.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Lo que conviene saber de este informe</h2>
+    <details>
+      <summary>Qué no pude comprobar (5 puntos «sin verificar»)</summary>
+      <ul>
+        <li>Botones de modo en el dictado (Trabajo, Abono, Ingreso, Egreso, Proforma) y comandos como <code>/hoy</code> y <code>/mes</code>.</li>
+        <li>Receta del trabajo (material, medida, colores, acabado), orden de la cola por urgencia y ficha impresa.</li>
+        <li>Precios con decimales finos, por ejemplo S/ 0.008 la unidad.</li>
+        <li>IGV opcional y documentos que quedan congelados una vez emitidos.</li>
+        <li>Que los datos de la imprenta (RUC, dirección) salgan en los documentos.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Cómo se hizo la revisión</summary>
+      <ul>
+        <li>Leí documentos, migraciones y el código de ambas aplicaciones. No ejecuté el sistema ni consulté la base de datos.</li>
+        <li>«Adaptado» significa que encontré el código y sus pruebas. No significa que lo probé funcionando.</li>
+        <li>El documento <code>RELEVO.md</code> tiene una sección desactualizada: dice que el repositorio no tiene commits y que el Cotizador y la voz quedan para después. Ya están hechos.</li>
+        <li>Siguen pendientes de personas: aplicar las migraciones nuevas en Neon, HTTPS para que funcione el micrófono en el celular y publicar el sistema.</li>
+      </ul>
+    </details>
+    <p class="nota"><b>Siguiente paso posible:</b> con el ERP levantado en tu computadora, puedo recorrer las 5 capacidades «sin verificar» pantalla por pantalla y convertir cada «falta» en una ficha de trabajo para Keny.</p>
+  </section>
+
+  <footer>Fuentes: carpeta <code>SF-registro-conversacional</code> (migraciones 001 a 017, pruebas e2e, documentos) y carpeta <code>capaz-erp</code> (docs, módulos de API y web, migraciones 0000 a 0032).</footer>
+</div>
+
+<script>
+var ESTADOS={
+  ok:{t:"Adaptado",c:"var(--ok)"},
+  parcial:{t:"A medias",c:"var(--par)"},
+  falta:{t:"Falta",c:"var(--falta)"},
+  ver:{t:"Sin verificar",c:"var(--ver)"}
+};
+var FILAS=[
+ ["Captura por voz","Dictar por voz o texto","Dices lo que pasó y sale una tarjeta para aprobar.","Pantalla de dictado que propone borradores. Trae las mismas reglas de imprenta: montos en palabras, «ayer», categorías, abonos, deudas y proformas.","ok"],
+ ["Captura por voz","Respaldo con inteligencia artificial","Usaba IA y, si fallaba, un analizador local.","Solo reglas locales y reconocimiento del navegador, sin modelo de pago. Hay un archivo de modelo de lenguaje cuyo uso no verifiqué.","parcial"],
+ ["Captura por voz","Botones de modo y comandos","Chips Trabajo, Abono, Ingreso, Egreso, Proforma, y comandos /hoy, /mes, /deudas.","No encontré referencia clara.","ver"],
+ ["Captura por voz","Aviso de nombres parecidos","Si dices «Wilfredo» y ya existe «Wilfredo Ica», pregunta si es la misma persona.","Mismo algoritmo de similitud usado al resolver el cliente.","ok"],
+ ["Clientes","Juntar clientes repetidos","Lista de pares repetidos; al juntar, las deudas partidas quedan enteras.","Pantalla de repetidos y fusión de clientes en el núcleo.","ok"],
+ ["Dinero","Ingresos y egresos","Lista con filtros por fecha y categoría, y «¿en qué se fue el dinero?».","Caja con cuentas (efectivo, banco, Yape), transferencias y caja del día. Más amplio que Tairos.RC.","ok"],
+ ["Dinero","Deudas, abonos y saldos","Quién te debe, a quién debes, abonos parciales que no pasan del saldo.","Deudas por cobrar y pagar, abonos y antigüedad de saldos.","ok"],
+ ["Dinero","Adelanto al cancelar un trabajo","Eliges si devolviste el adelanto o lo retuviste por materiales ya comprados.","Producción guarda el destino del adelanto: devuelto o retenido.","ok"],
+ ["Dinero","Recibos y WhatsApp","Documento con monto en letras, sello CANCELADO y envío por WhatsApp.","Recibo imprimible con monto en letras y documento de pedido con enlace a WhatsApp.","ok"],
+ ["Dinero","Anular sin borrar","El movimiento sale de las listas pero no se destruye.","Anular movimiento, deuda, transferencia y orden.","ok"],
+ ["Dinero","Papelera con restaurar","Pantalla donde se ve lo retirado y se recupera entero. Nunca se destruye.","No hay pantalla de papelera.","falta"],
+ ["Dinero","Corregir un movimiento guardado","Cambias monto, categoría, fecha o cliente. Nunca por debajo de lo cobrado.","Se edita el borrador antes de aprobar. Después solo se anula y se registra de nuevo.","parcial"],
+ ["Dinero","Excel para el contador","Hojas de ingresos, egresos, proformas y resúmenes por categoría y por cliente.","Exportación en CSV en el núcleo. No vi el Excel con resúmenes.","parcial"],
+ ["Taller","Orden de trabajo y sus estados","Pendiente, en máquina, listo, entregado o anulada, con número OT.","Módulo Producción con los mismos estados, cobro y anulación. Su manifiesto dice «modelo de SF».","ok"],
+ ["Taller","La orden registra el ingreso","Al crear la orden nace su venta, en un solo paso.","Producción avisa a Finanzas, que propone el ingreso o la deuda. La persona aprueba. Es más seguro, un clic más.","ok"],
+ ["Taller","Receta, cola por urgencia y ficha","Material, medida, colores y acabado por trabajo, con atrasados marcados.","No lo confirmé en el código.","ver"],
+ ["Taller","Precios con decimales finos","Cotizar a S/ 0.008 la unidad sin errores de redondeo.","No lo confirmé en el código.","ver"],
+ ["Ventas","Proformas y cotizaciones","Proforma numerada, PDF/PNG, WhatsApp, y al aceptarla nace la orden.","Cotizador mucho más grande. Al aceptar crea un borrador de pedido.","ok"],
+ ["Ventas","IGV opcional y documento congelado","El documento emitido no cambia si luego cambia la tasa.","No lo confirmé en el código.","ver"],
+ ["Imprenta","Categorías de imprenta","16 categorías cerradas (papel, tintas, planchas, acabados, offset, digital…) y sugerencia automática.","El dictado reconoce el vocabulario y las categorías. No confirmé cuáles se crean en una empresa nueva ni la pantalla de clasificar en lote.","parcial"],
+ ["Imprenta","Datos de la imprenta en los documentos","Nombre comercial, RUC, dirección y teléfono impresos.","Existen datos de empresa. No confirmé que salgan en cada documento.","ver"],
+ ["Ayuda","Tutor de 12 lecciones","Ayuda guiada sin IA con botón «Probarlo ahora».","No existe.","falta"],
+ ["Cuenta","Ingreso y usuarios","Un piloto con acceso por correo.","Varias empresas, roles con permisos y auditoría.","ok"]
+];
+
+(function(){
+  var orden=["ok","parcial","falta","ver"], cuenta={ok:0,parcial:0,falta:0,ver:0};
+  FILAS.forEach(function(f){cuenta[f[4]]++});
+  var total=FILAS.length;
+
+  var bar=document.getElementById("bar"), stats=document.getElementById("stats");
+  orden.forEach(function(k){
+    var s=document.createElement("span"); s.style.setProperty("--c",ESTADOS[k].c); s.style.flexGrow=cuenta[k]; s.title=ESTADOS[k].t+": "+cuenta[k]; bar.appendChild(s);
+    var d=document.createElement("div"); d.className="stat"; d.style.setProperty("--c",ESTADOS[k].c);
+    d.innerHTML="<b>"+cuenta[k]+"</b><small>"+ESTADOS[k].t+"</small>"; stats.appendChild(d);
+  });
+  document.getElementById("resumen-texto").textContent=
+    "De "+total+" capacidades de Tairos.RC, "+cuenta.ok+" ya están en el ERP, "+cuenta.parcial+" están a medias, "+cuenta.falta+" faltan y "+cuenta.ver+" no pude confirmar leyendo el código.";
+
+  var filtros=document.getElementById("filtros"), lista=document.getElementById("lista"), actual="todos";
+  function btn(k,t){
+    var b=document.createElement("button"); b.type="button"; b.textContent=t; b.dataset.k=k;
+    b.setAttribute("aria-pressed",k===actual?"true":"false");
+    b.addEventListener("click",function(){actual=k;pintar()}); filtros.appendChild(b);
+  }
+  btn("todos","Todas ("+total+")");
+  orden.forEach(function(k){btn(k,ESTADOS[k].t+" ("+cuenta[k]+")")});
+
+  function esc(s){return s.replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function pintar(){
+    Array.prototype.forEach.call(filtros.children,function(b){b.setAttribute("aria-pressed",b.dataset.k===actual?"true":"false")});
+    var grupos={}, orden_g=[];
+    FILAS.forEach(function(f){
+      if(actual!=="todos"&&f[4]!==actual)return;
+      if(!grupos[f[0]]){grupos[f[0]]=[];orden_g.push(f[0])}
+      grupos[f[0]].push(f);
+    });
+    lista.innerHTML=orden_g.map(function(g){
+      return '<div class="grupo"><h3>'+esc(g)+'</h3>'+grupos[g].map(function(f){
+        return '<div class="fila"><div class="cap">'+esc(f[1])+'</div>'+
+          '<div class="det"><span><b>Antes:</b> '+esc(f[2])+'</span><span><b>Ahora:</b> '+esc(f[3])+'</span></div>'+
+          '<span class="pill s-'+f[4]+'">'+ESTADOS[f[4]].t+'</span></div>';
+      }).join("")+'</div>';
+    }).join("");
+  }
+  pintar();
+})();
+</script>
