@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ESTADOS_DE_PEDIDO, type EstadoDePedido } from '@capaz/shared';
-import { comprobarAvance, comprobarCancelacion, comprobarConfirmacion, esEditable, estaAtrasado, mensajeDePasoInvalido } from './estados.js';
+import { comprobarAvance, comprobarCancelacion, comprobarConfirmacion, comprobarEdicionDeDatos, esEditable, estaAtrasado, mensajeDePasoInvalido } from './estados.js';
 
 // La tabla completa, escrita aparte de la implementación: cada par (de, a) dice si se permite.
 const AVANCES_ESPERADOS: Record<EstadoDePedido, EstadoDePedido[]> = {
@@ -61,5 +61,18 @@ describe('estaAtrasado', () => {
     expect(estaAtrasado('borrador', '2026-03-01', '2026-03-10')).toBe(false);
     expect(estaAtrasado('entregado', '2026-03-01', '2026-03-10')).toBe(false);
     expect(estaAtrasado('cancelado', '2026-03-01', '2026-03-10')).toBe(false);
+  });
+});
+
+describe('comprobarEdicionDeDatos', () => {
+  it('deja corregir datos solo con el pedido confirmado, en proceso o listo', () => {
+    for (const e of ESTADOS_DE_PEDIDO) {
+      expect(comprobarEdicionDeDatos(e).ok, e).toBe(['confirmado', 'en_proceso', 'listo'].includes(e));
+    }
+  });
+  it('explica el rechazo: el borrador se edita aparte y lo cerrado ya no cambia', () => {
+    expect(comprobarEdicionDeDatos('borrador')).toMatchObject({ ok: false, motivo: expect.stringContaining('Editar pedido') });
+    expect(comprobarEdicionDeDatos('entregado')).toEqual({ ok: false, motivo: 'Un pedido «entregado» ya no se puede corregir.' });
+    expect(comprobarEdicionDeDatos('cancelado')).toEqual({ ok: false, motivo: 'Un pedido «cancelado» ya no se puede corregir.' });
   });
 });

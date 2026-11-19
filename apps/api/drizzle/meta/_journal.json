@@ -232,6 +232,13 @@
       "when": 1794936731244,
       "tag": "0032_cotizador_origen_unidades_y_sistema",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795098984997,
+      "tag": "0033_pedido_eventos_detalle",
+      "breakpoints": true
     }
   ]
 }

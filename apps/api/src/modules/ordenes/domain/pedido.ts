@@ -18,6 +18,26 @@ export function comprobarFechas(fecha: string, entregaEl: string | null): Compro
   return entregaEl !== null && entregaEl < fecha ? { ok: false, motivo: 'La entrega no puede ser anterior a la fecha del pedido.' } : { ok: true };
 }
 
+export type CambioDeDato = { campo: 'entregaEl' | 'responsableId' | 'notas'; antes: string | null; despues: string | null };
+
+/**
+ * Lo que de verdad cambia al corregir los datos de un pedido: solo los campos que llegan y que difieren de lo guardado.
+ * Vacío o `null` quita el valor. Devuelve el antes y el después de cada uno (la huella).
+ */
+export function cambiosDeDatos(
+  actual: { entregaEl: string | null; responsableId: string | null; notas: string | null },
+  nuevos: { entregaEl?: string | null; responsableId?: string | null; notas?: string | null },
+): CambioDeDato[] {
+  const salida: CambioDeDato[] = [];
+  for (const campo of ['entregaEl', 'responsableId', 'notas'] as const) {
+    const llega = nuevos[campo];
+    if (llega === undefined) continue;
+    const despues = llega?.trim() || null;
+    if (despues !== actual[campo]) salida.push({ campo, antes: actual[campo], despues });
+  }
+  return salida;
+}
+
 /** Para confirmar: entre 1 y 100 líneas. */
 export function comprobarLineasParaConfirmar(cantidad: number): Comprobacion {
   if (cantidad < 1) return { ok: false, motivo: 'Agrega al menos una línea antes de confirmar el pedido.' };

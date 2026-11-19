@@ -158,5 +158,16 @@ export const eventosDeProduccion = {
   'produccion.orden_entregada': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string(), saldoCentimos: z.number().int() }),
   /** «Anotar que ya me pagó»: Finanzas propone cobrar lo que falta. */
   'produccion.orden_cobro_pedido': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string(), saldoCentimos: z.number().int() }),
+  'produccion.orden_corregida': z.strictObject({
+    id: z.string(),
+    codigo: z.string(),
+    clienteId: z.string(),
+    totalAnteriorCentimos: z.number().int(),
+    totalNuevoCentimos: z.number().int(),
+    adelantoAnteriorCentimos: z.number().int(),
+    adelantoNuevoCentimos: z.number().int(),
+    entregaAnterior: z.iso.date().nullable(),
+    entregaNueva: z.iso.date().nullable(),
+  }),
   'produccion.orden_anulada': z.strictObject({ id: z.string(), codigo: z.string(), adelantoCentimos: z.number().int(), destinoAdelanto: z.enum(DESTINOS_DEL_ADELANTO).nullable() }),
 } as const;

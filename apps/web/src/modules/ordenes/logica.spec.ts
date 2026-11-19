@@ -127,6 +127,7 @@ describe('historial y errores', () => {
   it('describe cada evento', () => {
     expect(textoDeEvento({ tipo: 'estado', estadoAnterior: 'confirmado', estadoNuevo: 'en_proceso', nota: null })).toBe('Pasó de Confirmado a En proceso');
     expect(textoDeEvento({ tipo: 'nota', estadoAnterior: null, estadoNuevo: null, nota: 'Recoge el viernes' })).toBe('Recoge el viernes');
+    expect(textoDeEvento({ tipo: 'datos_editados', estadoAnterior: null, estadoNuevo: null, nota: null })).toBe('Se corrigieron los datos del pedido');
     expect(textoDeEvento({ tipo: 'cancelado', estadoAnterior: 'listo', estadoNuevo: 'cancelado', nota: null })).toBe('Se canceló (estaba Listo)');
   });
   it('los códigos de acceso se explican; lo demás usa el mensaje del servidor', () => {

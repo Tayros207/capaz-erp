@@ -115,12 +115,14 @@ export const ordenesPedidoEventos = ordenes.table(
     estadoAnterior: text('estado_anterior'),
     estadoNuevo: text('estado_nuevo'),
     nota: text('nota'),
+    /** La huella de una corrección (`datos_editados`): campos con antes y después, y el motivo. */
+    detalle: jsonb('detalle'),
     usuarioId: text('usuario_id').notNull(),
     creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     foreignKey({ name: 'pedido_eventos_pedido_fk', columns: [t.tenantId, t.pedidoId], foreignColumns: [ordenesPedidos.tenantId, ordenesPedidos.id] }),
-    check('evento_tipo', sql`${t.tipo} IN ('creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota')`),
+    check('evento_tipo', sql`${t.tipo} IN ('creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados')`),
     index('idx_ordenes_pedido_eventos_pedido').on(t.tenantId, t.pedidoId, t.creadoEn.desc()),
   ],
 );

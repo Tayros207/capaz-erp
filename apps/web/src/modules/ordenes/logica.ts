@@ -296,6 +296,7 @@ export function textoDeEvento(e: Pick<EventoDePedidoDto, 'tipo' | 'estadoAnterio
     case 'estado': return `Pasó de ${estado(e.estadoAnterior)} a ${estado(e.estadoNuevo)}`;
     case 'cancelado': return `Se canceló (estaba ${estado(e.estadoAnterior)})`;
     case 'nota': return e.nota ?? 'Nota';
+    case 'datos_editados': return 'Se corrigieron los datos del pedido';
     default: return e.tipo;
   }
 }

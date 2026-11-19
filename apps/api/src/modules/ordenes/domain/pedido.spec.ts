@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { codigoDePedido, comprobarFechas, comprobarLineasParaConfirmar, prepararLineas, type ProductoParaLinea } from './pedido.js';
+import { cambiosDeDatos, codigoDePedido, comprobarFechas, comprobarLineasParaConfirmar, prepararLineas, type ProductoParaLinea } from './pedido.js';
 
 const P1 = '0192f0c4-7b1e-7000-8000-000000000001';
 const P2 = '0192f0c4-7b1e-7000-8000-000000000002';
@@ -80,5 +80,22 @@ describe('prepararLineas', () => {
 
   it('sin líneas: totales en cero', () => {
     expect(prepararLineas([], catalogo(), 18)).toEqual({ ok: true, lineas: [], subtotalCentimos: 0, igvCentimos: 0, totalCentimos: 0 });
+  });
+});
+
+describe('cambiosDeDatos', () => {
+  const actual = { entregaEl: '2099-02-01', responsableId: 'u1', notas: 'Vieja' };
+  it('solo lista lo que llega y difiere, con su antes y después', () => {
+    expect(cambiosDeDatos(actual, { entregaEl: '2099-02-10', notas: 'Vieja' })).toEqual([{ campo: 'entregaEl', antes: '2099-02-01', despues: '2099-02-10' }]);
+  });
+  it('vacío o null quita el valor; lo que no llega no se toca', () => {
+    expect(cambiosDeDatos(actual, { entregaEl: null, notas: '  ' })).toEqual([
+      { campo: 'entregaEl', antes: '2099-02-01', despues: null },
+      { campo: 'notas', antes: 'Vieja', despues: null },
+    ]);
+  });
+  it('sin cambios reales devuelve vacío (también quitar lo que ya estaba quitado)', () => {
+    expect(cambiosDeDatos(actual, {})).toEqual([]);
+    expect(cambiosDeDatos({ entregaEl: null, responsableId: null, notas: null }, { entregaEl: null, responsableId: '', notas: '' })).toEqual([]);
   });
 });

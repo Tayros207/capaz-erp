@@ -1,11 +1,11 @@
-import type { PedidoDto } from '@capaz/shared';
+import type { EntradaDe, PedidoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { clienteDeConsultas } from '../../shared/api/cliente-de-consultas.ts';
 import { puede } from '../../shared/sesion/sesion.ts';
 import { puedeEscribirEn } from '../../shared/sesion/acceso.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
-import { anotarPedido, cambiarEstado, cancelarPedido, confirmarPedido, listarPedidos } from './api.ts';
+import { anotarPedido, cambiarEstado, cancelarPedido, confirmarPedido, editarDatosDePedido, listarPedidos } from './api.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { ETIQUETA_DE_ESTADO, mensajeDeRechazo, type Paso } from './logica.ts';
 
@@ -35,6 +35,18 @@ export async function anotar(id: string, nota: string): Promise<boolean> {
   const r = await anotarPedido(id, nota);
   if (r.ok && 'datos' in r) {
     notificar('Nota agregada.', 'exito');
+    await refrescarPedidos();
+    return true;
+  }
+  if ('error' in r) notificar(mensajeDeRechazo(r.error.codigo, r.error.mensaje), 'error');
+  return false;
+}
+
+/** Corrige entrega, responsable o notas de un pedido confirmado. Devuelve si se aplicó. */
+export async function corregirDatos(id: string, cambios: Omit<EntradaDe<'pedido_editar_datos'>, 'id'>): Promise<boolean> {
+  const r = await editarDatosDePedido({ id, ...cambios });
+  if (r.ok && 'datos' in r) {
+    notificar('Datos del pedido corregidos.', 'exito');
     await refrescarPedidos();
     return true;
   }

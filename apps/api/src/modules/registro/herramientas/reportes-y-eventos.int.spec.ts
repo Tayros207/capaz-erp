@@ -164,7 +164,7 @@ describe('consumidores de pedidos: solo proponen borradores', () => {
   it('los consumidores y la fuente de tiempo quedaron registrados al arrancar el módulo', () => {
     const consumidores = app.obtener(RegistroDeConsumidores).todos().filter((c) => c.modulo === 'registro');
     expect(consumidores.map((c) => `${c.nombre}:${c.evento}`).sort((a, b) => a.localeCompare(b))).toEqual([
-      'registro_adelanto_registrado:adelanto.registrado', 'registro_compra_recibida:compra.recibida', 'registro_pedido_cancelado:pedido.cancelado', 'registro_pedido_confirmado:pedido.confirmado', 'registro_pedido_entregado:pedido.entregado', 'registro_produccion_cobro_pedido:produccion.orden_cobro_pedido', 'registro_produccion_orden_anulada:produccion.orden_anulada', 'registro_produccion_orden_creada:produccion.orden_creada', 'registro_produccion_orden_entregada:produccion.orden_entregada',
+      'registro_adelanto_registrado:adelanto.registrado', 'registro_compra_recibida:compra.recibida', 'registro_pedido_cancelado:pedido.cancelado', 'registro_pedido_confirmado:pedido.confirmado', 'registro_pedido_datos_editados:pedido.datos_editados', 'registro_pedido_entregado:pedido.entregado', 'registro_produccion_cobro_pedido:produccion.orden_cobro_pedido', 'registro_produccion_orden_anulada:produccion.orden_anulada', 'registro_produccion_orden_corregida:produccion.orden_corregida', 'registro_produccion_orden_creada:produccion.orden_creada', 'registro_produccion_orden_entregada:produccion.orden_entregada',
     ]);
     expect(app.obtener(RegistroDeFuentesDeTiempo).obtener('registro.deuda_vence')).toMatchObject({ modulo: 'registro' });
   });

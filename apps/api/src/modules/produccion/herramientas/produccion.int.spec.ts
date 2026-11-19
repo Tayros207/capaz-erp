@@ -240,3 +240,59 @@ describe('produccion_orden_anular', () => {
     expect(codigo(await ajeno.herramienta('produccion_orden_anular', { id: o.id, motivo: 'x' }))).toBe('no_encontrado');
   });
 });
+
+describe('produccion_orden_editar avisa a Finanzas (orden_corregida)', () => {
+  const mias = async (id: string) => (await propuestas()).filter((b) => b.origenRef === `produccion:${id}` && b.herramienta === 'deuda_editar');
+  let id: string;
+  let deudaId: string;
+
+  it('crea la orden y su deuda (aprobando la propuesta) para poder corregirla después', async () => {
+    const o = datosDe_(await orden({ adelantoCentimos: 10_000 }));
+    id = o.id;
+    await drenar();
+    const b = (await propuestas()).find((x) => x.origenRef === `produccion:${id}`)!;
+    expect((await dueno.herramienta('borrador_aprobar', { id: b.id })).cuerpo.ok).toBe(true);
+    deudaId = (await datosDe(dueno, 'deudas_listar', { tipo: 'por_cobrar', estado: 'todas', origenTipo: 'produccion', origenId: id })).items[0].id;
+  });
+
+  it('cambiar el total emite el evento con antes y después y propone un borrador de prioridad alta sin tocar la deuda', async () => {
+    datosDe_(await dueno.herramienta('produccion_orden_editar', { id, lineas: [volantes({ cantidadMilesimas: 2_000_000 })] }));
+    expect((await eventosDe('produccion.orden_corregida')).at(-1)).toMatchObject({ id, totalAnteriorCentimos: 24_000, totalNuevoCentimos: 48_000, adelantoAnteriorCentimos: 10_000, adelantoNuevoCentimos: 10_000, entregaAnterior: '2099-03-20', entregaNueva: '2099-03-20' });
+    await drenar();
+    const [b, ...resto] = await mias(id);
+    expect(resto).toEqual([]);
+    expect(b).toMatchObject({ estado: 'pendiente', prioridad: 'alta', origen: 'modulo', args: { id: deudaId } });
+    expect(b.args.notas).toContain('cambió de S/ 240.00 a S/ 480.00: la deuda quedó con S/ 240.00; revisa');
+    expect(b.args.venceEn).toBeUndefined();
+    expect((await datosDe(dueno, 'deuda_ver', { id: deudaId })).totalCentimos).toBe(24_000);
+  });
+
+  it('aprobar el borrador no falla: deja el aviso en las notas de la deuda y el total sigue igual', async () => {
+    const [b] = await mias(id);
+    const r = await dueno.herramienta('borrador_aprobar', { id: b.id });
+    expect(r.cuerpo.ok, JSON.stringify(r.cuerpo)).toBe(true);
+    expect(await datosDe(dueno, 'deuda_ver', { id: deudaId })).toMatchObject({ totalCentimos: 24_000, notas: expect.stringContaining('la deuda quedó con S/ 240.00') });
+  });
+
+  it('cambiar solo la entrega (la deuda vencía ese día) propone mover el vencimiento, sin aviso de total', async () => {
+    datosDe_(await dueno.herramienta('produccion_orden_editar', { id, entregaEl: '2099-04-01' }));
+    await drenar();
+    const pendientes = (await mias(id)).filter((b) => b.estado === 'pendiente');
+    expect(pendientes).toHaveLength(1);
+    expect(pendientes[0].args).toEqual({ id: deudaId, venceEn: '2099-04-01' });
+    expect(pendientes[0].prioridad).toBe('normal');
+    expect((await dueno.herramienta('borrador_aprobar', { id: pendientes[0].id })).cuerpo.ok).toBe(true);
+    expect((await datosDe(dueno, 'deuda_ver', { id: deudaId })).venceEn).toBe('2099-04-01');
+  });
+
+  it('corregir solo notas no emite evento; una orden sin deuda viva no propone nada', async () => {
+    const antes = (await eventosDe('produccion.orden_corregida')).length;
+    datosDe_(await dueno.herramienta('produccion_orden_editar', { id, notas: 'Sin cambio de dinero' }));
+    expect(await eventosDe('produccion.orden_corregida')).toHaveLength(antes);
+    const sinDeuda = datosDe_(await orden({ adelantoCentimos: 0 }));
+    await drenar();
+    datosDe_(await dueno.herramienta('produccion_orden_editar', { id: sinDeuda.id, lineas: [volantes({ cantidadMilesimas: 3_000_000 })] }));
+    await drenar();
+    expect(await mias(sinDeuda.id)).toEqual([]);
+  });
+});

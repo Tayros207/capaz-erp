@@ -1,4 +1,4 @@
-import { AVANCES_DE_PEDIDO, ESTADOS_CANCELABLES_DE_PEDIDO, ESTADOS_EN_CURSO_DE_PEDIDO, type EstadoDePedido } from '@capaz/shared';
+import { AVANCES_DE_PEDIDO, ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO, ESTADOS_CANCELABLES_DE_PEDIDO, ESTADOS_EN_CURSO_DE_PEDIDO, type EstadoDePedido } from '@capaz/shared';
 
 // Estados de un pedido y sus pasos válidos. La tabla (`AVANCES_DE_PEDIDO`) vive en `@capaz/shared`
 // porque la pantalla ofrece exactamente lo que aquí se permite; estas funciones la hacen cumplir.
@@ -31,6 +31,13 @@ export const comprobarCancelacion = (de: EstadoDePedido): Paso => paso(ESTADOS_C
 
 /** Un pedido solo se edita en borrador. */
 export const esEditable = (estado: EstadoDePedido): boolean => estado === 'borrador';
+
+/** Entrega, responsable y notas (sin dinero) se corrigen con el pedido confirmado, en proceso o listo; no en borrador (ahí va `pedido_editar`) ni cerrado. */
+export function comprobarEdicionDeDatos(estado: EstadoDePedido): Paso {
+  if ((ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO as readonly string[]).includes(estado)) return { ok: true };
+  if (estado === 'borrador') return { ok: false, motivo: 'Un pedido en borrador se edita con «Editar pedido»; esta corrección es para pedidos ya confirmados.' };
+  return { ok: false, motivo: `Un pedido «${NOMBRE_DE_ESTADO[estado]}» ya no se puede corregir.` };
+}
 
 /** En curso (confirmado, en proceso o listo) con entrega anterior a hoy. Los días son `AAAA-MM-DD`. */
 export const estaAtrasado = (estado: EstadoDePedido, entregaEl: string | null, hoy: string): boolean =>

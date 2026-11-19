@@ -1,4 +1,4 @@
-import type { EstadoDePedido, EventoDePedidoDto, LineaDePedidoDto, PedidoCompletoDto, PedidoDto } from '@capaz/shared';
+import type { DetalleDeEventoDePedido, EstadoDePedido, EventoDePedidoDto, LineaDePedidoDto, PedidoCompletoDto, PedidoDto } from '@capaz/shared';
 import { estaAtrasado } from '../domain/estados.js';
 import { codigoDePedido } from '../domain/pedido.js';
 import type { EventoDePedido, LineaDePedido, Pedido } from '../repositories/pedidos.repository.js';
@@ -56,6 +56,8 @@ export const aEventoDto = (e: EventoDePedido): EventoDePedidoDto => ({
   estadoNuevo: e.estadoNuevo,
   nota: e.nota,
   usuarioId: e.usuarioId,
+  usuarioNombre: e.usuarioNombre,
+  detalle: (e.detalle as DetalleDeEventoDePedido | null) ?? null,
   creadoEn: e.creadoEn.toISOString(),
 });
 

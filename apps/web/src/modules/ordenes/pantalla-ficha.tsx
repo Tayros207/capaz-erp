@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import type { PedidoCompletoDto } from '@capaz/shared';
+import { ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO, type PedidoCompletoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -15,11 +15,13 @@ import { useYo } from '../../shared/sesion/use-yo.ts';
 import { sePuedeCobrarAdelanto, type MedioDePago } from './adelanto.ts';
 import { ejecutarAdelanto } from './flujo-adelanto.ts';
 import { HojaAdelanto } from './hoja-adelanto.tsx';
-import { anotar, aplicarPaso, cancelar, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
+import { anotar, aplicarPaso, cancelar, corregirDatos, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
 import { accionesDeImpresion, enviarPorWhatsApp } from './acciones-documentos.ts';
 import { TITULO_DE_DOCUMENTO, documentosDisponibles } from './documentos.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
+import { lineasDeHuella } from './datos-de-pedido.ts';
+import { HojaEditarDatos } from './hoja-editar-datos.tsx';
 import { FormularioPedido } from './formulario-pedido.tsx';
 import { HojaTexto } from './hoja-texto.tsx';
 import { LineasDePedido } from './lineas-de-pedido.tsx';
@@ -60,7 +62,10 @@ function Historial({ p }: { p: PedidoCompletoDto }) {
         {p.historial.map((e) => (
           <li key={e.id} className="flex flex-col gap-0.5">
             <span className="break-words text-texto">{textoDeEvento(e)}</span>
-            <span className="text-sm text-texto-suave">{formatearFechaHora(e.creadoEn)}</span>
+            {lineasDeHuella(e.detalle).map((l) => (
+              <span key={l} className="break-words text-sm text-texto">{l}</span>
+            ))}
+            <span className="text-sm text-texto-suave">{[formatearFechaHora(e.creadoEn), e.usuarioNombre].filter(Boolean).join(' · ')}</span>
           </li>
         ))}
       </ol>
@@ -74,8 +79,9 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
   const editable = pedido.estado === 'borrador' && permisos.editar;
   const borrador = useBorrador(pedido, editable);
   const [ocupado, setOcupado] = useState(false);
-  const [hoja, setHoja] = useState<'nota' | 'cancelar' | 'adelanto' | null>(null);
+  const [hoja, setHoja] = useState<'nota' | 'cancelar' | 'adelanto' | 'datos' | null>(null);
   const navegar = useNavigate();
+  const puedeCorregir = permisos.editar && (ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO as readonly string[]).includes(pedido.estado);
   const principal = permisos.editar ? siguientePaso(pedido.estado) : null;
 
   async function conOcupado(fn: () => Promise<void>) {
@@ -116,6 +122,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
     ...accionesDeImpresion(pedido, (ruta) => void navegar(ruta)),
     ...(pedido.estado === 'cancelado' ? [] : [{ etiqueta: 'Enviar por WhatsApp', onSeleccionar: () => void enviarPorWhatsApp(pedido) }]),
     ...(permisos.editar ? otrosPasos(pedido.estado).map((paso) => ({ etiqueta: paso.texto, onSeleccionar: () => pulsarPrincipal(paso) })) : []),
+    ...(puedeCorregir ? [{ etiqueta: 'Editar datos', onSeleccionar: () => setHoja('datos') }] : []),
     ...(permisos.editar ? [{ etiqueta: 'Agregar nota', onSeleccionar: () => setHoja('nota') }] : []),
     ...(permisos.cancelar && sePuedeCancelar(pedido.estado) ? [{ etiqueta: 'Cancelar pedido', peligro: true, onSeleccionar: () => setHoja('cancelar') }] : []),
   ];
@@ -130,6 +137,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
           <>
             <InsigniasDePedido pedido={pedido} />
             {editable ? <Boton cargando={ocupado} disabled={!borrador.hayCambios} onClick={() => void guardarCambios()}>Guardar cambios</Boton> : null}
+            {puedeCorregir ? <Boton onClick={() => setHoja('datos')}>Editar datos</Boton> : null}
             {documentoPrincipal ? <Boton onClick={() => void navegar(`/m/ordenes/${pedido.id}/${documentoPrincipal}`)}>{`Imprimir ${TITULO_DE_DOCUMENTO[documentoPrincipal].toLowerCase()}`}</Boton> : null}
             {pedido.estado === 'cancelado' ? null : <Boton onClick={() => void enviarPorWhatsApp(pedido)}>Enviar por WhatsApp</Boton>}
             {acciones.length > 0 ? <MenuDeAcciones etiqueta="Más acciones del pedido" acciones={acciones} /> : null}
@@ -147,6 +155,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
       {ofreceAdelanto && totalActual !== null ? (
         <HojaAdelanto abierto={hoja === 'adelanto'} totalCentimos={totalActual} alAceptar={aceptarAdelanto} alCerrar={() => { setHoja(null); void refrescarPedidos(); }} />
       ) : null}
+      {puedeCorregir ? <HojaEditarDatos abierto={hoja === 'datos'} pedido={pedido} alEnviar={(c) => corregirDatos(pedido.id, c)} alCerrar={() => setHoja(null)} /> : null}
       <HojaTexto abierto={hoja === 'nota'} titulo="Agregar nota" etiqueta="Nota" textoEnviar="Agregar nota" maximo={1000} alEnviar={(t) => anotar(pedido.id, t)} alCerrar={() => setHoja(null)} />
       <HojaTexto abierto={hoja === 'cancelar'} titulo="Cancelar pedido" etiqueta="Motivo de la cancelación" textoEnviar="Continuar" maximo={300} peligroso alEnviar={(t) => cancelar(pedido.id, t)} alCerrar={() => setHoja(null)} />
     </div>

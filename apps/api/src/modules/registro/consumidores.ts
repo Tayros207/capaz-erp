@@ -265,4 +265,72 @@ export const registroProduccionOrdenAnulada: Consumidor = {
   },
 };
 
-export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada];
+/** Sumar el aviso a las notas que la deuda ya tenga, sin pasar del máximo de `deuda_editar` (2000). */
+function notasConAviso(previas: string | null, aviso: string): string {
+  return (previas ? `${previas}\n${aviso}` : aviso).slice(-2000);
+}
+
+/**
+ * Una orden corregida con otro total o vencimiento propone revisar su deuda viva. No existe un ajuste de total (el
+ * total de una deuda no se cambia: se anula y se crea otra), así que el borrador usa `deuda_editar`, que sí existe y
+ * es inocua: deja el aviso «el total cambió de S/ X a S/ Y, la deuda sigue por S/ X; revisa» en las notas de la deuda
+ * (prioridad alta, para que se vea) y, si la entrega cambió y la deuda vencía ese día, mueve también el vencimiento.
+ * Al aprobarlo la deuda no cambia de importe: la persona decide después si anula y vuelve a crear. Sin deuda viva, o sin
+ * nada que avisar, no hace nada. Dos correcciones seguidas proponen dos borradores (cada una es un hecho distinto).
+ */
+export const registroProduccionOrdenCorregida: Consumidor = {
+  nombre: 'registro_produccion_orden_corregida',
+  modulo: 'registro',
+  evento: 'produccion.orden_corregida',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['produccion.orden_corregida'].parse(e.carga);
+    const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PRODUCCION, carga.id);
+    if (!viva) return;
+    const cambioElTotal = carga.totalNuevoCentimos !== carga.totalAnteriorCentimos;
+    const mueveVencimiento = carga.entregaNueva !== carga.entregaAnterior && viva.venceEn !== null && viva.venceEn === carga.entregaAnterior;
+    if (!cambioElTotal && !mueveVencimiento) return;
+    const partes: string[] = [];
+    const args: { id: string; notas?: string; venceEn?: string | null } = { id: viva.id };
+    if (cambioElTotal) {
+      const aviso = `El total de la orden ${carga.codigo} cambió de ${formatearSoles(carga.totalAnteriorCentimos)} a ${formatearSoles(carga.totalNuevoCentimos)}: la deuda quedó con ${formatearSoles(viva.totalCentimos)}; revisa.`;
+      args.notas = notasConAviso(viva.notas, aviso);
+      partes.push(aviso);
+    }
+    if (mueveVencimiento) {
+      args.venceEn = carga.entregaNueva;
+      partes.push(`La entrega pasó a ${carga.entregaNueva ?? 'sin fecha'}: el vencimiento se mueve con ella.`);
+    }
+    await proponerBorrador(tx, {
+      herramienta: 'deuda_editar',
+      args,
+      resumen: partes.join(' ').slice(0, 500),
+      origen: 'modulo',
+      origenRef: `produccion:${carga.id}`,
+      ...(cambioElTotal && { prioridad: 'alta' as const }),
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
+/** Un pedido con la entrega corregida propone mover el vencimiento de su deuda viva, solo si vencía justo en la entrega anterior. */
+export const registroPedidoDatosEditados: Consumidor = {
+  nombre: 'registro_pedido_datos_editados',
+  modulo: 'registro',
+  evento: 'pedido.datos_editados',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['pedido.datos_editados'].parse(e.carga);
+    if (carga.entregaNueva === carga.entregaAnterior) return;
+    const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PEDIDO, carga.id);
+    if (viva?.venceEn == null || viva.venceEn !== carga.entregaAnterior) return;
+    await proponerBorrador(tx, {
+      herramienta: 'deuda_editar',
+      args: { id: viva.id, venceEn: carga.entregaNueva },
+      resumen: `Mover el vencimiento de la deuda del pedido ${carga.codigo} al ${carga.entregaNueva ?? 'sin fecha'}, porque cambió la entrega`,
+      origen: 'modulo',
+      origenRef: `pedido:${carga.id}`,
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
+export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada, registroProduccionOrdenCorregida, registroPedidoDatosEditados];

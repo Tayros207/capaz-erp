@@ -45,6 +45,8 @@ export const deudasListar = definirHerramienta('deudas_listar', {
       { nombre: 'tipo', queSeAnota: 'por_cobrar o por_pagar.', ejemplo: 'por_cobrar' },
       { nombre: 'estado', queSeAnota: 'abiertas, vencidas, pagadas, anuladas o todas (por defecto, abiertas).', ejemplo: 'vencidas' },
       { nombre: 'contactoId', queSeAnota: 'Solo las de un cliente o proveedor (opcional).', ejemplo: ID_DE_EJEMPLO },
+      { nombre: 'origenTipo', queSeAnota: 'Junto con origenId: solo la deuda que nació de ese documento (pedido, produccion, compra…) (opcional).', ejemplo: 'pedido' },
+      { nombre: 'origenId', queSeAnota: 'Identificador del documento de origen; va con origenTipo (opcional).', ejemplo: ID_DE_EJEMPLO },
     ],
     ejemploTecleado: 'ver las cuentas por cobrar vencidas',
     ejemploHablado: 'quién me debe y ya se le venció el plazo',
@@ -58,7 +60,7 @@ export const deudasListar = definirHerramienta('deudas_listar', {
     const r = await listarDeudas(
       tx,
       ctx,
-      { limite: args.limite, cursor, tipo: args.tipo, estado: args.estado, contactoId: args.contactoId, hoy: hoy.dia },
+      { limite: args.limite, cursor, tipo: args.tipo, estado: args.estado, contactoId: args.contactoId, origenTipo: args.origenTipo, origenId: args.origenId, hoy: hoy.dia },
       propietarioDe(ctx),
     );
     return exito({ items: r.items.map((f) => aDeudaDto(f, hoy.dia)), siguiente: r.siguiente });

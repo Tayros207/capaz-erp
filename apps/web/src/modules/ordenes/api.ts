@@ -13,6 +13,7 @@ export function listarPedidos(filtros: Omit<EntradaDe<'pedidos_listar'>, 'cursor
 export const verPedido = (id: string) => llamar('pedido_ver', { id });
 export const crearPedido = (args: EntradaDe<'pedido_crear'>) => llamar('pedido_crear', args);
 export const editarPedido = (args: EntradaDe<'pedido_editar'>) => llamar('pedido_editar', args);
+export const editarDatosDePedido = (args: EntradaDe<'pedido_editar_datos'>) => llamar('pedido_editar_datos', args);
 export const anotarPedido = (id: string, nota: string) => llamar('pedido_anotar', { id, nota });
 export const confirmarPedido = (id: string) => llamar('pedido_confirmar', { id });
 export const cambiarEstado = (id: string, estado: EntradaDe<'pedido_cambiar_estado'>['estado']) => llamar('pedido_cambiar_estado', { id, estado });

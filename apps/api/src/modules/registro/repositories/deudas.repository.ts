@@ -31,6 +31,8 @@ export type FiltrosDeDeudas = {
   tipo: string;
   estado: 'abiertas' | 'vencidas' | 'pagadas' | 'anuladas' | 'todas';
   contactoId?: string;
+  origenTipo?: string;
+  origenId?: string;
   /** Día de hoy de la empresa: decide cuáles están vencidas. */
   hoy: string;
 };
@@ -102,6 +104,7 @@ export async function listarDeudas(
     eq(d.tipo, f.tipo),
     filtroDeEstado(f),
     f.contactoId ? eq(d.contactoId, f.contactoId) : undefined,
+    f.origenTipo && f.origenId ? and(eq(d.origenTipo, f.origenTipo), eq(d.origenId, f.origenId)) : undefined,
     f.cursor ? sql`(${d.creadoEn}, ${d.id}) < (${f.cursor.instante}::timestamptz, ${f.cursor.id}::uuid)` : undefined,
   ];
   const filas = await conContacto(tx)

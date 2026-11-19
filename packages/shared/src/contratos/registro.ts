@@ -198,12 +198,17 @@ export const crearDeudaSchema = z
     origenId: texto(100).min(1).optional(),
   })
   .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen se indica completo (tipo e identificador) o no se indica.' });
-export const listarDeudasSchema = z.strictObject({
-  ...paginaSchema.shape,
-  tipo: z.enum(TIPOS_DE_DEUDA),
-  estado: z.enum(FILTROS_DE_DEUDAS).default('abiertas'),
-  contactoId: z.uuid().optional(),
-});
+export const listarDeudasSchema = z
+  .strictObject({
+    ...paginaSchema.shape,
+    tipo: z.enum(TIPOS_DE_DEUDA),
+    estado: z.enum(FILTROS_DE_DEUDAS).default('abiertas'),
+    contactoId: z.uuid().optional(),
+    /** Solo las deudas que nacieron de ese documento de otro módulo (p. ej. `pedido` + id): los dos o ninguno. */
+    origenTipo: texto(40).min(1).optional(),
+    origenId: texto(100).min(1).optional(),
+  })
+  .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen lleva tipo e identificador, los dos o ninguno.' });
 export const editarDeudaSchema = z
   .strictObject({ id: z.uuid(), concepto: texto(200).min(1, { error: 'Indica el concepto.' }).optional(), venceEn: dia.nullish(), notas: texto(2000).nullish() })
   .refine(algunCambio, SIN_CAMBIOS);

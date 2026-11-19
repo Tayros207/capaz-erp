@@ -122,6 +122,21 @@ export const ordenEditar = definirHerramienta('produccion_orden_editar', {
       ...(args.notas !== undefined && { notas: args.notas?.trim() || null }),
     });
     await agregarEvento(tx, ctx, { ordenId: o.id, tipo: 'editada', estadoAnterior: o.estado, estadoNuevo: o.estado, nota: `Total ${total}, adelanto ${adelanto}, falta ${saldoDe(total, adelanto)}` });
+    // Si cambió dinero o entrega, Finanzas lo sabe: propone revisar la deuda de la orden (nunca la toca sola).
+    const entregaNueva = args.entregaEl !== undefined ? args.entregaEl : o.entregaEl;
+    if (total !== o.totalCentimos || adelanto !== o.adelantoCentimos || entregaNueva !== o.entregaEl) {
+      await emitir(tx, 'produccion.orden_corregida', {
+        id: o.id,
+        codigo: codigoDeOrden(o.anio, o.numero),
+        clienteId: args.clienteId ?? o.clienteId,
+        totalAnteriorCentimos: o.totalCentimos,
+        totalNuevoCentimos: total,
+        adelantoAnteriorCentimos: o.adelantoCentimos,
+        adelantoNuevoCentimos: adelanto,
+        entregaAnterior: o.entregaEl,
+        entregaNueva,
+      });
+    }
     return responderOrden(tx, ctx, o.id);
   },
 });

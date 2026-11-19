@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, getTableColumns, gte, inArray, lte, or, sql, type SQL } from 'drizzle-orm';
-import { ESTADOS_ABIERTOS_DE_PEDIDO, type EstadoDePedido } from '@capaz/shared';
+import { ESTADOS_ABIERTOS_DE_PEDIDO, type DetalleDeEventoDePedido, type EstadoDePedido } from '@capaz/shared';
 import { clientes, productos, sucursales } from '../../../db/esquema/core-maestros.js';
 import { ordenesPedidoEventos, ordenesPedidoLineas, ordenesPedidos } from '../../../db/esquema/ordenes.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
@@ -11,8 +11,8 @@ import type { LineaPreparada, ProductoParaLinea } from '../domain/pedido.js';
 export type Alcance = 'todos' | 'propios';
 export type Pedido = typeof ordenesPedidos.$inferSelect & { clienteNombre: string; lineas: number };
 export type LineaDePedido = typeof ordenesPedidoLineas.$inferSelect;
-export type EventoDePedido = typeof ordenesPedidoEventos.$inferSelect;
-export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota';
+export type EventoDePedido = typeof ordenesPedidoEventos.$inferSelect & { usuarioNombre: string | null };
+export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota' | 'datos_editados';
 
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(ordenesPedidos.tenantId, ctx.empresaId);
 const deAlcance = (ctx: ContextoDeEmpresa, alcance: Alcance): SQL | undefined =>
@@ -51,12 +51,21 @@ const MAXIMO_DE_HISTORIAL = 200;
 
 /** Lo más reciente primero. */
 export async function historialDe(tx: Transaccion, ctx: ContextoDeEmpresa, pedidoId: string): Promise<EventoDePedido[]> {
-  return tx
+  const filas = await tx
     .select()
     .from(ordenesPedidoEventos)
     .where(and(eq(ordenesPedidoEventos.tenantId, ctx.empresaId), eq(ordenesPedidoEventos.pedidoId, pedidoId)))
     .orderBy(desc(ordenesPedidoEventos.creadoEn), desc(ordenesPedidoEventos.id))
     .limit(MAXIMO_DE_HISTORIAL);
+  const nombres = await nombresDeMiembros(tx, [...new Set(filas.map((f) => f.usuarioId))]);
+  return filas.map((f) => ({ ...f, usuarioNombre: nombres.get(f.usuarioId) ?? null }));
+}
+
+/** Nombre de cada miembro de la empresa por su identificador (vista `core.v_miembros`); quien ya no es miembro no aparece. */
+export async function nombresDeMiembros(tx: Transaccion, ids: readonly string[]): Promise<Map<string, string>> {
+  if (ids.length === 0) return new Map();
+  const r = await tx.execute<{ usuario_id: string; nombre: string }>(sql`select usuario_id, nombre from core.v_miembros where usuario_id in (${sql.join(ids.map((i) => sql`${i}`), sql`, `)})`);
+  return new Map(r.rows.map((f) => [f.usuario_id, f.nombre]));
 }
 
 export type DatosDePedido = {
@@ -127,7 +136,7 @@ export async function registrarEvento(
   tx: Transaccion,
   ctx: ContextoDeEmpresa,
   pedidoId: string,
-  evento: { tipo: TipoDeEvento; estadoAnterior?: EstadoDePedido; estadoNuevo?: EstadoDePedido; nota?: string },
+  evento: { tipo: TipoDeEvento; estadoAnterior?: EstadoDePedido; estadoNuevo?: EstadoDePedido; nota?: string; detalle?: DetalleDeEventoDePedido },
 ): Promise<void> {
   await tx.insert(ordenesPedidoEventos).values({ ...evento, tenantId: ctx.empresaId, pedidoId, usuarioId: ctx.usuarioId });
 }
