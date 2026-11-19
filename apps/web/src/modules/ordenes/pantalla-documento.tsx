@@ -88,6 +88,7 @@ function Cuerpo({ p, tipo, adelanto }: { p: PedidoCompletoDto; tipo: TipoDeDocum
   );
 }
 
+
 function Documento({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumento }) {
   const navegar = useNavigate();
   const { datos } = useDatosDeEmpresaParaImprimir();

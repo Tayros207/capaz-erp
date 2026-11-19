@@ -17,7 +17,7 @@ export const ESTADOS_EN_CURSO_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo'] 
 /** Destinos que admite `pedido_cambiar_estado`. */
 export const ESTADOS_DE_AVANCE_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo', 'entregado'] as const satisfies readonly EstadoDePedido[];
 export const FILTROS_DE_ESTADO_DE_PEDIDO = ['abiertos', ...ESTADOS_DE_PEDIDO, 'todos'] as const;
-export const TIPOS_DE_EVENTO_DE_PEDIDO = ['creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados'] as const;
+export const TIPOS_DE_EVENTO_DE_PEDIDO = ['creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados', 'guia_emitida', 'guia_anulada'] as const;
 /** Estados en los que `pedido_editar_datos` corrige entrega, responsable y notas (sin dinero). */
 export const ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo'] as const satisfies readonly EstadoDePedido[];
 /** Campos que corrige `pedido_editar_datos`. */
@@ -168,6 +168,8 @@ export const eventoDePedidoSchema = z.strictObject({
   /** Nombre de quien hizo el cambio, si todavía es miembro de la empresa. */
   usuarioNombre: z.string().nullable(),
   detalle: detalleDeEventoDePedidoSchema.nullable(),
+  /** La guía de remisión del evento (`guia_emitida`, `guia_anulada`). */
+  guia: z.strictObject({ id: z.string(), codigo: z.string() }).nullable(),
   creadoEn: z.iso.datetime(),
 });
 export type EventoDePedidoDto = z.infer<typeof eventoDePedidoSchema>;

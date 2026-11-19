@@ -116,6 +116,14 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into ordenes.pedido_eventos (tenant_id, pedido_id, tipo, usuario_id) values ($1, md5($1::text || 'o1')::uuid, 'creado', 'u1')`,
     modo: 'insercion',
   },
+  'ordenes.guias': {
+    sql: `insert into ordenes.guias (id, tenant_id, serie, numero, cliente_id, destinatario_nombre, fecha_emision, fecha_traslado, punto_partida, punto_llegada, motivo, modalidad, creado_por) values (md5($1::text || 'g1')::uuid, $1, 'G001', 1, md5($1::text || 'cl')::uuid, 'Cliente', date '2026-01-01', date '2026-01-01', 'Av. A 1', 'Jr. B 2', 'venta', 'privado', 'u1')`,
+    modo: 'insercion',
+  },
+  'ordenes.guia_lineas': {
+    sql: `insert into ordenes.guia_lineas (tenant_id, guia_id, posicion, descripcion, cantidad_milesimas) values ($1, md5($1::text || 'g1')::uuid, 0, 'Línea', 1000)`,
+    modo: 'insercion',
+  },
   'insumos.articulos': {
     sql: `insert into insumos.articulos (id, tenant_id, producto_id, creado_por) values (md5($1::text || 'i1')::uuid, $1, md5($1::text || 'pr')::uuid, 'u1')`,
     modo: 'completo',

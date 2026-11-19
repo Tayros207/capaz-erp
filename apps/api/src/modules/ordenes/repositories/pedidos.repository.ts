@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, getTableColumns, gte, inArray, lte, or, sql, type SQL } from 'drizzle-orm';
 import { ESTADOS_ABIERTOS_DE_PEDIDO, type DetalleDeEventoDePedido, type EstadoDePedido } from '@capaz/shared';
 import { clientes, productos, sucursales } from '../../../db/esquema/core-maestros.js';
-import { ordenesPedidoEventos, ordenesPedidoLineas, ordenesPedidos } from '../../../db/esquema/ordenes.js';
+import { ordenesGuias, ordenesPedidoEventos, ordenesPedidoLineas, ordenesPedidos } from '../../../db/esquema/ordenes.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import type { LineaPreparada, ProductoParaLinea } from '../domain/pedido.js';
 
@@ -11,11 +11,11 @@ import type { LineaPreparada, ProductoParaLinea } from '../domain/pedido.js';
 export type Alcance = 'todos' | 'propios';
 export type Pedido = typeof ordenesPedidos.$inferSelect & { clienteNombre: string; lineas: number };
 export type LineaDePedido = typeof ordenesPedidoLineas.$inferSelect;
-export type EventoDePedido = typeof ordenesPedidoEventos.$inferSelect & { usuarioNombre: string | null };
-export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota' | 'datos_editados';
+export type EventoDePedido = typeof ordenesPedidoEventos.$inferSelect & { usuarioNombre: string | null; guiaSerie: string | null; guiaNumero: number | null };
+export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota' | 'datos_editados' | 'guia_emitida' | 'guia_anulada';
 
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(ordenesPedidos.tenantId, ctx.empresaId);
-const deAlcance = (ctx: ContextoDeEmpresa, alcance: Alcance): SQL | undefined =>
+export const deAlcance = (ctx: ContextoDeEmpresa, alcance: Alcance): SQL | undefined =>
   alcance === 'propios' ? or(eq(ordenesPedidos.creadoPor, ctx.usuarioId), eq(ordenesPedidos.responsableId, ctx.usuarioId)) : undefined;
 
 const columnas = {
@@ -52,8 +52,9 @@ const MAXIMO_DE_HISTORIAL = 200;
 /** Lo más reciente primero. */
 export async function historialDe(tx: Transaccion, ctx: ContextoDeEmpresa, pedidoId: string): Promise<EventoDePedido[]> {
   const filas = await tx
-    .select()
+    .select({ ...getTableColumns(ordenesPedidoEventos), guiaSerie: ordenesGuias.serie, guiaNumero: ordenesGuias.numero })
     .from(ordenesPedidoEventos)
+    .leftJoin(ordenesGuias, and(eq(ordenesGuias.tenantId, ordenesPedidoEventos.tenantId), eq(ordenesGuias.id, ordenesPedidoEventos.guiaId)))
     .where(and(eq(ordenesPedidoEventos.tenantId, ctx.empresaId), eq(ordenesPedidoEventos.pedidoId, pedidoId)))
     .orderBy(desc(ordenesPedidoEventos.creadoEn), desc(ordenesPedidoEventos.id))
     .limit(MAXIMO_DE_HISTORIAL);
@@ -136,17 +137,17 @@ export async function registrarEvento(
   tx: Transaccion,
   ctx: ContextoDeEmpresa,
   pedidoId: string,
-  evento: { tipo: TipoDeEvento; estadoAnterior?: EstadoDePedido; estadoNuevo?: EstadoDePedido; nota?: string; detalle?: DetalleDeEventoDePedido },
+  evento: { tipo: TipoDeEvento; estadoAnterior?: EstadoDePedido; estadoNuevo?: EstadoDePedido; nota?: string; detalle?: DetalleDeEventoDePedido; guiaId?: string },
 ): Promise<void> {
   await tx.insert(ordenesPedidoEventos).values({ ...evento, tenantId: ctx.empresaId, pedidoId, usuarioId: ctx.usuarioId });
 }
 
 // --- Listado con cursor por instante (creado_en, id) descendente ---
 
-const codificarCursor = (instante: string, id: string) => Buffer.from(`${instante}|${id}`).toString('base64url');
+export const codificarCursor = (instante: string, id: string) => Buffer.from(`${instante}|${id}`).toString('base64url');
 const FORMA_DE_CURSOR = /^(.+)\|([0-9a-f-]{36})$/;
 
-function decodificarCursor(cursor: string): { instante: string; id: string } | null {
+export function decodificarCursor(cursor: string): { instante: string; id: string } | null {
   const m = FORMA_DE_CURSOR.exec(Buffer.from(cursor, 'base64url').toString('utf8'));
   return m?.[1] && m[2] && !Number.isNaN(Date.parse(m[1])) ? { instante: m[1], id: m[2] } : null;
 }

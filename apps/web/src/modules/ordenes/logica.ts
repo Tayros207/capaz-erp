@@ -288,7 +288,7 @@ export function agruparEntregas(pedidos: readonly PedidoDto[], hoy: string): Gru
 
 const estado = (e: string | null): string => (e && e in ETIQUETA_DE_ESTADO ? ETIQUETA_DE_ESTADO[e as EstadoDePedido] : '—');
 
-export function textoDeEvento(e: Pick<EventoDePedidoDto, 'tipo' | 'estadoAnterior' | 'estadoNuevo' | 'nota'>): string {
+export function textoDeEvento(e: Pick<EventoDePedidoDto, 'tipo' | 'estadoAnterior' | 'estadoNuevo' | 'nota'> & Partial<Pick<EventoDePedidoDto, 'guia'>>): string {
   switch (e.tipo) {
     case 'creado': return 'Se creó el pedido';
     case 'editado': return 'Se editó el borrador';
@@ -297,6 +297,8 @@ export function textoDeEvento(e: Pick<EventoDePedidoDto, 'tipo' | 'estadoAnterio
     case 'cancelado': return `Se canceló (estaba ${estado(e.estadoAnterior)})`;
     case 'nota': return e.nota ?? 'Nota';
     case 'datos_editados': return 'Se corrigieron los datos del pedido';
+    case 'guia_emitida': return `Se emitió la guía de remisión ${e.guia?.codigo ?? ''}`.trim();
+    case 'guia_anulada': return `Se anuló la guía de remisión ${e.guia?.codigo ?? ''}`.trim() + (e.nota ? `: ${e.nota}` : '');
     default: return e.tipo;
   }
 }

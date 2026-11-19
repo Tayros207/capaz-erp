@@ -22,9 +22,18 @@ export const cambiarEstado = (id: string, estado: EntradaDe<'pedido_cambiar_esta
 export const cancelarPedido = (id: string, motivo: string) =>
   llamarConfirmando('pedido_cancelar', { id, motivo }, { titulo: 'Cancelar pedido', textoConfirmar: 'Cancelar pedido', peligroso: true });
 
-export const buscarClientes = (texto: string) => llamar('clientes_buscar', { texto, limite: 8 });
 export const buscarProductos = (texto: string) => llamar('productos_buscar', { texto, limite: 8 });
 /** Lo que muestran los selectores al abrirse sin haber escrito nada: los primeros por orden alfabético. */
-export const primerosClientes = () => llamar('clientes_listar', { estado: 'activos', limite: 8 });
 export const primerosProductos = () => llamar('productos_listar', { estado: 'activos', limite: 8 });
 export const listarMiembros = () => llamar('miembros_listar', {});
+
+// Guías de remisión (control interno).
+export const prepararGuia = (args: EntradaDe<'guia_preparar'>) => llamar('guia_preparar', args);
+export const emitirGuia = (args: EntradaDe<'guia_emitir'>) => llamar('guia_emitir', args);
+export const verGuia = (id: string) => llamar('guia_ver', { id });
+export function listarGuias(filtros: Omit<EntradaDe<'guias_listar'>, 'cursor'>, cursor?: string) {
+  return llamar('guias_listar', { limite: POR_PAGINA, ...filtros, ...(cursor && { cursor }) });
+}
+/** Crítica: el servidor devuelve el resumen y la persona confirma antes de anular. */
+export const anularGuia = (id: string, motivo: string) =>
+  llamarConfirmando('guia_anular', { id, motivo }, { titulo: 'Anular guía', textoConfirmar: 'Anular guía', peligroso: true });

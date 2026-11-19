@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO, type PedidoCompletoDto } from '@capaz/shared';
+import { Link, useNavigate, useParams } from 'react-router';
+import { ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO, ESTADOS_DE_PEDIDO_PARA_GUIA, type PedidoCompletoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
@@ -19,6 +19,8 @@ import { anotar, aplicarPaso, cancelar, corregirDatos, refrescarPedidos, usePerm
 import { verPedido } from './api.ts';
 import { accionesDeImpresion, enviarPorWhatsApp } from './acciones-documentos.ts';
 import { TITULO_DE_DOCUMENTO, documentosDisponibles } from './documentos.ts';
+import { rutaDeGuiaNueva } from './armado-de-guia.ts';
+import { GuiasDelPedido } from './guias-del-pedido.tsx';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { lineasDeHuella } from './datos-de-pedido.ts';
 import { HojaEditarDatos } from './hoja-editar-datos.tsx';
@@ -61,7 +63,11 @@ function Historial({ p }: { p: PedidoCompletoDto }) {
       <ol className="flex flex-col gap-2">
         {p.historial.map((e) => (
           <li key={e.id} className="flex flex-col gap-0.5">
-            <span className="break-words text-texto">{textoDeEvento(e)}</span>
+            {e.guia ? (
+              <Link to={`/m/ordenes/guias/${e.guia.id}`} className="break-words text-texto underline">{textoDeEvento(e)}</Link>
+            ) : (
+              <span className="break-words text-texto">{textoDeEvento(e)}</span>
+            )}
             {lineasDeHuella(e.detalle).map((l) => (
               <span key={l} className="break-words text-sm text-texto">{l}</span>
             ))}
@@ -139,6 +145,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
             {editable ? <Boton cargando={ocupado} disabled={!borrador.hayCambios} onClick={() => void guardarCambios()}>Guardar cambios</Boton> : null}
             {puedeCorregir ? <Boton onClick={() => setHoja('datos')}>Editar datos</Boton> : null}
             {documentoPrincipal ? <Boton onClick={() => void navegar(`/m/ordenes/${pedido.id}/${documentoPrincipal}`)}>{`Imprimir ${TITULO_DE_DOCUMENTO[documentoPrincipal].toLowerCase()}`}</Boton> : null}
+            {permisos.editar && (ESTADOS_DE_PEDIDO_PARA_GUIA as readonly string[]).includes(pedido.estado) ? <Boton onClick={() => void navegar(rutaDeGuiaNueva({ pedidoIds: [pedido.id] }))}>Guía de remisión</Boton> : null}
             {pedido.estado === 'cancelado' ? null : <Boton onClick={() => void enviarPorWhatsApp(pedido)}>Enviar por WhatsApp</Boton>}
             {acciones.length > 0 ? <MenuDeAcciones etiqueta="Más acciones del pedido" acciones={acciones} /> : null}
           </>
@@ -151,6 +158,7 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
       ) : (
         <Lectura p={pedido} />
       )}
+      <GuiasDelPedido pedidoId={pedido.id} />
       <Historial p={pedido} />
       {ofreceAdelanto && totalActual !== null ? (
         <HojaAdelanto abierto={hoja === 'adelanto'} totalCentimos={totalActual} alAceptar={aceptarAdelanto} alCerrar={() => { setHoja(null); void refrescarPedidos(); }} />

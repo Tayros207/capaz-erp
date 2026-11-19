@@ -1,5 +1,6 @@
 import type { DetalleDeEventoDePedido, EstadoDePedido, EventoDePedidoDto, LineaDePedidoDto, PedidoCompletoDto, PedidoDto } from '@capaz/shared';
 import { estaAtrasado } from '../domain/estados.js';
+import { codigoDeGuia } from '../domain/guia.js';
 import { codigoDePedido } from '../domain/pedido.js';
 import type { EventoDePedido, LineaDePedido, Pedido } from '../repositories/pedidos.repository.js';
 
@@ -58,6 +59,7 @@ export const aEventoDto = (e: EventoDePedido): EventoDePedidoDto => ({
   usuarioId: e.usuarioId,
   usuarioNombre: e.usuarioNombre,
   detalle: (e.detalle as DetalleDeEventoDePedido | null) ?? null,
+  guia: e.guiaId && e.guiaSerie !== null && e.guiaNumero !== null ? { id: e.guiaId, codigo: codigoDeGuia(e.guiaSerie, e.guiaNumero) } : null,
   creadoEn: e.creadoEn.toISOString(),
 });
 

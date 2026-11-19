@@ -16,6 +16,7 @@ export const manifiestoOrdenes: ManifiestoDeEntrada = {
     { id: 'lista', nombre: 'Pedidos', ruta: '/m/ordenes', construida: true },
     { id: 'tablero', nombre: 'Por estado', ruta: '/m/ordenes/tablero', construida: true },
     { id: 'entregas', nombre: 'Entregas', ruta: '/m/ordenes/entregas', construida: true },
+    { id: 'guias', nombre: 'Guías de remisión', ruta: '/m/ordenes/guias', construida: true },
   ],
   familia: 'ventas',
   orden: 2,

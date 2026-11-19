@@ -128,6 +128,8 @@ describe('historial y errores', () => {
     expect(textoDeEvento({ tipo: 'estado', estadoAnterior: 'confirmado', estadoNuevo: 'en_proceso', nota: null })).toBe('Pasó de Confirmado a En proceso');
     expect(textoDeEvento({ tipo: 'nota', estadoAnterior: null, estadoNuevo: null, nota: 'Recoge el viernes' })).toBe('Recoge el viernes');
     expect(textoDeEvento({ tipo: 'datos_editados', estadoAnterior: null, estadoNuevo: null, nota: null })).toBe('Se corrigieron los datos del pedido');
+    expect(textoDeEvento({ tipo: 'guia_emitida', estadoAnterior: null, estadoNuevo: null, nota: null, guia: { id: 'g1', codigo: 'G001-000007' } })).toBe('Se emitió la guía de remisión G001-000007');
+    expect(textoDeEvento({ tipo: 'guia_anulada', estadoAnterior: null, estadoNuevo: null, nota: 'Error de cantidad', guia: { id: 'g1', codigo: 'G001-000007' } })).toBe('Se anuló la guía de remisión G001-000007: Error de cantidad');
     expect(textoDeEvento({ tipo: 'cancelado', estadoAnterior: 'listo', estadoNuevo: 'cancelado', nota: null })).toBe('Se canceló (estaba Listo)');
   });
   it('los códigos de acceso se explican; lo demás usa el mensaje del servidor', () => {

@@ -239,6 +239,13 @@
       "when": 1795098984997,
       "tag": "0033_pedido_eventos_detalle",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795102286123,
+      "tag": "0034_guias_de_remision",
+      "breakpoints": true
     }
   ]
 }

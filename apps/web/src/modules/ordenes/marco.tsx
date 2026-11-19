@@ -12,6 +12,7 @@ export function SeccionesDePedidos() {
         { a: '/m/ordenes', texto: 'Pedidos', fin: true },
         { a: '/m/ordenes/tablero', texto: 'Por estado' },
         { a: '/m/ordenes/entregas', texto: 'Entregas' },
+        { a: '/m/ordenes/guias', texto: 'Guías' },
       ]}
     />
   );

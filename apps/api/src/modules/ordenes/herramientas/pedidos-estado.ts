@@ -5,7 +5,9 @@ import { emitir } from '../../../core/eventos/emisor.js';
 import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { NOMBRE_DE_ESTADO, comprobarAvance, comprobarCancelacion, comprobarConfirmacion } from '../domain/estados.js';
+import { motivoDeGuiasEmitidas } from '../domain/guia.js';
 import { CLAVE_DE_CORRELATIVO, codigoDePedido, comprobarLineasParaConfirmar } from '../domain/pedido.js';
+import { guiasEmitidasDePedido } from '../repositories/guias.repository.js';
 import { actualizarPedido, registrarEvento, serieDe, verPedido } from '../repositories/pedidos.repository.js';
 import { ID, MODULO, NO_EXISTE, alcanceDePedidos, auditarPedido, estadoDe, responderPedido } from './comunes.js';
 
@@ -105,6 +107,8 @@ export const pedidoCancelar = definirHerramienta('pedido_cancelar', {
     const de = estadoDe(actual);
     const paso = comprobarCancelacion(de);
     if (!paso.ok) return { ok: false, error: { codigo: 'conflicto', mensaje: paso.motivo } };
+    const conGuias = motivoDeGuiasEmitidas(await guiasEmitidasDePedido(tx, ctx, actual.id));
+    if (conGuias) return { ok: false, error: { codigo: 'conflicto', mensaje: conGuias } };
     const codigo = codigoDePedido(actual.serie, actual.anio, actual.numero);
     const cual = actual.numero === null ? 'un pedido en borrador' : `el pedido ${codigo} (${NOMBRE_DE_ESTADO[de]})`;
     return {
@@ -121,6 +125,8 @@ export const pedidoCancelar = definirHerramienta('pedido_cancelar', {
     const de = estadoDe(actual);
     const paso = comprobarCancelacion(de);
     if (!paso.ok) return rechazo('conflicto', paso.motivo);
+    const conGuias = motivoDeGuiasEmitidas(await guiasEmitidasDePedido(tx, ctx, actual.id));
+    if (conGuias) return rechazo('conflicto', conGuias);
     await actualizarPedido(tx, ctx, actual.id, { estado: 'cancelado', canceladoAhora: true, canceladoPor: ctx.usuarioId, motivoCancelacion: args.motivo });
     await registrarEvento(tx, ctx, actual.id, { tipo: 'cancelado', estadoAnterior: de, estadoNuevo: 'cancelado' });
     // Solo un pedido que ya tenía número interesa a otros módulos; cancelar un borrador no emite.
