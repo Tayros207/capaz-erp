@@ -19,6 +19,7 @@ export const manifiestoRegistro: ManifiestoDeEntrada = {
     { id: 'por-pagar', nombre: 'Por pagar', ruta: '/m/registro/por-pagar', construida: true },
     { id: 'caja', nombre: 'Caja del día', ruta: '/m/registro/caja', construida: true },
     { id: 'antiguedad', nombre: 'Antigüedad', ruta: '/m/registro/antiguedad', construida: true },
+    { id: 'papelera', nombre: 'Papelera', ruta: '/m/registro/papelera', construida: true },
     { id: 'ajustes', nombre: 'Cuentas y categorías', ruta: '/m/registro/ajustes', construida: true },
   ],
   familia: 'finanzas',

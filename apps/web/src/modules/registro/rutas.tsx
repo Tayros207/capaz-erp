@@ -23,6 +23,7 @@ export const rutas: RouteObject[] = [
       { index: true, element: <Navigate to="movimientos" replace /> },
       { path: 'movimientos', element: <PantallaMovimientos /> },
       { path: 'movimientos/:id', element: <PantallaMovimiento /> },
+      { path: 'papelera', element: <PantallaMovimientos key="papelera" papelera /> },
       { path: 'por-cobrar', element: <PantallaDeudas tipo="por_cobrar" /> },
       { path: 'por-pagar', element: <PantallaDeudas tipo="por_pagar" /> },
       { path: 'deudas/:id', element: <PantallaDeuda /> },

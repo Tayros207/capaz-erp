@@ -17,7 +17,7 @@ import { CLAVE_REGISTRO } from './claves.ts';
 import { DetalleDeMovimiento } from './detalle-de-movimiento.tsx';
 import { HojaDeMovimiento } from './hoja-movimiento.tsx';
 import { HojaDeTransferencia } from './hoja-transferencia.tsx';
-import { argumentosDeListado, errorDeRango, FILTROS_VACIOS, formatearDia, montoConSigno, puedeTransferir, type FiltrosDeMovimientos, type TipoDeMovimiento } from './logica.ts';
+import { argumentosDeListado, errorDeRango, ETIQUETA_DE_ESTADO_DE_LISTADO, FILTROS_VACIOS, formatearDia, montoConSigno, puedeTransferir, type FiltrosDeMovimientos, type TipoDeMovimiento } from './logica.ts';
 import { useCuentas, usePuedeEditar } from './use-registro.ts';
 
 const CLASE_DE_TONO = { exito: 'text-exito', peligro: 'text-peligro', neutro: 'line-through', suave: 'text-texto-suave' } as const;
@@ -42,11 +42,15 @@ const COLUMNAS: Array<Columna<MovimientoDto>> = [
   { id: 'monto', titulo: 'Monto', alinear: 'derecha', celda: (m) => <Monto m={m} /> },
 ];
 
-export function PantallaMovimientos() {
+const COLUMNAS_DE_PAPELERA: Array<Columna<MovimientoDto>> = [...COLUMNAS, { id: 'motivo', titulo: 'Motivo', celda: (m) => m.motivoAnulacion ?? '—' }];
+
+/** Movimientos de la empresa. Con `papelera`, solo los anulados: se abren para restaurarlos (o ver su versión corregida). */
+export function PantallaMovimientos({ papelera = false }: { papelera?: boolean }) {
   const navegar = useNavigate();
   const puedeEditar = usePuedeEditar();
   const cuentas = useCuentas();
-  const [filtros, setFiltros] = useState<FiltrosDeMovimientos>(FILTROS_VACIOS);
+  const inicial: FiltrosDeMovimientos = papelera ? { ...FILTROS_VACIOS, estado: 'anulados' } : FILTROS_VACIOS;
+  const [filtros, setFiltros] = useState<FiltrosDeMovimientos>(inicial);
   const [nuevo, setNuevo] = useState<TipoDeMovimiento | null>(null);
   const [transfiriendo, setTransfiriendo] = useState(false);
   const rangoMalo = errorDeRango(filtros);
@@ -60,15 +64,15 @@ export function PantallaMovimientos() {
     enabled: !rangoMalo,
   });
   const filas = lista.data?.pages.flatMap((p) => p.items) ?? [];
-  const conFiltros = JSON.stringify(filtros) !== JSON.stringify(FILTROS_VACIOS);
+  const conFiltros = JSON.stringify(filtros) !== JSON.stringify(inicial);
 
   return (
     <div className="flex flex-col gap-4">
       <EncabezadoDePagina
-        titulo="Movimientos"
-        accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNuevo('ingreso')}>Nuevo ingreso</Boton> : undefined}
+        titulo={papelera ? 'Papelera' : 'Movimientos'}
+        accionPrincipal={puedeEditar && !papelera ? <Boton variante="primario" icono="mas" onClick={() => setNuevo('ingreso')}>Nuevo ingreso</Boton> : undefined}
         accionesSecundarias={
-          puedeEditar ? (
+          puedeEditar && !papelera ? (
             <>
               <Boton onClick={() => setTransfiriendo(true)} disabled={!puedeTransferir(cuentas.data?.items ?? [])} title={puedeTransferir(cuentas.data?.items ?? []) ? undefined : 'Necesitas al menos dos cuentas'}>Transferir entre cuentas</Boton>
               <Boton icono="mas" onClick={() => setNuevo('egreso')}>Nuevo egreso</Boton>
@@ -76,7 +80,8 @@ export function PantallaMovimientos() {
           ) : undefined
         }
       />
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {papelera ? <p className="text-sm text-texto-suave">Aquí están los movimientos anulados o reemplazados por una corrección. Ábrelos para restaurarlos; nada se borra.</p> : null}
+      <div className={`grid grid-cols-2 gap-3 ${papelera ? 'lg:grid-cols-4' : 'lg:grid-cols-5'}`}>
         <Campo etiqueta="Desde" type="date" value={filtros.desde} onChange={(e) => cambiar({ desde: e.target.value })} />
         <Campo etiqueta="Hasta" type="date" value={filtros.hasta} onChange={(e) => cambiar({ hasta: e.target.value })} error={rangoMalo} />
         <CampoSelect etiqueta="Tipo" value={filtros.tipo} onChange={(e) => cambiar({ tipo: e.target.value as FiltrosDeMovimientos['tipo'] })}>
@@ -88,6 +93,11 @@ export function PantallaMovimientos() {
           <option value="">Todas las cuentas</option>
           {(cuentas.data?.items ?? []).map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
         </CampoSelect>
+        {papelera ? null : (
+          <CampoSelect etiqueta="Estado" value={filtros.estado} onChange={(e) => cambiar({ estado: e.target.value as FiltrosDeMovimientos['estado'] })}>
+            {Object.entries(ETIQUETA_DE_ESTADO_DE_LISTADO).map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
+          </CampoSelect>
+        )}
       </div>
 
       {lista.isPending && lista.fetchStatus !== 'idle' ? (
@@ -101,17 +111,17 @@ export function PantallaMovimientos() {
       ) : (
         <>
           <Lista
-            etiqueta="Movimientos"
-            columnas={COLUMNAS}
+            etiqueta={papelera ? 'Papelera' : 'Movimientos'}
+            columnas={papelera ? COLUMNAS_DE_PAPELERA : COLUMNAS}
             filas={filas}
             clave={(m) => m.id}
             onAbrir={(m) => void navegar(`/m/registro/movimientos/${m.id}`)}
             vacio={
               <EstadoVacio
-                titulo={conFiltros ? 'Ningún movimiento con esos filtros' : 'Todavía no hay movimientos'}
-                descripcion={conFiltros ? 'Cambia las fechas, el tipo o la cuenta.' : 'Los ingresos y egresos que registres aparecerán aquí.'}
+                titulo={conFiltros ? 'Ningún movimiento con esos filtros' : papelera ? 'La papelera está vacía' : 'Todavía no hay movimientos'}
+                descripcion={conFiltros ? 'Cambia las fechas, el tipo o la cuenta.' : papelera ? 'Lo que anules o corrijas aparecerá aquí y podrás restaurarlo.' : 'Los ingresos y egresos que registres aparecerán aquí.'}
                 icono="caja"
-                accion={puedeEditar && !conFiltros ? <Boton variante="primario" onClick={() => setNuevo('ingreso')}>Nuevo ingreso</Boton> : undefined}
+                accion={puedeEditar && !conFiltros && !papelera ? <Boton variante="primario" onClick={() => setNuevo('ingreso')}>Nuevo ingreso</Boton> : undefined}
               />
             }
           />

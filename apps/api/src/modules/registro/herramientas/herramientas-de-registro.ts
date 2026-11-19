@@ -13,7 +13,9 @@ import { deudaAbonar } from './deudas-abonar.js';
 import { deudaCrearConAdelanto } from './deudas-con-adelanto.js';
 import { deudaAnular, deudaCrear, deudaEditar } from './deudas-escritura.js';
 import { deudasListar, deudaVer } from './deudas-lectura.js';
+import { movimientoCorregir } from './movimientos-correccion.js';
 import { movimientoAnular, movimientoRegistrar } from './movimientos-escritura.js';
+import { movimientoRestaurar } from './movimientos-restauracion.js';
 import { movimientosListar, movimientoVer } from './movimientos-lectura.js';
 import { cuentasTransferir } from './transferencias.js';
 import { cajaDelDia, registroResumen } from './reportes-herramientas.js';
@@ -34,6 +36,8 @@ export const HERRAMIENTAS_DE_REGISTRO = [
   movimientoVer,
   movimientosListar,
   movimientoAnular,
+  movimientoCorregir,
+  movimientoRestaurar,
   cuentasTransferir,
   deudaCrear,
   deudaVer,

@@ -112,9 +112,13 @@ describe('formulario de movimiento', () => {
 describe('listado', () => {
   it('los filtros vacíos no viajan y se piden también los anulados', () => {
     expect(argumentosDeListado(FILTROS_VACIOS, 25)).toEqual({ limite: 25, estado: 'todos' });
-    expect(argumentosDeListado({ desde: '2026-03-01', hasta: '2026-03-31', tipo: 'egreso', cuentaId: 'caja' }, 25, 'abc')).toEqual({
+    expect(argumentosDeListado({ desde: '2026-03-01', hasta: '2026-03-31', tipo: 'egreso', cuentaId: 'caja', estado: 'todos' }, 25, 'abc')).toEqual({
       limite: 25, estado: 'todos', desde: '2026-03-01', hasta: '2026-03-31', tipo: 'egreso', cuentaId: 'caja', cursor: 'abc',
     });
+  });
+  it('la papelera pide solo los anulados y el filtro «solo vigentes» solo los activos', () => {
+    expect(argumentosDeListado({ ...FILTROS_VACIOS, estado: 'anulados' }, 25)).toEqual({ limite: 25, estado: 'anulados' });
+    expect(argumentosDeListado({ ...FILTROS_VACIOS, estado: 'activos' }, 25)).toEqual({ limite: 25, estado: 'activos' });
   });
   it('avisa de un rango al revés', () => {
     expect(errorDeRango({ desde: '2026-03-10', hasta: '2026-03-01' })).toBe('La fecha final es anterior a la inicial.');

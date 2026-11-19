@@ -5,6 +5,7 @@ import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { revertirAbono, type EstadoDeDeuda } from '../domain/deuda.js';
 import { categoriaUtilizable, fechaDeMovimiento, puedeAnularseElMovimiento } from '../domain/movimiento.js';
+import { esOrigenReservado, MENSAJE_DE_ORIGEN_DE_CORRECCION } from '../domain/correccion.js';
 import { esNombreReservado, transferenciaDeReferencia, MENSAJE_DE_ORIGEN_RESERVADO, PREFIJO_DE_TRANSFERENCIA } from '../domain/transferencia.js';
 import { asegurarCatalogos } from '../repositories/catalogos.repository.js';
 import { verCategoria } from '../repositories/categorias.repository.js';
@@ -16,7 +17,8 @@ import { guardarMovimiento, resolverCuenta } from './guardar-movimiento.js';
 import { aMovimientoDto, codigoDe, codigoDeLaDeuda } from './mapeo.js';
 import { anularTransferencia, resumirAnulacionDeTransferencia } from './transferencias-anulacion.js';
 
-// Escrituras de movimientos: registrar (mueve dinero) y anular (crítica). Un movimiento nunca se edita ni se borra.
+// Escrituras de movimientos: registrar (mueve dinero) y anular (crítica). Un movimiento nunca se edita ni se borra:
+// corregirlo (`movimiento_corregir`) lo anula y registra uno nuevo; restaurarlo (`movimiento_restaurar`) lo reactiva.
 
 const NO_EXISTE = 'No existe ese movimiento.';
 
@@ -48,6 +50,7 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
   auditar: (_a, d) => ({ entidadTipo: 'movimiento', entidadId: d?.id, resumen: d ? { codigo: d.codigo, tipo: d.tipo, montoCentimos: d.montoCentimos } : undefined }),
   async ejecutar(args, ctx, tx) {
     if (args.origenRef?.startsWith(PREFIJO_DE_TRANSFERENCIA)) return rechazo('argumentos_invalidos', MENSAJE_DE_ORIGEN_RESERVADO);
+    if (esOrigenReservado(args.origenRef)) return rechazo('argumentos_invalidos', MENSAJE_DE_ORIGEN_DE_CORRECCION);
     await asegurarCatalogos(tx, ctx);
     const hoy = await hoyDeLaEmpresa(tx);
     const fecha = fechaDeMovimiento(args.fecha, hoy.dia);
@@ -87,7 +90,7 @@ export const movimientoAnular = definirHerramienta('movimiento_anular', {
   ayuda: {
     titulo: 'Anular un movimiento',
     paraQueSirve: 'Deja sin efecto un ingreso o egreso mal registrado. No se borra: queda marcado como anulado con su motivo. Si era el abono de una deuda, el monto vuelve al saldo de esa deuda.',
-    cuandoUsarla: 'Cuando un movimiento se registró por error o con datos equivocados. Para corregirlo, anúlalo y regístralo de nuevo.',
+    cuandoUsarla: 'Cuando un movimiento se registró por error o con datos equivocados. Para dejarlo bien sin escribir todo de nuevo usa «Corregir»; si fue un error, «Restaurar» lo reactiva.',
     campos: [
       { nombre: 'id', queSeAnota: 'Identificador del movimiento.', ejemplo: ID_DE_EJEMPLO },
       { nombre: 'motivo', queSeAnota: 'Por qué se anula.', ejemplo: 'Se registró dos veces' },
@@ -95,7 +98,7 @@ export const movimientoAnular = definirHerramienta('movimiento_anular', {
     ejemploTecleado: 'anular el movimiento MOV-2026-000123 porque se registró dos veces',
     ejemploHablado: 'anula el movimiento ciento veintitrés, estaba duplicado',
     erroresComunes: ['Ese movimiento ya está anulado.', 'La confirmación venció o el movimiento cambió: vuelve a pedirla.'],
-    relacionadas: ['movimiento_ver', 'movimiento_registrar'],
+    relacionadas: ['movimiento_ver', 'movimiento_registrar', 'movimiento_corregir', 'movimiento_restaurar'],
   },
   auditar: (a, d) => ({ entidadTipo: 'movimiento', entidadId: a.id, resumen: d ? { codigo: d.codigo, estado: d.estado, eraAbono: d.deudaId !== null } : undefined }),
   async resumir(args, ctx, tx) {

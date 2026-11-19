@@ -1,5 +1,6 @@
 import type { CategoriaDto, CuentaDto, DeudaDto, MovimientoDto } from '@capaz/shared';
 import { codigoDeDeuda, codigoDeMovimiento } from '../domain/codigos.js';
+import { correccionDeReferencia, esCorregible } from '../domain/correccion.js';
 import { transferenciaDeReferencia } from '../domain/transferencia.js';
 import { estaVencida, type EstadoDeDeuda } from '../domain/deuda.js';
 import type { Categoria } from '../repositories/categorias.repository.js';
@@ -53,6 +54,9 @@ export const aMovimientoDto = (f: MovimientoConNombres): MovimientoDto => ({
   deudaId: f.deudaId,
   sucursalId: f.sucursalId,
   transferenciaId: transferenciaDeReferencia(f.origenRef),
+  corregible: esCorregible(f),
+  correccionDe: correccionDeReferencia(f.origenRef),
+  reemplazadoPor: null,
   origen: f.origen as MovimientoDto['origen'],
   estado: f.estado as MovimientoDto['estado'],
   anuladoEn: iso(f.anuladoEn),
@@ -60,6 +64,9 @@ export const aMovimientoDto = (f: MovimientoConNombres): MovimientoDto => ({
   creadoPor: f.creadoPor,
   creadoEn: f.creadoEn.toISOString(),
 });
+
+/** Marca, en un movimiento anulado, la versión vigente de su cadena de correcciones (la calcula quien lista). */
+export const conReemplazo = (dto: MovimientoDto, reemplazadoPor: MovimientoDto['reemplazadoPor']): MovimientoDto => ({ ...dto, reemplazadoPor });
 
 /** `hoy`: día de la empresa (`hoyDeLaEmpresa`), para marcar la deuda como vencida. */
 export const aDeudaDto = (f: DeudaConContacto, hoy: string): DeudaDto => ({

@@ -69,6 +69,12 @@ export const movimientoSchema = z.strictObject({
   sucursalId: z.string().nullable(),
   /** Identificador común de las dos patas de una transferencia entre cuentas; `null` si no es una pata. */
   transferenciaId: z.string().nullable(),
+  /** `true` si se puede corregir (activo, suelto, no es abono ni nació en otro módulo). La web no ve `origen_ref`. */
+  corregible: z.boolean(),
+  /** Id de la raíz de la cadena de correcciones; `null` si este movimiento no nació de una corrección. */
+  correccionDe: z.string().nullable(),
+  /** Para un movimiento anulado: la versión vigente de su cadena de correcciones, si la hay. */
+  reemplazadoPor: z.strictObject({ id: z.string(), codigo: z.string() }).nullable(),
   origen: z.enum(ORIGENES_DE_MOVIMIENTO),
   estado: z.enum(ESTADOS_DE_MOVIMIENTO),
   anuladoEn: z.iso.datetime().nullable(),
@@ -143,6 +149,25 @@ export const transferirCuentasSchema = z.strictObject({
 });
 export const transferenciaSchema = z.strictObject({ transferenciaId: z.string(), egreso: movimientoSchema, ingreso: movimientoSchema });
 export type TransferenciaDto = z.infer<typeof transferenciaSchema>;
+
+/** Corregir un movimiento ya guardado: se indica solo lo que cambia. El tipo (ingreso o egreso) no se corrige: se anula y se registra de nuevo. */
+export const corregirMovimientoSchema = z
+  .strictObject({
+    id: z.uuid(),
+    /** Opcional: el servidor ya anota qué cambió. */
+    motivo: motivo.optional(),
+    montoCentimos: positivo.optional(),
+    fecha: dia.optional(),
+    cuentaId: z.uuid().optional(),
+    categoriaId: z.uuid().nullish(),
+    contactoId: z.uuid().nullish(),
+    medioDePago: z.enum(MEDIOS_DE_PAGO).optional(),
+    descripcion: texto(500).nullish(),
+  })
+  .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && k !== 'motivo' && x !== undefined), SIN_CAMBIOS);
+/** Lo que deja una corrección: el movimiento anulado y el nuevo que lo reemplaza. */
+export const correccionDeMovimientoSchema = z.strictObject({ anulado: movimientoSchema, nuevo: movimientoSchema });
+export type CorreccionDeMovimientoDto = z.infer<typeof correccionDeMovimientoSchema>;
 
 /** Categoría reservada de las dos patas de una transferencia: no se crea, edita, archiva ni se usa a mano. */
 export const NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA = 'Transferencia';
@@ -272,6 +297,8 @@ export const contratosDeRegistro = {
   movimientos_listar: contrato(listarMovimientosSchema, listadoSchema(movimientoSchema)),
   cuentas_transferir: contrato(transferirCuentasSchema, transferenciaSchema),
   movimiento_anular: contrato(z.strictObject({ id: z.uuid(), motivo }), movimientoSchema),
+  movimiento_corregir: contrato(corregirMovimientoSchema, correccionDeMovimientoSchema),
+  movimiento_restaurar: contrato(soloId, movimientoSchema),
   deuda_crear: contrato(crearDeudaSchema, deudaSchema),
   deuda_ver: contrato(soloId, deudaConAbonosSchema),
   deudas_listar: contrato(listarDeudasSchema, listadoSchema(deudaSchema)),
@@ -286,6 +313,7 @@ export const contratosDeRegistro = {
 export const eventosDeRegistro = {
   'movimiento.registrado': z.strictObject({ id: z.string(), codigo: z.string(), tipo: z.enum(['ingreso', 'egreso']), montoCentimos: z.number().int(), fecha: z.iso.date(), cuentaId: z.string(), contactoId: z.string().nullable(), deudaId: z.string().nullable() }),
   'movimiento.anulado': z.strictObject({ id: z.string(), codigo: z.string(), deudaId: z.string().nullable() }),
+  'movimiento.restaurado': z.strictObject({ id: z.string(), codigo: z.string(), tipo: z.enum(['ingreso', 'egreso']), montoCentimos: z.number().int(), fecha: z.iso.date(), cuentaId: z.string(), contactoId: z.string().nullable(), deudaId: z.string().nullable() }),
   'deuda.creada': z.strictObject({ id: z.string(), codigo: z.string(), tipo: z.enum(['por_cobrar', 'por_pagar']), contactoId: z.string(), totalCentimos: z.number().int(), venceEn: z.iso.date().nullable(), origenTipo: z.string().nullable(), origenId: z.string().nullable() }),
   'deuda.abonada': z.strictObject({ id: z.string(), codigo: z.string(), movimientoId: z.string(), montoCentimos: z.number().int(), saldoCentimos: z.number().int() }),
   'deuda.pagada': z.strictObject({ id: z.string(), codigo: z.string(), tipo: z.enum(['por_cobrar', 'por_pagar']), contactoId: z.string(), totalCentimos: z.number().int() }),

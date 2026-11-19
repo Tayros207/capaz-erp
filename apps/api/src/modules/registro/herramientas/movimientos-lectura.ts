@@ -1,9 +1,22 @@
 import { exito, rechazo } from '@capaz/shared';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { decodificarCursorPorFecha } from '../domain/cursor.js';
-import { listarMovimientos, verMovimiento } from '../repositories/movimientos.repository.js';
+import { raizDeFamilia } from '../domain/correccion.js';
+import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import { listarMovimientos, verMovimiento, vigentesDeFamilias, type MovimientoConNombres } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe } from './comun.js';
-import { aMovimientoDto } from './mapeo.js';
+import { aMovimientoDto, codigoDe, conReemplazo } from './mapeo.js';
+
+/** Los DTO; en cada anulado, la versión vigente de su cadena de correcciones (una sola consulta para toda la página). */
+async function conReemplazos(tx: Transaccion, ctx: ContextoDeEmpresa, filas: readonly MovimientoConNombres[]) {
+  const raices = [...new Set(filas.filter((f) => f.estado === 'anulado').map(raizDeFamilia))];
+  const vigentes = await vigentesDeFamilias(tx, ctx, raices);
+  return filas.map((f) => {
+    const dto = aMovimientoDto(f);
+    const v = f.estado === 'anulado' ? vigentes.get(raizDeFamilia(f)) : undefined;
+    return v ? conReemplazo(dto, { id: v.id, codigo: codigoDe(v) }) : dto;
+  });
+}
 
 // Lecturas de movimientos. Con alcance «propios» solo se ven los que registró la propia persona (R4).
 
@@ -23,7 +36,9 @@ export const movimientoVer = definirHerramienta('movimiento_ver', {
   },
   async ejecutar(args, ctx, tx) {
     const f = await verMovimiento(tx, ctx, args.id, propietarioDe(ctx));
-    return f ? exito(aMovimientoDto(f)) : rechazo('no_encontrado', 'No existe ese movimiento.');
+    if (!f) return rechazo('no_encontrado', 'No existe ese movimiento.');
+    const [dto] = await conReemplazos(tx, ctx, [f]);
+    return dto ? exito(dto) : rechazo('no_encontrado', 'No existe ese movimiento.');
   },
 });
 
@@ -52,6 +67,6 @@ export const movimientosListar = definirHerramienta('movimientos_listar', {
     if (args.cursor && !cursor) return rechazo('argumentos_invalidos', 'El cursor no es válido.');
     const { cursor: _c, ...filtros } = args;
     const r = await listarMovimientos(tx, ctx, { ...filtros, cursor }, propietarioDe(ctx));
-    return exito({ items: r.items.map(aMovimientoDto), siguiente: r.siguiente });
+    return exito({ items: await conReemplazos(tx, ctx, r.items), siguiente: r.siguiente });
   },
 });

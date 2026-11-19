@@ -24,6 +24,10 @@ export async function buscarContactos(texto: string): Promise<Opcion[]> {
 
 export const anularMovimiento = (id: string, motivo: string) =>
   llamarConfirmando('movimiento_anular', { id, motivo }, { titulo: 'Anular movimiento', textoConfirmar: 'Anular', peligroso: true });
+export const corregirMovimiento = (args: EntradaDe<'movimiento_corregir'>) =>
+  llamarConfirmando('movimiento_corregir', args, { titulo: 'Corregir movimiento', textoConfirmar: 'Corregir' });
+export const restaurarMovimiento = (id: string) =>
+  llamarConfirmando('movimiento_restaurar', { id }, { titulo: 'Restaurar movimiento', textoConfirmar: 'Restaurar' });
 export const crearCuenta = (args: EntradaDe<'cuenta_crear'>) => llamar('cuenta_crear', args);
 export const editarCuenta = (args: EntradaDe<'cuenta_editar'>) => llamar('cuenta_editar', args);
 export const archivarCuenta = (id: string) => llamar('cuenta_archivar', { id });

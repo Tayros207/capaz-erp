@@ -130,12 +130,14 @@ export function argumentosDeAdelanto(f: FormularioDeMovimiento): EntradaDe<'deud
   return args;
 }
 
-export type FiltrosDeMovimientos = { desde: string; hasta: string; tipo: '' | TipoDeMovimiento; cuentaId: string };
-export const FILTROS_VACIOS: FiltrosDeMovimientos = { desde: '', hasta: '', tipo: '', cuentaId: '' };
+export type EstadoDeListado = EntradaDe<'movimientos_listar'>['estado'] & string;
+export type FiltrosDeMovimientos = { desde: string; hasta: string; tipo: '' | TipoDeMovimiento; cuentaId: string; estado: EstadoDeListado };
+export const FILTROS_VACIOS: FiltrosDeMovimientos = { desde: '', hasta: '', tipo: '', cuentaId: '', estado: 'todos' };
+export const ETIQUETA_DE_ESTADO_DE_LISTADO: Record<EstadoDeListado, string> = { todos: 'Vigentes y anulados', activos: 'Solo vigentes', anulados: 'Solo anulados' };
 
-/** Argumentos de `movimientos_listar`: los filtros vacíos no viajan. Se ven también los anulados, marcados. */
+/** Argumentos de `movimientos_listar`: los filtros vacíos no viajan. Por defecto se ven también los anulados, marcados. */
 export function argumentosDeListado(f: FiltrosDeMovimientos, limite: number, cursor?: string): EntradaDe<'movimientos_listar'> {
-  const args: EntradaDe<'movimientos_listar'> = { limite, estado: 'todos' };
+  const args: EntradaDe<'movimientos_listar'> = { limite, estado: f.estado };
   if (f.desde) args.desde = f.desde;
   if (f.hasta) args.hasta = f.hasta;
   if (f.tipo) args.tipo = f.tipo;
