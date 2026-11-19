@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Boton } from './boton.tsx';
 import { useDialogo } from './use-dialogo.ts';
 
@@ -13,8 +14,12 @@ type Props = {
 export function HojaInferior({ abierto, alCerrar, titulo, children }: Props) {
   const ref = useDialogo(abierto, alCerrar);
   const idTitulo = useId();
-  return (
+  // Va a `document.body`: si la hoja se abre desde dentro de un formulario, su propio <form> no queda anidado en el de la
+  // pantalla (un <form> dentro de otro es HTML inválido y el navegador no envía el interno). Y como los eventos de un portal
+  // suben por el árbol de React, el envío se corta aquí para que no active el formulario de la pantalla.
+  return createPortal(
     <dialog
+      onSubmit={(e) => e.stopPropagation()}
       ref={ref}
       aria-labelledby={idTitulo}
       onClick={(e) => e.target === e.currentTarget && alCerrar()}
@@ -27,6 +32,7 @@ export function HojaInferior({ abierto, alCerrar, titulo, children }: Props) {
         <Boton variante="fantasma" icono="cerrar" aria-label="Cerrar" onClick={alCerrar} />
       </div>
       <div className="overflow-y-auto px-5 py-5 pb-[max(1rem,env(safe-area-inset-bottom))]">{children}</div>
-    </dialog>
+    </dialog>,
+    document.body,
   );
 }
