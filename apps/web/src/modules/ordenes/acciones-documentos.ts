@@ -7,7 +7,9 @@ import { TITULO_DE_DOCUMENTO, documentosDisponibles, enlaceDeWhatsApp, mensajeDe
 
 /** Entradas «Imprimir …» del menú de la ficha: una por documento que el estado permite. */
 export function accionesDeImpresion(p: Pick<PedidoCompletoDto, 'id' | 'estado'>, ir: (ruta: string) => void): AccionDeMenu[] {
-  return documentosDisponibles(p.estado).map((tipo) => ({ etiqueta: `Imprimir ${TITULO_DE_DOCUMENTO[tipo].toLowerCase()}`, onSeleccionar: () => ir(`/m/ordenes/${p.id}/${tipo}`) }));
+  // Confirmado o posterior: la nota de pedido (la constancia del cliente) va primero y la proforma al final.
+  const tipos = documentosDisponibles(p.estado).sort((a, b) => Number(a === 'proforma' && p.estado !== 'borrador') - Number(b === 'proforma' && p.estado !== 'borrador'));
+  return tipos.map((tipo) => ({ etiqueta: `Imprimir ${TITULO_DE_DOCUMENTO[tipo].toLowerCase()}`, onSeleccionar: () => ir(`/m/ordenes/${p.id}/${tipo}`) }));
 }
 
 /**

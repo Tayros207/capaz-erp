@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { formatearSoles, type LineaDeOrdenDto, type OrdenDeProduccionCompletaDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
@@ -35,6 +35,7 @@ function Contenido({ o }: { o: OrdenDeProduccionCompletaDto }) {
   const [hoy] = useState(hoyLocal);
   const [corrigiendo, setCorrigiendo] = useState(false);
   const [anulando, setAnulando] = useState(false);
+  const navegar = useNavigate();
   const acciones = accionesDeOrden(o);
   const avance = avanceDe(o.estado);
 
@@ -53,6 +54,7 @@ function Contenido({ o }: { o: OrdenDeProduccionCompletaDto }) {
         accionesSecundarias={
           <>
             <Insignia tono={TONO_DE_ESTADO[o.estado]}>{ETIQUETA_DE_ESTADO[o.estado]}</Insignia>
+            <Boton onClick={() => void navegar(`/m/produccion/${o.id}/documento`)}>Imprimir orden</Boton>
             {editar && acciones.cobrar ? <Boton onClick={() => void resolverAccion(cobrarOrden(o.id), 'Pedimos a Finanzas cobrar lo que falta: confírmalo en la bandeja.')}>Anotar que ya me pagó</Boton> : null}
             {editar && acciones.editar ? <Boton onClick={() => setCorrigiendo(true)}>Corregir</Boton> : null}
             {anular && acciones.anular ? <Boton variante="peligro" onClick={() => setAnulando(true)}>Anular</Boton> : null}

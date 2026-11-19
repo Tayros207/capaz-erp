@@ -55,6 +55,15 @@ export function totalesDelDocumento(p: Pick<PedidoCompletoDto, 'subtotalCentimos
   return filasDeTotales({ subtotal: p.subtotalCentimos, igv: p.igvCentimos, total: p.totalCentimos }, p.igvPorcentaje / 100);
 }
 
+/** Lo que el cliente ya dejó a cuenta del pedido, tomado de su deuda en Finanzas. */
+export type AdelantoDelPedido = { abonadoCentimos: number; saldoCentimos: number };
+
+/** Con adelanto cobrado, el documento agrega «Adelanto recibido» y «Saldo por pagar» debajo del total. Sin adelanto, queda igual. */
+export function totalesConAdelanto(base: FilaDeTotal[], adelanto: AdelantoDelPedido | null | undefined): FilaDeTotal[] {
+  if (!adelanto || adelanto.abonadoCentimos <= 0) return base;
+  return [...base, { etiqueta: 'Adelanto recibido', valor: formatearSoles(adelanto.abonadoCentimos) }, { etiqueta: 'Saldo por pagar', valor: formatearSoles(adelanto.saldoCentimos), destacado: true }];
+}
+
 /** Texto del IGV para el pie de la proforma: «Los precios incluyen IGV (18 %)». */
 export const textoDeIgvIncluido = (igvPorcentaje: number): string => `Los precios incluyen IGV (${igvPorcentaje} %)`;
 

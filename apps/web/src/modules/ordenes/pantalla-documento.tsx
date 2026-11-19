@@ -7,8 +7,9 @@ import { normalizarEmpresa } from '../../shared/impresion/logica-impresion.ts';
 import { useDatosDeEmpresaParaImprimir } from '../../shared/impresion/usar-datos-de-empresa.ts';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { verPedido } from './api.ts';
+import { buscarDeudaDelPedido } from './flujo-adelanto.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
-import { TITULO_DE_DOCUMENTO, esTipoDeDocumento, filasDelDocumento, sePuedeImprimir, textoDeIgvIncluido, textoDeVigencia, totalesDelDocumento, type TipoDeDocumento } from './documentos.ts';
+import { TITULO_DE_DOCUMENTO, esTipoDeDocumento, filasDelDocumento, sePuedeImprimir, textoDeIgvIncluido, textoDeVigencia, totalesConAdelanto, totalesDelDocumento, type AdelantoDelPedido, type TipoDeDocumento } from './documentos.ts';
 import { ETIQUETA_DE_ESTADO, formatearDia } from './logica.ts';
 import { Cargando } from './marco.tsx';
 
@@ -58,7 +59,7 @@ function DatosDelPedido({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumen
   return <BloqueDeDatos titulo="Datos del pedido" pares={pares} />;
 }
 
-function Cuerpo({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumento }) {
+function Cuerpo({ p, tipo, adelanto }: { p: PedidoCompletoDto; tipo: TipoDeDocumento; adelanto: AdelantoDelPedido | null }) {
   const conPrecios = tipo !== 'orden-de-trabajo';
   return (
     <>
@@ -68,7 +69,7 @@ function Cuerpo({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumento }) {
         etiqueta={`Detalle: ${TITULO_DE_DOCUMENTO[tipo]}`}
         columnas={[...(conPrecios ? COLUMNAS_CON_PRECIO : COLUMNAS_SIN_PRECIO)]}
         filas={filasDelDocumento(p.detalle, conPrecios)}
-        totales={conPrecios ? totalesDelDocumento(p) : undefined}
+        totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), adelanto) : undefined}
       />
       {conPrecios ? <p className="text-[9pt]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
       {tipo === 'orden-de-trabajo' ? (
@@ -92,13 +93,23 @@ function Documento({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumento })
   const { datos } = useDatosDeEmpresaParaImprimir();
   const empresa = normalizarEmpresa(datos);
   const aviso = tipo === 'proforma' ? AVISO_PROFORMA : null;
+  // El adelanto vive en Finanzas (la deuda del pedido). Quien no tiene acceso a Finanzas simplemente no lo ve en el documento.
+  const deuda = useQuery({
+    queryKey: [...CLAVE_PEDIDOS, 'deuda-del-pedido', p.id],
+    queryFn: async () => {
+      const r = await buscarDeudaDelPedido(p.id, p.clienteId);
+      return r.ok ? r.datos : null;
+    },
+    enabled: tipo !== 'orden-de-trabajo' && p.estado !== 'borrador',
+    retry: false,
+  });
   return (
     <div className="flex flex-col">
       <BarraDeImpresion onVolver={() => void navegar(`/m/ordenes/${p.id}`)} etiquetaVolver="Volver al pedido" />
       <AvisoDeEmpresa razonSocial={empresa.razonSocial} ruc={empresa.ruc} />
       <VistaPreviaDeHoja>
         <HojaImprimible titulo={`${TITULO_DE_DOCUMENTO[tipo]} ${p.codigo}`} empresa={datos} aviso={aviso}>
-          <Cuerpo p={p} tipo={tipo} />
+          <Cuerpo p={p} tipo={tipo} adelanto={deuda.data ?? null} />
         </HojaImprimible>
       </VistaPreviaDeHoja>
     </div>

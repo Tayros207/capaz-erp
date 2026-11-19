@@ -19,7 +19,7 @@ function normalizar<T, U>(r: Respuesta<T>, mapa: (d: T) => U): Res<U> {
 const deMinima = (d: DeudaDto) => ({ id: d.id, codigo: d.codigo, totalCentimos: d.totalCentimos, abonadoCentimos: d.abonadoCentimos, saldoCentimos: d.saldoCentimos });
 
 /** La deuda viva del pedido: se recorre la lista del cliente y se compara el origen (no hay filtro por origen en la herramienta). */
-async function buscarDeudaDelPedido(pedidoId: string, clienteId: string): Promise<Res<ReturnType<typeof deMinima> | null>> {
+export async function buscarDeudaDelPedido(pedidoId: string, clienteId: string): Promise<Res<ReturnType<typeof deMinima> | null>> {
   let cursor: string | undefined;
   for (let i = 0; i < PAGINAS_COMO_MAXIMO; i++) {
     const r = await llamar('deudas_listar', { tipo: 'por_cobrar', estado: 'todas', contactoId: clienteId, limite: 100, ...(cursor && { cursor }) });

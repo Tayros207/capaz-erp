@@ -18,6 +18,7 @@ import { HojaAdelanto } from './hoja-adelanto.tsx';
 import { anotar, aplicarPaso, cancelar, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
 import { accionesDeImpresion, enviarPorWhatsApp } from './acciones-documentos.ts';
+import { TITULO_DE_DOCUMENTO, documentosDisponibles } from './documentos.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { FormularioPedido } from './formulario-pedido.tsx';
 import { HojaTexto } from './hoja-texto.tsx';
@@ -108,6 +109,9 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
     return ejecutarAdelanto(pedido.id, adelanto.montoCentimos, adelanto.medio);
   };
 
+  // El documento que se le da al cliente: la proforma mientras es borrador y la nota de pedido (constancia) desde que se confirma.
+  const documentoPrincipal = documentosDisponibles(pedido.estado).find((t) => t === (pedido.estado === 'borrador' ? 'proforma' : 'nota')) ?? null;
+
   const acciones: AccionDeMenu[] = [
     ...accionesDeImpresion(pedido, (ruta) => void navegar(ruta)),
     ...(pedido.estado === 'cancelado' ? [] : [{ etiqueta: 'Enviar por WhatsApp', onSeleccionar: () => void enviarPorWhatsApp(pedido) }]),
@@ -126,6 +130,8 @@ function Contenido({ pedido }: { pedido: PedidoCompletoDto }) {
           <>
             <InsigniasDePedido pedido={pedido} />
             {editable ? <Boton cargando={ocupado} disabled={!borrador.hayCambios} onClick={() => void guardarCambios()}>Guardar cambios</Boton> : null}
+            {documentoPrincipal ? <Boton onClick={() => void navegar(`/m/ordenes/${pedido.id}/${documentoPrincipal}`)}>{`Imprimir ${TITULO_DE_DOCUMENTO[documentoPrincipal].toLowerCase()}`}</Boton> : null}
+            {pedido.estado === 'cancelado' ? null : <Boton onClick={() => void enviarPorWhatsApp(pedido)}>Enviar por WhatsApp</Boton>}
             {acciones.length > 0 ? <MenuDeAcciones etiqueta="Más acciones del pedido" acciones={acciones} /> : null}
           </>
         }

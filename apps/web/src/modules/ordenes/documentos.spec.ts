@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LineaDePedidoDto } from '@capaz/shared';
-import { documentosDisponibles, enlaceDeWhatsApp, esTipoDeDocumento, filasDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesDelDocumento } from './documentos.ts';
+import { documentosDisponibles, enlaceDeWhatsApp, esTipoDeDocumento, filasDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
 
 const l = (extra: Partial<LineaDePedidoDto>): LineaDePedidoDto => ({ id: 'a', posicion: 1, productoId: null, descripcion: 'Polo', unidad: 'unidad', cantidadMilesimas: 50_000, precioUnitarioMilesimas: 15_000, afectoIgv: true, importeCentimos: 75_000, ...extra });
 
@@ -62,5 +62,17 @@ describe('WhatsApp', () => {
     expect(url.startsWith('https://wa.me/51999000111?text=')).toBe(true);
     expect(decodeURIComponent(url)).toContain('PED-1');
     expect(decodeURIComponent(url)).toContain('S/ 118.00');
+  });
+});
+
+describe('adelanto en el documento', () => {
+  const base = [{ etiqueta: 'Total', valor: 'S/ 80.00', destacado: true }];
+  it('sin adelanto cobrado el documento no cambia', () => {
+    expect(totalesConAdelanto(base, null)).toEqual(base);
+    expect(totalesConAdelanto(base, { abonadoCentimos: 0, saldoCentimos: 8_000 })).toEqual(base);
+  });
+  it('con adelanto agrega lo recibido y el saldo por pagar', () => {
+    const t = totalesConAdelanto(base, { abonadoCentimos: 3_000, saldoCentimos: 5_000 });
+    expect(t.slice(1).map((f) => [f.etiqueta, f.valor])).toEqual([['Adelanto recibido', 'S/ 30.00'], ['Saldo por pagar', 'S/ 50.00']]);
   });
 });
