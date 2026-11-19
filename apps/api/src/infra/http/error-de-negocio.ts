@@ -23,6 +23,7 @@ export const MENSAJES: Record<Codigo, string> = {
   modulo_solo_lectura: 'Este módulo está en solo lectura.',
   no_encontrado: 'No se encontró lo que buscas.',
   conflicto: 'Esa operación choca con el estado actual.',
+  requiere_aprobacion: 'Este cambio necesita la aprobación del dueño o de un administrador.',
   error_interno: 'Ocurrió un error inesperado. No se aplicó ningún cambio.',
 };
 

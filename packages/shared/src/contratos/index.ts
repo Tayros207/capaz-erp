@@ -23,6 +23,7 @@ import { contratosDeRegistro, eventosDeRegistro } from './registro.js';
 import { contratosDeCrm, eventosDeCrm } from './crm.js';
 import { contratosDeOrdenes, eventosDeOrdenes } from './ordenes.js';
 import { contratosDeGuias, eventosDeGuias } from './ordenes-guias.js';
+import { contratosDeOrdenesCorreccion } from './ordenes-correccion.js';
 import { contratosDeInsumos, eventosDeInsumos } from './insumos.js';
 import { contratosDeCompras, eventosDeCompras } from './compras.js';
 import { contratosDePersonal, eventosDePersonal } from './personal.js';
@@ -58,6 +59,7 @@ export * from './registro.js';
 export * from './crm.js';
 export * from './ordenes.js';
 export * from './ordenes-guias.js';
+export * from './ordenes-correccion.js';
 export * from './insumos.js';
 export * from './compras.js';
 export * from './personal.js';
@@ -95,6 +97,7 @@ export const CONTRATOS = {
   ...contratosDeCrm,
   ...contratosDeOrdenes,
   ...contratosDeGuias,
+  ...contratosDeOrdenesCorreccion,
   ...contratosDeInsumos,
   ...contratosDeCompras,
   ...contratosDePersonal,

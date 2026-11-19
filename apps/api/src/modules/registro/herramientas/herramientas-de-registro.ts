@@ -13,6 +13,7 @@ import { registroPendientes } from './pendientes-herramientas.js';
 import { deudaAbonar } from './deudas-abonar.js';
 import { deudaCrearConAdelanto } from './deudas-con-adelanto.js';
 import { deudaAnular, deudaCrear, deudaEditar } from './deudas-escritura.js';
+import { deudaAjustar, deudaAjustesListar } from './deudas-ajuste.js';
 import { deudasListar, deudaVer } from './deudas-lectura.js';
 import { movimientoCorregir } from './movimientos-correccion.js';
 import { movimientoAnular, movimientoRegistrar } from './movimientos-escritura.js';
@@ -45,6 +46,8 @@ export const HERRAMIENTAS_DE_REGISTRO = [
   deudaVer,
   deudasListar,
   deudaEditar,
+  deudaAjustar,
+  deudaAjustesListar,
   deudaAbonar,
   deudaCrearConAdelanto,
   deudaAnular,

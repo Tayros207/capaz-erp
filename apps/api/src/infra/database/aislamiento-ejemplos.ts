@@ -116,6 +116,14 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into ordenes.pedido_eventos (tenant_id, pedido_id, tipo, usuario_id) values ($1, md5($1::text || 'o1')::uuid, 'creado', 'u1')`,
     modo: 'insercion',
   },
+  'ordenes.pedido_versiones': {
+    sql: `insert into ordenes.pedido_versiones (tenant_id, pedido_id, version, foto, motivo_codigo, creado_por) values ($1, md5($1::text || 'o1')::uuid, 1, '{}'::jsonb, 'otro', 'u1')`,
+    modo: 'insercion',
+  },
+  'registro.deuda_ajustes': {
+    sql: `insert into registro.deuda_ajustes (tenant_id, deuda_id, monto_centimos, total_anterior_centimos, total_nuevo_centimos, motivo_codigo, creado_por) values ($1, md5($1::text || 'r3')::uuid, 100, 1000, 1100, 'otro', 'u1')`,
+    modo: 'insercion',
+  },
   'ordenes.guias': {
     sql: `insert into ordenes.guias (id, tenant_id, serie, numero, cliente_id, destinatario_nombre, fecha_emision, fecha_traslado, punto_partida, punto_llegada, motivo, modalidad, creado_por) values (md5($1::text || 'g1')::uuid, $1, 'G001', 1, md5($1::text || 'cl')::uuid, 'Cliente', date '2026-01-01', date '2026-01-01', 'Av. A 1', 'Jr. B 2', 'venta', 'privado', 'u1')`,
     modo: 'insercion',

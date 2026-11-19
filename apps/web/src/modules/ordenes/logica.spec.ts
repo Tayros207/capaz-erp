@@ -8,7 +8,7 @@ import {
 
 const linea = (extra: Partial<LineaDeFormulario> = {}): LineaDeFormulario => ({ ...lineaVacia('l1'), descripcion: 'Volantes', precioUnitarioMilesimas: 118_000, ...extra });
 const pedido = (extra: Partial<PedidoDto> = {}): PedidoDto => ({
-  id: 'p1', codigo: 'PED-PRI-2026-0001', numero: 1, serie: 'PRI', anio: 2026, clienteId: 'c1', clienteNombre: 'Imprenta Sol', estado: 'confirmado', fecha: '2026-03-01',
+  id: 'p1', codigo: 'PED-PRI-2026-0001', numero: 1, serie: 'PRI', anio: 2026, clienteId: 'c1', clienteNombre: 'Imprenta Sol', estado: 'confirmado', version: 1, fecha: '2026-03-01',
   entregaEl: null, atrasado: false, responsableId: null, igvPorcentaje: 18, subtotalCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800, notas: null, sucursalId: null,
   origenTipo: null, origenId: null, confirmadoEn: null, entregadoEn: null, canceladoEn: null, motivoCancelacion: null, lineas: 1, creadoPor: 'u1',
   creadoEn: '2026-03-01T10:00:00.000Z', actualizadoEn: '2026-03-01T10:00:00.000Z', ...extra,
@@ -16,7 +16,7 @@ const pedido = (extra: Partial<PedidoDto> = {}): PedidoDto => ({
 const completo = (extra: Partial<PedidoCompletoDto> = {}): PedidoCompletoDto => ({
   ...pedido({ estado: 'borrador', numero: null, serie: null, anio: null, codigo: 'Borrador' }),
   detalle: [{ id: 'd1', posicion: 0, productoId: null, descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true, importeCentimos: 11_800 }],
-  historial: [], ...extra,
+  historial: [], versiones: [], ...extra,
 });
 
 describe('pasos de la ficha y del tablero', () => {

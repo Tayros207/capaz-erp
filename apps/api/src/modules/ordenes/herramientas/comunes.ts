@@ -15,6 +15,7 @@ import {
   type Alcance,
   type Pedido,
 } from '../repositories/pedidos.repository.js';
+import { versionesDe } from '../repositories/correccion.repository.js';
 import { aPedidoCompleto } from './pedido-mapeo.js';
 
 // Lo que comparten las herramientas de pedidos.
@@ -37,8 +38,8 @@ export const auditarPedido = (_args: unknown, d: PedidoCompletoDto | null): Dato
 export async function responderPedido(tx: Transaccion, ctx: ContextoDeHerramienta, id: string): Promise<Respuesta<PedidoCompletoDto>> {
   const pedido = await verPedido(tx, ctx, id, { alcance: alcanceDePedidos(ctx) });
   if (!pedido) return rechazo('no_encontrado', NO_EXISTE);
-  const [lineas, historial, hoy] = [await lineasDe(tx, ctx, id), await historialDe(tx, ctx, id), await hoyDeLaEmpresa(tx)];
-  return exito(aPedidoCompleto(pedido, lineas, historial, hoy.dia));
+  const [lineas, historial, hoy, versiones] = [await lineasDe(tx, ctx, id), await historialDe(tx, ctx, id), await hoyDeLaEmpresa(tx), await versionesDe(tx, ctx, id)];
+  return exito(aPedidoCompleto(pedido, lineas, historial, hoy.dia, versiones));
 }
 
 /** Comprueba lo que el pedido cita del núcleo (solo lo que llega). Devuelve el motivo del rechazo o `null`. */

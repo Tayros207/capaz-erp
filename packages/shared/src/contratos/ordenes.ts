@@ -17,7 +17,10 @@ export const ESTADOS_EN_CURSO_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo'] 
 /** Destinos que admite `pedido_cambiar_estado`. */
 export const ESTADOS_DE_AVANCE_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo', 'entregado'] as const satisfies readonly EstadoDePedido[];
 export const FILTROS_DE_ESTADO_DE_PEDIDO = ['abiertos', ...ESTADOS_DE_PEDIDO, 'todos'] as const;
-export const TIPOS_DE_EVENTO_DE_PEDIDO = ['creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados', 'guia_emitida', 'guia_anulada'] as const;
+export const TIPOS_DE_EVENTO_DE_PEDIDO = ['creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados', 'corregido', 'guia_emitida', 'guia_anulada'] as const;
+/** Por qué se corrige un pedido o una deuda ya confirmados: lo elige quien corrige; el texto libre es opcional (obligatorio con `otro`). */
+export const MOTIVOS_DE_CORRECCION = ['igv', 'precio_acordado', 'cantidad', 'lineas', 'error_digitacion', 'otro'] as const;
+export type MotivoDeCorreccion = (typeof MOTIVOS_DE_CORRECCION)[number];
 /** Estados en los que `pedido_editar_datos` corrige entrega, responsable y notas (sin dinero). */
 export const ESTADOS_DE_DATOS_EDITABLES_DE_PEDIDO = ['confirmado', 'en_proceso', 'listo'] as const satisfies readonly EstadoDePedido[];
 /** Campos que corrige `pedido_editar_datos`. */
@@ -120,6 +123,8 @@ export const pedidoSchema = z.strictObject({
   clienteId: z.string(),
   clienteNombre: z.string(),
   estado: z.enum(ESTADOS_DE_PEDIDO),
+  /** Versión del pedido: 1 hasta que se corrige estando confirmado; cada corrección suma una (mismo número, la anterior queda guardada). */
+  version: z.number().int(),
   fecha: z.iso.date(),
   entregaEl: z.iso.date().nullable(),
   atrasado: z.boolean(),
@@ -143,7 +148,48 @@ export const pedidoSchema = z.strictObject({
 });
 export type PedidoDto = z.infer<typeof pedidoSchema>;
 
-/** La huella de una corrección: qué campos cambiaron (antes y después, con nombre legible si lo hay) y el motivo. */
+const valoresDeLinea = z.strictObject({
+  descripcion: z.string(),
+  unidad: z.string(),
+  cantidadMilesimas: z.number().int(),
+  precioUnitarioMilesimas: z.number().int(),
+  afectoIgv: z.boolean(),
+  importeCentimos: z.number().int(),
+});
+
+/** La huella de una corrección de importes o líneas (`corregido`): quién lo decide va en el evento; aquí el antes y el después. */
+export const correccionDePedidoSchema = z.strictObject({
+  versionAnterior: z.number().int(),
+  versionNueva: z.number().int(),
+  motivoCodigo: z.enum(MOTIVOS_DE_CORRECCION),
+  motivoTexto: z.string().nullable(),
+  estadoAlCorregir: z.enum(ESTADOS_DE_PEDIDO),
+  totalAnteriorCentimos: z.number().int(),
+  totalNuevoCentimos: z.number().int(),
+  deltaCentimos: z.number().int(),
+  subtotalAnteriorCentimos: z.number().int(),
+  subtotalNuevoCentimos: z.number().int(),
+  igvAnteriorCentimos: z.number().int(),
+  igvNuevoCentimos: z.number().int(),
+  /** Solo las líneas que cambian: cambiada (antes y después), agregada (sin antes) o quitada (sin después). */
+  lineas: z.array(z.strictObject({ cambio: z.enum(['cambiada', 'agregada', 'quitada']), lineaId: z.string(), descripcion: z.string(), antes: valoresDeLinea.nullable(), despues: valoresDeLinea.nullable() })),
+  datos: z.array(
+    z.strictObject({
+      campo: z.enum(['entregaEl', 'notas', 'clienteId']),
+      antes: z.string().nullable(),
+      despues: z.string().nullable(),
+      antesEtiqueta: z.string().nullable().optional(),
+      despuesEtiqueta: z.string().nullable().optional(),
+    }),
+  ),
+  /** Lo que el cliente ya había pagado, si quien corrige lo sabía (`venta_corregir`); `null` si no. */
+  abonadoCentimos: z.number().int().nullable(),
+  /** Lo pagado de más que queda a favor del cliente con el total nuevo; `null` si no se conocía lo abonado. */
+  aFavorCentimos: z.number().int().nullable(),
+});
+export type CorreccionDePedidoDto = z.infer<typeof correccionDePedidoSchema>;
+
+/** La huella de un cambio en el historial: campos con antes y después, el motivo y, si fue una corrección de importes, su detalle. */
 export const detalleDeEventoDePedidoSchema = z.strictObject({
   cambios: z.array(
     z.strictObject({
@@ -155,8 +201,37 @@ export const detalleDeEventoDePedidoSchema = z.strictObject({
     }),
   ),
   motivo: z.string().nullable().optional(),
+  correccion: correccionDePedidoSchema.optional(),
 });
 export type DetalleDeEventoDePedido = z.infer<typeof detalleDeEventoDePedidoSchema>;
+
+/** La foto de un pedido tal como estaba en una versión anterior: inmutable, sirve para reimprimirla. */
+export const fotoDeVersionSchema = z.strictObject({
+  estado: z.enum(ESTADOS_DE_PEDIDO),
+  clienteId: z.string(),
+  clienteNombre: z.string(),
+  fecha: z.iso.date(),
+  entregaEl: z.iso.date().nullable(),
+  notas: z.string().nullable(),
+  igvPorcentaje: z.number().int(),
+  subtotalCentimos: z.number().int(),
+  igvCentimos: z.number().int(),
+  totalCentimos: z.number().int(),
+  lineas: z.array(lineaDePedidoSchema),
+});
+export type FotoDeVersionDto = z.infer<typeof fotoDeVersionSchema>;
+
+/** Una versión anterior del pedido (la de número `version`) con el motivo por el que fue reemplazada y quién lo hizo. */
+export const versionDePedidoSchema = z.strictObject({
+  version: z.number().int(),
+  motivoCodigo: z.enum(MOTIVOS_DE_CORRECCION),
+  motivoTexto: z.string().nullable(),
+  creadoPor: z.string(),
+  creadoPorNombre: z.string().nullable(),
+  creadoEn: z.iso.datetime(),
+  foto: fotoDeVersionSchema,
+});
+export type VersionDePedidoDto = z.infer<typeof versionDePedidoSchema>;
 
 export const eventoDePedidoSchema = z.strictObject({
   id: z.string(),
@@ -178,6 +253,8 @@ export const pedidoCompletoSchema = z.strictObject({
   ...pedidoSchema.shape,
   detalle: z.array(lineaDePedidoSchema),
   historial: z.array(eventoDePedidoSchema),
+  /** Versiones anteriores (de la más reciente a la más antigua); vacío si el pedido nunca se corrigió. */
+  versiones: z.array(versionDePedidoSchema),
 });
 export type PedidoCompletoDto = z.infer<typeof pedidoCompletoSchema>;
 
@@ -268,5 +345,17 @@ export const eventosDeOrdenes = {
   'pedido.confirmado': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string(), totalCentimos: z.number().int(), entregaEl: z.iso.date().nullable(), sucursalId: z.string().nullable() }),
   'pedido.entregado': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string() }),
   'pedido.cancelado': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string(), teniaNumero: z.boolean() }),
+  /** Lo abonado no viaja: Pedidos no lo conoce; Finanzas lo lee de su deuda. */
+  'pedido.corregido': z.strictObject({
+    id: z.string(),
+    codigo: z.string(),
+    clienteId: z.string(),
+    versionAnterior: z.number().int(),
+    versionNueva: z.number().int(),
+    totalAnteriorCentimos: z.number().int(),
+    totalNuevoCentimos: z.number().int(),
+    entregaAnterior: z.iso.date().nullable(),
+    entregaNueva: z.iso.date().nullable(),
+  }),
   'pedido.datos_editados': z.strictObject({ id: z.string(), codigo: z.string(), clienteId: z.string(), entregaAnterior: z.iso.date().nullable(), entregaNueva: z.iso.date().nullable() }),
 } as const;

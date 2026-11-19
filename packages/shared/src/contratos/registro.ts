@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { MOTIVOS_DE_CORRECCION } from './ordenes.js';
 
 // Contratos del área «registro» (Finanzas ligeras): un contrato por herramienta (`entidad_accion`) y un
 // esquema por evento (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -113,7 +114,37 @@ export const deudaSchema = z.strictObject({
 });
 export type DeudaDto = z.infer<typeof deudaSchema>;
 
-export const deudaConAbonosSchema = z.strictObject({ ...deudaSchema.shape, abonos: z.array(movimientoSchema) });
+/**
+ * Un ajuste del total de una deuda (inmutable): monto con signo, quién, cuándo y por qué. `aFavorCentimos` es lo que el
+ * cliente pagó de más con el total nuevo: queda a su favor y no se devuelve (adaptación contable interna).
+ */
+export const ajusteDeDeudaSchema = z.strictObject({
+  id: z.string(),
+  deudaId: z.string(),
+  deudaCodigo: z.string(),
+  montoCentimos: z.number().int(),
+  totalAnteriorCentimos: z.number().int(),
+  totalNuevoCentimos: z.number().int(),
+  aFavorCentimos: z.number().int(),
+  motivoCodigo: z.enum(MOTIVOS_DE_CORRECCION),
+  motivoTexto: z.string().nullable(),
+  origenRef: z.string().nullable(),
+  creadoPor: z.string(),
+  creadoPorNombre: z.string().nullable(),
+  creadoEn: z.iso.datetime(),
+});
+export type AjusteDeDeudaDto = z.infer<typeof ajusteDeDeudaSchema>;
+
+export const deudaConAbonosSchema = z.strictObject({
+  ...deudaSchema.shape,
+  abonos: z.array(movimientoSchema),
+  /** Ajustes del total, del más reciente al más antiguo. */
+  ajustes: z.array(ajusteDeDeudaSchema),
+  /** Total con que nació la deuda: el total actual menos la suma de los ajustes. */
+  totalOriginalCentimos: z.number().int(),
+  /** Derivado del último ajuste: lo pagado de más que queda a favor del cliente (no se devuelve). */
+  aFavorCentimos: z.number().int(),
+});
 export type DeudaConAbonosDto = z.infer<typeof deudaConAbonosSchema>;
 
 export const crearCuentaSchema = z.strictObject({
@@ -212,6 +243,22 @@ export const listarDeudasSchema = z
 export const editarDeudaSchema = z
   .strictObject({ id: z.uuid(), concepto: texto(200).min(1, { error: 'Indica el concepto.' }).optional(), venceEn: dia.nullish(), notas: texto(2000).nullish() })
   .refine(algunCambio, SIN_CAMBIOS);
+/**
+ * Ajusta el total de una deuda viva sin anularla ni tocar lo abonado. `nuevoTotalCentimos` es el total que debe tener la
+ * venta (mayor que cero: para dejarla en cero se anula). Si es menor que lo ya abonado, la deuda queda en lo abonado
+ * (pagada) y la diferencia es el excedente a favor del cliente. `origenRef` (p. ej. `pedido:<id>:v2`) vuelve idempotente la llamada.
+ */
+export const ajustarDeudaSchema = z.strictObject({
+  id: z.uuid(),
+  nuevoTotalCentimos: positivo,
+  motivoCodigo: z.enum(MOTIVOS_DE_CORRECCION),
+  motivoTexto: texto(300).optional(),
+  origenRef: texto(150).min(1).optional(),
+  /** Nuevo vencimiento (o `null` para quitarlo); opcional. */
+  venceEn: dia.nullish(),
+  /** Nuevo cliente de la deuda; solo si no tiene abonos. */
+  contactoId: z.uuid().optional(),
+});
 export const abonarDeudaSchema = z.strictObject({
   id: z.uuid(),
   montoCentimos: positivo,
@@ -308,6 +355,8 @@ export const contratosDeRegistro = {
   deuda_ver: contrato(soloId, deudaConAbonosSchema),
   deudas_listar: contrato(listarDeudasSchema, listadoSchema(deudaSchema)),
   deuda_editar: contrato(editarDeudaSchema, deudaSchema),
+  deuda_ajustar: contrato(ajustarDeudaSchema, z.strictObject({ deuda: deudaSchema, ajuste: ajusteDeDeudaSchema.nullable(), aFavorCentimos: z.number().int(), yaAplicado: z.boolean() })),
+  deuda_ajustes_listar: contrato(z.strictObject({ origenRefs: z.array(texto(150).min(1)).min(1).max(100) }), z.strictObject({ items: z.array(ajusteDeDeudaSchema) })),
   deuda_abonar: contrato(abonarDeudaSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
   deuda_crear_con_adelanto: contrato(crearDeudaConAdelantoSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
   deuda_anular: contrato(z.strictObject({ id: z.uuid(), motivo }), deudaSchema),
@@ -323,4 +372,5 @@ export const eventosDeRegistro = {
   'deuda.abonada': z.strictObject({ id: z.string(), codigo: z.string(), movimientoId: z.string(), montoCentimos: z.number().int(), saldoCentimos: z.number().int() }),
   'deuda.pagada': z.strictObject({ id: z.string(), codigo: z.string(), tipo: z.enum(['por_cobrar', 'por_pagar']), contactoId: z.string(), totalCentimos: z.number().int() }),
   'deuda.anulada': z.strictObject({ id: z.string(), codigo: z.string() }),
+  'deuda.ajustada': z.strictObject({ id: z.string(), codigo: z.string(), montoCentimos: z.number().int(), totalAnteriorCentimos: z.number().int(), totalNuevoCentimos: z.number().int(), aFavorCentimos: z.number().int() }),
 } as const;

@@ -118,6 +118,34 @@ export const registroDeudas = registro.table(
   ],
 );
 
+/** Ajustes del total de una deuda: solo se agregan (inmutables). Total original + suma de ajustes = `deudas.total_centimos`. */
+export const registroDeudaAjustes = registro.table(
+  'deuda_ajustes',
+  {
+    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    tenantId: text('tenant_id').notNull(),
+    deudaId: uuid('deuda_id').notNull(),
+    montoCentimos: bigint('monto_centimos', { mode: 'number' }).notNull(),
+    totalAnteriorCentimos: bigint('total_anterior_centimos', { mode: 'number' }).notNull(),
+    totalNuevoCentimos: bigint('total_nuevo_centimos', { mode: 'number' }).notNull(),
+    aFavorCentimos: bigint('a_favor_centimos', { mode: 'number' }).notNull().default(0),
+    motivoCodigo: text('motivo_codigo').notNull(),
+    motivoTexto: text('motivo_texto'),
+    origenRef: text('origen_ref'),
+    creadoPor: text('creado_por').notNull(),
+    creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ name: 'deuda_ajustes_deuda_fk', columns: [t.tenantId, t.deudaId], foreignColumns: [registroDeudas.tenantId, registroDeudas.id] }),
+    check('ajuste_total_nuevo', sql`${t.totalNuevoCentimos} > 0`),
+    check('ajuste_monto', sql`${t.montoCentimos} = ${t.totalNuevoCentimos} - ${t.totalAnteriorCentimos}`),
+    check('ajuste_a_favor', sql`${t.aFavorCentimos} >= 0`),
+    check('ajuste_motivo', sql`${t.motivoCodigo} IN ('igv', 'precio_acordado', 'cantidad', 'lineas', 'error_digitacion', 'otro')`),
+    unique('uq_registro_deuda_ajustes_origen').on(t.tenantId, t.origenRef),
+    index('idx_registro_deuda_ajustes_deuda').on(t.tenantId, t.deudaId, t.creadoEn.desc()),
+  ],
+);
+
 /** Movimientos de dinero: inmutables salvo la anulación (permisos de columna, ADR-012). */
 export const registroMovimientos = registro.table(
   'movimientos',

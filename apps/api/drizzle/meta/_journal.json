@@ -246,6 +246,13 @@
       "when": 1795102286123,
       "tag": "0034_guias_de_remision",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1795105022888,
+      "tag": "0035_pedido_versiones_y_ajustes_de_deuda",
+      "breakpoints": true
     }
   ]
 }

@@ -3,6 +3,7 @@ import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { decodificarCursorPorInstante } from '../domain/cursor.js';
 import { listarDeudas, verDeuda } from '../repositories/deudas.repository.js';
+import { ajustesDeDeuda } from '../repositories/ajustes.repository.js';
 import { abonosDeDeuda } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe } from './comun.js';
 import { aDeudaDto, aMovimientoDto } from './mapeo.js';
@@ -29,7 +30,9 @@ export const deudaVer = definirHerramienta('deuda_ver', {
     const hoy = await hoyDeLaEmpresa(tx);
     // Los abonos son parte de la deuda: quien puede verla ve todos, también los que anotó otra persona.
     const abonos = await abonosDeDeuda(tx, ctx, f.id);
-    return exito({ ...aDeudaDto(f, hoy.dia), abonos: abonos.map(aMovimientoDto) });
+    const ajustes = await ajustesDeDeuda(tx, ctx, f.id);
+    const sumaDeAjustes = ajustes.reduce((t, a) => t + a.montoCentimos, 0);
+    return exito({ ...aDeudaDto(f, hoy.dia), abonos: abonos.map(aMovimientoDto), ajustes, totalOriginalCentimos: f.totalCentimos - sumaDeAjustes, aFavorCentimos: ajustes[0]?.aFavorCentimos ?? 0 });
   },
 });
 

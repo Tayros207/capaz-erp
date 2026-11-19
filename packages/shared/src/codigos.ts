@@ -27,6 +27,7 @@ export const CODIGOS = {
   // Generales
   no_encontrado: 404,
   conflicto: 409,
+  requiere_aprobacion: 409,
   error_interno: 500,
 } as const;
 

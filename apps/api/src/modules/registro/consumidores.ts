@@ -5,6 +5,7 @@ import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Consumidor } from '../../core/eventos/tipos.js';
 import { normalizarNombre } from './domain/catalogos.js';
 import { categoriaConNombre } from './repositories/categorias.repository.js';
+import { aFavorActual, ajustePorOrigen } from './repositories/ajustes.repository.js';
 import { deudaVivaPorOrigen } from './repositories/deudas.repository.js';
 
 // Consumidores de eventos de otros módulos (ficha §4.5). Regla R5: un consumidor NUNCA ejecuta herramientas ni
@@ -333,4 +334,40 @@ export const registroPedidoDatosEditados: Consumidor = {
   },
 };
 
-export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada, registroProduccionOrdenCorregida, registroPedidoDatosEditados];
+/**
+ * Respaldo de «Corregir venta»: un pedido corregido cuya deuda viva no cuadra con el total nuevo (porque quien corrigió no
+ * lleva Finanzas, o corrigió solo el pedido) propone `deuda_ajustar` como borrador (R5: no ajusta por su cuenta). Si la deuda ya
+ * cuadra, o ya hay un ajuste o un borrador con esa referencia (`pedido:<id>:v<n>`), no hace nada: dos entregas no duplican.
+ * «Cuadra»: la deuda vale el total nuevo, o lo abonado si el cliente ya pagó más, y el excedente a su favor registrado es el que corresponde.
+ */
+export const registroPedidoCorregido: Consumidor = {
+  nombre: 'registro_pedido_corregido',
+  modulo: 'registro',
+  evento: 'pedido.corregido',
+  async manejar(e, ctx, tx) {
+    const carga = EVENTOS['pedido.corregido'].parse(e.carga);
+    const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PEDIDO, carga.id);
+    if (!viva) return;
+    const origenRef = `pedido:${carga.id}:v${carga.versionNueva}`;
+    if (await ajustePorOrigen(tx, ctx, origenRef)) return;
+    const aFavorEsperado = Math.max(0, viva.abonadoCentimos - carga.totalNuevoCentimos);
+    if (viva.totalCentimos === Math.max(carga.totalNuevoCentimos, viva.abonadoCentimos) && (await aFavorActual(tx, ctx, viva.id)) === aFavorEsperado) return;
+    const [pendiente] = await tx
+      .select({ id: borradores.id })
+      .from(borradores)
+      .where(and(eq(borradores.tenantId, ctx.empresaId), eq(borradores.herramienta, 'deuda_ajustar'), eq(borradores.origenRef, origenRef), eq(borradores.estado, 'pendiente')))
+      .limit(1);
+    if (pendiente) return;
+    await proponerBorrador(tx, {
+      herramienta: 'deuda_ajustar',
+      args: { id: viva.id, nuevoTotalCentimos: carga.totalNuevoCentimos, motivoCodigo: 'otro', motivoTexto: `Corrección del pedido ${carga.codigo} (versión ${carga.versionAnterior} a ${carga.versionNueva})`, origenRef },
+      resumen: `Ajustar la deuda del pedido ${carga.codigo}: el total pasó de ${formatearSoles(carga.totalAnteriorCentimos)} a ${formatearSoles(carga.totalNuevoCentimos)} (la deuda sigue en ${formatearSoles(viva.totalCentimos)})`,
+      origen: 'modulo',
+      origenRef,
+      prioridad: 'alta',
+      propuestoPor: 'sistema',
+    });
+  },
+};
+
+export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoCorregido, registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada, registroProduccionOrdenCorregida, registroPedidoDatosEditados];

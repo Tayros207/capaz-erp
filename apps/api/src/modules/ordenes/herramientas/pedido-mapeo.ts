@@ -1,4 +1,4 @@
-import type { DetalleDeEventoDePedido, EstadoDePedido, EventoDePedidoDto, LineaDePedidoDto, PedidoCompletoDto, PedidoDto } from '@capaz/shared';
+import type { DetalleDeEventoDePedido, EstadoDePedido, EventoDePedidoDto, LineaDePedidoDto, PedidoCompletoDto, PedidoDto, VersionDePedidoDto } from '@capaz/shared';
 import { estaAtrasado } from '../domain/estados.js';
 import { codigoDeGuia } from '../domain/guia.js';
 import { codigoDePedido } from '../domain/pedido.js';
@@ -16,6 +16,7 @@ export const aPedidoDto = (f: Pedido, hoy: string): PedidoDto => ({
   clienteId: f.clienteId,
   clienteNombre: f.clienteNombre,
   estado: f.estado as EstadoDePedido,
+  version: f.version,
   fecha: f.fecha,
   entregaEl: f.entregaEl,
   atrasado: estaAtrasado(f.estado as EstadoDePedido, f.entregaEl, hoy),
@@ -63,8 +64,9 @@ export const aEventoDto = (e: EventoDePedido): EventoDePedidoDto => ({
   creadoEn: e.creadoEn.toISOString(),
 });
 
-export const aPedidoCompleto = (f: Pedido, lineas: readonly LineaDePedido[], historial: readonly EventoDePedido[], hoy: string): PedidoCompletoDto => ({
+export const aPedidoCompleto = (f: Pedido, lineas: readonly LineaDePedido[], historial: readonly EventoDePedido[], hoy: string, versiones: readonly VersionDePedidoDto[] = []): PedidoCompletoDto => ({
   ...aPedidoDto(f, hoy),
   detalle: lineas.map(aLineaDto),
   historial: historial.map(aEventoDto),
+  versiones: [...versiones],
 });

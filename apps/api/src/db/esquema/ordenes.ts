@@ -33,6 +33,8 @@ export const ordenesPedidos = ordenes.table(
     anio: integer('anio'),
     clienteId: uuid('cliente_id').notNull(),
     estado: text('estado').notNull().default('borrador'),
+    /** Versión del pedido: sube con cada corrección estando confirmado; las anteriores viven en `pedido_versiones`. */
+    version: integer('version').notNull().default(1),
     fecha: date('fecha', { mode: 'string' }).notNull(),
     entregaEl: date('entrega_el', { mode: 'string' }),
     responsableId: text('responsable_id'),
@@ -59,6 +61,7 @@ export const ordenesPedidos = ordenes.table(
     foreignKey({ name: 'pedidos_cliente_fk', columns: [t.tenantId, t.clienteId], foreignColumns: [clientes.tenantId, clientes.id] }),
     foreignKey({ name: 'pedidos_sucursal_fk', columns: [t.tenantId, t.sucursalId], foreignColumns: [sucursales.tenantId, sucursales.id] }),
     check('pedido_numeracion', sql`(${t.numero} is null) = (${t.serie} is null) and (${t.numero} is null) = (${t.anio} is null)`),
+    check('pedido_version', sql`${t.version} >= 1`),
     check('pedido_estado', sql`${t.estado} IN ('borrador', 'confirmado', 'en_proceso', 'listo', 'entregado', 'cancelado')`),
     check('pedido_estado_numero', sql`${t.estado} in ('borrador', 'cancelado') or ${t.numero} is not null`),
     check('pedido_igv_porcentaje', sql`${t.igvPorcentaje} between 0 and 100`),
@@ -209,8 +212,32 @@ export const ordenesPedidoEventos = ordenes.table(
   (t) => [
     foreignKey({ name: 'pedido_eventos_pedido_fk', columns: [t.tenantId, t.pedidoId], foreignColumns: [ordenesPedidos.tenantId, ordenesPedidos.id] }),
     foreignKey({ name: 'pedido_eventos_guia_fk', columns: [t.tenantId, t.guiaId], foreignColumns: [ordenesGuias.tenantId, ordenesGuias.id] }),
-    check('evento_tipo', sql`${t.tipo} IN ('creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados', 'guia_emitida', 'guia_anulada')`),
+    check('evento_tipo', sql`${t.tipo} IN ('creado', 'editado', 'confirmado', 'estado', 'cancelado', 'nota', 'datos_editados', 'corregido', 'guia_emitida', 'guia_anulada')`),
     check('evento_guia', sql`(${t.tipo} in ('guia_emitida', 'guia_anulada')) = (${t.guiaId} is not null)`),
     index('idx_ordenes_pedido_eventos_pedido').on(t.tenantId, t.pedidoId, t.creadoEn.desc()),
+    index('idx_ordenes_pedido_eventos_tipo').on(t.tenantId, t.tipo, t.creadoEn.desc()),
+  ],
+);
+
+/** La foto de cada versión anterior de un pedido corregido. Solo se agrega: inmutable (ADR-012). */
+export const ordenesPedidoVersiones = ordenes.table(
+  'pedido_versiones',
+  {
+    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    tenantId: text('tenant_id').notNull(),
+    pedidoId: uuid('pedido_id').notNull(),
+    /** La versión que se guarda (la que la corrección reemplaza). */
+    version: integer('version').notNull(),
+    foto: jsonb('foto').notNull(),
+    motivoCodigo: text('motivo_codigo').notNull(),
+    motivoTexto: text('motivo_texto'),
+    creadoPor: text('creado_por').notNull(),
+    creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ name: 'pedido_versiones_pedido_fk', columns: [t.tenantId, t.pedidoId], foreignColumns: [ordenesPedidos.tenantId, ordenesPedidos.id] }),
+    check('pedido_version_numero', sql`${t.version} >= 1`),
+    check('pedido_version_motivo', sql`${t.motivoCodigo} IN ('igv', 'precio_acordado', 'cantidad', 'lineas', 'error_digitacion', 'otro')`),
+    uniqueIndex('uq_ordenes_pedido_versiones').on(t.tenantId, t.pedidoId, t.version),
   ],
 );

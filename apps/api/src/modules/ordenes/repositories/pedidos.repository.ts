@@ -12,7 +12,7 @@ export type Alcance = 'todos' | 'propios';
 export type Pedido = typeof ordenesPedidos.$inferSelect & { clienteNombre: string; lineas: number };
 export type LineaDePedido = typeof ordenesPedidoLineas.$inferSelect;
 export type EventoDePedido = typeof ordenesPedidoEventos.$inferSelect & { usuarioNombre: string | null; guiaSerie: string | null; guiaNumero: number | null };
-export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota' | 'datos_editados' | 'guia_emitida' | 'guia_anulada';
+export type TipoDeEvento = 'creado' | 'editado' | 'confirmado' | 'estado' | 'cancelado' | 'nota' | 'datos_editados' | 'corregido' | 'guia_emitida' | 'guia_anulada';
 
 const deEmpresa = (ctx: ContextoDeEmpresa) => eq(ordenesPedidos.tenantId, ctx.empresaId);
 export const deAlcance = (ctx: ContextoDeEmpresa, alcance: Alcance): SQL | undefined =>
@@ -112,7 +112,7 @@ export type CambiosDePedido = Partial<
   Pick<
     typeof ordenesPedidos.$inferInsert,
     | 'clienteId' | 'entregaEl' | 'responsableId' | 'notas' | 'sucursalId' | 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos'
-    | 'estado' | 'numero' | 'serie' | 'anio' | 'canceladoPor' | 'motivoCancelacion'
+    | 'version' | 'estado' | 'numero' | 'serie' | 'anio' | 'canceladoPor' | 'motivoCancelacion'
   >
 > & { confirmadoAhora?: boolean; entregadoAhora?: boolean; canceladoAhora?: boolean };
 

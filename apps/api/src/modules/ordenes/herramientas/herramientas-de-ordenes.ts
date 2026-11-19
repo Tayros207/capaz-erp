@@ -6,6 +6,8 @@ import { CONSUMIDORES_DE_ORDENES } from '../consumidores.js';
 import { entregaVence } from '../fuentes.js';
 import { pedidoAnotar, pedidoCrear, pedidoEditar } from './pedidos-escritura.js';
 import { pedidoEditarDatos } from './pedidos-datos.js';
+import { pedidoCorregir } from './pedidos-correccion.js';
+import { pedidoCorreccionesListar } from './pedidos-correcciones-lectura.js';
 import { pedidoCambiarEstado, pedidoCancelar, pedidoConfirmar } from './pedidos-estado.js';
 import { pedidosPreciosAnteriores } from './pedidos-precios-anteriores.js';
 import { ordenesPendientes } from './pedidos-pendientes.js';
@@ -23,7 +25,7 @@ export class HerramientasDeOrdenes implements OnModuleInit {
   ) {}
 
   onModuleInit(): void {
-    this.registro.agregar([pedidoCrear, pedidoEditar, pedidoEditarDatos, pedidoVer, pedidosListar, pedidoAnotar, pedidoConfirmar, pedidoCambiarEstado, pedidoCancelar, ordenesResumen, pedidosPreciosAnteriores, ordenesPendientes, guiaPreparar, guiaEmitir, guiaVer, guiasListar, guiaAnular]);
+    this.registro.agregar([pedidoCrear, pedidoEditar, pedidoEditarDatos, pedidoCorregir, pedidoCorreccionesListar, pedidoVer, pedidosListar, pedidoAnotar, pedidoConfirmar, pedidoCambiarEstado, pedidoCancelar, ordenesResumen, pedidosPreciosAnteriores, ordenesPendientes, guiaPreparar, guiaEmitir, guiaVer, guiasListar, guiaAnular]);
     this.consumidores.agregar(CONSUMIDORES_DE_ORDENES);
     this.fuentes.agregar([entregaVence]);
   }
