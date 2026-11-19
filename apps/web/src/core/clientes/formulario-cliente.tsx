@@ -16,10 +16,12 @@ type Props = {
   valor: FormularioDeCliente;
   errores: ErroresDeCliente;
   alCambiar: (cambio: Partial<FormularioDeCliente>) => void;
+  /** Alta rápida desde otro formulario: sin correo ni notas. */
+  compacto?: boolean;
 };
 
 /** Campos de un cliente, en una columna en el móvil y en dos desde 640 px. Sirve para crear y para editar. */
-export function FormularioCliente({ valor, errores, alCambiar }: Props) {
+export function FormularioCliente({ valor, errores, alCambiar, compacto }: Props) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <div className="sm:col-span-2">
@@ -51,13 +53,15 @@ export function FormularioCliente({ valor, errores, alCambiar }: Props) {
       </CampoSelect>
       <Campo etiqueta="Número de documento" inputMode="numeric" autoComplete="off" value={valor.documentoNumero} error={errores.documentoNumero} onChange={(e) => alCambiar({ documentoNumero: e.target.value })} />
       <Campo etiqueta="Teléfono" type="tel" autoComplete="off" value={valor.telefono} onChange={(e) => alCambiar({ telefono: e.target.value })} />
-      <Campo etiqueta="Correo" type="email" autoComplete="off" value={valor.correo} error={errores.correo} onChange={(e) => alCambiar({ correo: e.target.value })} />
-      <div className="sm:col-span-2">
+      {compacto ? null : <Campo etiqueta="Correo" type="email" autoComplete="off" value={valor.correo} error={errores.correo} onChange={(e) => alCambiar({ correo: e.target.value })} />}
+      <div className={compacto ? '' : 'sm:col-span-2'}>
         <Campo etiqueta="Dirección" autoComplete="off" value={valor.direccion} onChange={(e) => alCambiar({ direccion: e.target.value })} />
       </div>
-      <div className="sm:col-span-2">
-        <Campo etiqueta="Notas" value={valor.notas} onChange={(e) => alCambiar({ notas: e.target.value })} />
-      </div>
+      {compacto ? null : (
+        <div className="sm:col-span-2">
+          <Campo etiqueta="Notas" value={valor.notas} onChange={(e) => alCambiar({ notas: e.target.value })} />
+        </div>
+      )}
     </div>
   );
 }

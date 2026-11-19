@@ -8,19 +8,25 @@ export function ContenedorDeCampo({
   etiqueta,
   error,
   ayuda,
+  accion,
   children,
 }: {
   id: string;
   etiqueta: string;
   error?: string;
   ayuda?: string;
+  /** Acción pequeña a la derecha de la etiqueta. */
+  accion?: ReactNode;
   children: ReactNode;
 }) {
+  const rotulo = (
+    <label htmlFor={id} className="text-sm font-medium text-texto">
+      {etiqueta}
+    </label>
+  );
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-texto">
-        {etiqueta}
-      </label>
+      {accion ? <div className="flex flex-wrap items-center justify-between gap-x-2">{rotulo}{accion}</div> : rotulo}
       {children}
       {ayuda && !error ? (
         <p id={`${id}-ayuda`} className="text-sm text-texto-suave">

@@ -28,6 +28,8 @@ export function listarClientes(estado: EstadoDeListado, cursor?: string) {
 }
 
 export const verCliente = (id: string) => llamar('clientes_ver', { id });
+/** Lo que muestran los selectores al abrirse sin haber escrito nada: los primeros por orden alfabético. */
+export const primerosClientes = () => llamar('clientes_listar', { estado: 'activos', limite: 8 });
 export const buscarClientes = (texto: string, limite = 20) => llamar('clientes_buscar', { texto, limite });
 export const crearCliente = (args: EntradaDe<'clientes_crear'>) => llamar('clientes_crear', args);
 export const editarCliente = (args: EntradaDe<'clientes_editar'>) => llamar('clientes_editar', args);

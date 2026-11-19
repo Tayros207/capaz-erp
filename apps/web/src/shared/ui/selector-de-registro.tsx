@@ -2,11 +2,22 @@ import { useId, useState } from 'react';
 import { Boton } from './boton.tsx';
 import { ContenedorDeCampo } from './campo.tsx';
 import { CLASES_DE_CONTROL, descritoPor } from './campo-comun.ts';
-import { teclaDelSelector } from './logica-selector.ts';
+import { Icono } from './icono.tsx';
+import { ListaDelSelector } from './lista-del-selector.tsx';
+import { teclaDelSelector, textoDeCrear, type Opcion } from './logica-selector.ts';
 import { unir } from './unir.ts';
 import { useBusqueda } from './use-busqueda.ts';
 
-export type Opcion = { id: string; nombre: string; detalle?: string };
+export type { Opcion } from './logica-selector.ts';
+
+/** Botón fijo junto a la etiqueta; el margen negativo mantiene la fila de la etiqueta baja. */
+function BotonCrear({ texto, alPulsar }: { texto: string; alPulsar: () => void }) {
+  return (
+    <button type="button" onClick={alPulsar} className="-my-1.5 inline-flex min-h-8 items-center gap-1 rounded-control px-2 text-sm font-medium text-accion hover:bg-superficie-alta">
+      <Icono nombre="mas" />{texto}
+    </button>
+  );
+}
 
 type Props = {
   etiqueta: string;
@@ -20,17 +31,19 @@ type Props = {
   textoSinResultados?: string;
   alCrear?: (texto: string) => void;
   textoCrear?: string;
+  /** Botón siempre visible junto a la etiqueta (p. ej. «Nuevo cliente»): llama a `alCrear` con lo escrito, aunque esté vacío. Solo con `alCrear`. */
+  botonCrear?: string;
 };
 
 /** Elige un registro buscándolo por texto. Quien lo usa aporta `buscar`; no conoce ninguna API. */
-export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarSinTexto, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear' }: Props) {
+export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarSinTexto, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear', botonCrear }: Props) {
   const id = useId();
   const [texto, setTexto] = useState('');
   const [abierto, setAbierto] = useState(false);
   const [activo, setActivo] = useState(-1);
   const { cargando, falla, opciones } = useBusqueda(texto, abierto && valor === null, buscar, 300, buscarSinTexto);
-  const puedeCrear = alCrear !== undefined && texto.trim() !== '';
-  const total = opciones.length + (puedeCrear ? 1 : 0);
+  const crear = textoDeCrear(alCrear !== undefined, textoCrear, texto);
+  const total = opciones.length + (crear !== null ? 1 : 0);
 
   if (valor) {
     return (
@@ -45,7 +58,7 @@ export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarS
 
   const elegir = (i: number) => {
     const o = opciones[i];
-    if (o) { alCambiar(o); setTexto(''); } else if (puedeCrear) alCrear(texto.trim());
+    if (o) { alCambiar(o); setTexto(''); } else if (crear !== null) alCrear?.(texto.trim());
     setAbierto(false); setActivo(-1);
   };
   const alTeclear = (e: React.KeyboardEvent) => {
@@ -55,8 +68,9 @@ export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarS
     if (r.accion === 'elegir') elegir(activo);
   };
 
+  const accion = alCrear && botonCrear ? <BotonCrear texto={botonCrear} alPulsar={() => alCrear(texto.trim())} /> : undefined;
   return (
-    <ContenedorDeCampo id={`${id}-entrada`} etiqueta={etiqueta} error={error} ayuda={ayuda}>
+    <ContenedorDeCampo id={`${id}-entrada`} etiqueta={etiqueta} error={error} ayuda={ayuda} accion={accion}>
       <div className="relative">
         <input
           id={`${id}-entrada`} type="text" role="combobox" autoComplete="off" aria-expanded={abierto} aria-controls={`${id}-lista`} aria-autocomplete="list"
@@ -67,17 +81,8 @@ export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarS
           onChange={(e) => { setTexto(e.target.value); setAbierto(true); setActivo(-1); }}
           onFocus={() => setAbierto(true)} onBlur={() => setAbierto(false)} onKeyDown={alTeclear}
         />
-        <div id={`${id}-lista`} role="listbox" aria-label={`Resultados de ${etiqueta}`} hidden={!abierto}
-          className="absolute inset-x-0 top-full z-10 mt-1 max-h-64 overflow-y-auto rounded-control border border-borde-fuerte bg-superficie shadow-lg">
-          {[...opciones.map((o) => o.nombre + (o.detalle ? ` · ${o.detalle}` : '')), ...(puedeCrear ? [`${textoCrear} «${texto.trim()}»`] : [])].map((t, i) => (
-            <button key={i < opciones.length ? opciones[i]!.id : 'crear'} id={`${id}-op-${i}`} type="button" role="option" aria-selected={i === activo} tabIndex={-1}
-              className={unir('flex min-h-(--alto-control) w-full cursor-pointer items-center px-3 text-left text-texto', i === activo ? 'bg-superficie-alta' : 'hover:bg-superficie-alta')}
-              onMouseDown={(e) => e.preventDefault()} onClick={() => elegir(i)}>{t}</button>
-          ))}
-          {cargando ? <p role="status" className="px-3 py-3 text-texto-suave">Buscando…</p> : null}
-          {falla ? <p role="alert" className="px-3 py-3 font-medium text-peligro">No se pudo buscar. Intenta de nuevo.</p> : null}
-          {!cargando && !falla && opciones.length === 0 ? <p role="status" className="px-3 py-3 text-texto-suave">{texto.trim() === '' && !buscarSinTexto ? 'Escribe para buscar.' : textoSinResultados}</p> : null}
-        </div>
+        <ListaDelSelector id={id} etiqueta={etiqueta} abierto={abierto} activo={activo} opciones={opciones} cargando={cargando} falla={falla} crear={crear} alElegir={elegir}
+          textoVacio={texto.trim() === '' && !buscarSinTexto ? 'Escribe para buscar.' : textoSinResultados} />
       </div>
     </ContenedorDeCampo>
   );

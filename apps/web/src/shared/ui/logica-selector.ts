@@ -1,3 +1,11 @@
+export type Opcion = { id: string; nombre: string; detalle?: string };
+
+/** Texto de la opción «crear» con lo escrito («Crear cliente «Ana»»), o null si no se ofrece: sin `alCrear` o sin texto. */
+export function textoDeCrear(hayAlCrear: boolean, textoCrear: string, texto: string): string | null {
+  const t = texto.trim();
+  return hayAlCrear && t !== '' ? `${textoCrear} «${t}»` : null;
+}
+
 export type EstadoDeTeclado = { abierto: boolean; activo: number; total: number };
 export type ResultadoDeTeclado = { abierto: boolean; activo: number; accion: 'ninguna' | 'elegir' | 'cerrar' };
 

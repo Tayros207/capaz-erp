@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { teclaDelSelector } from './logica-selector.ts';
+import { teclaDelSelector, textoDeCrear } from './logica-selector.ts';
 
 const cerrado = { abierto: false, activo: -1, total: 3 };
 const abierto = (activo: number, total = 3) => ({ abierto: true, activo, total });
@@ -33,5 +33,16 @@ describe('teclaDelSelector', () => {
   });
   it('otras teclas no cambian nada', () => {
     expect(teclaDelSelector(abierto(1), 'a')).toEqual({ abierto: true, activo: 1, accion: 'ninguna' });
+  });
+});
+
+describe('textoDeCrear', () => {
+  it('no ofrece crear sin alCrear o sin texto', () => {
+    expect(textoDeCrear(false, 'Crear cliente', 'Ana')).toBeNull();
+    expect(textoDeCrear(true, 'Crear cliente', '')).toBeNull();
+    expect(textoDeCrear(true, 'Crear cliente', '   ')).toBeNull();
+  });
+  it('arma el texto con lo escrito', () => {
+    expect(textoDeCrear(true, 'Crear cliente', '  Ana ')).toBe('Crear cliente «Ana»');
   });
 });
