@@ -42,8 +42,29 @@ describe('componerMiDia', () => {
       fuentes: [fuente('ordenes', [tarjeta({ clave: 'a' })]), fuente('registro', [], [{ entidad: { tipo: 'pedido', id: 'p1' }, texto: 'Pagado', tono: 'exito', pagado: true, conAdelanto: true }, { entidad: { tipo: 'pedido', id: 'otro' }, texto: 'Debe S/ 1.00', tono: 'aviso' }])],
     });
     const t = r.grupos[0]!.tarjetas[0]!;
-    expect(t.detalle).toContain('Pagado: ¿ya se entregó?');
+    expect(t.detalle).toBe('Entrega hoy · Pagado: ¿ya se entregó?');
     expect(t.notas).toEqual([{ texto: 'Pagado', tono: 'exito' }]);
+  });
+
+  it('el pago que anota Finanzas manda sobre el que anotó el propio módulo: nunca «Pagado» y «Debe» juntos', () => {
+    const ot = tarjeta({ clave: 'o', detalle: 'Vence hoy · Listo: ¿ya se entregó?', entidad: { tipo: 'orden_trabajo', id: 'o1', codigo: 'OT-1' }, acciones: [{ etiqueta: 'Ya se entregó', herramienta: 'produccion_orden_estado', args: { id: 'o1', estado: 'entregado' } }] });
+    const propia: Anotacion = { entidad: { tipo: 'orden_trabajo', id: 'o1' }, texto: 'Debe S/ 200.00', tono: 'aviso', pagado: false, conAdelanto: true };
+    const deFinanzas: Anotacion = { entidad: { tipo: 'orden_trabajo', id: 'o1' }, texto: 'Pagado', tono: 'exito', pagado: true, conAdelanto: true };
+    const conAmbas = componerMiDia({ fecha: 'x', borradores: [], puedeEjecutar: todo, fuentes: [fuente('produccion', [ot], [propia]), fuente('registro', [], [deFinanzas])] });
+    const t = conAmbas.grupos[0]!.tarjetas[0]!;
+    expect(t.notas).toEqual([{ texto: 'Pagado', tono: 'exito' }]);
+    expect(t.detalle).toBe('Vence hoy · Pagado: ¿ya se entregó?');
+    // Sin dato de Finanzas vale lo que anotó la orden.
+    const sola = componerMiDia({ fecha: 'x', borradores: [], puedeEjecutar: todo, fuentes: [fuente('produccion', [ot], [propia])] });
+    expect(sola.grupos[0]!.tarjetas[0]!.notas).toEqual([{ texto: 'Debe S/ 200.00', tono: 'aviso' }]);
+  });
+
+  it('«sin adelanto» solo si Finanzas confirma una deuda sin ningún pago; sin ese dato no se afirma', () => {
+    const adelanto = tarjeta({ clave: 'ad', grupo: 'adelanto', urgencia: 'pronto', acciones: [], entidad: { tipo: 'pedido', id: 'p5', codigo: 'p5' } });
+    const sinDatos = componerMiDia({ fecha: 'x', borradores: [], puedeEjecutar: todo, fuentes: [fuente('ordenes', [adelanto])] });
+    expect(sinDatos.total).toBe(0);
+    const pagado = componerMiDia({ fecha: 'x', borradores: [], puedeEjecutar: todo, fuentes: [fuente('ordenes', [adelanto]), fuente('registro', [], [{ entidad: { tipo: 'pedido', id: 'p5' }, texto: 'Pagado', tono: 'exito', pagado: true, conAdelanto: true }])] });
+    expect(pagado.total).toBe(0);
   });
 
   it('con saldo, la anotación «Debe S/ X» queda como nota; y la alerta de «sin adelanto» desaparece si ya hay un pago', () => {
@@ -67,15 +88,18 @@ describe('componerMiDia', () => {
     expect(r.grupos[0]!.tarjetas[0]!.notas).toEqual([{ texto: 'Debe S/ 60.00', tono: 'aviso' }]);
   });
 
-  it('los borradores por aprobar van a «por aprobar» como «S/ X por aprobar», los de deuda primero', () => {
+  it('los borradores por aprobar van a «por aprobar» como «S/ X por aprobar», los de deuda primero, y llevan a la bandeja', () => {
     const r = componerMiDia({
       fecha: 'x', puedeEjecutar: todo, fuentes: [],
-      borradores: [borrador({ id: 'm', herramienta: 'movimiento_registrar', origenRef: null, resumen: 'Registrar egreso', args: {} }), borrador({ id: 'd' })],
+      borradores: [borrador({ id: 'm', herramienta: 'movimiento_registrar', origenRef: null, resumen: 'Registrar egreso', args: {} }), borrador({ id: 'd', propuestoEn: '2026-11-18T02:30:00.000Z' })],
+      diaDe: () => '2026-11-17',
     });
     const g = r.grupos.find((x) => x.clave === 'por_aprobar')!;
     expect(g.tarjetas.map((t) => t.clave)).toEqual(['borrador:d', 'borrador:m']);
     expect(g.tarjetas[0]!.titulo).toBe('S/ 300.00 por aprobar');
-    expect(g.tarjetas[0]!.entidad).toMatchObject({ tipo: 'pedido', id: 'p9' });
+    expect(g.tarjetas[0]!.entidad).toMatchObject({ tipo: 'borrador', id: 'd' });
+    // Propuesto a las 21:30 de Lima: su día es el local, no el de UTC.
+    expect(g.tarjetas[0]!.fecha).toBe('2026-11-17');
     expect(g.tarjetas[1]!.entidad.tipo).toBe('borrador');
     expect(r.resumen.porAprobar).toBe(2);
   });
@@ -83,11 +107,23 @@ describe('componerMiDia', () => {
   it('un borrador de la misma entidad que una tarjeta no duplica: se vuelve nota de la tarjeta (salvo prioridad alta)', () => {
     const r = componerMiDia({
       fecha: 'x', puedeEjecutar: todo, fuentes: [fuente('ordenes', [tarjeta({ clave: 'a' })])],
-      borradores: [borrador({ id: 'd', origenRef: 'pedido:p1' }), borrador({ id: 'alta', origenRef: 'pedido:p1', herramienta: 'deuda_anular', args: {}, resumen: 'Anular la deuda', prioridad: 'alta' })],
+      borradores: [borrador({ id: 'd', origenRef: 'pedido:p1' }), borrador({ id: 'd2', origenRef: 'pedido:p1' }), borrador({ id: 'alta', origenRef: 'pedido:p1', herramienta: 'deuda_anular', args: {}, resumen: 'Anular la deuda', prioridad: 'alta' })],
     });
     expect(r.grupos.find((g) => g.clave === 'por_aprobar')!.tarjetas.map((t) => t.clave)).toEqual(['borrador:alta']);
+    // Dos borradores iguales no repiten la nota.
     expect(r.grupos.find((g) => g.clave === 'hoy')!.tarjetas[0]!.notas).toEqual([{ texto: 'S/ 300.00 por aprobar', tono: 'aviso' }]);
-    expect(r.resumen.porAprobar).toBe(2);
+    expect(r.resumen.porAprobar).toBe(3);
+  });
+
+  it('la nota de un borrador siempre es corta: el monto si mueve dinero, si no «Por aprobar en la Bandeja»', () => {
+    const r = componerMiDia({
+      fecha: 'x', puedeEjecutar: todo, fuentes: [fuente('ordenes', [tarjeta({ clave: 'a' })])],
+      borradores: [
+        borrador({ id: 'mov', origenRef: 'pedido:p1', herramienta: 'movimiento_registrar', args: { tipo: 'ingreso', montoCentimos: 36_000 }, resumen: 'Registrar el cobro de S/ 360.00 de la orden OT-2026-0002' }),
+        borrador({ id: 'otro', origenRef: 'pedido:p1', herramienta: 'pedido_editar', args: {}, resumen: 'Cambiar la fecha de entrega del pedido PED-PRI-2026-0001 al viernes' }),
+      ],
+    });
+    expect(r.grupos[0]!.tarjetas[0]!.notas.map((n) => n.texto)).toEqual(['S/ 360.00 por aprobar', 'Por aprobar en la Bandeja']);
   });
 
   it('sin nada devuelve el panel vacío', () => {

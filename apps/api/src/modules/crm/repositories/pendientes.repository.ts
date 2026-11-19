@@ -2,8 +2,9 @@ import { sql } from 'drizzle-orm';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import type { ActividadPendiente } from '../domain/pendientes.js';
 
-// Lectura de «Mi día»: actividades sin hacer que vencen a más tardar en `hasta`. Con alcance «propios» salen las que la
-// persona creó o tiene a cargo, y las de oportunidades suyas (igual que el resto del módulo). Solo lee.
+// Lectura de «Mi día»: actividades sin hacer que vencen a más tardar mañana. Con alcance «propios» salen las que la persona
+// creó o tiene a cargo, y las de oportunidades suyas (igual que el resto del módulo). Solo lee. Con más que el tope, primero
+// entran las de hoy y mañana y luego las vencidas (la más antigua primero).
 
 type Fila = {
   id: string; tipo: string; asunto: string; vence_el: string; oportunidad_id: string; numero: number; anio: number; titulo: string;
@@ -12,7 +13,7 @@ type Fila = {
 
 const TOPE = 500;
 
-export async function actividadesPorHacer(tx: Transaccion, ctx: ContextoDeEmpresa, hasta: string, propios: boolean): Promise<ActividadPendiente[]> {
+export async function actividadesPorHacer(tx: Transaccion, ctx: ContextoDeEmpresa, hoy: string, propios: boolean): Promise<ActividadPendiente[]> {
   const u = ctx.usuarioId;
   const alcance = propios ? sql`and (a.creado_por = ${u} or a.responsable_id = ${u} or o.creado_por = ${u} or o.responsable_id = ${u})` : sql``;
   const r = await tx.execute<Fila>(sql`
@@ -22,8 +23,8 @@ export async function actividadesPorHacer(tx: Transaccion, ctx: ContextoDeEmpres
     join crm.oportunidades o on o.tenant_id = a.tenant_id and o.id = a.oportunidad_id
     join core.clientes c on c.tenant_id = o.tenant_id and c.id = o.cliente_id
     where a.tenant_id = current_setting('app.tenant_id', true) and a.hecha_en is null and a.vence_el is not null
-      and a.vence_el <= ${hasta}::date and o.estado = 'abierta' ${alcance}
-    order by a.vence_el, a.creado_en
+      and a.vence_el <= ${hoy}::date + 1 and o.estado = 'abierta' ${alcance}
+    order by (a.vence_el >= ${hoy}::date) desc, a.vence_el, a.creado_en
     limit ${TOPE}`);
   return r.rows.map((f) => ({
     id: f.id, tipo: f.tipo, asunto: f.asunto, venceEl: f.vence_el, oportunidadId: f.oportunidad_id, oportunidadNumero: f.numero, oportunidadAnio: f.anio,

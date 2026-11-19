@@ -36,7 +36,8 @@ export async function deudasPorCobrarAbiertas(tx: Transaccion, ctx: ContextoDeEm
 
 /**
  * Las deudas por cobrar que nacieron de un pedido o una orden de trabajo: las abiertas y las saldadas en los últimos
- * `diasPagadas` días (lo más reciente primero). Alimentan las anotaciones «Pagado» y «Debe S/ X».
+ * `diasPagadas` días. Alimentan las anotaciones «Pagado» y «Debe S/ X». Van primero las abiertas (de ellas depende «sin
+ * adelanto» y el saldo) y luego lo más reciente, para que el tope no deje fuera una abierta por una ya pagada.
  */
 export async function deudasConOrigen(tx: Transaccion, ctx: ContextoDeEmpresa, propietario: string | null, diasPagadas = 120): Promise<DeudaConOrigen[]> {
   const filas = await tx
@@ -53,7 +54,7 @@ export async function deudasConOrigen(tx: Transaccion, ctx: ContextoDeEmpresa, p
         delPropietario(propietario),
       ),
     )
-    .orderBy(desc(d.actualizadoEn), desc(d.id))
+    .orderBy(sql`(${d.estado} in ('pendiente', 'parcial')) desc`, desc(d.actualizadoEn), desc(d.id))
     .limit(MAXIMO_DE_ANOTACIONES);
   return filas.flatMap((f) => (f.origenTipo && f.origenId ? [{ origenTipo: f.origenTipo, origenId: f.origenId, estado: f.estado, totalCentimos: f.total, abonadoCentimos: f.abonado }] : []));
 }

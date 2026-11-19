@@ -23,7 +23,7 @@ export const ordenesPendientes = definirHerramienta('ordenes_pendientes', {
   async ejecutar(args, ctx, tx) {
     const hoy = await hoyDeLaEmpresa(tx);
     const dia = args.fecha ?? hoy.dia;
-    const pedidos = await pedidosEnCurso(tx, ctx, alcanceDePedidos(ctx), hoy.zona);
+    const pedidos = await pedidosEnCurso(tx, ctx, alcanceDePedidos(ctx), hoy.zona, dia);
     return exito({ fecha: dia, ...limitarTarjetas(tarjetasDePedidos(pedidos, dia)), anotaciones: [] });
   },
 });

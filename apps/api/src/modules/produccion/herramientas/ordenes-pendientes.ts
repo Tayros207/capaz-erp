@@ -1,7 +1,7 @@
-import { exito, limitarTarjetas, sumarDias } from '@capaz/shared';
+import { exito, limitarTarjetas } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
-import { tarjetasDeOrdenes } from '../domain/pendientes.js';
+import { anotacionesDeOrdenes, tarjetasDeOrdenes } from '../domain/pendientes.js';
 import { ordenesPorEntregar } from '../repositories/pendientes.repository.js';
 import { MODULO } from './comunes.js';
 
@@ -22,7 +22,10 @@ export const produccionPendientes = definirHerramienta('produccion_pendientes', 
   auditar: (_a, d) => ({ ...(d && { resumen: { tarjetas: d.tarjetas.length, total: d.total } }) }),
   async ejecutar(args, ctx, tx) {
     const dia = args.fecha ?? (await hoyDeLaEmpresa(tx)).dia;
-    const ordenes = await ordenesPorEntregar(tx, ctx, sumarDias(dia, 1));
-    return exito({ fecha: dia, ...limitarTarjetas(tarjetasDeOrdenes(ordenes, dia)), anotaciones: [] });
+    const ordenes = await ordenesPorEntregar(tx, ctx, dia);
+    const { tarjetas, total } = limitarTarjetas(tarjetasDeOrdenes(ordenes, dia));
+    // Pagado o saldo solo de las órdenes que salen en el panel.
+    const visibles = new Set(tarjetas.map((t) => t.entidad.id));
+    return exito({ fecha: dia, tarjetas, total, anotaciones: anotacionesDeOrdenes(ordenes, dia).filter((a) => visibles.has(a.entidad.id)) });
   },
 });

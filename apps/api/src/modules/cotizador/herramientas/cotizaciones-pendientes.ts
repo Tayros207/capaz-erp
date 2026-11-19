@@ -3,6 +3,7 @@ import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { tarjetasDeCotizaciones } from '../domain/pendientes.js';
 import { cotizacionesSinRespuesta } from '../repositories/pendientes.repository.js';
+import { alcanceDeCotizaciones } from './cotizacion-comun.js';
 import { MODULO } from './comun.js';
 
 export const cotizadorPendientes = definirHerramienta('cotizador_pendientes', {
@@ -16,13 +17,14 @@ export const cotizadorPendientes = definirHerramienta('cotizador_pendientes', {
     campos: [{ nombre: 'fecha', queSeAnota: 'El día que se toma como hoy (AAAA-MM-DD); por defecto, hoy.', ejemplo: '2026-11-18' }],
     ejemploTecleado: 'qué cotizaciones están sin respuesta',
     ejemploHablado: 'a quién tengo que llamar por una cotización',
-    erroresComunes: ['Una cotización enviada cuenta los días desde la última vez que cambió.'],
+    erroresComunes: ['Una cotización enviada cuenta los días desde que se marcó enviada.', 'Con alcance «propios» solo salen las cotizaciones que tú creaste.'],
     relacionadas: ['cotizaciones_listar', 'cotizacion_marcar_enviada'],
   },
   auditar: (_a, d) => ({ ...(d && { resumen: { tarjetas: d.tarjetas.length, total: d.total } }) }),
-  async ejecutar(args, _ctx, tx) {
+  async ejecutar(args, ctx, tx) {
     const hoy = await hoyDeLaEmpresa(tx);
     const dia = args.fecha ?? hoy.dia;
-    return exito({ fecha: dia, ...limitarTarjetas(tarjetasDeCotizaciones(await cotizacionesSinRespuesta(tx, _ctx, hoy.zona), dia)), anotaciones: [] });
+    const cotizaciones = await cotizacionesSinRespuesta(tx, ctx, alcanceDeCotizaciones(ctx), hoy.zona);
+    return exito({ fecha: dia, ...limitarTarjetas(tarjetasDeCotizaciones(cotizaciones, dia)), anotaciones: [] });
   },
 });

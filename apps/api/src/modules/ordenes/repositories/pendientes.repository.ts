@@ -13,7 +13,11 @@ type Fila = {
 
 const TOPE = 500;
 
-export async function pedidosEnCurso(tx: Transaccion, ctx: ContextoDeEmpresa, alcance: Alcance, zona: string): Promise<PedidoEnCurso[]> {
+/**
+ * `hoy` ordena la lectura: con más pedidos en curso que el tope, primero entran los que se entregan hoy o mañana, luego los
+ * atrasados (el más antiguo primero) y al final los demás. Así lo de hoy nunca queda fuera por tener muchos atrasados.
+ */
+export async function pedidosEnCurso(tx: Transaccion, ctx: ContextoDeEmpresa, alcance: Alcance, zona: string, hoy: string): Promise<PedidoEnCurso[]> {
   const propios = alcance === 'propios' ? sql`and (p.creado_por = ${ctx.usuarioId} or p.responsable_id = ${ctx.usuarioId})` : sql``;
   const r = await tx.execute<Fila>(sql`
     select p.id, p.serie, p.anio, p.numero, p.estado, p.entrega_el::text as entrega_el, p.total_centimos::text as total,
@@ -22,7 +26,8 @@ export async function pedidosEnCurso(tx: Transaccion, ctx: ContextoDeEmpresa, al
     from ordenes.pedidos p
     join core.clientes c on c.tenant_id = p.tenant_id and c.id = p.cliente_id
     where p.tenant_id = current_setting('app.tenant_id', true) and p.estado in ('confirmado', 'en_proceso', 'listo') ${propios}
-    order by p.entrega_el nulls last, p.confirmado_en
+    order by case when p.entrega_el between ${hoy}::date and ${hoy}::date + 1 then 0 when p.entrega_el < ${hoy}::date then 1 else 2 end,
+             p.entrega_el nulls last, p.confirmado_en
     limit ${TOPE}`);
   return r.rows.map((f) => ({
     id: f.id, serie: f.serie, anio: f.anio, numero: f.numero, estado: f.estado, entregaEl: f.entrega_el, totalCentimos: Number(f.total),

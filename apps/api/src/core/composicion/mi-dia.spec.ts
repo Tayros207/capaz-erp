@@ -102,9 +102,23 @@ describe('consultarMiDia (herramientas falsas)', () => {
     expect(d.grupos[0]!.tarjetas[0]!.notas).toEqual([{ texto: 'S/ 50.00 por aprobar', tono: 'aviso' }]);
   });
 
+  it('si un módulo tenía más tarjetas que el tope, su fuente lo dice (el resumen solo cuenta lo que se ve)', async () => {
+    const { ejecutor } = ejecutorCon({ ordenes_pendientes: { ...salida([tarjeta]), total: 1_234 }, registro_pendientes: salida([]), insumos_pendientes: salida([]), borradores_listar: { items: [], siguiente: null } });
+    const d = await ver(ejecutor, TODOS);
+    expect(d.fuentesConsultadas).toContainEqual({ modulo: 'ordenes', incluida: true, aviso: 'se muestran 1 de 1,234' });
+    expect(d.fuentesConsultadas).toContainEqual({ modulo: 'registro', incluida: true, aviso: null });
+  });
+
   it('un borrador cuya herramienta la persona no puede usar no se muestra', async () => {
     const ctx = ctxDe([acceso('registro')], ['registro:ver', 'borradores:ver']);
     const { ejecutor } = ejecutorCon({ registro_pendientes: salida([]), borradores_listar: { items: [borradorDe], siguiente: null } });
     expect((await ver(ejecutor, ctx)).total).toBe(0);
+  });
+
+  it('de noche no se desfasa: un borrador propuesto a las 21:30 de Lima (02:30 UTC del día siguiente) es de ese día', async () => {
+    const deNoche = { ...borradorDe, origenRef: null, propuestoEn: '2026-11-18T02:30:00.000Z' };
+    const { ejecutor } = ejecutorCon({ ordenes_pendientes: salida([]), registro_pendientes: salida([]), insumos_pendientes: salida([]), borradores_listar: { items: [deNoche], siguiente: null } });
+    const d = await ver(ejecutor, TODOS);
+    expect(d.grupos.find((g) => g.clave === 'por_aprobar')!.tarjetas[0]!.fecha).toBe('2026-11-17');
   });
 });

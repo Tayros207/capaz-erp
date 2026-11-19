@@ -1,4 +1,4 @@
-import { exito, limitarTarjetas, type TarjetaDePendiente } from '@capaz/shared';
+import { exito, limitarTarjetas, sumarDias, type TarjetaDePendiente } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { agruparCobros, anotacionesDeDeudas, type CobroDeCliente } from '../domain/cobros-pendientes.js';
@@ -19,7 +19,8 @@ export function tarjetaDeCobro(c: CobroDeCliente, empresa: string | null, hoy: s
     urgencia: 'atrasado',
     titulo: `Cobrar a ${c.contactoNombre}`,
     detalle: `${c.deudas} ${c.deudas === 1 ? 'deuda vencida' : 'deudas vencidas'}, la más antigua hace ${enDias(c.diasMasAntiguo)}`,
-    fecha: hoy,
+    // El día desde el que corre la más antigua: el panel ordena por fecha, así la deuda más vieja va primero.
+    fecha: sumarDias(hoy, -c.diasMasAntiguo),
     montoCentimos: c.totalCentimos,
     cliente: { id: c.contactoId, nombre: c.contactoNombre, telefono: c.contactoTelefono },
     entidad: { tipo: 'cliente', id: c.contactoId, codigo: c.contactoNombre },

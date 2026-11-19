@@ -6,6 +6,7 @@ import {
   type MiDiaDto,
   type Respuesta,
 } from '@capaz/shared';
+import { diaLocal } from '../automatizaciones/condiciones.js';
 import { hoyDeLaEmpresa } from '../empresas/hoy.js';
 import type { EjecutorDeHerramientas } from '../herramientas/ejecutor.js';
 import type { RegistroDeHerramientas } from '../herramientas/registro.js';
@@ -70,7 +71,8 @@ export async function consultarMiDia(
   ctx: ContextoDeHerramienta,
   args: EntradaDe<'mi_dia_ver'>,
 ): Promise<Respuesta<MiDiaDto>> {
-  const fecha = args.fecha ?? (await hoyDeLaEmpresa(tx)).dia;
+  const hoy = await hoyDeLaEmpresa(tx);
+  const fecha = args.fecha ?? hoy.dia;
   const fuentes: Fuentes = [];
   const leidas: FuenteLeida[] = [];
   for (const d of pendientesRegistradas(registro)) {
@@ -87,9 +89,13 @@ export async function consultarMiDia(
       fuentes.push({ modulo: d.modulo, incluida: false, aviso: salida ? 'respuesta no válida' : 'no se pudo consultar' });
       continue;
     }
-    fuentes.push({ modulo: d.modulo, incluida: true, aviso: null });
+    // Si el módulo tenía más de lo que cabe, se dice: el resumen solo cuenta lo que se muestra.
+    const { total, tarjetas } = salida.data;
+    const recorte = total > tarjetas.length ? `se muestran ${tarjetas.length} de ${total.toLocaleString('es-PE')}` : null;
+    fuentes.push({ modulo: d.modulo, incluida: true, aviso: recorte });
     leidas.push({ modulo: d.modulo, soloLectura: !acceso.puedeEscribir, tarjetas: salida.data.tarjetas, anotaciones: salida.data.anotaciones });
   }
   const borradores = await leerBorradores(ejecutor, registro, tx, ctx, fuentes);
-  return exito({ ...componerMiDia({ fecha, fuentes: leidas, borradores, puedeEjecutar: puedeEjecutarDesdeMiDia(registro, ctx) }), fuentesConsultadas: fuentes });
+  const diaDe = (instante: string) => diaLocal(new Date(instante), hoy.zona);
+  return exito({ ...componerMiDia({ fecha, fuentes: leidas, borradores, puedeEjecutar: puedeEjecutarDesdeMiDia(registro, ctx), diaDe }), fuentesConsultadas: fuentes });
 }

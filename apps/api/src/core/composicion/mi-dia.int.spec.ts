@@ -9,9 +9,14 @@ import { diaMas, HOY } from '../../modules/registro/herramientas/pruebas-de-regi
 let app: AppDePruebas;
 let dueno: Sesion;
 let soloPedidos: Sesion;
+let soloSusCotizaciones: Sesion;
 let sol: string;
 let pedidoPagado: any;
+let pedidoSinAdelanto: any;
+let pedidoSinDeuda: any;
 let ordenAtrasada: any;
+/** Lo que nunca debe salir: cancelado, anulado o de otra empresa. */
+const fuera: string[] = [];
 let relevo: Relevo;
 let futuro = Date.now() + 3_600_000;
 
@@ -32,10 +37,11 @@ const grupo = (d: any, clave: string): any[] => d.grupos.find((g: any) => g.clav
 beforeAll(async () => {
   app = await levantarApp({ alta: 'abierta' });
   relevo = app.obtener(Relevo);
-  [dueno, soloPedidos] = await Promise.all(['Dueña', 'Solo pedidos'].map((n) => abrirSesion(app, n)));
+  [dueno, soloPedidos, soloSusCotizaciones] = await Promise.all(['Dueña', 'Solo pedidos', 'Solo sus cotizaciones'].map((n) => abrirSesion(app, n)));
   const A = await crearEmpresa(dueno, 'Empresa de Mi día');
   await Promise.all(['ordenes', 'produccion', 'registro', 'cotizador', 'insumos', 'crm'].map((m) => activarModulo(A, m)));
   await agregarMiembro(app, A, soloPedidos, { modulo: 'ordenes', nivel: 'lectura', alcance: 'todos' });
+  soloSusCotizaciones = await agregarMiembro(app, A, soloSusCotizaciones, { modulo: 'cotizador', nivel: 'completo', alcance: 'propios' });
   await confirmando(dueno, 'empresa_actualizar_configuracion', { razonSocial: 'Gráfica Andina SAC' });
   sol = (await llamar(dueno, 'clientes_crear', { nombre: 'Imprenta Sol', telefono: '987654321' })).id;
 
@@ -45,8 +51,13 @@ beforeAll(async () => {
   await llamar(dueno, 'pedido_cambiar_estado', { id: pedidoPagado.id, estado: 'listo' });
   const deuda = await llamar(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: sol, concepto: 'Pedido', totalCentimos: 100_000, origenTipo: 'pedido', origenId: pedidoPagado.id });
   await llamar(dueno, 'deuda_abonar', { id: deuda.id, montoCentimos: 100_000 });
-  // Otro pedido sin entrega próxima y sin adelanto.
-  await llamar(dueno, 'pedido_confirmar', { id: (await llamar(dueno, 'pedido_crear', { clienteId: sol, entregaEl: diaMas(30), lineas: [linea('Banners', 50, 2)] })).id });
+  // Otro pedido sin entrega próxima: su deuda existe y no recibió ningún pago (sin adelanto, confirmado por Finanzas).
+  pedidoSinAdelanto = await llamar(dueno, 'pedido_crear', { clienteId: sol, entregaEl: diaMas(30), lineas: [linea('Banners', 50, 2)] });
+  await llamar(dueno, 'pedido_confirmar', { id: pedidoSinAdelanto.id });
+  await llamar(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: sol, concepto: 'Banners', totalCentimos: 10_000, origenTipo: 'pedido', origenId: pedidoSinAdelanto.id });
+  // Y uno cuya deuda aún no existe (su borrador sigue por aprobar): no se afirma «sin adelanto».
+  pedidoSinDeuda = await llamar(dueno, 'pedido_crear', { clienteId: sol, entregaEl: diaMas(20), lineas: [linea('Stickers', 10, 10)] });
+  await llamar(dueno, 'pedido_confirmar', { id: pedidoSinDeuda.id });
   // Una deuda vencida hace 40 días y otra de hace 70.
   await llamar(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: sol, concepto: 'Trabajo viejo', totalCentimos: 300_000, fecha: diaMas(-120), venceEn: diaMas(-40) });
   await llamar(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: sol, concepto: 'Trabajo más viejo', totalCentimos: 120_000, fecha: diaMas(-120), venceEn: diaMas(-70) });
@@ -60,6 +71,26 @@ beforeAll(async () => {
   // Una actividad de CRM vencida.
   const op = await llamar(dueno, 'oportunidad_crear', { titulo: 'Banner grande', clienteId: sol });
   await llamar(dueno, 'actividad_crear', { oportunidadId: op.id, tipo: 'llamada', asunto: 'Confirmar medidas', venceEl: diaMas(-1) });
+
+  // Lo que no debe aparecer: un pedido de hoy cancelado, una orden de hoy anulada y una deuda vencida anulada.
+  const cancelado = await llamar(dueno, 'pedido_crear', { clienteId: sol, entregaEl: HOY.dia, lineas: [linea('Cancelado', 10, 1)] });
+  await llamar(dueno, 'pedido_confirmar', { id: cancelado.id });
+  await confirmando(dueno, 'pedido_cancelar', { id: cancelado.id, motivo: 'El cliente desistió' });
+  const anulada = await llamar(dueno, 'produccion_orden_crear', { clienteId: sol, fecha: diaMas(-3), entregaEl: HOY.dia, lineas: [linea('Anulada', 10, 1)] });
+  await confirmando(dueno, 'produccion_orden_anular', { id: anulada.id, motivo: 'Duplicada' });
+  const deudaAnulada = await llamar(dueno, 'deuda_crear', { tipo: 'por_cobrar', contactoId: sol, concepto: 'Anulada', totalCentimos: 50_000, fecha: diaMas(-90), venceEn: diaMas(-50) });
+  await confirmando(dueno, 'deuda_anular', { id: deudaAnulada.id, motivo: 'Error de registro' });
+  fuera.push(cancelado.id, anulada.id);
+
+  // Otra empresa con lo mismo (entrega de hoy, deuda vencida, insumo bajo): nada de ella cruza a la primera (RLS).
+  const otra = await abrirSesion(app, 'Dueño de otra empresa');
+  const B = await crearEmpresa(otra, 'Otra empresa');
+  await Promise.all(['ordenes', 'registro', 'insumos'].map((m) => activarModulo(B, m)));
+  const luna = (await llamar(otra, 'clientes_crear', { nombre: 'Cliente de la otra', telefono: '912345678' })).id;
+  const ajeno = await llamar(otra, 'pedido_crear', { clienteId: luna, entregaEl: HOY.dia, lineas: [linea('Ajeno', 10, 1)] });
+  await llamar(otra, 'pedido_confirmar', { id: ajeno.id });
+  await llamar(otra, 'deuda_crear', { tipo: 'por_cobrar', contactoId: luna, concepto: 'Ajena', totalCentimos: 70_000, fecha: diaMas(-90), venceEn: diaMas(-45) });
+  fuera.push(luna, ajeno.id);
 });
 afterAll(async () => {
   await app.cerrar();
@@ -77,12 +108,23 @@ describe('mi_dia_ver', () => {
     expect(atrasados).toEqual(expect.arrayContaining(['orden_trabajo', 'oportunidad']));
     const cobro = grupo(d, 'por_cobrar')[0];
     expect(cobro).toMatchObject({ grupo: 'cobro', montoCentimos: 420_000, cliente: { id: sol, telefono: '987654321' }, cobro: { diasMasAntiguo: 70, tramo31a60Centimos: 300_000, tramo61masCentimos: 120_000 } });
-    expect(cobro.mensaje.texto).toContain('Gráfica Andina SAC');
+    expect(cobro.mensaje.texto).toContain('te saluda Gráfica Andina SAC.');
     expect(cobro.mensaje.texto).toContain('S/ 4,200.00');
     expect(cobro.mensaje.enlaceWhatsapp).toMatch(/^https:\/\/wa\.me\/51987654321\?text=/);
     expect(d.resumen).toMatchObject({ porCobrarVencidoCentimos: 420_000, entregasAtrasadas: 1 });
-    expect(grupo(d, 'mas_adelante').some((t: any) => t.entidad.tipo === 'articulo')).toBe(true);
+    expect(grupo(d, 'mas_adelante').find((t: any) => t.entidad.tipo === 'articulo')?.detalle).toMatch(/^Sin existencias en .+ \(mínimo 10 /);
+    // La orden sin adelanto ni deuda aprobada en Finanzas muestra el saldo que anotó la propia orden.
+    expect(grupo(d, 'atrasado').find((t: any) => t.entidad.id === ordenAtrasada.id).notas).toContainEqual({ texto: 'Debe S/ 200.00', tono: 'aviso' });
     expect(tarjetas(d).some((t: any) => t.entidad.tipo === 'cotizacion')).toBe(true);
+  });
+
+  it('nada cancelado, anulado ni de otra empresa: ni tarjeta, ni cliente, ni monto', async () => {
+    const d = datos(await dueno.herramienta('mi_dia_ver', {}));
+    const ids = tarjetas(d).flatMap((t: any) => [t.entidad.id, t.cliente?.id]);
+    for (const id of fuera) expect(ids).not.toContain(id);
+    // La deuda anulada (S/ 500) y la de la otra empresa (S/ 700) no suman a lo vencido.
+    expect(grupo(d, 'por_cobrar')).toHaveLength(1);
+    expect(d.resumen.porCobrarVencidoCentimos).toBe(420_000);
   });
 
   it('el pedido listo cuya deuda ya está pagada dice «Pagado: ¿ya se entregó?» y no pide adelanto', async () => {
@@ -92,8 +134,10 @@ describe('mi_dia_ver', () => {
     expect(t.detalle).toContain('Pagado: ¿ya se entregó?');
     expect(t.acciones).toEqual([{ etiqueta: 'Ya se entregó', herramienta: 'pedido_cambiar_estado', args: { id: pedidoPagado.id, estado: 'entregado' } }]);
     expect(t.notas).toContainEqual({ texto: 'Pagado', tono: 'exito' });
-    // El pedido sin adelanto y sin deuda aparece como alerta; el pagado no.
-    expect(tarjetas(d).filter((x: any) => x.grupo === 'adelanto')).toHaveLength(1);
+    // Solo el pedido cuya deuda existe sin ningún pago aparece como «sin adelanto»; ni el pagado ni el que aún no tiene deuda.
+    expect(tarjetas(d).filter((x: any) => x.grupo === 'adelanto').map((x: any) => x.entidad.id)).toEqual([pedidoSinAdelanto.id]);
+    expect(t.detalle).toBe('Entrega hoy · Pagado: ¿ya se entregó?');
+    expect(tarjetas(d).some((x: any) => x.entidad.id === pedidoSinDeuda.id)).toBe(false);
   });
 
   it('la acción de un clic cambia el estado de verdad y la tarjeta sale de la lista', async () => {
@@ -113,8 +157,9 @@ describe('mi_dia_ver', () => {
     futuro += 600_000;
     for (let i = 0; i < 400; i++) if ((await relevo.procesarLote(new Date(futuro))).reservados === 0) break;
     const d = datos(await dueno.herramienta('mi_dia_ver', {}));
-    const t = grupo(d, 'por_aprobar').find((x: any) => x.entidad.id === ped.id);
-    expect(t).toMatchObject({ titulo: 'S/ 600.00 por aprobar', grupo: 'aprobacion', modulo: 'registro' });
+    const t = grupo(d, 'por_aprobar').find((x: any) => x.titulo === 'S/ 600.00 por aprobar');
+    // La tarjeta lleva a la bandeja, que es donde se aprueba.
+    expect(t).toMatchObject({ grupo: 'aprobacion', modulo: 'registro', entidad: { tipo: 'borrador' } });
     expect(t.acciones).toEqual([]);
     expect(d.resumen.porAprobar).toBeGreaterThanOrEqual(1);
     // Nada se cobró solo: la deuda sigue con su saldo.
@@ -128,6 +173,13 @@ describe('mi_dia_ver', () => {
     const incluidas = d.fuentesConsultadas.filter((f: any) => f.incluida).map((f: any) => f.modulo);
     expect(incluidas).toContain('ordenes');
     expect(d.fuentesConsultadas.filter((f: any) => !f.incluida).map((f: any) => f.modulo)).toEqual(expect.arrayContaining(['registro', 'produccion']));
+  });
+
+  it('con alcance «propios» en el cotizador no ve las cotizaciones de otra persona', async () => {
+    const d = datos(await soloSusCotizaciones.herramienta('mi_dia_ver', {}));
+    expect(d.fuentesConsultadas).toContainEqual({ modulo: 'cotizador', incluida: true, aviso: null });
+    expect(tarjetas(d).some((t: any) => t.entidad.tipo === 'cotizacion')).toBe(false);
+    expect(tarjetas(datos(await dueno.herramienta('mi_dia_ver', {}))).some((t: any) => t.entidad.tipo === 'cotizacion')).toBe(true);
   });
 
   it('cada `_pendientes` responde con su contrato por sí sola', async () => {

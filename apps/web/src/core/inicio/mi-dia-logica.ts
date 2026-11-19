@@ -44,10 +44,33 @@ export function fechaLarga(dia: string): string {
 
 export const hayPendientes = (m: MiDiaDto): boolean => m.total > 0;
 
-/** Los módulos que no aportaron, con una frase para el pie («Sin acceso a Registro»). */
+/** Como se llaman en el menú (los manifiestos de cada módulo); los borradores viven en la Bandeja. */
+const NOMBRE_DE_FUENTE: Record<string, string> = { ordenes: 'Pedidos', produccion: 'Producción', registro: 'Registro', cotizador: 'Cotizador', insumos: 'Inventario', crm: 'CRM', borradores: 'Bandeja' };
+const nombreDeFuente = (modulo: string) => NOMBRE_DE_FUENTE[modulo] ?? modulo;
+const esSinAcceso = (f: MiDiaDto['fuentesConsultadas'][number]) => f.aviso === 'sin acceso';
+
+/** Los módulos a los que la persona no tiene acceso, para el pie («Sin datos de Registro y CRM»). Es normal, no es un error. */
 export function avisosDeFuentes(m: MiDiaDto): string[] {
-  const nombre: Record<string, string> = { ordenes: 'Pedidos', produccion: 'Producción', registro: 'Registro', cotizador: 'Cotizador', insumos: 'Insumos', crm: 'CRM', borradores: 'Borradores' };
-  return m.fuentesConsultadas.filter((f) => !f.incluida).map((f) => `${nombre[f.modulo] ?? f.modulo}: ${f.aviso ?? 'no disponible'}`);
+  return m.fuentesConsultadas.filter((f) => !f.incluida && esSinAcceso(f)).map((f) => nombreDeFuente(f.modulo));
+}
+
+/** Los módulos que sí debían aportar y fallaron: el resto del panel se muestra igual, con un aviso visible. */
+export function fuentesConFalla(m: MiDiaDto): string[] {
+  return m.fuentesConsultadas.filter((f) => !f.incluida && !esSinAcceso(f)).map((f) => nombreDeFuente(f.modulo));
+}
+
+/** Los módulos que tenían más de lo que cabe en el panel: «Pedidos (se muestran 50 de 1,234)». */
+export function fuentesRecortadas(m: MiDiaDto): string[] {
+  return m.fuentesConsultadas.filter((f) => f.incluida && f.aviso).map((f) => `${nombreDeFuente(f.modulo)} (${f.aviso})`);
+}
+
+/** «Todo al día» solo si no hay nada pendiente y ningún módulo falló (si falló, no sabemos si está al día). */
+export const estaAlDia = (m: MiDiaDto): boolean => !hayPendientes(m) && fuentesConFalla(m).length === 0;
+
+/** Una lista legible: «Registro», «Registro y CRM», «Pedidos, Registro y CRM». */
+export function enLista(nombres: readonly string[]): string {
+  if (nombres.length <= 1) return nombres[0] ?? '';
+  return `${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}`;
 }
 
 /** Sin la tarjeta que se acaba de resolver, y con el resumen y el total al día (actualización optimista). */
@@ -65,8 +88,15 @@ export function sinTarjeta(m: MiDiaDto, clave: string): MiDiaDto {
   return { ...m, grupos, resumen, total: m.total - 1 };
 }
 
-/** La frase que confirma una acción: «Listo: Ya se entregó · PED-A-2026-0007». */
-export const avisoDeAccion = (etiqueta: string, t: Pick<TarjetaDeMiDia, 'entidad'>): string => `Listo: ${etiqueta} · ${t.entidad.codigo}`;
+/** La frase que confirma una acción: «Anotado: ya se entregó · PED-A-2026-0007». */
+export const avisoDeAccion = (etiqueta: string, t: Pick<TarjetaDeMiDia, 'entidad'>): string =>
+  `Anotado: ${etiqueta.charAt(0).toLowerCase()}${etiqueta.slice(1)} · ${t.entidad.codigo}`;
 
-/** Tarjeta de cobro: ¿se puede abrir WhatsApp? */
-export const tieneWhatsapp = (t: Pick<TarjetaDeMiDia, 'mensaje'>): boolean => !!t.mensaje?.enlaceWhatsapp;
+/** El enlace de WhatsApp de una tarjeta de cobro, solo si de verdad es de `wa.me` (nunca otra dirección); si no, `null`. */
+export function enlaceDeWhatsapp(t: Pick<TarjetaDeMiDia, 'mensaje'>): string | null {
+  const enlace = t.mensaje?.enlaceWhatsapp ?? null;
+  return enlace && /^https:\/\/wa\.me\/\d{8,15}\?text=/.test(enlace) ? enlace : null;
+}
+
+/** ¿Hay algún mensaje de cobro en el panel? (para avisar si salen sin el nombre de la empresa). */
+export const hayMensajesDeCobro = (m: MiDiaDto): boolean => m.grupos.some((g) => g.tarjetas.some((t) => t.mensaje !== null));

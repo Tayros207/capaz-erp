@@ -139,11 +139,17 @@ export function urgenciaDeFecha(fecha: string, hoy: string): UrgenciaDeMiDia {
 
 const ORDEN_DE_URGENCIA: Record<UrgenciaDeMiDia, number> = { atrasado: 0, hoy: 1, manana: 2, pronto: 3, info: 4 };
 export const ordenDeUrgencia = (u: UrgenciaDeMiDia): number => ORDEN_DE_URGENCIA[u];
+/** Qué se queda si hay que cortar: lo de hoy y mañana nunca se pierde por tener muchos atrasados. */
+const PRIORIDAD_AL_CORTAR: Record<UrgenciaDeMiDia, number> = { hoy: 0, manana: 1, atrasado: 2, pronto: 3, info: 4 };
 
-/** Ordena por urgencia y fecha (lo más antiguo primero), corta al tope y dice cuántas había. */
-export function limitarTarjetas<T extends Pick<TarjetaDePendiente, 'urgencia' | 'fecha' | 'clave'>>(tarjetas: readonly T[], tope = MAXIMO_DE_TARJETAS): { tarjetas: T[]; total: number } {
-  const ordenadas = [...tarjetas].sort(
-    (a, b) => ORDEN_DE_URGENCIA[a.urgencia] - ORDEN_DE_URGENCIA[b.urgencia] || (a.fecha ?? '9999').localeCompare(b.fecha ?? '9999') || a.clave.localeCompare(b.clave),
-  );
-  return { tarjetas: ordenadas.slice(0, tope), total: ordenadas.length };
+type Ordenable = Pick<TarjetaDePendiente, 'urgencia' | 'fecha' | 'clave'>;
+const porFecha = (a: Ordenable, b: Ordenable) => (a.fecha ?? '9999').localeCompare(b.fecha ?? '9999') || a.clave.localeCompare(b.clave);
+
+/**
+ * Corta al tope y dice cuántas había. Al cortar se quedan primero las de hoy y mañana, luego las atrasadas (la más antigua
+ * primero) y al final lo demás; lo que queda se entrega ordenado por urgencia y fecha (lo más antiguo primero).
+ */
+export function limitarTarjetas<T extends Ordenable>(tarjetas: readonly T[], tope = MAXIMO_DE_TARJETAS): { tarjetas: T[]; total: number } {
+  const elegidas = [...tarjetas].sort((a, b) => PRIORIDAD_AL_CORTAR[a.urgencia] - PRIORIDAD_AL_CORTAR[b.urgencia] || porFecha(a, b)).slice(0, tope);
+  return { tarjetas: elegidas.sort((a, b) => ORDEN_DE_URGENCIA[a.urgencia] - ORDEN_DE_URGENCIA[b.urgencia] || porFecha(a, b)), total: tarjetas.length };
 }

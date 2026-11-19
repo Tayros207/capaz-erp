@@ -1,9 +1,11 @@
 import { sql } from 'drizzle-orm';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import type { CotizacionSinRespuesta } from '../domain/pendientes.js';
+import type { Alcance } from './cotizaciones.repository.js';
 
 // Lectura de «Mi día»: cotizaciones emitidas o enviadas, con el día desde el que esperan respuesta. Solo lee; la RLS aísla
-// por empresa. No hay marca de «enviada el»: para una enviada se toma la última vez que cambió.
+// por empresa y con alcance «propios» salen las que la persona creó (igual que la lista). Una enviada cuenta desde su último
+// evento «enviada» (editarla después no reinicia la cuenta); sin ese evento, desde la última vez que cambió.
 
 type Fila = {
   id: string; numero: number | null; anio: number | null; version_actual: number; estado: CotizacionSinRespuesta['estado']; titulo: string;
@@ -12,15 +14,19 @@ type Fila = {
 
 const TOPE = 500;
 
-export async function cotizacionesSinRespuesta(tx: Transaccion, _ctx: ContextoDeEmpresa, zona: string): Promise<CotizacionSinRespuesta[]> {
+export async function cotizacionesSinRespuesta(tx: Transaccion, ctx: ContextoDeEmpresa, alcance: Alcance, zona: string): Promise<CotizacionSinRespuesta[]> {
+  const propias = alcance === 'propios' ? sql`and c.creado_por = ${ctx.usuarioId}` : sql``;
   const r = await tx.execute<Fila>(sql`
     select c.id, c.numero, c.anio, c.version_actual, c.estado, c.titulo, c.valida_hasta::text as valida_hasta, v.total_centimos::text as total,
-           ((case when c.estado = 'enviada' then c.actualizado_en else coalesce(v.emitida_en, c.actualizado_en) end) at time zone ${zona})::date::text as desde,
+           ((case when c.estado = 'enviada'
+                  then coalesce((select max(ev.creado_en) from cotizador.eventos ev
+                                  where ev.tenant_id = c.tenant_id and ev.cotizacion_id = c.id and ev.tipo = 'enviada'), c.actualizado_en)
+                  else coalesce(v.emitida_en, c.actualizado_en) end) at time zone ${zona})::date::text as desde,
            c.cliente_id, coalesce(cl.nombre, c.cliente_nombre) as cliente_nombre, cl.telefono as cliente_telefono
     from cotizador.cotizaciones c
     left join cotizador.versiones v on v.tenant_id = c.tenant_id and v.cotizacion_id = c.id and v.version = c.version_actual
     left join core.clientes cl on cl.tenant_id = c.tenant_id and cl.id = c.cliente_id
-    where c.tenant_id = current_setting('app.tenant_id', true) and c.estado in ('emitida', 'enviada')
+    where c.tenant_id = current_setting('app.tenant_id', true) and c.estado in ('emitida', 'enviada') ${propias}
     order by c.creado_en desc
     limit ${TOPE}`);
   return r.rows.map((f) => ({

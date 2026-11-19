@@ -1,4 +1,4 @@
-import { exito, limitarTarjetas, sumarDias } from '@capaz/shared';
+import { exito, limitarTarjetas } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { tarjetasDeActividades } from '../domain/pendientes.js';
@@ -22,7 +22,7 @@ export const crmPendientes = definirHerramienta('crm_pendientes', {
   auditar: (_a, d) => ({ ...(d && { resumen: { tarjetas: d.tarjetas.length, total: d.total } }) }),
   async ejecutar(args, ctx, tx) {
     const dia = args.fecha ?? (await hoyDeLaEmpresa(tx)).dia;
-    const filas = await actividadesPorHacer(tx, ctx, sumarDias(dia, 1), propios(ctx));
+    const filas = await actividadesPorHacer(tx, ctx, dia, propios(ctx));
     return exito({ fecha: dia, ...limitarTarjetas(tarjetasDeActividades(filas, dia)), anotaciones: [] });
   },
 });
