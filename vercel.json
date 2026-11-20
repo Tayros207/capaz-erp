@@ -5,7 +5,7 @@
       "root": "apps/api",
       "framework": "nestjs",
       "entrypoint": "src/main.ts",
-      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter api build && echo '{\"type\":\"module\"}' > apps/api/dist/package.json"
+      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter api build && echo '{\"type\":\"module\"}' > dist/package.json"
     },
     "web": {
       "root": "apps/web",
