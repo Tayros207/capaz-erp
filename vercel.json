@@ -5,7 +5,7 @@
       "root": "apps/api",
       "framework": "nestjs",
       "entrypoint": "src/main.ts",
-      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter api build && echo '{\"type\":\"module\"}' > dist/package.json"
+      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter api build && pnpm --filter api --prod deploy --legacy --config.node-linker=hoisted ../../.deploy-api && rm -rf ../../.deploy-api/node_modules/.bin && cp -r ../../.deploy-api/node_modules dist/node_modules && echo '{\"type\":\"module\"}' > dist/package.json"
     },
     "web": {
       "root": "apps/web",
