@@ -118,3 +118,17 @@ describe('dinero y cantidades en los argumentos', () => {
     expect(argumentosCorregidos(deuda, { ...f, totalCentimos: '1.234' })).toEqual({ ok: false, errores: { totalCentimos: expect.any(String) } });
   });
 });
+
+describe('pedido: líneas y etiquetas', () => {
+  const tarjetas = { descripcion: 'tarjetas', unidad: 'unidad', cantidadMilesimas: 500000, precioUnitarioMilesimas: 365 };
+  const entero = { descripcion: 'millar de volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 240000 };
+  it('muestra las líneas una por renglón', () => {
+    expect(valorDeArgumento('lineas', [tarjetas, entero])).toBe('tarjetas — 500 unidad × S/ 0.365 = S/ 182.50\nmillar de volantes — 1 unidad × S/ 240.00 = S/ 240.00');
+    expect(valorDeArgumento('lineas', [])).toBe('—');
+  });
+  it('etiqueta los campos del pedido', () => {
+    expect(etiquetaDeArgumento('clienteId')).toBe('Cliente');
+    expect(etiquetaDeArgumento('lineas')).toBe('Líneas');
+    expect(etiquetaDeArgumento('entregaEl')).toBe('Entrega');
+  });
+});

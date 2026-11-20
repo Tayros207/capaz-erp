@@ -6,9 +6,10 @@ import { esCategoriaValida, type Categoria } from './reglas/categorias-de-rubro.
 import { enriquecerExtraccion } from './reglas/enriquecer.js';
 import type { Extraccion } from './reglas/extraccion.js';
 import { inferirTipo } from './reglas/monto.js';
+import { esPedidoDictado, interpretarPedidoDictado, type PedidoDictado } from './reglas/pedido.js';
 import { pistaDeDictadoIncompleto } from './reglas/pista.js';
 
-export type IntencionDeDictado = 'movimiento' | 'abono' | 'deuda' | 'deuda_con_adelanto' | 'fuera_de_alcance' | 'incompleto';
+export type IntencionDeDictado = 'movimiento' | 'abono' | 'deuda' | 'deuda_con_adelanto' | 'fuera_de_alcance' | 'incompleto' | 'pedido';
 
 export type Dictado = {
   intencion: IntencionDeDictado;
@@ -24,6 +25,8 @@ export type Dictado = {
   tipoDeDeuda: 'por_cobrar' | 'por_pagar' | null;
   /** AAAA-MM-DD solo si se dictó «ayer» o «anteayer». */
   fecha: string | null;
+  /** Solo con intencion «pedido»: lo entendido de «Pedido para Rosa, 500 tarjetas a 0.365…». */
+  pedido: PedidoDictado | null;
   faltan: string[];
   pista: string | null;
 };
@@ -57,13 +60,39 @@ function resultado(e: Extraccion, texto: string, hoy: string, parcial: Partial<D
     categoriaDeCapaz: rubro ? categoriaDeCapaz(rubro) : null,
     tipoDeDeuda: null,
     fecha: conFecha ? fechaDictada(texto, hoy) : null,
+    pedido: null,
     faltan: [],
     pista: null,
     ...parcial,
   };
 }
 
+export const PISTA_DE_PEDIDO =
+  'Dicta cada trabajo con su precio, por ejemplo: «Pedido para Rosa, 500 tarjetas a 0.365 y un millar de volantes a 240, adelanto 100, para el viernes».';
+
+function dictadoDePedido(texto: string, hoy: string): Dictado {
+  const pedido = interpretarPedidoDictado(texto, hoy);
+  const sinLineas = pedido.lineas.length === 0;
+  return {
+    intencion: 'pedido',
+    tipo: null,
+    montoCentimos: null,
+    adelantoCentimos: pedido.adelantoCentimos,
+    contactoNombre: pedido.clienteNombre,
+    descripcion: null,
+    categoriaDeRubro: null,
+    categoriaDeCapaz: null,
+    tipoDeDeuda: null,
+    fecha: null,
+    pedido,
+    faltan: sinLineas ? ['qué se pidió y su precio'] : [],
+    pista: sinLineas ? PISTA_DE_PEDIDO : null,
+  };
+}
+
 export function interpretarDictado(texto: string, opciones: Opciones): Dictado {
+  // Un pedido se decide antes de enriquecer: «pedido»/«orden» no son un contrato ni una deuda.
+  if (esPedidoDictado(texto, opciones.modo)) return dictadoDePedido(texto, opciones.hoy);
   const e = enriquecerExtraccion(texto, opciones.extraccion ?? VACIA, { modo: opciones.modo });
   const hoy = opciones.hoy;
 

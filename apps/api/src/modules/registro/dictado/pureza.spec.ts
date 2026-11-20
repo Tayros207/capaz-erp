@@ -3,7 +3,8 @@ import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
 // Todo archivo de dictado/ que no sea prueba importa solo rutas relativas de dictado/ y zod. Excepción: interprete.ts y resolver.ts (s5b), que leen la base.
-const CON_LECTURA = ['interprete.ts', 'resolver.ts'];
+// propuesta-de-pedido arma los argumentos con @capaz/shared (soles e importe), sin leer la base.
+const CON_LECTURA = ['interprete.ts', 'resolver.ts', 'propuesta-de-pedido.ts'];
 const RAIZ = join(process.cwd(), 'src/modules/registro/dictado');
 
 function archivos(dir: string): string[] {

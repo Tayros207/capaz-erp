@@ -1,29 +1,12 @@
 import { Inject, Injectable, type OnModuleInit } from '@nestjs/common';
-import { exito, MAXIMO_DE_PROPUESTAS_POR_CAPTURA, rechazo } from '@capaz/shared';
-import { datosDeHerramienta } from '../borradores/catalogo.js';
+import { exito, rechazo } from '@capaz/shared';
 import { proponerBorrador } from '../borradores/proponer.js';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
-import { definirHerramienta, type ContextoDeHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
+import { definirHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
 import { AYUDAS } from './ayudas.js';
 import { MODELO_DE_LENGUAJE, type ModeloDeLenguaje } from './modelo-de-lenguaje.js';
 import { RegistroDeInterpretes } from './registro-de-interpretes.js';
-import type { PropuestaInterpretada } from './tipos.js';
-
-/**
- * Comprueba, antes de guardar nada, que la persona podría aprobar cada propuesta. Es todo o nada.
- * Una herramienta desconocida o de otro módulo es un error de programación del intérprete.
- */
-function revisarPropuestas(propuestas: readonly PropuestaInterpretada[], modulo: string, ctx: ContextoDeHerramienta) {
-  if (propuestas.length > MAXIMO_DE_PROPUESTAS_POR_CAPTURA) {
-    throw new Error(`El intérprete de «${modulo}» devolvió ${propuestas.length} propuestas: el máximo es ${MAXIMO_DE_PROPUESTAS_POR_CAPTURA}.`);
-  }
-  for (const p of propuestas) {
-    const d = datosDeHerramienta(p.herramienta);
-    if (!d || d.modulo !== modulo) throw new Error(`El intérprete de «${modulo}» propuso «${p.herramienta}», que no es de ese módulo.`);
-    if (d.permiso !== null && !ctx.permisos.includes(d.permiso)) return rechazo('sin_permiso', 'No tienes permiso para registrar eso.');
-  }
-  return null;
-}
+import { revisarPropuestas } from './revisar-propuestas.js';
 
 export function crearHerramientasDeCaptura(interpretes: RegistroDeInterpretes, modelo: ModeloDeLenguaje): HerramientaRegistrada[] {
   const proponer = definirHerramienta('captura_proponer', {
@@ -58,7 +41,7 @@ export function crearHerramientasDeCaptura(interpretes: RegistroDeInterpretes, m
       const interpretadoCon = extraccion === null ? ('reglas' as const) : ('modelo' as const);
       const r = await interprete.interpretar(tx, ctx, { texto: args.texto, origen: args.origen, modo: args.modo, extraccion });
 
-      const sinPermiso = revisarPropuestas(r.propuestas, interprete.modulo, ctx);
+      const sinPermiso = revisarPropuestas(r.propuestas, interprete, ctx);
       if (sinPermiso) return sinPermiso;
 
       // La hora la calcula el servidor: el reloj del aparato solo aporta una duración.

@@ -46,3 +46,9 @@ export const hayTexto = (texto: string): boolean => texto.trim().length > 0;
 
 /** Una pregunta como «cuánto le cobramos a Cristina por las cajas» no crea un borrador: abre `/precios` ya buscada. `null` si es otra cosa. */
 export const destinoSiEsPreguntaDePrecio = (texto: string): string | null => destinoDePreguntaDePrecio(texto);
+
+/** El aviso al aprobar un borrador y qué consultas refrescar: un pedido queda en borrador en Pedidos, lo demás se registra. */
+export function avisoAlAprobar(herramienta: string | undefined): { texto: string; clave: readonly string[] } {
+  if (herramienta === 'pedido_crear') return { texto: 'Pedido creado en borrador. Confírmalo en Pedidos.', clave: ['ordenes'] };
+  return { texto: 'Registrado', clave: ['registro'] };
+}

@@ -24,6 +24,8 @@ export type EntradaDeInterprete = {
 export type InterpreteDeCaptura = {
   /** Código del módulo dueño de las herramientas que propone. */
   modulo: string;
+  /** Otros módulos cuyas herramientas también puede proponer; la persona debe poder escribir en ellos. */
+  tambienPropone?: readonly string[];
   /** Solo lee (R19). `ctx` es el de la PERSONA que dicta, no el de sistema. */
   interpretar(tx: Transaccion, ctx: ContextoDeHerramienta, e: EntradaDeInterprete): Promise<DictadoInterpretado>;
   /** Solo A2. */

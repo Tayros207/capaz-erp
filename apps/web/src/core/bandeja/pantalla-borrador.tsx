@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import type { Borrador } from '@capaz/shared';
 import { formatearFechaHora } from '../../shared/formato/fechas.ts';
@@ -13,6 +13,7 @@ import { CLAVE_BANDEJA } from './claves.ts';
 import { FormularioCorreccion } from './formulario-correccion.tsx';
 import { HojaDescartar } from './hoja-descartar.tsx';
 import { InsigniasDeBorrador } from './insignias.tsx';
+import { NombreDeCliente } from './nombre-de-cliente.tsx';
 import {
   accionDeAtajo,
   argumentosCorregidos,
@@ -31,14 +32,14 @@ function esCampoDeTexto(destino: EventTarget | null): boolean {
   return destino.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(destino.tagName);
 }
 
-function Dato({ etiqueta, valor, corregido }: { etiqueta: string; valor: string; corregido: boolean }) {
+function Dato({ etiqueta, valor, corregido }: { etiqueta: string; valor: ReactNode; corregido: boolean }) {
   return (
     <div className="flex flex-col gap-0.5">
       <dt className="text-sm text-texto-suave">
         {etiqueta}
         {corregido ? <span className="ml-2 font-medium text-aviso">corregido</span> : null}
       </dt>
-      <dd className="break-words text-lg font-medium text-texto">{valor}</dd>
+      <dd className="whitespace-pre-line break-words text-lg font-medium text-texto">{valor}</dd>
     </div>
   );
 }
@@ -204,7 +205,12 @@ export function PantallaBorrador() {
           ) : filas.length > 0 ? (
             <dl className="grid gap-4 sm:grid-cols-2">
               {filas.map((f) => (
-                <Dato key={f.clave} etiqueta={f.etiqueta} valor={f.valor} corregido={corregidas.has(f.clave)} />
+                <Dato
+                  key={f.clave}
+                  etiqueta={f.etiqueta}
+                  valor={f.clave === 'clienteId' && esObjetoPlano(b.args) && typeof b.args.clienteId === 'string' && b.args.clienteId !== '' ? <NombreDeCliente id={b.args.clienteId} /> : f.valor}
+                  corregido={corregidas.has(f.clave)}
+                />
               ))}
             </dl>
           ) : (

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decidirOrigen, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs, destinoSiEsPreguntaDePrecio } from './logica.ts';
+import { avisoAlAprobar, decidirOrigen, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs, destinoSiEsPreguntaDePrecio } from './logica.ts';
 
 describe('origen', () => {
   it('voz aunque se retoque; texto si se escribió', () => {
@@ -51,5 +51,15 @@ describe('destinoSiEsPreguntaDePrecio', () => {
   it('una pregunta de precio abre /precios; un movimiento dictado sigue su camino', () => {
     expect(destinoSiEsPreguntaDePrecio('¿Cuánto le cobramos a Imprenta Sur por volantes?')).toBe('/precios?cliente=Imprenta+Sur&q=volantes');
     expect(destinoSiEsPreguntaDePrecio('Egreso 80 soles, papel bond')).toBeNull();
+  });
+});
+
+describe('avisoAlAprobar', () => {
+  it('un pedido avisa que queda en borrador', () => {
+    expect(avisoAlAprobar('pedido_crear')).toEqual({ texto: 'Pedido creado en borrador. Confírmalo en Pedidos.', clave: ['ordenes'] });
+  });
+  it('lo demás se registra', () => {
+    expect(avisoAlAprobar('movimiento_registrar')).toEqual({ texto: 'Registrado', clave: ['registro'] });
+    expect(avisoAlAprobar(undefined)).toEqual({ texto: 'Registrado', clave: ['registro'] });
   });
 });

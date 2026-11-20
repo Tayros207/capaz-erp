@@ -9,7 +9,7 @@ import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { CLAVE_BANDEJA } from '../bandeja/claves.ts';
 import { CLAVE_CAPTURA, medirDictados, proponerCaptura } from './api.ts';
-import { decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
+import { avisoAlAprobar, decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
 import { recortarTexto, unirConBase } from './logica-reconocedor.ts';
 import { TarjetaDeBorrador, type Resolucion } from './tarjeta-de-borrador.tsx';
 import { useReconocedorWebSpeech } from './use-reconocedor-web-speech.ts';
@@ -113,8 +113,9 @@ export function PantallaDictado() {
     void cliente.invalidateQueries({ queryKey: [...CLAVE_CAPTURA, 'metricas'] });
     void cliente.invalidateQueries({ queryKey: CLAVE_BANDEJA });
     if (resolucion === 'aprobado') {
-      notificar('Registrado', 'exito');
-      void cliente.invalidateQueries({ queryKey: ['registro'] });
+      const a = avisoAlAprobar(propuesta?.borradores.find((b) => b.id === id)?.herramienta);
+      notificar(a.texto, 'exito');
+      void cliente.invalidateQueries({ queryKey: a.clave });
     } else if (resolucion === 'despues') {
       notificar('Queda en la bandeja', 'info');
     }
@@ -129,7 +130,7 @@ export function PantallaDictado() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4 pb-8">
-      <EncabezadoDePagina titulo="Dictar un movimiento" />
+      <EncabezadoDePagina titulo="Dictar un movimiento o un pedido" />
 
       {conBorradores ? (
         <section aria-label="Borradores propuestos" className="flex flex-col gap-4">
@@ -163,7 +164,7 @@ export function PantallaDictado() {
             maxLength={MAXIMO_DE_TEXTO_DE_CAPTURA}
             value={texto}
             placeholder="Ejemplo: Ingreso 500 soles, cliente Juan Pérez, flyers"
-            ayuda={`${texto.length} de ${MAXIMO_DE_TEXTO_DE_CAPTURA} caracteres. Puedes corregir el texto antes de enviarlo.`}
+            ayuda={`${texto.length} de ${MAXIMO_DE_TEXTO_DE_CAPTURA} caracteres. Puedes corregir el texto antes de enviarlo. Para un pedido, empieza con «Pedido para…».`}
             onChange={(e) => alEscribir(e.target.value)}
           />
           <div role="group" aria-label="Qué es" className="grid grid-cols-2 gap-2">

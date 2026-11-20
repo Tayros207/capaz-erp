@@ -6,6 +6,7 @@ import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import type { ContextoDeHerramienta } from '../../../core/herramientas/tipos.js';
 import type { Transaccion } from '../../../infra/database/con-empresa.js';
 import { interpretarDictado, type Dictado } from './interpretar-dictado.js';
+import { propuestaDePedido } from './propuesta-de-pedido.js';
 import { deudasAbiertasDe, resolverCategoria, resolverContacto, type ContactoResuelto } from './resolver.js';
 
 type Ctx = ContextoDeHerramienta;
@@ -89,7 +90,8 @@ async function interpretar(tx: Transaccion, ctx: Ctx, e: EntradaDeInterprete): P
   if (d.intencion === 'movimiento') r = await proponerMovimiento(tx, ctx, d, contacto, sugerencia, origen);
   else if (d.intencion === 'abono') r = await proponerAbono(tx, ctx, d, contacto, sugerencia, origen, hoy);
   else if (d.intencion === 'deuda' || d.intencion === 'deuda_con_adelanto') r = proponerDeuda(d, contacto, sugerencia, origen);
+  else if (d.intencion === 'pedido' && d.pedido) r = propuestaDePedido(d.pedido, { contacto, sugerencia });
   return { propuestas: r.propuestas, faltan: [...r.faltan, ...d.faltan], pista: d.pista };
 }
 
-export const interpreteDeRegistro: InterpreteDeCaptura = { modulo: 'registro', interpretar };
+export const interpreteDeRegistro: InterpreteDeCaptura = { modulo: 'registro', tambienPropone: ['ordenes'], interpretar };

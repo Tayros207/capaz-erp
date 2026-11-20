@@ -7,6 +7,7 @@ import { comoArgs, sinCambios, type ArgsEditables } from './logica-tarjeta.ts';
 import { FormularioDeudaAbonar } from './tarjetas/formulario-deuda-abonar.tsx';
 import { FormularioDeudaCrear } from './tarjetas/formulario-deuda-crear.tsx';
 import { FormularioGenerico } from './tarjetas/formulario-generico.tsx';
+import { FormularioPedido } from './tarjetas/formulario-pedido.tsx';
 import { FormularioMovimiento } from './tarjetas/formulario-movimiento.tsx';
 import type { PropsDeFormulario } from './tarjetas/tipos.ts';
 
@@ -23,6 +24,8 @@ function Formulario({ herramienta, ...props }: PropsDeFormulario & { herramienta
       return <FormularioDeudaCrear {...props} conAdelanto={false} />;
     case 'deuda_crear_con_adelanto':
       return <FormularioDeudaCrear {...props} conAdelanto />;
+    case 'pedido_crear':
+      return <FormularioPedido {...props} />;
     default:
       return <FormularioGenerico {...props} />;
   }

@@ -1,6 +1,7 @@
 import type { Borrador, Centimos } from '@capaz/shared';
 import { centimosATexto, formatearSoles, textoACentimos } from '../../shared/formato/soles.ts';
 import { milesimasATexto, textoAMilesimas } from '../../shared/formato/milesimas.ts';
+import { esListaDeLineas, textoDeLinea } from './lineas-de-pedido.ts';
 
 // Lógica pura de la bandeja de borradores: textos legibles, edición de argumentos y atajos de teclado.
 
@@ -67,8 +68,12 @@ export function medidaDeArgumento(clave: string): MedidaDeArgumento {
   return null;
 }
 
+const ETIQUETAS_CONOCIDAS: Record<string, string> = { clienteId: 'Cliente', lineas: 'Líneas', entregaEl: 'Entrega' };
+
 /** «totalCentimos» pasa a «Total»: la medida va en el valor («S/ 1,500.00»), no en el nombre. */
 export function etiquetaDeArgumento(clave: string): string {
+  const conocida = ETIQUETAS_CONOCIDAS[clave];
+  if (conocida) return conocida;
   const base = clave.replace(/(Centimos|Milesimas)$/, '');
   return etiquetaDeCampo(base === '' ? clave : base);
 }
@@ -77,6 +82,7 @@ const milesimasConTresDecimales = (n: number) => `${n < 0 ? '-' : ''}${milesimas
 
 /** Valor de un argumento para leerlo: dinero en soles, milésimas con tres decimales, el resto como `valorLegible`. */
 export function valorDeArgumento(clave: string, valor: unknown): string {
+  if (clave === 'lineas' && esListaDeLineas(valor)) return valor.length === 0 ? '—' : valor.map(textoDeLinea).join('\n');
   const medida = medidaDeArgumento(clave);
   if (typeof valor === 'number' && Number.isSafeInteger(valor)) {
     if (medida === 'centimos') return formatearSoles(valor as Centimos);

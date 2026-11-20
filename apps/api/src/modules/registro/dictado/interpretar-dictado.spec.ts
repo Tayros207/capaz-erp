@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { interpretarDictado } from './interpretar-dictado.js';
+import { interpretarDictado, PISTA_DE_PEDIDO } from './interpretar-dictado.js';
 
 const HOY = '2026-03-10';
 const dictar = (texto: string, modo?: 'ingreso' | 'egreso') => interpretarDictado(texto, { hoy: HOY, modo });
@@ -61,5 +61,19 @@ describe('interpretarDictado (regla nueva, no portada)', () => {
   test('la fecha solo se entrega en movimiento y abono', () => {
     expect(dictar('Cristina me quedó debiendo 240 ayer').fecha).toBeNull();
     expect(dictar('Juan abona 100 soles de su deuda ayer').fecha).toBe('2026-03-09');
+  });
+  test('un pedido con líneas', () => {
+    const d = dictar('Pedido para Rosa, 500 tarjetas a 0.365');
+    expect(d).toMatchObject({ intencion: 'pedido', contactoNombre: 'Rosa', faltan: [], pista: null });
+    expect(d.pedido?.lineas).toHaveLength(1);
+  });
+  test('un pedido sin líneas pide qué se pidió', () => {
+    expect(dictar('anota un pedido de tarjetas')).toMatchObject({ intencion: 'pedido', faltan: ['qué se pidió y su precio'], pista: PISTA_DE_PEDIDO });
+  });
+  test('un egreso con la palabra pedido no es un pedido', () => {
+    expect(dictar('Egreso 120, pedido de tintas').intencion).not.toBe('pedido');
+  });
+  test('en modo egreso nunca es un pedido', () => {
+    expect(dictar('pedido para Rosa 500 tarjetas a 0.365', 'egreso').intencion).not.toBe('pedido');
   });
 });
