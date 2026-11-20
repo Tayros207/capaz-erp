@@ -9,3 +9,5 @@ coverage
 .vite
 .claude/
 graphify-out/cache/
+.vercel
+.env.local
