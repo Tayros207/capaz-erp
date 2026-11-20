@@ -22,6 +22,7 @@ async function bootstrap() {
   // bodyParser desactivado: Better Auth se monta antes de los analizadores de cuerpo (configurarApp).
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bodyParser: false, logger: new LoggerDeNest(logger) });
   configurarApp(app, logger);
-  await app.listen(config.PORT);
+  await app.listen(config.PORT, '0.0.0.0');
+  logger.info({ puerto: config.PORT }, 'Servidor escuchando');
 }
 await bootstrap();
