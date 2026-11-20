@@ -13,7 +13,13 @@
     "web": {
       "root": "apps/web",
       "framework": "vite",
-      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter web build"
+      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter web build",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     }
   },
   "rewrites": [
