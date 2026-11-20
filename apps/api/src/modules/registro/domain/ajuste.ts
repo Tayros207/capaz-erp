@@ -36,6 +36,12 @@ export function calcularAjuste(deuda: { totalCentimos: number; abonadoCentimos: 
   };
 }
 
+/** `pedido:<id>:v<n>` (la referencia con que «Corregir venta» y su respaldo ajustan la deuda) → pedido y versión; `null` si es otra cosa. */
+export function versionDePedidoEnReferencia(ref: string | null | undefined): { pedidoId: string; version: number } | null {
+  const m = /^pedido:([0-9a-f-]{36}):v(\d{1,7})$/.exec(ref ?? '');
+  return m ? { pedidoId: m[1]!, version: Number(m[2]) } : null;
+}
+
 /** La frase que explica un ajuste. */
 export const frasesDeAjuste = (a: Pick<ResultadoDelAjuste, 'aFavorCentimos'> & { totalAnteriorCentimos: number; totalNuevoCentimos: number }): string =>
   `Total de la deuda ${formatearSoles(a.totalAnteriorCentimos)} → ${formatearSoles(a.totalNuevoCentimos)}${a.aFavorCentimos > 0 ? `; a favor del cliente ${formatearSoles(a.aFavorCentimos)}` : ''}`;

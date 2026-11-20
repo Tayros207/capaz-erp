@@ -74,7 +74,7 @@ function Cuerpo({ p, tipo, adelanto, reimpresion, vigente }: { p: PedidoCompleto
         etiqueta={`Detalle: ${TITULO_DE_DOCUMENTO[tipo]}`}
         columnas={[...(conPrecios ? COLUMNAS_CON_PRECIO : COLUMNAS_SIN_PRECIO)]}
         filas={filasDelDocumento(p.detalle, conPrecios)}
-        totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), adelanto) : undefined}
+        totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), adelanto, p.totalCentimos) : undefined}
       />
       {conPrecios ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
       {conPrecios && vigente ? <RecuadroQueCambio correccion={vigente} /> : null}

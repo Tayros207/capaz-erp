@@ -1,11 +1,13 @@
-import { EVENTOS, formatearSoles } from '@capaz/shared';
+import { EVENTOS, formatearSoles, type CargaDe } from '@capaz/shared';
 import { and, eq } from 'drizzle-orm';
-import { proponerBorrador } from '../../core/borradores/proponer.js';
+import { proponerBorrador, reproponerBorradores } from '../../core/borradores/proponer.js';
 import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Consumidor } from '../../core/eventos/tipos.js';
+import type { Transaccion } from '../../infra/database/con-empresa.js';
 import { normalizarNombre } from './domain/catalogos.js';
+import { versionDePedidoEnReferencia } from './domain/ajuste.js';
 import { categoriaConNombre } from './repositories/categorias.repository.js';
-import { aFavorActual, ajustePorOrigen } from './repositories/ajustes.repository.js';
+import { aFavorActual, ajustePorOrigen, ultimaVersionAjustada } from './repositories/ajustes.repository.js';
 import { deudaVivaPorOrigen } from './repositories/deudas.repository.js';
 
 // Consumidores de eventos de otros módulos (ficha §4.5). Regla R5: un consumidor NUNCA ejecuta herramientas ni
@@ -347,7 +349,14 @@ export const registroPedidoCorregido: Consumidor = {
   async manejar(e, ctx, tx) {
     const carga = EVENTOS['pedido.corregido'].parse(e.carga);
     const viva = await deudaVivaPorOrigen(tx, ctx, ORIGEN_PEDIDO, carga.id);
-    if (!viva) return;
+    if (!viva) {
+      await ponerAlDiaLaPropuestaDeCobro(tx, carga);
+      return;
+    }
+    // Llegó tarde: la deuda ya se ajustó con una versión más nueva del pedido. Proponer esta la haría retroceder.
+    const ultima = await ultimaVersionAjustada(tx, ctx, viva.id, carga.id);
+    if (ultima !== null && ultima > carga.versionNueva) return;
+    await ponerAlDiaLosAjustesViejos(tx, carga);
     const origenRef = `pedido:${carga.id}:v${carga.versionNueva}`;
     if (await ajustePorOrigen(tx, ctx, origenRef)) return;
     const aFavorEsperado = Math.max(0, viva.abonadoCentimos - carga.totalNuevoCentimos);
@@ -369,5 +378,41 @@ export const registroPedidoCorregido: Consumidor = {
     });
   },
 };
+
+/**
+ * El pedido se corrigió antes de que su deuda existiera: la propuesta `deuda_crear` que sigue pendiente en la bandeja se pone al
+ * día (total, cliente y vencimiento) para que, al aprobarla, la deuda nazca con lo vigente y no con el total viejo. Sigue siendo
+ * una propuesta (R5: aquí no se ejecuta ni se escribe nada del módulo; lo hace el núcleo de borradores). Si ya estaba al día, nada.
+ */
+async function ponerAlDiaLaPropuestaDeCobro(tx: Transaccion, carga: CargaDe<'pedido.corregido'>): Promise<void> {
+  const ref = `pedido:${carga.id}`;
+  await reproponerBorradores(tx, {
+    herramienta: 'deuda_crear',
+    origenRefEmpiezaCon: ref,
+    aplica: (r) => r === ref,
+    cambiar: (previos) => ({
+      ...previos,
+      totalCentimos: carga.totalNuevoCentimos,
+      contactoId: carga.clienteId,
+      ...(carga.entregaNueva !== carga.entregaAnterior && carga.entregaNueva !== null && { venceEn: carga.entregaNueva }),
+    }),
+    resumen: `Cobrar ${formatearSoles(carga.totalNuevoCentimos)} por el pedido ${carga.codigo} (versión ${carga.versionNueva})`,
+  });
+}
+
+/**
+ * Propuestas de ajuste de versiones anteriores del pedido que siguen pendientes: se ponen al día con el total vigente. Así,
+ * aprobarlas tarde nunca hace retroceder la deuda (p. ej., alguien bajó el precio, el dueño lo devolvió y Finanzas aprueba después
+ * la propuesta vieja); si la deuda ya cuadra, al aprobarlas no habrá nada que ajustar.
+ */
+async function ponerAlDiaLosAjustesViejos(tx: Transaccion, carga: CargaDe<'pedido.corregido'>): Promise<void> {
+  await reproponerBorradores(tx, {
+    herramienta: 'deuda_ajustar',
+    origenRefEmpiezaCon: `pedido:${carga.id}:v`,
+    aplica: (r) => (versionDePedidoEnReferencia(r)?.version ?? Number.POSITIVE_INFINITY) < carga.versionNueva,
+    cambiar: (previos) => ({ ...previos, nuevoTotalCentimos: carga.totalNuevoCentimos }),
+    resumen: `Ajustar la deuda del pedido ${carga.codigo} a ${formatearSoles(carga.totalNuevoCentimos)}: el total vigente (versión ${carga.versionNueva})`,
+  });
+}
 
 export const CONSUMIDORES_DE_REGISTRO: readonly Consumidor[] = [registroPedidoCorregido, registroPedidoConfirmado, registroPedidoCancelado, registroPedidoEntregado, registroCompraRecibida, registroAdelantoRegistrado, registroProduccionOrdenCreada, registroProduccionOrdenEntregada, registroProduccionCobroPedido, registroProduccionOrdenAnulada, registroProduccionOrdenCorregida, registroPedidoDatosEditados];

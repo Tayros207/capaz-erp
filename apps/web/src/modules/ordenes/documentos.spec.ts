@@ -72,8 +72,12 @@ describe('adelanto en el documento', () => {
     expect(totalesConAdelanto(base, { abonadoCentimos: 0, saldoCentimos: 8_000 })).toEqual(base);
   });
   it('con adelanto agrega lo recibido y el saldo por pagar', () => {
-    const t = totalesConAdelanto(base, { abonadoCentimos: 3_000, saldoCentimos: 5_000 });
+    const t = totalesConAdelanto(base, { abonadoCentimos: 3_000, saldoCentimos: 5_000 }, 8_000);
     expect(t.slice(1).map((f) => [f.etiqueta, f.valor])).toEqual([['Adelanto recibido', 'S/ 30.00'], ['Saldo por pagar', 'S/ 50.00']]);
+  });
+  it('si la versión corregida quedó por debajo de lo pagado, dice cuánto queda a favor del cliente', () => {
+    const t = totalesConAdelanto(base, { abonadoCentimos: 11_800, saldoCentimos: 0 }, 8_000);
+    expect(t.slice(1).map((f) => [f.etiqueta, f.valor])).toEqual([['Adelanto recibido', 'S/ 118.00'], ['Saldo por pagar', 'S/ 0.00'], ['A favor del cliente (no se devuelve)', 'S/ 38.00']]);
   });
 });
 

@@ -1,4 +1,4 @@
-import { precioConIgvEncima, precioSinIgvIncluido, type EntradaDe, type MotivoDeCorreccion, type PedidoCompletoDto } from '@capaz/shared';
+import { ponerIgv, precioConIgvEncima, precioSinIgvIncluido, type EntradaDe, type MotivoDeCorreccion, type PedidoCompletoDto } from '@capaz/shared';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { cambiarPrecio } from './logica-filas.ts';
 import { formularioDesde, sinFilasEnBlanco, totalesDe, validarPedido, type ErroresDePedido, type LineaDeFormulario } from './logica.ts';
@@ -28,6 +28,21 @@ export const conIgvEncima = (lineas: readonly LineaDeFormulario[], igvPorcentaje
 
 /** «Se cobró IGV de más»: el precio ya incluía un IGV que no debía; el nuevo es el precio sin IGV. Solo las líneas afectas. */
 export const sinIgvIncluido = (lineas: readonly LineaDeFormulario[], igvPorcentaje: number): LineaDeFormulario[] => sobreAfectas(lineas, (p) => precioSinIgvIncluido(p, igvPorcentaje));
+
+/**
+ * El precio unitario se guarda con tres decimales (S/ 0.001). Con cantidades grandes y precios chicos (1000 × S/ 0.085), sumar o
+ * quitar el IGV al precio no da el 18 % exacto del total: 1000 × S/ 0.100 = S/ 100.00 y no S/ 100.30. Devuelve el total exacto y
+ * el que dan los precios, solo si difieren, para avisarlo antes de guardar. `null` si coinciden o no se puede calcular.
+ */
+export function diferenciaDelAtajo(antes: readonly LineaDeFormulario[], despues: readonly LineaDeFormulario[], igvPorcentaje: number, sentido: 'encima' | 'quitar'): { exactoCentimos: number; conPreciosCentimos: number } | null {
+  const total = (lineas: readonly LineaDeFormulario[]) => totalesDe(sinFilasEnBlanco(lineas), igvPorcentaje)?.totalCentimos ?? null;
+  const afectas = total(antes.filter((l) => l.afectoIgv));
+  const otras = total(antes.filter((l) => !l.afectoIgv));
+  const conPrecios = total(despues);
+  if (afectas === null || otras === null || conPrecios === null) return null;
+  const exacto = (sentido === 'encima' ? ponerIgv(afectas, igvPorcentaje) : precioSinIgvIncluido(afectas, igvPorcentaje)) + otras;
+  return exacto === conPrecios ? null : { exactoCentimos: exacto, conPreciosCentimos: conPrecios };
+}
 
 /** «Solo cambia el desglose del IGV»: si todas son afectas pasan a no afectas; si no, todas a afectas. El total no cambia. */
 export function alternarDesglose(lineas: readonly LineaDeFormulario[]): LineaDeFormulario[] {
@@ -73,7 +88,10 @@ export function validarCorreccion(p: PedidoCompletoDto, f: FormularioDeCorreccio
 
 export const hayErrores = (e: ErroresDeCorreccion): boolean => Object.keys(e).length > 0;
 
-/** Argumentos de `venta_corregir`. Solo las filas que ya existían llevan `id` (las nuevas, no). Solo se llama sin errores. */
+/**
+ * Argumentos de `venta_corregir`. Solo las filas que ya existían llevan `id` (las nuevas, no). Solo se llama sin errores.
+ * `versionEsperada` es la versión que la persona tiene a la vista: si otra corrección se guardó antes, el servidor rechaza.
+ */
 export function argumentosDeCorreccion(p: PedidoCompletoDto, f: FormularioDeCorreccion): EntradaDe<'venta_corregir'> {
   const existentes = new Set(p.detalle.map((l) => l.id));
   const lineas = sinFilasEnBlanco(f.lineas).map((l) => ({
@@ -86,12 +104,15 @@ export function argumentosDeCorreccion(p: PedidoCompletoDto, f: FormularioDeCorr
     afectoIgv: l.afectoIgv,
   }));
   const texto = f.motivoTexto.trim();
+  const cambianLineas = lineasCambiaron(p, f);
   return {
     id: p.id,
+    versionEsperada: p.version,
     motivoCodigo: f.motivo ?? 'otro',
     ...(texto && { motivoTexto: texto }),
-    ...(lineasCambiaron(p, f) && { lineas }),
-    ...(f.fijarTotalCentimos !== null && f.fijarTotalCentimos !== p.totalCentimos && { fijarTotalCentimos: f.fijarTotalCentimos }),
+    ...(cambianLineas && { lineas }),
+    // Con líneas cambiadas, el total fijado va aunque sea el mismo de antes: «Qué cambia» muestra ese total y el servidor debe dar el mismo.
+    ...(f.fijarTotalCentimos !== null && (cambianLineas || f.fijarTotalCentimos !== p.totalCentimos) && { fijarTotalCentimos: f.fijarTotalCentimos }),
   };
 }
 

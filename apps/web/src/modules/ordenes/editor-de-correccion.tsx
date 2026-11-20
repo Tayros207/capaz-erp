@@ -5,7 +5,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoMonto } from '../../shared/ui/campo-monto.tsx';
 import { FilasDePedido } from './filas-de-pedido.tsx';
-import { MAXIMO_DE_MOTIVO_TEXTO, MOTIVO_DE_ATAJO, avisoDeEstado, alternarDesglose, conIgvEncima, sinIgvIncluido, type ErroresDeCorreccion, type FormularioDeCorreccion } from './correccion.ts';
+import { MAXIMO_DE_MOTIVO_TEXTO, MOTIVO_DE_ATAJO, avisoDeEstado, alternarDesglose, conIgvEncima, diferenciaDelAtajo, sinIgvIncluido, type ErroresDeCorreccion, type FormularioDeCorreccion } from './correccion.ts';
 import { ETIQUETA_DE_MOTIVO } from './huella-de-correccion.ts';
 
 type Props = {
@@ -17,19 +17,28 @@ type Props = {
 
 function Atajos({ pedido, form, alCambiar }: Omit<Props, 'errores'>) {
   const [fijando, setFijando] = useState(form.fijarTotalCentimos !== null);
+  const [precision, setPrecision] = useState<ReturnType<typeof diferenciaDelAtajo>>(null);
   const igv = pedido.igvPorcentaje;
-  const conCambio = (lineas: FormularioDeCorreccion['lineas']) => alCambiar({ lineas, fijarTotalCentimos: null, motivo: form.motivo ?? MOTIVO_DE_ATAJO });
+  const conCambio = (lineas: FormularioDeCorreccion['lineas'], sentido?: 'encima' | 'quitar') => {
+    setPrecision(sentido ? diferenciaDelAtajo(form.lineas, lineas, igv, sentido) : null);
+    alCambiar({ lineas, fijarTotalCentimos: null, motivo: form.motivo ?? MOTIVO_DE_ATAJO });
+  };
   return (
     <section aria-label="Atajos" className="flex flex-col gap-2">
       <h3 className="text-sm font-medium text-texto">Atajos de un toque</h3>
       <div className="flex flex-wrap gap-2">
-        <Boton onClick={() => conCambio(conIgvEncima(form.lineas, igv))}>Faltó sumar el IGV</Boton>
-        <Boton onClick={() => conCambio(sinIgvIncluido(form.lineas, igv))}>Se cobró IGV de más</Boton>
+        <Boton onClick={() => conCambio(conIgvEncima(form.lineas, igv), 'encima')}>Faltó sumar el IGV</Boton>
+        <Boton onClick={() => conCambio(sinIgvIncluido(form.lineas, igv), 'quitar')}>Se cobró IGV de más</Boton>
         <Boton onClick={() => alCambiar({ lineas: alternarDesglose(form.lineas), motivo: form.motivo ?? MOTIVO_DE_ATAJO })}>Solo cambia el desglose del IGV</Boton>
         <Boton aria-expanded={fijando} onClick={() => { setFijando((a) => !a); if (fijando) alCambiar({ fijarTotalCentimos: null }); }}>
           {form.fijarTotalCentimos !== null ? `Total fijado en ${formatearSoles(form.fijarTotalCentimos)}` : 'Fijar total en S/ …'}
         </Boton>
       </div>
+      {precision ? (
+        <p role="status" className="rounded-control border border-aviso/30 bg-aviso/10 p-3 text-sm text-texto">
+          Con precios de hasta tres decimales el total queda en <strong>{formatearSoles(precision.conPreciosCentimos)}</strong>; el {igv} % exacto daría {formatearSoles(precision.exactoCentimos)}. Si acordaron {formatearSoles(precision.exactoCentimos)}, prueba «Fijar total»; si con esa cantidad no se llega al céntimo, el sistema te avisará y puedes cambiar la unidad (por ejemplo, millar).
+        </p>
+      ) : null}
       {fijando ? (
         <div className="max-w-xs">
           <CampoMonto etiqueta="Total del pedido (con IGV)" valor={form.fijarTotalCentimos === null ? null : centimosSchema.parse(form.fijarTotalCentimos)} alCambiar={(v) => alCambiar({ fijarTotalCentimos: v })} ayuda="El sistema reparte la diferencia entre los precios de las líneas." />

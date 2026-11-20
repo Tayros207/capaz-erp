@@ -145,14 +145,16 @@ export type Umbral = { ok: true } | { ok: false; motivo: string };
 
 /**
  * Un trabajador corrige sin aprobación solo si la diferencia es de hasta 10 % del total anterior Y hasta S/ 100, sin
- * excedente a favor del cliente (lo ya abonado no supera el total nuevo). El estado entregado ya lo excluye `modoDeCorreccion`.
- * `abonadoCentimos` `null` = no se sabe: no se puede comprobar el excedente (la corrección por `venta_corregir` siempre lo sabe).
+ * dejar excedente a favor del cliente (bajar el total por debajo de lo ya abonado). El estado entregado ya lo excluye
+ * `modoDeCorreccion`. Si el total no baja, el excedente no crece: corregir la entrega o subir el precio de un pedido que ya
+ * tenía saldo a favor no pide aprobación. `abonadoCentimos` `null` = no se sabe (quien no ve Finanzas): el excedente no se
+ * puede comprobar aquí; el ajuste de la deuda queda entonces como borrador que aprueba quien lleva Finanzas.
  */
 export function comprobarUmbralDeTrabajador(c: { totalAnteriorCentimos: number; totalNuevoCentimos: number; abonadoCentimos: number | null }): Umbral {
   const delta = Math.abs(c.totalNuevoCentimos - c.totalAnteriorCentimos);
   const dentroDelPorcentaje = delta * 100 <= c.totalAnteriorCentimos * UMBRAL_DE_TRABAJADOR_PORCENTAJE;
   const dentroDelImporte = delta <= UMBRAL_DE_TRABAJADOR_CENTIMOS;
-  const aFavor = c.abonadoCentimos !== null && c.abonadoCentimos > c.totalNuevoCentimos;
+  const aFavor = c.abonadoCentimos !== null && c.abonadoCentimos > c.totalNuevoCentimos && c.totalNuevoCentimos < c.totalAnteriorCentimos;
   if (dentroDelPorcentaje && dentroDelImporte && !aFavor) return { ok: true };
   const signo = c.totalNuevoCentimos >= c.totalAnteriorCentimos ? 'sube' : 'baja';
   const porque = aFavor
@@ -187,8 +189,10 @@ export function fijarTotal<T extends { cantidadMilesimas: number; precioUnitario
   let faltante = totalDeseado - importes.reduce((a, b) => a + b, 0);
   if (faltante === 0) return nuevas;
   // El redondeo del precio dejó una diferencia de céntimos: se busca, línea por línea (la de cantidad más chica primero), un precio que la cierre.
+  // Una línea que valía cero (algo que se regala) no recibe precio: el reparto es en proporción a lo que cada línea valía.
   const porCantidad = nuevas.map((_, i) => i).sort((a, b) => nuevas[a]!.cantidadMilesimas - nuevas[b]!.cantidadMilesimas);
   for (const i of porCantidad) {
+    if (actuales[i] === 0n) continue;
     const l = nuevas[i]!;
     const meta = importes[i]! + faltante;
     if (meta < 0) continue;

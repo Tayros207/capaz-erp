@@ -16,7 +16,7 @@ import { useYo } from '../../shared/sesion/use-yo.ts';
 import { sePuedeCobrarAdelanto, type MedioDePago } from './adelanto.ts';
 import { ejecutarAdelanto } from './flujo-adelanto.ts';
 import { HojaAdelanto } from './hoja-adelanto.tsx';
-import { anotar, aplicarPaso, cancelar, corregirDatos, refrescarPedidos, usePermisosDePedidos } from './acciones.ts';
+import { anotar, aplicarPaso, cancelar, corregirDatos, refrescarPedidos, refrescarTrasCorregir, usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
 import { accionesDeImpresion, enviarPorWhatsApp } from './acciones-documentos.ts';
 import { TITULO_DE_DOCUMENTO, documentosDisponibles, mensajeDeWhatsAppDeVersion } from './documentos.ts';
@@ -199,7 +199,7 @@ function Contenido({ pedido, corregido, alCorregir }: PropsDeContenido) {
       {ofreceAdelanto && totalActual !== null ? (
         <HojaAdelanto abierto={hoja === 'adelanto'} totalCentimos={totalActual} alAceptar={aceptarAdelanto} alCerrar={() => { setHoja(null); void refrescarPedidos(); }} />
       ) : null}
-      {puedeCorregirPedido ? <HojaCorregir abierto={hoja === 'corregir'} pedido={pedido} alGuardar={(r) => { setHoja(null); alCorregir(r); void refrescarPedidos(); }} alCerrar={() => setHoja(null)} /> : null}
+      {puedeCorregirPedido ? <HojaCorregir abierto={hoja === 'corregir'} pedido={pedido} alGuardar={(r) => { setHoja(null); alCorregir(r); void refrescarTrasCorregir(r); }} alCerrar={() => setHoja(null)} /> : null}
       {puedeCorregir ? <HojaEditarDatos abierto={hoja === 'datos'} pedido={pedido} alEnviar={(c) => corregirDatos(pedido.id, c)} alCerrar={() => setHoja(null)} /> : null}
       <HojaTexto abierto={hoja === 'nota'} titulo="Agregar nota" etiqueta="Nota" textoEnviar="Agregar nota" maximo={1000} alEnviar={(t) => anotar(pedido.id, t)} alCerrar={() => setHoja(null)} />
       <HojaTexto abierto={hoja === 'cancelar'} titulo="Cancelar pedido" etiqueta="Motivo de la cancelación" textoEnviar="Continuar" maximo={300} peligroso alEnviar={(t) => cancelar(pedido.id, t)} alCerrar={() => setHoja(null)} />

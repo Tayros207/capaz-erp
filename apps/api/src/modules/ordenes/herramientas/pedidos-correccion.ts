@@ -1,5 +1,6 @@
 import { calcularTotalesDePedido, exito, rechazo, type ArgsDe, type CorreccionDePedidoDto, type FotoDeVersionDto, type EstadoDePedido } from '@capaz/shared';
 import { emitir } from '../../../core/eventos/emisor.js';
+import { abonadoVerificado } from '../../../core/herramientas/contexto-verificado.js';
 import { definirHerramienta, type ContextoDeHerramienta } from '../../../core/herramientas/tipos.js';
 import type { Transaccion } from '../../../infra/database/con-empresa.js';
 import {
@@ -67,9 +68,13 @@ async function prepararLineas(tx: Transaccion, ctx: ContextoDeHerramienta, actua
 
 const norm = (v: string | null | undefined): string | null => v?.trim() || null;
 
+const versionDistinta = (esperada: number, actual: number): string =>
+  `El pedido ya no es la versión ${esperada} que estabas corrigiendo: ahora es la versión ${actual} (otra corrección se guardó antes, quizá la tuya). Cierra, revisa el historial y, si hace falta, vuelve a corregir sobre lo último.`;
+
 type Datos = CorreccionDePedidoDto['datos'];
 
-async function cambiosDeDatos(tx: Transaccion, ctx: ContextoDeHerramienta, actual: Pedido, args: Args): Promise<{ datos: Datos; entregaEl: string | null; notas: string | null; clienteId: string } | Rechazo> {
+/** `abonado`: lo que el cliente ya pagó según `venta_corregir` (`null` = no se sabe; ver `contexto-verificado.ts`). */
+async function cambiosDeDatos(tx: Transaccion, ctx: ContextoDeHerramienta, actual: Pedido, args: Args, abonado: number | null): Promise<{ datos: Datos; entregaEl: string | null; notas: string | null; clienteId: string } | Rechazo> {
   const datos: Datos = [];
   const entregaEl = args.entregaEl === undefined ? actual.entregaEl : norm(args.entregaEl);
   const notas = args.notas === undefined ? actual.notas : norm(args.notas);
@@ -81,8 +86,8 @@ async function cambiosDeDatos(tx: Transaccion, ctx: ContextoDeHerramienta, actua
   if (notas !== actual.notas) datos.push({ campo: 'notas', antes: actual.notas, despues: notas });
   const clienteId = args.clienteId ?? actual.clienteId;
   if (clienteId !== actual.clienteId) {
-    if (args.abonadoCentimos === undefined) return rechazo('conflicto', 'El cambio de cliente se hace con «Corregir venta», que comprueba primero que el pedido no tenga pagos.');
-    if (args.abonadoCentimos > 0) return rechazo('conflicto', 'No se puede cambiar el cliente: el pedido ya tiene abonos. Anula los abonos o crea otro pedido.');
+    if (abonado === null) return rechazo('conflicto', 'El cliente solo se cambia con «Corregir venta» y sabiendo que el pedido no tiene pagos: pídelo a quien lleva Finanzas.');
+    if (abonado > 0) return rechazo('conflicto', 'No se puede cambiar el cliente: el pedido ya tiene abonos. Anula los abonos o crea otro pedido.');
     const falta = await comprobarReferencias(tx, ctx, { clienteId });
     if (falta) return rechazo('argumentos_invalidos', falta);
     datos.push({ campo: 'clienteId', antes: actual.clienteId, despues: clienteId, antesEtiqueta: actual.clienteNombre, despuesEtiqueta: await nombreDeCliente(tx, ctx, clienteId) });
@@ -126,6 +131,7 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
       { nombre: 'entregaEl', queSeAnota: 'Nuevo día de entrega, o vacío para quitarlo (opcional).', ejemplo: '2026-03-22' },
       { nombre: 'notas', queSeAnota: 'Nuevas notas, o vacío para borrarlas (opcional).', ejemplo: 'Precio acordado por teléfono' },
       { nombre: 'clienteId', queSeAnota: 'Otro cliente (solo si el pedido no tiene abonos; lo comprueba «Corregir venta»).', ejemplo: '0192f0c4-7b1e-7000-8000-000000000001' },
+      { nombre: 'versionEsperada', queSeAnota: 'La versión del pedido que tenías a la vista (pedido_ver); si cambió, se rechaza para no pisar otra corrección.', ejemplo: '1' },
     ],
     ejemploTecleado: 'corregir el pedido PED-PRI-2026-0007: el precio acordado fue 500 soles en total',
     ejemploHablado: 'el pedido siete se cobró en quinientos, corrígelo',
@@ -135,6 +141,7 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
       'No se puede quitar una línea que ya figura en una guía de remisión, ni bajar su cantidad por debajo de lo enviado.',
       'Un trabajador corrige hasta 10 % del total y S/ 100 sin aprobación; más allá responde «requiere aprobación».',
       'El total no puede quedar en cero: para eso se cancela el pedido.',
+      'Otra persona corrigió el pedido mientras tanto (ya va en otra versión): vuelve a verlo y corrige sobre lo último.',
     ],
     relacionadas: ['venta_corregir', 'pedido_editar_datos', 'pedido_ver', 'pedido_correcciones_listar'],
   },
@@ -146,6 +153,8 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
   async ejecutar(args, ctx, tx) {
     const actual = await verPedido(tx, ctx, args.id, { alcance: alcanceDePedidos(ctx), bloquear: true });
     if (!actual) return rechazo('no_encontrado', NO_EXISTE);
+    // Ya con el pedido bloqueado: si otra corrección se guardó antes, esta se armó sobre algo que ya no existe.
+    if (actual.version !== args.versionEsperada) return rechazo('conflicto', versionDistinta(args.versionEsperada, actual.version));
     const estado: EstadoDePedido = estadoDe(actual);
     const modo = modoDeCorreccion(estado, ctx.rol);
     if (!modo.ok) return rechazo(modo.codigo, modo.motivo);
@@ -155,7 +164,8 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
     const actuales = await lineasDe(tx, ctx, actual.id);
     const prep = await prepararLineas(tx, ctx, actual, actuales, args, modo.modo === 'solo_precio');
     if (!('resueltas' in prep)) return prep;
-    const datos = await cambiosDeDatos(tx, ctx, actual, args);
+    const abonado = abonadoVerificado(ctx);
+    const datos = await cambiosDeDatos(tx, ctx, actual, args, abonado);
     if (!('datos' in datos)) return datos;
     const diferencias = diferenciasDeLineas(actuales, prep.resultantes);
     if (diferencias.length === 0 && datos.datos.length === 0) return rechazo('argumentos_invalidos', 'No hay nada que cambiar: el pedido ya era así.');
@@ -164,10 +174,10 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
     const { guias, hayGuias } = await comprobarGuiasDe(tx, ctx, actual.id, prep.resueltas);
     if (!guias.ok) return rechazo('conflicto', guias.motivo);
     if (!esAdministrador(ctx.rol)) {
-      const umbral = comprobarUmbralDeTrabajador({ totalAnteriorCentimos: actual.totalCentimos, totalNuevoCentimos: total, abonadoCentimos: args.abonadoCentimos ?? null });
+      const umbral = comprobarUmbralDeTrabajador({ totalAnteriorCentimos: actual.totalCentimos, totalNuevoCentimos: total, abonadoCentimos: abonado });
       if (!umbral.ok) return rechazo('requiere_aprobacion', umbral.motivo);
     }
-    return aplicar(tx, ctx, actual, actuales, args, { prep, datos, hayGuias });
+    return aplicar(tx, ctx, actual, actuales, args, { prep, datos, hayGuias, abonado });
   },
 });
 
@@ -177,7 +187,7 @@ async function aplicar(
   actual: Pedido,
   actuales: readonly LineaActual[],
   args: Args,
-  c: { prep: Preparada; datos: { datos: Datos; entregaEl: string | null; notas: string | null; clienteId: string }; hayGuias: boolean },
+  c: { prep: Preparada; datos: { datos: Datos; entregaEl: string | null; notas: string | null; clienteId: string }; hayGuias: boolean; abonado: number | null },
 ) {
   const { totales } = c.prep;
   const versionNueva = actual.version + 1;
@@ -193,7 +203,7 @@ async function aplicar(
     totalCentimos: totales.totalCentimos,
     version: versionNueva,
   });
-  const abonado = args.abonadoCentimos ?? null;
+  const { abonado } = c;
   const correccion: CorreccionDePedidoDto = {
     versionAnterior: actual.version,
     versionNueva,

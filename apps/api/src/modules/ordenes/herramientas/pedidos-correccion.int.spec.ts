@@ -18,7 +18,9 @@ let ajeno: Sesion;
 let empresaA: string;
 let cliente: string;
 
-const corregir = (s: Sesion, args: Record<string, unknown>) => s.herramienta('pedido_corregir', { motivoCodigo: 'precio_acordado', ...args });
+/** La versión vigente (la que la persona tendría a la vista), salvo que la prueba diga otra. */
+const versionActual = async (id: unknown): Promise<number> => (await dueno.herramienta('pedido_ver', { id })).cuerpo?.datos?.version ?? 1;
+const corregir = async (s: Sesion, args: Record<string, unknown>) => s.herramienta('pedido_corregir', { motivoCodigo: 'precio_acordado', versionEsperada: await versionActual(args.id), ...args });
 const confirmado = async (lineas = [linea('Volantes', 118, 1)]) => {
   const p = await crearBorrador(dueno, cliente, { lineas });
   datos(await dueno.herramienta('pedido_confirmar', { id: p.id }));
@@ -198,15 +200,13 @@ describe('pedido_corregir: estados, cliente y permisos', () => {
     expect(ok.pedido).toMatchObject({ estado: 'entregado', version: 2, totalCentimos: 10_000 });
   });
 
-  it('el cliente solo cambia si se sabe que no hay abonos', async () => {
+  it('el cliente no cambia llamando a pedido_corregir a secas: lo abonado no se puede «decir» como argumento', async () => {
     const otro = await crearCliente(dueno, 'Otro cliente');
     const p = await confirmado();
     expect(mensaje(await corregir(dueno, { id: p.id, clienteId: otro }))).toMatch(/Corregir venta/);
-    expect(mensaje(await corregir(dueno, { id: p.id, clienteId: otro, abonadoCentimos: 100 }))).toMatch(/ya tiene abonos/);
-    const r = datos(await corregir(dueno, { id: p.id, clienteId: otro, abonadoCentimos: 0 }));
-    expect(r.pedido).toMatchObject({ clienteId: otro, clienteNombre: 'Otro cliente' });
-    expect(r.correccion.datos[0]).toMatchObject({ campo: 'clienteId', antesEtiqueta: 'Imprenta Sol', despuesEtiqueta: 'Otro cliente' });
-    expect(r.pedido.versiones[0].foto.clienteNombre).toBe('Imprenta Sol');
+    // Antes se aceptaba `abonadoCentimos: 0` de quien llamaba: cualquiera podía cambiar el cliente de un pedido ya pagado.
+    expect(codigo(await corregir(dueno, { id: p.id, clienteId: otro, abonadoCentimos: 0 }))).toBe('argumentos_invalidos');
+    expect(datos(await dueno.herramienta('pedido_ver', { id: p.id }))).toMatchObject({ version: 1, clienteId: cliente });
   });
 
   it('el trabajador corrige dentro del umbral y no más allá; el dueño sí', async () => {
@@ -219,12 +219,20 @@ describe('pedido_corregir: estados, cliente y permisos', () => {
     expect(datos(await corregir(dueno, { id: p.id, fijarTotalCentimos: 30_000 })).pedido.totalCentimos).toBe(30_000);
   });
 
-  it('el trabajador no puede dejar excedente a favor del cliente (aunque sea una diferencia chica)', async () => {
+  it('a secas, sin «Corregir venta», lo abonado no se sabe: no se calcula excedente y no se puede inventar', async () => {
     const p = await confirmado([linea('Volantes', 100, 1)]);
-    expect(codigo(await corregir(trabajador, { id: p.id, fijarTotalCentimos: 9_900, abonadoCentimos: 10_000 }))).toBe('requiere_aprobacion');
-    expect(datos(await corregir(trabajador, { id: p.id, fijarTotalCentimos: 9_900, abonadoCentimos: 9_900 })).correccion).toMatchObject({ aFavorCentimos: 0, abonadoCentimos: 9_900 });
-    const q = await confirmado([linea('Volantes', 100, 1)]);
-    expect(datos(await corregir(dueno, { id: q.id, fijarTotalCentimos: 7_000, abonadoCentimos: 10_000 })).correccion).toMatchObject({ aFavorCentimos: 3_000, deltaCentimos: -3_000 });
+    expect(codigo(await corregir(trabajador, { id: p.id, fijarTotalCentimos: 9_900, abonadoCentimos: 9_900 }))).toBe('argumentos_invalidos');
+    expect(datos(await corregir(trabajador, { id: p.id, fijarTotalCentimos: 9_900 })).correccion).toMatchObject({ aFavorCentimos: null, abonadoCentimos: null });
+  });
+
+  it('versión esperada: si otra corrección se guardó antes, se rechaza sin pisarla', async () => {
+    const p = await confirmado();
+    datos(await corregir(dueno, { id: p.id, fijarTotalCentimos: 11_000, versionEsperada: 1 }));
+    const tarde = await corregir(trabajador, { id: p.id, fijarTotalCentimos: 11_500, versionEsperada: 1 });
+    expect(codigo(tarde)).toBe('conflicto');
+    expect(mensaje(tarde)).toMatch(/ya no es la versión 1.*ahora es la versión 2/);
+    expect(datos(await dueno.herramienta('pedido_ver', { id: p.id }))).toMatchObject({ version: 2, totalCentimos: 11_000 });
+    expect(codigo(await corregir(dueno, { id: p.id, fijarTotalCentimos: 11_500, versionEsperada: 3 }))).toBe('conflicto');
   });
 
   it('lector no corrige; alcance propios solo lo suyo; otra empresa no lo ve', async () => {

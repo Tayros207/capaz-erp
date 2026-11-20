@@ -46,6 +46,11 @@ export type LineaACorregir = z.infer<typeof lineaACorregirSchema>;
 
 const baseDeCorreccion = {
   id: z.uuid(),
+  /**
+   * La versión del pedido sobre la que se corrigió (la que se tenía a la vista). Si otra persona guardó antes otra corrección,
+   * el pedido ya va en otra versión y esta se rechaza en vez de pisarla sin que nadie lo note.
+   */
+  versionEsperada: z.number({ error: 'Indica la versión del pedido que corriges.' }).int().min(1).max(1_000_000),
   motivoCodigo: z.enum(MOTIVOS_DE_CORRECCION),
   motivoTexto: texto(300).optional(),
   /** El pedido completo como debe quedar: las líneas con `id` se actualizan en el sitio, las que faltan se quitan, las sin `id` se agregan. */
@@ -64,13 +69,11 @@ const OTRO_CON_TEXTO = { error: 'Con el motivo «otro» escribe qué pasó.', pa
 const conTexto = (v: Corregible) => v.motivoCodigo !== 'otro' || Boolean(v.motivoTexto?.trim());
 
 /**
- * Corrige un pedido ya confirmado («versión 2»): mismo número, la versión anterior queda guardada. `abonadoCentimos` lo informa
- * quien sabe lo que el cliente ya pagó (`venta_corregir`): sin él no se puede cambiar el cliente, y no se calcula lo que queda a favor.
+ * Corrige un pedido ya confirmado («versión 2»): mismo número, la versión anterior queda guardada. Lo que el cliente ya pagó NO
+ * es un argumento (quien llama podría inventarlo para cambiar el cliente o dejar saldo a favor): solo lo informa por dentro
+ * `venta_corregir`, que lo averigua en Finanzas. Sin ese dato no se cambia el cliente ni se calcula lo que queda a favor.
  */
-export const corregirPedidoSchema = z
-  .strictObject({ ...baseDeCorreccion, abonadoCentimos: z.number().int().safe().min(0).optional() })
-  .refine(hayAlgoQueCorregir, SIN_CORRECCION)
-  .refine(conTexto, OTRO_CON_TEXTO);
+export const corregirPedidoSchema = z.strictObject(baseDeCorreccion).refine(hayAlgoQueCorregir, SIN_CORRECCION).refine(conTexto, OTRO_CON_TEXTO);
 
 /** Lo mismo para la composición del núcleo, que averigua lo abonado por su cuenta. */
 export const corregirVentaSchema = z.strictObject(baseDeCorreccion).refine(hayAlgoQueCorregir, SIN_CORRECCION).refine(conTexto, OTRO_CON_TEXTO);

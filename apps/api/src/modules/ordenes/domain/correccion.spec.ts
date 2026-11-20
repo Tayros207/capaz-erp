@@ -54,6 +54,11 @@ describe('umbral del trabajador (10 % y S/ 100, sin excedente a favor)', () => {
     if (!r.ok) expect(r.motivo).toContain('a su favor');
     expect(u(10_000, 9_900, 9_900).ok).toBe(true);
   });
+  it('si el total no baja, un saldo a favor que ya existía no bloquea (corregir la entrega, subir el precio)', () => {
+    expect(u(7_000, 7_000, 11_800).ok).toBe(true);
+    expect(u(7_000, 7_500, 11_800).ok).toBe(true);
+    expect(u(7_000, 6_900, 11_800).ok).toBe(false);
+  });
   it('el mensaje dice cuánto cambia', () => {
     const r = u(10_000, 20_000);
     expect(r).toMatchObject({ ok: false, motivo: expect.stringContaining('S/ 100.00 a S/ 200.00') });
@@ -129,6 +134,28 @@ describe('fijarTotal', () => {
   });
   it('si todas valen cero no hay cómo repartir', () => {
     expect(fijarTotal([{ cantidadMilesimas: 1000, precioUnitarioMilesimas: 0, afectoIgv: true }], 100, 18)).toBeNull();
+  });
+  it('barrido: con una línea chica siempre llega al céntimo; mezcla afectas y no afectas y no deja precios negativos', () => {
+    const mezcla = [
+      { cantidadMilesimas: 1_000_000, precioUnitarioMilesimas: 85, afectoIgv: true }, // 1000 × S/ 0.085
+      { cantidadMilesimas: 1_500, precioUnitarioMilesimas: 33_333, afectoIgv: false },
+      { cantidadMilesimas: 1_000, precioUnitarioMilesimas: 0, afectoIgv: true },
+    ];
+    for (let total = 1; total <= 50_000; total += 997) {
+      const r = fijarTotal(mezcla, total, 18);
+      expect(r).not.toBeNull();
+      expect(calcularTotalesDePedido(r!, 18).totalCentimos).toBe(total);
+      expect(r!.every((l) => l.precioUnitarioMilesimas >= 0)).toBe(true);
+      expect(r![2]!.precioUnitarioMilesimas).toBe(0); // la línea en cero no recibe nada
+    }
+  });
+  it('una sola línea de cantidad grande no siempre puede dar el céntimo exacto: devuelve null (el servidor lo rechaza, no inventa)', () => {
+    // 1000 × S/ 0.085 = S/ 85.00; con precios de 3 decimales esa línea solo da múltiplos de S/ 1.00.
+    expect(fijarTotal([{ cantidadMilesimas: 1_000_000, precioUnitarioMilesimas: 85, afectoIgv: true }], 10_030, 18)).toBeNull();
+    expect(calcularTotalesDePedido(fijarTotal([{ cantidadMilesimas: 1_000_000, precioUnitarioMilesimas: 85, afectoIgv: true }], 10_000, 18)!, 18).totalCentimos).toBe(10_000);
+  });
+  it('un total desmedido no rompe los enteros: lanza (la herramienta responde «demasiado grande»)', () => {
+    expect(() => fijarTotal([{ cantidadMilesimas: 1000, precioUnitarioMilesimas: 1000, afectoIgv: true }], Number.MAX_SAFE_INTEGER, 18)).toThrow();
   });
 });
 

@@ -1,5 +1,5 @@
 import { ORIGENES_DE_BORRADOR, type NombreDeHerramienta } from '@capaz/shared';
-import { sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Transaccion } from '../../infra/database/con-empresa.js';
 import { emitir } from '../eventos/emisor.js';
@@ -73,4 +73,39 @@ export async function proponerBorrador(tx: Transaccion, b: PropuestaDeBorrador):
     prioridad: b.prioridad ?? 'normal',
   });
   return { id: fila.id };
+}
+
+/**
+ * Pone al día las propuestas que siguen PENDIENTES de una herramienta cuyo `origenRef` empieza con `origenRefEmpiezaCon` (y que
+ * `aplica` acepta) con argumentos y resumen nuevos; p. ej. el cobro o el ajuste de un pedido que se volvió a corregir antes de
+ * aprobarlos. Sigue siendo una propuesta: no se ejecuta nada y quien la apruebe ve lo vigente. `argsOriginales` no se toca (es la
+ * medida del dictado). Devuelve los ids que cambiaron.
+ */
+export async function reproponerBorradores(
+  tx: Transaccion,
+  b: {
+    herramienta: NombreDeHerramienta;
+    origenRefEmpiezaCon: string;
+    aplica?: (origenRef: string) => boolean;
+    cambiar: (args: Record<string, unknown>) => Record<string, unknown>;
+    resumen: string;
+  },
+): Promise<string[]> {
+  const pendientes = and(
+    eq(borradores.tenantId, sql`current_setting('app.tenant_id', true)`),
+    eq(borradores.herramienta, b.herramienta),
+    sql`${borradores.origenRef} like ${`${b.origenRefEmpiezaCon.replace(/[\\%_]/g, (c) => `\\${c}`)}%`}`,
+    eq(borradores.estado, 'pendiente'),
+  );
+  const filas = await tx.select({ id: borradores.id, args: borradores.args, origenRef: borradores.origenRef }).from(borradores).where(pendientes);
+  const cambiados: string[] = [];
+  for (const fila of filas) {
+    if (!fila.origenRef || (b.aplica && !b.aplica(fila.origenRef))) continue;
+    const previos = (fila.args ?? {}) as Record<string, unknown>;
+    const args = b.cambiar(previos);
+    if (JSON.stringify(args) === JSON.stringify(previos)) continue;
+    await tx.update(borradores).set({ args, resumen: b.resumen }).where(and(pendientes, eq(borradores.id, fila.id)));
+    cambiados.push(fila.id);
+  }
+  return cambiados;
 }

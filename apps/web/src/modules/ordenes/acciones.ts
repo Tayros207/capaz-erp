@@ -1,4 +1,4 @@
-import type { EntradaDe, PedidoDto } from '@capaz/shared';
+import type { EntradaDe, PedidoDto, VentaCorregidaDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { clienteDeConsultas } from '../../shared/api/cliente-de-consultas.ts';
 import { puede } from '../../shared/sesion/sesion.ts';
@@ -7,6 +7,7 @@ import { useYo } from '../../shared/sesion/use-yo.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { anotarPedido, cambiarEstado, cancelarPedido, confirmarPedido, editarDatosDePedido, listarPedidos } from './api.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
+import { saldoTrasCorregir, type SaldoDelPedido } from './deuda-del-pedido.ts';
 import { ETIQUETA_DE_ESTADO, mensajeDeRechazo, type Paso } from './logica.ts';
 
 /** Qué puede hacer esta persona en Pedidos: escribir exige acceso completo al módulo y el permiso. */
@@ -17,6 +18,17 @@ export function usePermisosDePedidos(): { editar: boolean; cancelar: boolean } {
 }
 
 export const refrescarPedidos = () => clienteDeConsultas.invalidateQueries({ queryKey: CLAVE_PEDIDOS });
+
+/**
+ * Tras «Corregir venta»: el pedido y su saldo se pintan ya con lo que devolvió el servidor (sin parpadeo del saldo anterior) y
+ * después se vuelve a pedir todo lo que depende de esa venta: pedidos, Finanzas (la deuda), Mi día y la bandeja (propuestas de
+ * cobro puestas al día). Las claves de los otros módulos van escritas aquí para no importarlos (regla 7).
+ */
+export async function refrescarTrasCorregir(r: VentaCorregidaDto): Promise<void> {
+  clienteDeConsultas.setQueryData([...CLAVE_PEDIDOS, 'ficha', r.pedido.id], r.pedido);
+  clienteDeConsultas.setQueryData<SaldoDelPedido | null>([...CLAVE_PEDIDOS, 'saldo', r.pedido.id], (previo) => saldoTrasCorregir(previo, r));
+  await Promise.all([refrescarPedidos(), ...[['registro'], ['inicio'], ['bandeja']].map((queryKey) => clienteDeConsultas.invalidateQueries({ queryKey }))]);
+}
 
 /** Confirma o cambia de estado, avisa del resultado y refresca las listas. Devuelve si se aplicó. */
 export async function aplicarPaso(id: string, paso: Paso): Promise<boolean> {

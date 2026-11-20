@@ -47,8 +47,9 @@ async function venta(opciones: { soles?: number; abonoCentimos?: number; deuda?:
   }
   return { p: await llamar(dueno, 'pedido_ver', { id: p.id }), d };
 }
-const corregir = (s: Sesion, args: Record<string, unknown>) => confirmando(s, 'venta_corregir', { motivoCodigo: 'precio_acordado', ...args });
 const versionDe = async (id: string) => (await llamar(dueno, 'pedido_ver', { id })).version as number;
+/** Corrige sobre la versión vigente (la que la persona tendría a la vista), salvo que la prueba diga otra. */
+const corregir = async (s: Sesion, args: Record<string, unknown>) => confirmando(s, 'venta_corregir', { motivoCodigo: 'precio_acordado', versionEsperada: await versionDe(args.id as string), ...args });
 const contarVersiones = (id: string) => comoEmpresa(appPool, A, async (c) => Number((await c.query(`select count(*)::int as n from ordenes.pedido_versiones where pedido_id = $1`, [id])).rows[0].n));
 
 beforeAll(async () => {
@@ -72,7 +73,7 @@ afterAll(async () => {
 describe('venta_corregir: una confirmación, una transacción', () => {
   it('muestra el resumen sin cambiar nada y, al confirmar, corrige el pedido y ajusta la deuda; lo pagado no se toca', async () => {
     const { p, d } = await venta({ abonoCentimos: 5_000 });
-    const pide = await dueno.herramienta('venta_corregir', { id: p.id, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 });
+    const pide = await dueno.herramienta('venta_corregir', { id: p.id, versionEsperada: 1, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 });
     expect(pide.cuerpo.requiereConfirmacion.resumen).toContain(`pedido ${p.codigo} (versión 1 → 2)`);
     expect(pide.cuerpo.requiereConfirmacion.resumen).toContain('Total: S/ 118.00 → S/ 100.00 (−S/ 18.00)');
     expect(pide.cuerpo.requiereConfirmacion.resumen).toContain('Ya pagó S/ 50.00; falta S/ 50.00');
@@ -82,7 +83,7 @@ describe('venta_corregir: una confirmación, una transacción', () => {
     expect((await llamar(dueno, 'deuda_ver', { id: d.id })).totalCentimos).toBe(11_800);
     expect((await eventosDe(appPool, A, 'pedido.corregido')).filter((e) => e.carga.id === p.id)).toEqual([]);
     // Una sola confirmación: el token del resumen basta para todo.
-    const fin = await dueno.herramienta('venta_corregir', { id: p.id, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 }, { confirmacion: pide.cuerpo.requiereConfirmacion.token });
+    const fin = await dueno.herramienta('venta_corregir', { id: p.id, versionEsperada: 1, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 }, { confirmacion: pide.cuerpo.requiereConfirmacion.token });
     const r = datos(fin);
     expect(r.pedido).toMatchObject({ version: 2, totalCentimos: 10_000 });
     expect(r.deuda).toMatchObject({ id: d.id, totalCentimos: 10_000, abonadoCentimos: 5_000, saldoCentimos: 5_000, estado: 'parcial' });
@@ -92,7 +93,7 @@ describe('venta_corregir: una confirmación, una transacción', () => {
     expect(v).toMatchObject({ totalCentimos: 10_000, abonadoCentimos: 5_000, totalOriginalCentimos: 11_800 });
     expect(v.abonos).toHaveLength(1);
     // Reusar el mismo token no repite nada.
-    const otra = await dueno.herramienta('venta_corregir', { id: p.id, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 }, { confirmacion: pide.cuerpo.requiereConfirmacion.token });
+    const otra = await dueno.herramienta('venta_corregir', { id: p.id, versionEsperada: 1, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 }, { confirmacion: pide.cuerpo.requiereConfirmacion.token });
     expect(otra.cuerpo.ok).not.toBe(true);
     expect(await versionDe(p.id)).toBe(2);
     // El respaldo no propone nada: la deuda ya cuadra y el ajuste ya existe.
@@ -205,12 +206,12 @@ describe('venta_corregir: permisos y umbral', () => {
 
   it('el consumidor de respaldo también cubre pedido_corregir llamado a secas, solo una vez, y no propone si la deuda ya cuadra', async () => {
     const { p, d } = await venta({ soles: 118 });
-    datos(await dueno.herramienta('pedido_corregir', { id: p.id, motivoCodigo: 'otro', motivoTexto: 'Directo', fijarTotalCentimos: 11_000 }));
+    datos(await dueno.herramienta('pedido_corregir', { id: p.id, versionEsperada: 1, motivoCodigo: 'otro', motivoTexto: 'Directo', fijarTotalCentimos: 11_000 }));
     await drenar();
     expect(await borradoresDe('deuda_ajustar', `pedido:${p.id}:v2`)).toHaveLength(1);
     // Corrección que deja el mismo total que ya tiene la deuda: no hay nada que proponer.
     const { p: q } = await venta({ soles: 118 });
-    datos(await dueno.herramienta('pedido_corregir', { id: q.id, motivoCodigo: 'igv', lineas: [{ id: q.detalle[0].id, descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: false }] }));
+    datos(await dueno.herramienta('pedido_corregir', { id: q.id, versionEsperada: 1, motivoCodigo: 'igv', lineas: [{ id: q.detalle[0].id, descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: false }] }));
     await drenar();
     expect(await borradoresDe('deuda_ajustar', `pedido:${q.id}:v2`)).toEqual([]);
     expect(d.id).toBeTruthy();
@@ -223,7 +224,7 @@ describe('venta_corregir: permisos y umbral', () => {
 
   it('es crítica: solo desde la pantalla, y pide confirmación', async () => {
     const { p } = await venta({ deuda: false });
-    const pide = await dueno.herramienta('venta_corregir', { id: p.id, motivoCodigo: 'igv', fijarTotalCentimos: 11_000 });
+    const pide = await dueno.herramienta('venta_corregir', { id: p.id, versionEsperada: 1, motivoCodigo: 'igv', fijarTotalCentimos: 11_000 });
     expect(pide.cuerpo.requiereConfirmacion?.token).toBeTruthy();
     expect(await versionDe(p.id)).toBe(1);
   });

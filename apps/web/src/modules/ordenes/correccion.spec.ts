@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { PedidoCompletoDto } from '@capaz/shared';
-import { alternarDesglose, argumentosDeCorreccion, conIgvEncima, formularioDeCorreccion, hayCambios, sinIgvIncluido, validarCorreccion, vistaPrevia } from './correccion.ts';
+import { calcularTotalesDePedido, type PedidoCompletoDto } from '@capaz/shared';
+import { alternarDesglose, argumentosDeCorreccion, conIgvEncima, diferenciaDelAtajo, formularioDeCorreccion, hayCambios, sinIgvIncluido, validarCorreccion, vistaPrevia } from './correccion.ts';
 import { lineaVacia } from './logica.ts';
 
 const ID1 = '0192f0c4-7b1e-7000-8000-000000000001';
@@ -32,6 +32,21 @@ describe('atajos de IGV', () => {
     expect(a.every((l) => l.afectoIgv)).toBe(true);
     expect(alternarDesglose(a).every((l) => !l.afectoIgv)).toBe(true);
     expect(a.map((l) => l.precioUnitarioMilesimas)).toEqual(f.lineas.map((l) => l.precioUnitarioMilesimas));
+  });
+});
+
+describe('precisión de los atajos (precio con tres decimales)', () => {
+  const chico = (precio: number, cantidad: number) => ({ ...formularioDeCorreccion(pedido()).lineas[0]!, cantidadMilesimas: cantidad, precioUnitarioMilesimas: precio });
+  it('1000 × S/ 0.085 más IGV: el precio queda en S/ 0.100 y el total en S/ 100.00, no en S/ 100.30; se avisa', () => {
+    const antes = [chico(85, 1_000_000)];
+    const despues = conIgvEncima(antes, 18);
+    expect(despues[0]?.precioUnitarioMilesimas).toBe(100);
+    expect(diferenciaDelAtajo(antes, despues, 18, 'encima')).toEqual({ exactoCentimos: 10_030, conPreciosCentimos: 10_000 });
+  });
+  it('con precios normales no hay nada que avisar (ida y vuelta exacta)', () => {
+    const antes = formularioDeCorreccion(pedido()).lineas;
+    expect(diferenciaDelAtajo(antes, conIgvEncima(antes, 18), 18, 'encima')).toBeNull();
+    expect(diferenciaDelAtajo(antes, sinIgvIncluido(antes, 18), 18, 'quitar')).toBeNull();
   });
 });
 
@@ -70,11 +85,33 @@ describe('argumentos', () => {
   it('fijar total sin tocar líneas no envía las líneas', () => {
     const p = pedido();
     const a = argumentosDeCorreccion(p, { ...formularioDeCorreccion(p), motivo: 'precio_acordado', fijarTotalCentimos: 10_000 });
-    expect(a).toEqual({ id: p.id, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 });
+    expect(a).toEqual({ id: p.id, versionEsperada: 1, motivoCodigo: 'precio_acordado', fijarTotalCentimos: 10_000 });
+  });
+  it('lleva la versión que se tiene a la vista (si otro corrigió antes, el servidor rechaza)', () => {
+    const p = pedido({ version: 3 });
+    expect(argumentosDeCorreccion(p, { ...formularioDeCorreccion(p), motivo: 'igv', fijarTotalCentimos: 9_000 }).versionEsperada).toBe(3);
+  });
+  it('líneas cambiadas con el total fijado en el mismo de antes: se envía el total fijado (la vista previa y el servidor dan lo mismo)', () => {
+    const p = pedido();
+    const base = formularioDeCorreccion(p);
+    const nueva = { ...lineaVacia('9f2c0000-0000-4000-8000-000000000009'), descripcion: 'Extra', cantidadMilesimas: 1000, precioUnitarioMilesimas: 10_000 };
+    const f = { ...base, lineas: [...base.lineas, nueva], motivo: 'lineas' as const, fijarTotalCentimos: p.totalCentimos };
+    const a = argumentosDeCorreccion(p, f);
+    expect(a.fijarTotalCentimos).toBe(11_800);
+    expect(vistaPrevia(p, f, null).totalNuevoCentimos).toBe(11_800);
   });
 });
 
 describe('vista previa «Qué cambia»', () => {
+  it('sin total fijado, el total de la vista previa es el mismo cálculo del servidor (calcularTotalesDePedido)', () => {
+    const p = pedido();
+    const base = formularioDeCorreccion(p);
+    for (const lineas of [conIgvEncima(base.lineas, 18), sinIgvIncluido(base.lineas, 18), alternarDesglose(base.lineas)]) {
+      const f = { ...base, lineas, motivo: 'igv' as const };
+      const servidor = calcularTotalesDePedido(argumentosDeCorreccion(p, f).lineas ?? [], 18).totalCentimos;
+      expect(vistaPrevia(p, f, null).totalNuevoCentimos).toBe(servidor);
+    }
+  });
   it('muestra la línea cambiada, el total, lo pagado y lo que queda a favor', () => {
     const p = pedido();
     const f = { ...formularioDeCorreccion(p), motivo: 'igv' as const, fijarTotalCentimos: 9_000 };

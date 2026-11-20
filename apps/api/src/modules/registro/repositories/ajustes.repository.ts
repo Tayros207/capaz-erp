@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import type { AjusteDeDeudaDto, MotivoDeCorreccion } from '@capaz/shared';
 import { registroDeudaAjustes, registroDeudas } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
+import { versionDePedidoEnReferencia } from '../domain/ajuste.js';
 import { codigoDeDeuda } from '../domain/codigos.js';
 
 // Ajustes del total de una deuda: solo se agregan. La deuda debe estar bloqueada por quien escribe.
@@ -18,6 +19,19 @@ export async function ajustePorOrigen(tx: Transaccion, ctx: ContextoDeEmpresa, o
 export async function aFavorActual(tx: Transaccion, ctx: ContextoDeEmpresa, deudaId: string): Promise<number> {
   const [f] = await tx.select({ aFavor: a.aFavorCentimos }).from(a).where(and(eq(a.tenantId, ctx.empresaId), eq(a.deudaId, deudaId))).orderBy(desc(a.creadoEn), desc(a.id)).limit(1);
   return f?.aFavor ?? 0;
+}
+
+/**
+ * La versión más nueva del pedido con que ya se ajustó esta deuda (por las referencias `pedido:<id>:v<n>`), o `null`. Sirve
+ * para no aplicar tarde el ajuste de una versión vieja (un borrador aprobado después de otra corrección) y dejar la deuda atrás.
+ */
+export async function ultimaVersionAjustada(tx: Transaccion, ctx: ContextoDeEmpresa, deudaId: string, pedidoId: string): Promise<number | null> {
+  const filas = await tx
+    .select({ ref: a.origenRef })
+    .from(a)
+    .where(and(eq(a.tenantId, ctx.empresaId), eq(a.deudaId, deudaId), sql`${a.origenRef} like ${`pedido:${pedidoId}:v%`}`));
+  const versiones = filas.map((f) => versionDePedidoEnReferencia(f.ref)?.version ?? 0);
+  return versiones.length ? Math.max(...versiones) : null;
 }
 
 export type DatosDeAjuste = {

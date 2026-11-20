@@ -1,10 +1,11 @@
 import { exito, rechazo } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { emitir } from '../../../core/eventos/emisor.js';
-import { definirHerramienta } from '../../../core/herramientas/tipos.js';
-import { calcularAjuste } from '../domain/ajuste.js';
+import { definirHerramienta, type ContextoDeHerramienta } from '../../../core/herramientas/tipos.js';
+import type { Transaccion } from '../../../infra/database/con-empresa.js';
+import { calcularAjuste, versionDePedidoEnReferencia } from '../domain/ajuste.js';
 import { puedeEditarseLaDeuda, validarVencimiento, type EstadoDeDeuda } from '../domain/deuda.js';
-import { aFavorActual, ajustePorOrigen, ajustesDeDeuda, ajustesPorOrigenes, guardarTotal, insertarAjuste } from '../repositories/ajustes.repository.js';
+import { aFavorActual, ajustePorOrigen, ajustesDeDeuda, ajustesPorOrigenes, guardarTotal, insertarAjuste, ultimaVersionAjustada } from '../repositories/ajustes.repository.js';
 import { bloquearDeuda, verDeuda } from '../repositories/deudas.repository.js';
 import { existeContacto } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
@@ -13,6 +14,22 @@ import { aDeudaDto, codigoDeLaDeuda } from './mapeo.js';
 // `deuda_ajustar`: corrige el TOTAL de una deuda viva (la venta se corrigió) sin anularla y sin tocar lo ya abonado. Deja un
 // ajuste visible e inmutable (monto con signo, motivo, quién, cuándo). Si el cliente pagó de más, el exceso queda a su favor:
 // no se devuelve dinero ni se crea una deuda por pagar (adaptación contable interna).
+
+/**
+ * La referencia de origen, con la deuda ya bloqueada: repetida → el ajuste ya existe (idempotente); de otra deuda → choque; de una
+ * versión del pedido más vieja que la ya ajustada → se rechaza (aplicarla dejaría la deuda con un total que ya no vale).
+ */
+async function revisarReferencia(tx: Transaccion, ctx: ContextoDeHerramienta, deudaId: string, origenRef: string | undefined): Promise<{ yaAplicado: string } | { motivo: string } | null> {
+  if (!origenRef) return null;
+  const previo = await ajustePorOrigen(tx, ctx, origenRef);
+  if (previo) return previo.deudaId === deudaId ? { yaAplicado: previo.id } : { motivo: 'Esa referencia ya se usó para ajustar otra deuda.' };
+  const ref = versionDePedidoEnReferencia(origenRef);
+  const ultima = ref ? await ultimaVersionAjustada(tx, ctx, deudaId, ref.pedidoId) : null;
+  if (ref && ultima !== null && ultima > ref.version) {
+    return { motivo: `Este ajuste es de la versión ${ref.version} del pedido, pero la deuda ya se ajustó con la versión ${ultima}: ya no corresponde aplicarlo (descártalo).` };
+  }
+  return null;
+}
 
 export const deudaAjustar = definirHerramienta('deuda_ajustar', {
   modulo: MODULO,
@@ -38,6 +55,7 @@ export const deudaAjustar = definirHerramienta('deuda_ajustar', {
       'Una deuda anulada no se ajusta.',
       'No hay nada que ajustar: la deuda ya tenía ese total.',
       'El cliente de la deuda solo se cambia si no tiene abonos.',
+      'El ajuste es de una versión del pedido más vieja que la ya aplicada: se descarta.',
     ],
     relacionadas: ['deuda_ver', 'deuda_editar', 'deuda_anular', 'deuda_ajustes_listar'],
   },
@@ -52,10 +70,8 @@ export const deudaAjustar = definirHerramienta('deuda_ajustar', {
       const ajustes = await ajustesDeDeuda(tx, ctx, actual.id);
       return exito({ deuda: aDeudaDto(f, hoy), ajuste: ajustes.find((x) => x.id === ajusteId) ?? null, aFavorCentimos: ajustes[0]?.aFavorCentimos ?? 0, yaAplicado });
     };
-    if (args.origenRef) {
-      const previo = await ajustePorOrigen(tx, ctx, args.origenRef);
-      if (previo) return previo.deudaId === actual.id ? responder(true, previo.id) : rechazo('conflicto', 'Esa referencia ya se usó para ajustar otra deuda.');
-    }
+    const referencia = await revisarReferencia(tx, ctx, actual.id, args.origenRef);
+    if (referencia) return 'yaAplicado' in referencia ? responder(true, referencia.yaAplicado) : rechazo('conflicto', referencia.motivo);
     const editable = puedeEditarseLaDeuda(actual.estado as EstadoDeDeuda);
     if (!editable.ok) return rechazoDe(editable);
     if (args.venceEn !== undefined) {
