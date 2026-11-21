@@ -1,33 +1,21 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import type { CapturaPropuesta } from '@capaz/shared';
-import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
 import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { CLAVE_BANDEJA } from '../bandeja/claves.ts';
-import { CLAVE_CAPTURA, medirDictados, proponerCaptura } from './api.ts';
-import { avisoAlAprobar, decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, lineaDeMedicion, mensajeDeErrorDeCaptura, rangoDelMes, transcurridoMs } from './logica.ts';
+import { CLAVE_CAPTURA, proponerCaptura } from './api.ts';
+import { avisoAlAprobar, decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, mensajeDeErrorDeCaptura, transcurridoMs } from './logica.ts';
 import { recortarTexto, unirConBase } from './logica-reconocedor.ts';
+import { LineaDeMedicion } from './linea-de-medicion.tsx';
 import { TarjetaDeBorrador, type Resolucion } from './tarjeta-de-borrador.tsx';
 import { useReconocedorWebSpeech } from './use-reconocedor-web-speech.ts';
 import { MAXIMO_DE_TEXTO_DE_CAPTURA, type OrigenDeCaptura } from '@capaz/shared';
 
 type Modo = 'ingreso' | 'egreso';
-
-function diaDeHoy(): string {
-  const p = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-  return p;
-}
-
-export function LineaDeMedicion({ alineacion = 'centro' }: { alineacion?: 'centro' | 'izquierda' } = {}) {
-  const [rango] = useState(() => rangoDelMes(diaDeHoy()));
-  const m = useQuery({ queryKey: [...CLAVE_CAPTURA, 'metricas', rango.desde, rango.hasta], queryFn: async () => datosOError(await medirDictados(rango.desde, rango.hasta)), staleTime: 30_000 });
-  if (!m.data) return null;
-  return <p className={alineacion === 'centro' ? 'text-center text-sm text-texto-suave' : 'text-sm text-texto-suave'}>{lineaDeMedicion(m.data)}</p>;
-}
 
 /** Dictado por voz o texto: el texto es siempre el respaldo. Interpreta, propone borradores y la persona los aprueba. */
 export function PantallaDictado() {

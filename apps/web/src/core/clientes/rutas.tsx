@@ -1,11 +1,11 @@
 import type { RouteObject } from 'react-router';
-import { PantallaFichaCliente } from './pantalla-ficha.tsx';
-import { PantallaClientes } from './pantalla-lista.tsx';
-import { PantallaRepetidos } from './pantalla-repetidos.tsx';
+import { perezosa } from '../../shared/rutas/perezosa.ts';
+
+const p = () => import('./pantallas-de-clientes.ts');
 
 // `/clientes` (lista con búsqueda y alta) y `/clientes/:id` (ficha). Herramientas clientes_*.
 export const rutas: RouteObject[] = [
-  { path: 'clientes', element: <PantallaClientes /> },
-  { path: 'clientes/repetidos', element: <PantallaRepetidos /> },
-  { path: 'clientes/:id', element: <PantallaFichaCliente /> },
+  { path: 'clientes', lazy: perezosa(p, (m) => <m.PantallaClientes />) },
+  { path: 'clientes/repetidos', lazy: perezosa(p, (m) => <m.PantallaRepetidos />) },
+  { path: 'clientes/:id', lazy: perezosa(p, (m) => <m.PantallaFichaCliente />) },
 ];

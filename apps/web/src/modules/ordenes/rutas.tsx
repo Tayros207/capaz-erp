@@ -1,30 +1,22 @@
 import type { RouteObject } from 'react-router';
-import { PantallaDocumentoDePedido } from './pantalla-documento.tsx';
-import { PantallaGuia } from './pantalla-guia.tsx';
-import { PantallaGuias } from './pantalla-guias.tsx';
-import { PantallaNuevaGuia, RedirigirAGuiaNueva } from './pantalla-guia-nueva.tsx';
-import { PantallaCorrecciones } from './pantalla-correcciones.tsx';
-import { PantallaEntregas } from './pantalla-entregas.tsx';
-import { PantallaImportarHistorial } from './pantalla-importar-historial.tsx';
-import { PantallaFichaPedido } from './pantalla-ficha.tsx';
-import { PantallaPedidos } from './pantalla-lista.tsx';
-import { PantallaNuevoPedido } from './pantalla-nuevo.tsx';
-import { PantallaTableroDePedidos } from './pantalla-tablero.tsx';
+import { perezosa } from '../../shared/rutas/perezosa.ts';
+
+const p = () => import('./pantallas-de-ordenes.ts');
 
 // Pedidos: lista, tablero por estado, entregas, guías de remisión, alta y ficha. Las rutas de guías van antes de `:id`. Herramientas pedido_* y pedidos_listar.
 export const rutas: RouteObject[] = [
-  { path: 'm/ordenes', element: <PantallaPedidos /> },
-  { path: 'm/ordenes/tablero', element: <PantallaTableroDePedidos /> },
-  { path: 'm/ordenes/entregas', element: <PantallaEntregas /> },
-  { path: 'm/ordenes/nuevo', element: <PantallaNuevoPedido /> },
-  { path: 'm/ordenes/correcciones', element: <PantallaCorrecciones /> },
-  { path: 'm/ordenes/importar-historial', element: <PantallaImportarHistorial /> },
-  { path: 'm/ordenes/guias', element: <PantallaGuias /> },
-  { path: 'm/ordenes/guias/nueva', element: <PantallaNuevaGuia /> },
-  { path: 'm/ordenes/guias/:guiaId', element: <PantallaGuia /> },
-  { path: 'm/ordenes/:id/proforma', element: <PantallaDocumentoDePedido tipo="proforma" /> },
-  { path: 'm/ordenes/:id/nota', element: <PantallaDocumentoDePedido tipo="nota" /> },
-  { path: 'm/ordenes/:id/orden-de-trabajo', element: <PantallaDocumentoDePedido tipo="orden-de-trabajo" /> },
-  { path: 'm/ordenes/:id/guia-de-remision', element: <RedirigirAGuiaNueva /> },
-  { path: 'm/ordenes/:id', element: <PantallaFichaPedido /> },
+  { path: 'm/ordenes', lazy: perezosa(p, (m) => <m.PantallaPedidos />) },
+  { path: 'm/ordenes/tablero', lazy: perezosa(p, (m) => <m.PantallaTableroDePedidos />) },
+  { path: 'm/ordenes/entregas', lazy: perezosa(p, (m) => <m.PantallaEntregas />) },
+  { path: 'm/ordenes/nuevo', lazy: perezosa(p, (m) => <m.PantallaNuevoPedido />) },
+  { path: 'm/ordenes/correcciones', lazy: perezosa(p, (m) => <m.PantallaCorrecciones />) },
+  { path: 'm/ordenes/importar-historial', lazy: perezosa(p, (m) => <m.PantallaImportarHistorial />) },
+  { path: 'm/ordenes/guias', lazy: perezosa(p, (m) => <m.PantallaGuias />) },
+  { path: 'm/ordenes/guias/nueva', lazy: perezosa(p, (m) => <m.PantallaNuevaGuia />) },
+  { path: 'm/ordenes/guias/:guiaId', lazy: perezosa(p, (m) => <m.PantallaGuia />) },
+  { path: 'm/ordenes/:id/proforma', lazy: perezosa(p, (m) => <m.PantallaDocumentoDePedido tipo="proforma" />) },
+  { path: 'm/ordenes/:id/nota', lazy: perezosa(p, (m) => <m.PantallaDocumentoDePedido tipo="nota" />) },
+  { path: 'm/ordenes/:id/orden-de-trabajo', lazy: perezosa(p, (m) => <m.PantallaDocumentoDePedido tipo="orden-de-trabajo" />) },
+  { path: 'm/ordenes/:id/guia-de-remision', lazy: perezosa(p, (m) => <m.RedirigirAGuiaNueva />) },
+  { path: 'm/ordenes/:id', lazy: perezosa(p, (m) => <m.PantallaFichaPedido />) },
 ];

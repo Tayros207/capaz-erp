@@ -8,7 +8,7 @@ import { useYo } from '../../shared/sesion/use-yo.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { unir } from '../../shared/ui/unir.ts';
-import { LineaDeMedicion } from '../captura/pantalla-dictado.tsx';
+import { LineaDeMedicion } from '../captura/linea-de-medicion.tsx';
 import { PantallaMiDia } from './pantalla-mi-dia.tsx';
 
 const COLOR_ACENTO: Record<string, string> = {

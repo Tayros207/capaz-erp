@@ -9,6 +9,7 @@
     "typecheck": "tsc -b",
     "lint": "oxlint",
     "preview": "vite preview",
+    "presupuesto": "node scripts/presupuesto-de-carga.ts",
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {

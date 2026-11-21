@@ -1,5 +1,7 @@
 import type { RouteObject } from 'react-router';
-import { PantallaDictado } from './pantalla-dictado.tsx';
+import { perezosa } from '../../shared/rutas/perezosa.ts';
 
 // `/dictar`: captura por voz y texto. Herramienta captura_proponer; los borradores se aprueban desde la propia pantalla.
-export const rutas: RouteObject[] = [{ path: 'dictar', element: <PantallaDictado /> }];
+export const rutas: RouteObject[] = [
+  { path: 'dictar', lazy: perezosa(() => import('./pantalla-dictado.tsx'), (m) => <m.PantallaDictado />) },
+];

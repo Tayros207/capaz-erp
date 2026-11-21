@@ -18,6 +18,7 @@
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "test:int": "pnpm --filter api test:int",
+    "check:carga": "pnpm --filter @capaz/shared build && pnpm --filter web build && pnpm --filter web presupuesto",
     "check": "pnpm --filter @capaz/shared build && pnpm typecheck && pnpm lint && pnpm test && pnpm test:int",
     "db:preparar": "pnpm --filter api db:preparar",
     "db:migrar": "pnpm --filter api db:migrar",

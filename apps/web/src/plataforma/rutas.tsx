@@ -1,14 +1,13 @@
 import type { RouteObject } from 'react-router';
-import { Marco } from './marco.tsx';
-import { PantallaEmpresa } from './pantalla-empresa.tsx';
-import { PantallaEmpresas } from './pantalla-empresas.tsx';
-import { PantallaPlanes } from './pantalla-planes.tsx';
-import { PantallaSolicitudes } from './pantalla-solicitudes.tsx';
+import { perezosa } from '../shared/rutas/perezosa.ts';
+
+const p = () => import('./pantallas-de-plataforma.ts');
 
 // Consola de plataforma (solo operadores). Habla con `/api/v1/plataforma/herramientas/:nombre`, no con la puerta de empresas.
+// Las pantallas cargan diferido: la consola no pesa en el arranque de quien no es operador.
 export const rutas: RouteObject[] = [
-  { path: 'plataforma', element: <Marco><PantallaEmpresas /></Marco> },
-  { path: 'plataforma/empresas/:id', element: <Marco conIndicadores={false}><PantallaEmpresa /></Marco> },
-  { path: 'plataforma/planes', element: <Marco conIndicadores={false}><PantallaPlanes /></Marco> },
-  { path: 'plataforma/solicitudes', element: <Marco conIndicadores={false}><PantallaSolicitudes /></Marco> },
+  { path: 'plataforma', lazy: perezosa(p, (m) => <m.Marco><m.PantallaEmpresas /></m.Marco>) },
+  { path: 'plataforma/empresas/:id', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaEmpresa /></m.Marco>) },
+  { path: 'plataforma/planes', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaPlanes /></m.Marco>) },
+  { path: 'plataforma/solicitudes', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaSolicitudes /></m.Marco>) },
 ];

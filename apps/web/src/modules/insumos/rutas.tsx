@@ -1,27 +1,22 @@
 import type { RouteObject } from 'react-router';
+import { perezosa } from '../../shared/rutas/perezosa.ts';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
-import { MarcoDeInventario } from './marco.tsx';
-import { PantallaAlertas } from './pantalla-alertas.tsx';
-import { PantallaArticulo } from './pantalla-articulo.tsx';
-import { PantallaConteo } from './pantalla-conteo.tsx';
-import { PantallaConteos } from './pantalla-conteos.tsx';
-import { PantallaTransferencias } from './pantalla-transferencias.tsx';
-import { PantallaExistencias } from './pantalla-existencias.tsx';
-import { PantallaMovimientos } from './pantalla-movimientos.tsx';
+
+const p = () => import('./pantallas-de-insumos.ts');
 
 // Pantallas de «insumos» (Inventario), bajo `m/insumos/…` con marco propio (FICHAS-OLA-3 §2).
 export const rutas: RouteObject[] = [
   {
     path: 'm/insumos',
-    element: <MarcoDeInventario />,
+    lazy: perezosa(p, (m) => <m.MarcoDeInventario />),
     children: [
-      { index: true, element: <PantallaExistencias /> },
-      { path: 'alertas', element: <PantallaAlertas /> },
-      { path: 'movimientos', element: <PantallaMovimientos /> },
-      { path: 'transferencias', element: <PantallaTransferencias /> },
-      { path: 'conteos', element: <PantallaConteos /> },
-      { path: 'conteos/:id', element: <PantallaConteo /> },
-      { path: 'articulos/:id', element: <PantallaArticulo /> },
+      { index: true, lazy: perezosa(p, (m) => <m.PantallaExistencias />) },
+      { path: 'alertas', lazy: perezosa(p, (m) => <m.PantallaAlertas />) },
+      { path: 'movimientos', lazy: perezosa(p, (m) => <m.PantallaMovimientos />) },
+      { path: 'transferencias', lazy: perezosa(p, (m) => <m.PantallaTransferencias />) },
+      { path: 'conteos', lazy: perezosa(p, (m) => <m.PantallaConteos />) },
+      { path: 'conteos/:id', lazy: perezosa(p, (m) => <m.PantallaConteo />) },
+      { path: 'articulos/:id', lazy: perezosa(p, (m) => <m.PantallaArticulo />) },
       { path: '*', element: <EstadoVacio titulo="No encontramos esta pantalla" icono="caja" /> },
     ],
   },
