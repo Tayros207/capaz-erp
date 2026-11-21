@@ -1,4 +1,4 @@
-import { MAXIMO_DE_LINEAS_DE_PEDIDO, calcularTotalesDePedido, type LineaDeEntrada } from '@capaz/shared';
+import { MAXIMO_DE_LINEAS_DE_PEDIDO, calcularTotalesDePedido, fichaNormalizada, type FichaDeMaquina, type LineaDeEntrada } from '@capaz/shared';
 
 // Reglas puras del pedido: código visible, fechas, líneas y totales. Sin base ni framework.
 
@@ -57,7 +57,7 @@ export type LineaPreparada = {
   precioUnitarioMilesimas: number;
   afectoIgv: boolean;
   importeCentimos: number;
-};
+} & FichaDeMaquina;
 
 export type LineasPreparadas =
   | { ok: true; lineas: LineaPreparada[]; subtotalCentimos: number; igvCentimos: number; totalCentimos: number }
@@ -86,6 +86,7 @@ export function prepararLineas(entradas: readonly LineaDeEntrada[], productos: R
       cantidadMilesimas: e.cantidadMilesimas,
       precioUnitarioMilesimas: precio,
       afectoIgv: e.afectoIgv ?? producto?.afectoIgv ?? true,
+      ...fichaNormalizada(e),
     });
   }
   try {

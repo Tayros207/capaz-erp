@@ -73,3 +73,5 @@ export {
   type Coincidencia,
 } from './similitud-descripciones.js';
 export { detectarPreguntaDePrecio, type PreguntaDePrecio } from './pregunta-de-precio.js';
+export { telefonoParaWhatsapp, enlaceDeWhatsapp } from './whatsapp.js';
+export { MONTO_MINIMO_POR_TRABAJO_CENTIMOS, MAXIMO_MONTO_MINIMO_CENTIMOS, montoMinimoEfectivo, faltaParaElMinimo } from './monto-minimo.js';

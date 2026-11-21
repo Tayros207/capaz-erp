@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { importe } from '../dinero.js';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { fichaDeEntradaShape, fichaDeSalidaShape } from './ficha-de-maquina.js';
 import { entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema } from './precios-anteriores.js';
 
 // Producción: órdenes de trabajo del taller (el modelo de SF/Tairos.RC en Capaz). Una orden es de un cliente, lleva una o
@@ -32,10 +33,7 @@ export const lineaDeOrdenSchema = z.strictObject({
   cantidadMilesimas: z.number().int(),
   precioUnitarioMilesimas: z.number().int(),
   subtotalCentimos: z.number().int(),
-  material: z.string().nullable(),
-  medida: z.string().nullable(),
-  colores: z.string().nullable(),
-  acabado: z.string().nullable(),
+  ...fichaDeSalidaShape,
 });
 export type LineaDeOrdenDto = z.infer<typeof lineaDeOrdenSchema>;
 
@@ -85,10 +83,7 @@ export const lineaDeOrdenEntradaSchema = z.strictObject({
   unidad: texto(20).optional(),
   cantidadMilesimas: z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' }),
   precioUnitarioMilesimas: z.number().int().safe().min(1, { error: 'El valor debe ser mayor que cero.' }),
-  material: texto(120).nullish(),
-  medida: texto(120).nullish(),
-  colores: texto(120).nullish(),
-  acabado: texto(120).nullish(),
+  ...fichaDeEntradaShape,
 });
 export type LineaDeOrdenEntrada = z.infer<typeof lineaDeOrdenEntradaSchema>;
 

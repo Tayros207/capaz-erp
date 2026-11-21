@@ -21,6 +21,10 @@ import { movimientoRestaurar } from './movimientos-restauracion.js';
 import { movimientosListar, movimientoVer } from './movimientos-lectura.js';
 import { cuentasTransferir } from './transferencias.js';
 import { cajaDelDia, registroResumen } from './reportes-herramientas.js';
+import { registroCoberturaDelMes } from './cobertura-herramientas.js';
+import { semanaRevisar } from './cierre-revisar.js';
+import { semanaCerrar } from './cierre-cerrar.js';
+import { deudasCopiarFijos } from './pagos-fijos-herramientas.js';
 
 export const HERRAMIENTAS_DE_REGISTRO = [
   deudasAntiguedad,
@@ -53,6 +57,10 @@ export const HERRAMIENTAS_DE_REGISTRO = [
   deudaAnular,
   cajaDelDia,
   registroResumen,
+  registroCoberturaDelMes,
+  semanaRevisar,
+  semanaCerrar,
+  deudasCopiarFijos,
 ] as const;
 
 /** Todo lo que el módulo `registro` aporta al servidor: herramientas, consumidores de eventos y fuentes de tiempo. */

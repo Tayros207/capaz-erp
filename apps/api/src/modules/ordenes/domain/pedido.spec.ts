@@ -31,6 +31,12 @@ describe('fechas y cantidad de líneas', () => {
 });
 
 describe('prepararLineas', () => {
+  it('D7 la ficha se recorta y lo vacío queda null', () => {
+    const r = prepararLineas([{ descripcion: 'Tarjetas', cantidadMilesimas: 1000, precioUnitarioMilesimas: 100, material: ' couché 300 g ', medida: '', colores: null }], catalogo(), 18);
+    if (!r.ok) throw new Error(r.motivo);
+    expect(r.lineas[0]).toMatchObject({ material: 'couché 300 g', medida: null, colores: null, acabado: null });
+  });
+
   it('lo que no llega se toma del producto; lo que llega manda', () => {
     const r = prepararLineas(
       [
@@ -41,7 +47,7 @@ describe('prepararLineas', () => {
       18,
     );
     if (!r.ok) throw new Error(r.motivo);
-    expect(r.lineas[0]).toEqual({ posicion: 0, productoId: P1, descripcion: 'Tarjetas', unidad: 'millar', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true, importeCentimos: 11_800 });
+    expect(r.lineas[0]).toEqual({ posicion: 0, productoId: P1, descripcion: 'Tarjetas', unidad: 'millar', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true, importeCentimos: 11_800, material: null, medida: null, colores: null, acabado: null });
     expect(r.lineas[1]).toMatchObject({ posicion: 1, descripcion: 'Tarjetas mate', unidad: 'ciento', precioUnitarioMilesimas: 50_000, afectoIgv: false, importeCentimos: 10_000 });
     expect(r).toMatchObject({ subtotalCentimos: 20_000, igvCentimos: 1_800, totalCentimos: 21_800 });
   });

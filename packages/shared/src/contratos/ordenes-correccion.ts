@@ -4,6 +4,7 @@ import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { MAXIMO_DE_LINEAS_DE_PEDIDO, MOTIVOS_DE_CORRECCION, correccionDePedidoSchema, pedidoCompletoSchema } from './ordenes.js';
 import { ajusteDeDeudaSchema } from './registro.js';
+import { fichaDeEntradaShape } from './ficha-de-maquina.js';
 
 // «Corregir pedido confirmado» (versión 2): `pedido_corregir` (Pedidos), la composición del núcleo `venta_corregir` (pedido +
 // deuda en una sola confirmación) y la huella visible (`pedido_correcciones_listar`, `correcciones_listar`). La deuda se
@@ -41,6 +42,8 @@ export const lineaACorregirSchema = z.strictObject({
   precioUnitarioMilesimas: z.number().int().safe().min(0, { error: 'El precio no puede ser negativo.' }),
   afectoIgv: z.boolean(),
   productoId: z.uuid().nullish(),
+  // Ficha de máquina: si no llega, la línea guardada conserva la suya (una nueva queda sin ficha); vacío o null la borra.
+  ...fichaDeEntradaShape,
 });
 export type LineaACorregir = z.infer<typeof lineaACorregirSchema>;
 

@@ -4,6 +4,7 @@ import { IGV_POR_DEFECTO, type PedidoCompletoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
+import { AvisoDeMontoMinimo } from '../../shared/ui/aviso-de-monto-minimo.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { enviarPorWhatsApp } from './acciones-documentos.ts';
 import { usePermisosDePedidos } from './acciones.ts';
@@ -87,6 +88,7 @@ export function PantallaNuevoPedido() {
       <EncabezadoDePagina titulo="Nuevo pedido" migas={MIGAS} />
       <FormularioPedido valor={h.form} errores={h.errores} igvPorcentaje={IGV_POR_DEFECTO} fecha={h.hoy} alCambiar={h.cambiar} />
       {h.ofreceAdelanto ? <BloqueAdelanto totalCentimos={h.totalCentimos} adelanto={h.adelanto} alCambiar={h.cambiarAdelanto} /> : null}
+      <AvisoDeMontoMinimo totalCentimos={h.totalCentimos} />
       {h.aviso ? <p role="alert" className="text-sm font-medium text-peligro">{h.aviso}</p> : null}
       <div className="flex flex-wrap justify-end gap-2">
         <Boton variante="fantasma" disabled={h.enviando} onClick={() => void navegar('/m/ordenes')}>Cancelar</Boton>

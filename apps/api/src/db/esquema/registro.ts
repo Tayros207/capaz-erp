@@ -195,3 +195,26 @@ export const registroMovimientos = registro.table(
     index('idx_registro_movimientos_creador').on(t.tenantId, t.creadoPor, t.fecha.desc()),
   ],
 );
+
+// Cierre semanal (0037): foto inmutable de los saldos de las cuentas al sábado. Cuentas y movimientos van dentro del JSON.
+export const registroCierres = registro.table(
+  'cierres',
+  {
+    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    tenantId: text('tenant_id').notNull(),
+    desde: date('desde', { mode: 'string' }).notNull(),
+    hasta: date('hasta', { mode: 'string' }).notNull(),
+    saldos: jsonb('saldos').notNull(),
+    notas: text('notas'),
+    cerradoPor: text('cerrado_por').notNull(),
+    cerradoEn: timestamp('cerrado_en', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    unique('registro_cierres_empresa_id').on(t.tenantId, t.id),
+    unique('registro_cierres_semana').on(t.tenantId, t.desde, t.hasta),
+    check('cierre_semana', sql`${t.hasta} = ${t.desde} + 5 and extract(isodow from ${t.desde}) = 1`),
+    check('cierre_saldos', sql`jsonb_typeof(${t.saldos}) = 'array'`),
+    check('cierre_notas', sql`${t.notas} is null or length(${t.notas}) <= 1000`),
+    index('idx_registro_cierres_cerrado').on(t.tenantId, t.cerradoEn.desc()),
+  ],
+);

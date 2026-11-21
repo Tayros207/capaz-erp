@@ -1,9 +1,10 @@
 import { and, desc, eq, inArray, isNotNull, ne, or, sql, type SQL } from 'drizzle-orm';
-import { MAXIMO_DE_ANOTACIONES } from '@capaz/shared';
+import { MAXIMO_DE_ANOTACIONES, sumarDias } from '@capaz/shared';
 import { clientes } from '../../../db/esquema/core-maestros.js';
 import { registroDeudas } from '../../../db/esquema/registro.js';
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import type { DeudaConOrigen, DeudaPorCobrar } from '../domain/cobros-pendientes.js';
+import { DIAS_DE_AVISO_DE_PAGO, type DeudaPorPagar } from '../domain/pagos-pendientes.js';
 
 // Lecturas de «Mi día» para el módulo `registro`. Solo leen; la RLS de la transacción aísla por empresa y, con alcance
 // «propios», `propietario` limita a las deudas que la persona creó.
@@ -63,4 +64,20 @@ export async function deudasConOrigen(tx: Transaccion, ctx: ContextoDeEmpresa, p
 export async function nombreDeLaEmpresa(tx: Transaccion): Promise<string | null> {
   const r = await tx.execute<{ razon_social: string | null }>(sql`select razon_social from core.empresa_config limit 1`);
   return r.rows[0]?.razon_social?.trim() || null;
+}
+
+/** Las deudas por pagar con saldo (pendientes y parciales) que vencen hasta `hoy` + días de aviso, vencidas incluidas. */
+export async function deudasPorPagarProximas(tx: Transaccion, ctx: ContextoDeEmpresa, propietario: string | null, hoy: string): Promise<DeudaPorPagar[]> {
+  const filas = await tx
+    .select({
+      id: d.id, anio: d.anio, numero: d.numero, proveedorId: d.contactoId, proveedorNombre: clientes.nombre, concepto: d.concepto,
+      saldo: sql<string>`(${d.totalCentimos} - ${d.abonadoCentimos})::bigint`,
+      venceEn: sql<string>`${d.venceEn}::text`,
+    })
+    .from(d)
+    .innerJoin(clientes, and(eq(clientes.tenantId, d.tenantId), eq(clientes.id, d.contactoId)))
+    .where(and(deEmpresa(ctx), eq(d.tipo, 'por_pagar'), inArray(d.estado, ['pendiente', 'parcial']), isNotNull(d.venceEn), sql`${d.venceEn} <= ${sumarDias(hoy, DIAS_DE_AVISO_DE_PAGO)}::date`, delPropietario(propietario)))
+    .orderBy(d.venceEn, d.id)
+    .limit(MAXIMO_DE_ANOTACIONES);
+  return filas.map((f) => ({ id: f.id, anio: f.anio, numero: f.numero, proveedorId: f.proveedorId, proveedorNombre: f.proveedorNombre, concepto: f.concepto, saldoCentimos: aEntero(f.saldo), venceEn: f.venceEn }));
 }

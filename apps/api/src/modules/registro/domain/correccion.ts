@@ -1,5 +1,6 @@
 import { formatearSoles } from '@capaz/shared';
 import { aplicarAbono, type DespuesDeAbonar, type SaldoDeDeuda } from './deuda.js';
+import { PREFIJO_DE_CIERRE } from './cierre.js';
 import { PREFIJO_DE_TRANSFERENCIA } from './transferencia.js';
 import { rechazada, type Regla } from './regla.js';
 
@@ -12,11 +13,11 @@ export const PREFIJO_DE_CORRECCION = 'correccion:';
 
 export const referenciaDeCorreccion = (raizId: string): string => `${PREFIJO_DE_CORRECCION}${raizId}`;
 
-/** Un `origen_ref` que solo el sistema puede escribir (transferencias y correcciones). */
+/** Un `origen_ref` que solo el sistema puede escribir (transferencias, correcciones y diferencias de caja del cierre). */
 export const esOrigenReservado = (origenRef: string | null | undefined): boolean =>
-  origenRef !== null && origenRef !== undefined && (origenRef.startsWith(PREFIJO_DE_TRANSFERENCIA) || origenRef.startsWith(PREFIJO_DE_CORRECCION));
+  origenRef !== null && origenRef !== undefined && [PREFIJO_DE_TRANSFERENCIA, PREFIJO_DE_CORRECCION, PREFIJO_DE_CIERRE].some((p) => origenRef.startsWith(p));
 
-export const MENSAJE_DE_ORIGEN_DE_CORRECCION = 'Ese origen está reservado para las correcciones: usa «Corregir» sobre el movimiento.';
+export const MENSAJE_DE_ORIGEN_DE_CORRECCION = 'Ese origen está reservado para el sistema (correcciones, transferencias y cierres de caja).';
 
 /** El id de la raíz de la familia a la que pertenece el movimiento (él mismo si nunca fue una corrección). */
 export function raizDeFamilia(mov: { id: string; origenRef: string | null }): string {

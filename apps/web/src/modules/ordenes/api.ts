@@ -47,3 +47,9 @@ export function listarGuias(filtros: Omit<EntradaDe<'guias_listar'>, 'cursor'>, 
 /** Crítica: el servidor devuelve el resumen y la persona confirma antes de anular. */
 export const anularGuia = (id: string, motivo: string) =>
   llamarConfirmando('guia_anular', { id, motivo }, { titulo: 'Anular guía', textoConfirmar: 'Anular guía', peligroso: true });
+
+// Importar historial de trabajos de años anteriores (solo dueño o administrador; lo exige el servidor).
+export const previsualizarHistorial = (args: EntradaDe<'pedidos_importar_historial_previsualizar'>) => llamar('pedidos_importar_historial_previsualizar', args);
+/** Crítica: el servidor resume y la persona confirma antes de crear los trabajos. */
+export const importarHistorial = (args: EntradaDe<'pedidos_importar_historial'>) =>
+  llamarConfirmando('pedidos_importar_historial', args, { titulo: 'Importar historial', textoConfirmar: 'Importar' });

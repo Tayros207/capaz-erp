@@ -16,6 +16,7 @@ import { COLUMNAS_DE_PEDIDOS } from './columnas.tsx';
 import { ETIQUETA_DE_ESTADO } from './logica.ts';
 import { Cargando, SeccionesDePedidos } from './marco.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
+import { useYo } from '../../shared/sesion/use-yo.ts';
 
 const FILTROS: FiltroDeEstado[] = ['abiertos', 'borrador', 'confirmado', 'en_proceso', 'listo', 'entregado', 'cancelado', 'todos'];
 const etiquetaDeFiltro = (f: FiltroDeEstado) => (f === 'abiertos' ? 'Abiertos' : f === 'todos' ? 'Todos' : ETIQUETA_DE_ESTADO[f]);
@@ -23,6 +24,8 @@ const etiquetaDeFiltro = (f: FiltroDeEstado) => (f === 'abiertos' ? 'Abiertos' :
 export function PantallaPedidos() {
   const navegar = useNavigate();
   const { editar } = usePermisosDePedidos();
+  const yo = useYo();
+  const esDuenio = yo?.empresa?.rol === 'owner' || yo?.empresa?.rol === 'admin';
   const [estado, setEstado] = useState<FiltroDeEstado>('abiertos');
   const [seleccion, setSeleccion] = useState<ReadonlySet<string>>(new Set());
   const lista = useInfiniteQuery({
@@ -41,7 +44,7 @@ export function PantallaPedidos() {
 
   return (
     <div className="flex flex-col gap-4">
-      <EncabezadoDePagina titulo="Pedidos" accionPrincipal={nuevo} />
+      <EncabezadoDePagina titulo="Pedidos" accionPrincipal={nuevo} accionesSecundarias={esDuenio ? <Boton variante="secundario" onClick={() => void navegar('/m/ordenes/importar-historial')}>Importar historial</Boton> : undefined} />
       <SeccionesDePedidos />
       <div className="grid gap-3 sm:grid-cols-[14rem]">
         <CampoSelect etiqueta="Mostrar" value={estado} onChange={(e) => { setEstado(e.target.value as FiltroDeEstado); setSeleccion(new Set()); }}>

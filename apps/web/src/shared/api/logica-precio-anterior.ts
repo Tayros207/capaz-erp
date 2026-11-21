@@ -42,6 +42,21 @@ export function diaATexto(dia: string): string {
   return m ? `${m[3]}/${m[2]}/${m[1]}` : '—';
 }
 
+/** Meses completos entre dos días `AAAA-MM-DD` (0 si alguno no es válido o si la fecha es futura). */
+function mesesEntre(fecha: string, hoy: string): number {
+  const a = /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha);
+  const b = /^(\d{4})-(\d{2})-(\d{2})$/.exec(hoy);
+  if (!a || !b) return 0;
+  const meses = (Number(b[1]) - Number(a[1])) * 12 + (Number(b[2]) - Number(a[2])) - (Number(b[3]) < Number(a[3]) ? 1 : 0);
+  return Math.max(0, meses);
+}
+
+/** «Precio de hace 14 meses: ¿lo actualizas?» cuando el precio tiene 12 meses o más; si no, `null`. */
+export function avisoDePrecioAntiguo(fecha: string, hoy: string): string | null {
+  const n = mesesEntre(fecha, hoy);
+  return n >= 12 ? `Precio de hace ${n} meses: ¿lo actualizas?` : null;
+}
+
 /** Milésimas → texto plano para un campo editable (sin comas de miles): 118000 → «118», 240 → «0.24», 12505 → «12.505». */
 export function milesimasATextoPlano(milesimas: number): string {
   const enteros = Math.trunc(milesimas / 1000);

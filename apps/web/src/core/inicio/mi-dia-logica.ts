@@ -9,6 +9,7 @@ export const TITULO_DE_GRUPO: Record<GrupoDeMiDia, string> = {
   hoy: 'Hoy',
   manana: 'Mañana',
   por_cobrar: 'Por cobrar',
+  por_llamar: 'Clientes por llamar',
   por_aprobar: 'Por aprobar',
   mas_adelante: 'Más adelante',
 };
@@ -97,6 +98,12 @@ export function enlaceDeWhatsapp(t: Pick<TarjetaDeMiDia, 'mensaje'>): string | n
   const enlace = t.mensaje?.enlaceWhatsapp ?? null;
   return enlace && /^https:\/\/wa\.me\/\d{8,15}\?text=/.test(enlace) ? enlace : null;
 }
+
+/** Qué decir cuando la tarjeta trae mensaje pero no hay enlace de WhatsApp (el cliente no tiene un celular válido guardado). */
+export const textoSinWhatsapp = (grupo: TarjetaDeMiDia['grupo']): string =>
+  grupo === 'recompra'
+    ? 'Este cliente no tiene teléfono guardado: agrégalo en su ficha para abrir WhatsApp.'
+    : 'Este cliente no tiene un celular válido: copia el mensaje y envíalo por donde prefieras.';
 
 /** ¿Hay algún mensaje de cobro en el panel? (para avisar si salen sin el nombre de la empresa). */
 export const hayMensajesDeCobro = (m: MiDiaDto): boolean => m.grupos.some((g) => g.tarjetas.some((t) => t.mensaje !== null));

@@ -6,6 +6,7 @@ import { marcarEnviada } from '../api-cotizaciones.ts';
 import { Boton } from '../../../shared/ui/boton.tsx';
 import { Campo } from '../../../shared/ui/campo.tsx';
 import { CampoSelect } from '../../../shared/ui/campo-select.tsx';
+import { AvisoDeMontoMinimo } from '../../../shared/ui/aviso-de-monto-minimo.tsx';
 import { Cifra, GrupoDeCifras } from '../../../shared/ui/cifra.tsx';
 import { rutaDeDocumento, rutaDeFicha } from '../logica-cotizaciones.ts';
 import { soles } from '../logica.ts';
@@ -45,6 +46,7 @@ export function DirectaPie({ hoja, igv, opcionesDeValidez, emitida, emitiendo, a
         <Cifra etiqueta={`IGV ${igv} %`} valor={soles(cifras.igvCentimos)} />
         <Cifra etiqueta="Total" valor={soles(cifras.totalCentimos)} />
       </GrupoDeCifras>
+      {soloLectura ? null : <AvisoDeMontoMinimo totalCentimos={cifras.totalCentimos} />}
       <section aria-label="Condiciones" className="grid gap-4 sm:grid-cols-3">
         <CampoSelect etiqueta="Válida por" value={String(hoja.validezDias)} disabled={soloLectura} onChange={(e) => alCambiar({ validezDias: Number(e.target.value) })}>
           {validez.map((d) => <option key={d} value={d}>{d} días</option>)}

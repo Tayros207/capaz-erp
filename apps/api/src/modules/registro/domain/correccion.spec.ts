@@ -19,6 +19,7 @@ describe('familia de correcciones', () => {
   it('los orígenes de transferencia y de corrección están reservados al sistema', () => {
     expect(esOrigenReservado('correccion:abc')).toBe(true);
     expect(esOrigenReservado('transferencia:abc')).toBe(true);
+    expect(esOrigenReservado('cierre:2026-11-16:abc')).toBe(true);
     expect(esOrigenReservado('compra:abc')).toBe(false);
     expect(esOrigenReservado(undefined)).toBe(false);
   });

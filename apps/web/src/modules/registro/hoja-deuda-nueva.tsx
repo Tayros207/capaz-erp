@@ -5,6 +5,7 @@ import { CampoMonto } from '../../shared/ui/campo-monto.tsx';
 import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
+import { CasillaDePagoFijo } from './casilla-de-pago-fijo.tsx';
 import { buscarContactos, crearDeuda } from './api.ts';
 import { resolverAccion } from './acciones.ts';
 import {
@@ -44,6 +45,7 @@ function Contenido({ tipo, alCerrar }: Omit<Props, 'abierto'>) {
       <Campo etiqueta="Concepto" maxLength={200} value={form.concepto} onChange={(e) => cambiar({ concepto: e.target.value })} error={errores.concepto} />
       <CampoMonto etiqueta="Total" valor={form.total} alCambiar={(total) => cambiar({ total })} error={errores.total} />
       <Campo etiqueta="Vence (opcional)" type="date" min={hoy} value={form.venceEn} onChange={(e) => cambiar({ venceEn: e.target.value })} error={errores.venceEn} />
+      {tipo === 'por_pagar' ? <CasillaDePagoFijo marcado={form.fijo} alCambiar={(fijo) => cambiar({ fijo })} /> : null}
       <CampoTextarea etiqueta="Notas (opcional)" filas={2} maxLength={2000} value={form.notas} onChange={(e) => cambiar({ notas: e.target.value })} error={errores.notas} />
       <div className="flex justify-end gap-2">
         <Boton variante="fantasma" onClick={alCerrar}>Cerrar</Boton>

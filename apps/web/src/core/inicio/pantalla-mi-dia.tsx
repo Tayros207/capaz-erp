@@ -57,7 +57,7 @@ function AvisoDeFalla({ modulos, reintentar }: { modulos: readonly string[]; rei
 }
 
 /**
- * Los mensajes de cobro firman con la razón social de Ajustes › Empresa; si está vacía, salen sin el nombre de la empresa.
+ * Los mensajes de cobro y de recompra firman con la razón social de Ajustes › Empresa; si está vacía, salen sin el nombre de la empresa.
  * Se avisa solo si hay cobros en el panel y la persona puede ver esos datos. La clave cuelga de la de los datos de la
  * empresa: guardar en Ajustes › Empresa la invalida y el aviso desaparece.
  */
@@ -73,7 +73,7 @@ function AvisoDeRazonSocial({ hayCobros }: { hayCobros: boolean }) {
   if (!hayCobros || !puedeVer || q.data === undefined || q.data !== '') return null;
   return (
     <p role="status" className="rounded-control border border-borde bg-superficie-alta px-3 py-2 text-sm text-texto">
-      Tus mensajes de cobro saldrán sin el nombre de tu empresa porque falta la razón social.{' '}
+      Tus mensajes de cobro y de recompra saldrán sin el nombre de tu empresa porque falta la razón social.{' '}
       {permisos.includes('empresa:configurar') ? (
         <Link to="/ajustes/empresa" className="font-medium text-accion underline">Escríbela en Ajustes › Empresa</Link>
       ) : (

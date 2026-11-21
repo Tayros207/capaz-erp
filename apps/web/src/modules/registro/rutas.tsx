@@ -4,6 +4,7 @@ import { MarcoDeRegistro } from './marco.tsx';
 import { PantallaAjustes } from './pantalla-ajustes.tsx';
 import { PantallaAntiguedad } from './pantalla-antiguedad.tsx';
 import { PantallaCaja } from './pantalla-caja.tsx';
+import { PantallaCierre } from './pantalla-cierre.tsx';
 import { PantallaDeuda } from './pantalla-deuda.tsx';
 import { PantallaDeudas } from './pantalla-deudas.tsx';
 import { PantallaMovimiento } from './pantalla-movimiento.tsx';
@@ -28,6 +29,7 @@ export const rutas: RouteObject[] = [
       { path: 'por-pagar', element: <PantallaDeudas tipo="por_pagar" /> },
       { path: 'deudas/:id', element: <PantallaDeuda /> },
       { path: 'caja', element: <PantallaCaja /> },
+      { path: 'cierre', element: <PantallaCierre /> },
       { path: 'antiguedad', element: <PantallaAntiguedad /> },
       { path: 'ajustes', element: <PantallaAjustes /> },
       { path: '*', element: <EstadoVacio titulo="No encontramos esta pantalla" icono="caja" /> },

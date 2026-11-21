@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { MOTIVOS_DE_CORRECCION } from './ordenes.js';
+import { contratosDeRegistroCierre } from './registro-cierre.js';
+
+export * from './registro-cierre.js';
 
 // Contratos del área «registro» (Finanzas ligeras): un contrato por herramienta (`entidad_accion`) y un
 // esquema por evento (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -106,6 +109,8 @@ export const deudaSchema = z.strictObject({
   origenId: z.string().nullable(),
   sucursalId: z.string().nullable(),
   notas: z.string().nullable(),
+  /** Pago fijo de cada mes (solo las deudas por pagar): `deudas_copiar_fijos` lo copia al mes siguiente. */
+  fijo: z.boolean(),
   anuladoEn: z.iso.datetime().nullable(),
   motivoAnulacion: z.string().nullable(),
   creadoPor: z.string(),
@@ -225,10 +230,12 @@ export const crearDeudaSchema = z
     venceEn: dia.nullish(),
     sucursalId: z.uuid().nullish(),
     notas: texto(2000).nullish(),
+    fijo: z.boolean().optional(),
     origenTipo: texto(40).min(1).optional(),
     origenId: texto(100).min(1).optional(),
   })
-  .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen se indica completo (tipo e identificador) o no se indica.' });
+  .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen se indica completo (tipo e identificador) o no se indica.' })
+  .refine((v) => v.fijo !== true || (v.venceEn !== undefined && v.venceEn !== null), { error: 'Un pago fijo necesita fecha de vencimiento.', path: ['venceEn'] });
 export const listarDeudasSchema = z
   .strictObject({
     ...paginaSchema.shape,
@@ -241,7 +248,7 @@ export const listarDeudasSchema = z
   })
   .refine((v) => (v.origenTipo === undefined) === (v.origenId === undefined), { error: 'El origen lleva tipo e identificador, los dos o ninguno.' });
 export const editarDeudaSchema = z
-  .strictObject({ id: z.uuid(), concepto: texto(200).min(1, { error: 'Indica el concepto.' }).optional(), venceEn: dia.nullish(), notas: texto(2000).nullish() })
+  .strictObject({ id: z.uuid(), concepto: texto(200).min(1, { error: 'Indica el concepto.' }).optional(), venceEn: dia.nullish(), notas: texto(2000).nullish(), fijo: z.boolean().optional() })
   .refine(algunCambio, SIN_CAMBIOS);
 /**
  * Ajusta el total de una deuda viva sin anularla ni tocar lo abonado. `nuevoTotalCentimos` es el total que debe tener la
@@ -333,7 +340,39 @@ export const resumenDeRegistroSchema = z.strictObject({
 });
 export type ResumenDeRegistroDto = z.infer<typeof resumenDeRegistroSchema>;
 
+/**
+ * Cobertura del mes: cuánto de los pagos del mes (deudas por pagar no anuladas con vencimiento en el mes, sean pagos fijos o
+ * compras a crédito) cubren los ingresos del mes (sin transferencias ni diferencias de caja). El año va desde 1900.
+ */
+export const pedirCoberturaDelMesSchema = z.strictObject({ mes: z.string().regex(/^(19\d{2}|[2-9]\d{3})-(0[1-9]|1[0-2])$/, { error: 'El mes va como AAAA-MM.' }).optional() });
+export const coberturaDelMesSchema = z.strictObject({
+  mes: z.string(),
+  desde: dia,
+  hasta: dia,
+  ingresosCentimos: z.number().int(),
+  compromisosCentimos: z.number().int(),
+  compromisosPagadosCentimos: z.number().int(),
+  faltaCentimos: z.number().int().nonnegative(),
+  /** `null` si no hay pagos (compromisos) del mes. */
+  porcentaje: z.number().int().nullable(),
+  compromisos: z.number().int(),
+});
+export type CoberturaDelMesDto = z.infer<typeof coberturaDelMesSchema>;
+
+/** Copia al mes indicado los pagos fijos (deudas por pagar marcadas «fijo») que vencían el mes anterior. */
+export const copiarFijosSchema = z.strictObject({ mes: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, { error: 'El mes va como AAAA-MM.' }).optional() });
+export const fijosCopiadosSchema = z.strictObject({
+  mes: z.string(),
+  mesOrigen: z.string(),
+  creadas: z.number().int(),
+  yaExistian: z.number().int(),
+  totalCentimos: z.number().int(),
+  deudas: z.array(deudaSchema).max(100),
+});
+export type FijosCopiadosDto = z.infer<typeof fijosCopiadosSchema>;
+
 export const contratosDeRegistro = {
+  ...contratosDeRegistroCierre,
   registro_iniciar: contrato(z.strictObject({}), z.strictObject({ cuentasCreadas: z.number().int(), categoriasCreadas: z.number().int() })),
   cuentas_listar: contrato(z.strictObject({ incluirArchivadas: z.boolean().default(false) }), listadoSchema(cuentaSchema)),
   cuenta_crear: contrato(crearCuentaSchema, cuentaSchema),
@@ -360,8 +399,10 @@ export const contratosDeRegistro = {
   deuda_abonar: contrato(abonarDeudaSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
   deuda_crear_con_adelanto: contrato(crearDeudaConAdelantoSchema, z.strictObject({ deuda: deudaSchema, movimiento: movimientoSchema })),
   deuda_anular: contrato(z.strictObject({ id: z.uuid(), motivo }), deudaSchema),
+  deudas_copiar_fijos: contrato(copiarFijosSchema, fijosCopiadosSchema),
   caja_del_dia: contrato(z.strictObject({ fecha: dia.optional(), cuentaId: z.uuid().optional() }), cajaDelDiaSchema),
   registro_resumen: contrato(pedirResumenSchema, resumenDeRegistroSchema),
+  registro_cobertura_del_mes: contrato(pedirCoberturaDelMesSchema, coberturaDelMesSchema),
 } as const;
 
 export const eventosDeRegistro = {

@@ -1,4 +1,4 @@
-import { formatearSoles, type CorreccionDePedidoDto, type MotivoDeCorreccion } from '@capaz/shared';
+import { formatearSoles, textoDeFicha, type CorreccionDePedidoDto, type FichaParcial, type MotivoDeCorreccion } from '@capaz/shared';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearDia } from './logica.ts';
 
@@ -31,9 +31,24 @@ export function textoDeValoresDeLinea(v: Valores & { unidad: string }): string {
   return `${formatearCantidad(v.cantidadMilesimas, v.unidad)} × S/ ${milesimasATexto(v.precioUnitarioMilesimas)} = ${formatearSoles(v.importeCentimos)}${igv}`;
 }
 
+/** «ficha: A → B» si la ficha cambió; nada si es la misma. */
+export function textoDeCambioDeFicha(antes: FichaParcial, despues: FichaParcial): string[] {
+  const a = textoDeFicha(antes);
+  const d = textoDeFicha(despues);
+  return a === d ? [] : [`ficha: ${a || 'sin ficha'} → ${d || 'sin ficha'}`];
+}
+
 export function textoDeLineaCorregida(l: CorreccionDePedidoDto['lineas'][number]): string {
-  if (l.antes && l.despues) return `«${l.descripcion}»: ${textoDeValoresDeLinea(l.antes)} → ${textoDeValoresDeLinea(l.despues)}`;
-  if (l.despues) return `Se agregó «${l.descripcion}»: ${textoDeValoresDeLinea(l.despues)}`;
+  if (l.antes && l.despues) {
+    const va = textoDeValoresDeLinea(l.antes);
+    const vd = textoDeValoresDeLinea(l.despues);
+    const partes = [...(va === vd ? [] : [`${va} → ${vd}`]), ...textoDeCambioDeFicha(l.antes, l.despues)];
+    return `«${l.descripcion}»: ${(partes.length ? partes : [`${va} → ${vd}`]).join(' · ')}`;
+  }
+  if (l.despues) {
+    const ficha = textoDeFicha(l.despues);
+    return `Se agregó «${l.descripcion}»: ${textoDeValoresDeLinea(l.despues)}${ficha ? ` · ficha: ${ficha}` : ''}`;
+  }
   return `Se quitó «${l.descripcion}»${l.antes ? `: ${textoDeValoresDeLinea(l.antes)}` : ''}`;
 }
 

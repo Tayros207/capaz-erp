@@ -29,6 +29,11 @@ describe('propuestaDePedido', () => {
     expect(faltan).toEqual(['el adelanto de S/ 100.00 se cobra al confirmar el pedido']);
   });
 
+  test('PD1b · el dictado nunca supone la ficha de máquina', () => {
+    const { propuestas } = propuestaDePedido(de(T1_4), { contacto: { id: 'c-rosa', nombre: 'Rosa Díaz' }, sugerencia: null });
+    for (const l of propuestas[0]!.args.lineas as object[]) expect(Object.keys(l)).toEqual(['descripcion', 'unidad', 'cantidadMilesimas', 'precioUnitarioMilesimas']);
+  });
+
   test('PD2 · falta precio', () => {
     const { propuestas, faltan } = propuestaDePedido(de('pedido para Juan Pérez 500 volantes'), { contacto: { id: 'c-juan', nombre: 'Juan Pérez' }, sugerencia: null });
     expect(propuestas[0]!.args).toEqual({ clienteId: 'c-juan', entregaEl: null, notas: null, lineas: [{ descripcion: 'volantes', unidad: 'unidad', cantidadMilesimas: 500000 }] });

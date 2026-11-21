@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { MiDiaDto, TarjetaDeMiDia } from '@capaz/shared';
-import { avisosDeFuentes, avisoDeAccion, enlaceDeWhatsapp, enLista, estaAlDia, fechaLarga, fuentesConFalla, fuentesRecortadas, hayMensajesDeCobro, sinTarjeta, textoDeResumen, TONO_DE_URGENCIA, TITULO_DE_GRUPO } from './mi-dia-logica.ts';
+import { avisosDeFuentes, avisoDeAccion, textoSinWhatsapp, enlaceDeWhatsapp, enLista, estaAlDia, fechaLarga, fuentesConFalla, fuentesRecortadas, hayMensajesDeCobro, sinTarjeta, textoDeResumen, TONO_DE_URGENCIA, TITULO_DE_GRUPO } from './mi-dia-logica.ts';
 
 const t = (o: Partial<TarjetaDeMiDia> & { clave: string }): TarjetaDeMiDia => ({
   grupo: 'entrega', urgencia: 'hoy', titulo: 'T', detalle: 'D', fecha: null, montoCentimos: null, cliente: null, entidad: { tipo: 'pedido', id: o.clave, codigo: 'PED-1' },
@@ -9,7 +9,7 @@ const t = (o: Partial<TarjetaDeMiDia> & { clave: string }): TarjetaDeMiDia => ({
 const panel = (tarjetas: TarjetaDeMiDia[]): MiDiaDto => ({
   fecha: '2026-11-18',
   resumen: { entregasDeHoy: 1, entregasAtrasadas: 1, porCobrarVencidoCentimos: 420_000, porAprobar: 1 },
-  grupos: [{ clave: 'atrasado', tarjetas: tarjetas.filter((x) => x.urgencia === 'atrasado') }, { clave: 'hoy', tarjetas: tarjetas.filter((x) => x.urgencia === 'hoy') }, { clave: 'por_cobrar', tarjetas: tarjetas.filter((x) => x.grupo === 'cobro') }].filter((g) => g.tarjetas.length > 0) as MiDiaDto['grupos'],
+  grupos: [{ clave: 'atrasado', tarjetas: tarjetas.filter((x) => x.urgencia === 'atrasado') }, { clave: 'hoy', tarjetas: tarjetas.filter((x) => x.urgencia === 'hoy') }, { clave: 'por_cobrar', tarjetas: tarjetas.filter((x) => x.grupo === 'cobro') }, { clave: 'por_llamar', tarjetas: tarjetas.filter((x) => x.grupo === 'recompra') }].filter((g) => g.tarjetas.length > 0) as MiDiaDto['grupos'],
   total: tarjetas.length,
   fuentesConsultadas: [{ modulo: 'ordenes', incluida: true, aviso: null }, { modulo: 'registro', incluida: false, aviso: 'sin acceso' }],
 });
@@ -46,7 +46,7 @@ describe('sinTarjeta (actualización optimista)', () => {
 describe('textos y colores', () => {
   it('cada urgencia tiene un tono semántico y cada grupo su título', () => {
     expect(TONO_DE_URGENCIA).toEqual({ atrasado: 'peligro', hoy: 'aviso', manana: 'info', pronto: 'neutro', info: 'neutro' });
-    expect(Object.values(TITULO_DE_GRUPO)).toEqual(['Atrasado', 'Hoy', 'Mañana', 'Por cobrar', 'Por aprobar', 'Más adelante']);
+    expect(Object.values(TITULO_DE_GRUPO)).toEqual(['Atrasado', 'Hoy', 'Mañana', 'Por cobrar', 'Clientes por llamar', 'Por aprobar', 'Más adelante']);
   });
   it('avisos de módulos sin acceso y confirmación de acción', () => {
     expect(avisosDeFuentes(panel([]))).toEqual(['Registro']);
@@ -85,5 +85,15 @@ describe('WhatsApp y cobros', () => {
   it('hayMensajesDeCobro mira si alguna tarjeta trae mensaje', () => {
     expect(hayMensajesDeCobro(panel([t({ clave: 'a' })]))).toBe(false);
     expect(hayMensajesDeCobro(panel([t({ clave: 'c', grupo: 'cobro', urgencia: 'atrasado', mensaje: { texto: 'Hola', enlaceWhatsapp: null } })]))).toBe(true);
+  });
+  it('una tarjeta de recompra (cliente inventado) también cuenta como mensaje y su grupo tiene título', () => {
+    const recompra = t({ clave: 'recompra:c1', grupo: 'recompra', urgencia: 'info', mensaje: { texto: 'Hola Cliente Demo', enlaceWhatsapp: 'https://wa.me/51987654321?text=Hola' } });
+    expect(hayMensajesDeCobro(panel([recompra]))).toBe(true);
+    expect(enlaceDeWhatsapp(recompra)).toBe('https://wa.me/51987654321?text=Hola');
+    expect(TITULO_DE_GRUPO.por_llamar).toBe('Clientes por llamar');
+  });
+  it('sin enlace de WhatsApp, la recompra manda a agregar el teléfono en la ficha', () => {
+    expect(textoSinWhatsapp('recompra')).toBe('Este cliente no tiene teléfono guardado: agrégalo en su ficha para abrir WhatsApp.');
+    expect(textoSinWhatsapp('cobro')).toMatch(/celular válido/);
   });
 });

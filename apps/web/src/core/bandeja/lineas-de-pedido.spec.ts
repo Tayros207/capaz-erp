@@ -104,3 +104,23 @@ describe('esListaDeLineas', () => {
     expect(esListaDeLineas([{ cantidadMilesimas: '1' }])).toBe(false);
   });
 });
+
+describe('ficha de máquina en la fila (W11)', () => {
+  const ida = (l: Record<string, unknown>) => lineaDeFila(filaDeLinea(l, 'a'));
+  it('ida y vuelta sin cambios', () => {
+    const l = { ...tarjetas, material: 'couché', medida: null };
+    expect(ida(l)).toEqual(l);
+  });
+  it('vaciar un campo que la línea traía lo manda como null', () => {
+    const f = filaDeLinea({ ...tarjetas, material: 'couché' }, 'a');
+    expect(lineaDeFila({ ...f, material: '' })).toEqual({ ...tarjetas, material: null });
+  });
+  it('un campo nuevo viaja recortado; uno vacío sin ficha previa se omite', () => {
+    const f = filaDeLinea(tarjetas, 'a');
+    expect(lineaDeFila({ ...f, colores: ' 4x0 ' })).toEqual({ ...tarjetas, colores: '4x0' });
+    expect(lineaDeFila({ ...f, colores: '' })).toEqual(tarjetas);
+  });
+  it('la ficha se lee en la frase de la línea', () => {
+    expect(textoDeLinea({ ...tarjetas, material: 'couché 300 g', medida: 'A5' })).toBe('tarjetas — 500 unidad × S/ 0.365 = S/ 182.50 — ficha: couché 300 g · A5');
+  });
+});

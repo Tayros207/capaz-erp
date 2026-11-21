@@ -23,6 +23,8 @@ import { aplicarLineas, guardarVersion, guiasPorLinea, nombreDeCliente } from '.
 import { cantidadesEnviadas } from '../repositories/guias.repository.js';
 import { actualizarPedido, lineasDe, productosPorId, registrarEvento, verPedido, type Pedido } from '../repositories/pedidos.repository.js';
 import { ID, MODULO, NO_EXISTE, alcanceDePedidos, comprobarReferencias, estadoDe, responderPedido } from './comunes.js';
+import { fichaNormalizada, type LineaACorregir } from '@capaz/shared';
+import { fichaCorregida } from '../domain/ficha.js';
 
 // `pedido_corregir`: la «versión 2» de un pedido confirmado. Mismo número; la versión anterior queda como foto inmutable en
 // `pedido_versiones`; las líneas se actualizan EN EL SITIO por id (las guías de remisión las citan); cada corrección deja
@@ -36,7 +38,7 @@ type Preparada = {
   totales: ReturnType<typeof calcularTotalesDePedido>;
 };
 
-const aEntradas = (actuales: readonly LineaActual[]) =>
+const aEntradas = (actuales: readonly LineaActual[]): LineaACorregir[] =>
   actuales.map((l) => ({ id: l.id, descripcion: l.descripcion, unidad: l.unidad, cantidadMilesimas: l.cantidadMilesimas, precioUnitarioMilesimas: l.precioUnitarioMilesimas, afectoIgv: l.afectoIgv, productoId: l.productoId }));
 
 /** Líneas que quedarían (con `fijarTotalCentimos` aplicado) y sus totales. */
@@ -49,10 +51,11 @@ async function prepararLineas(tx: Transaccion, ctx: ContextoDeHerramienta, actua
     if (!solo.ok) return rechazo('conflicto', solo.motivo);
   }
   const previas = new Map(actuales.map((l) => [l.id, l.productoId]));
+  const guardadas = new Map(actuales.map((l) => [l.id, l]));
   const nuevosProductos = entradas.flatMap((e) => (e.productoId && e.productoId !== (e.id ? previas.get(e.id) : null) ? [e.productoId] : []));
   const productos = await productosPorId(tx, ctx, nuevosProductos);
   for (const id of nuevosProductos) if (!productos.get(id) || productos.get(id)!.archivado) return rechazo('argumentos_invalidos', 'Un producto de las líneas no existe o está archivado.');
-  let base = entradas.map((e, posicion) => ({ id: e.id ?? null, posicion, productoId: e.productoId ?? null, descripcion: e.descripcion, unidad: e.unidad, cantidadMilesimas: e.cantidadMilesimas, precioUnitarioMilesimas: e.precioUnitarioMilesimas, afectoIgv: e.afectoIgv }));
+  let base = entradas.map((e, posicion) => ({ id: e.id ?? null, posicion, productoId: e.productoId ?? null, descripcion: e.descripcion, unidad: e.unidad, cantidadMilesimas: e.cantidadMilesimas, precioUnitarioMilesimas: e.precioUnitarioMilesimas, afectoIgv: e.afectoIgv, ...fichaCorregida(e, e.id ? guardadas.get(e.id) : undefined) }));
   try {
     if (args.fijarTotalCentimos !== undefined) {
       const repartidas = fijarTotal(base, args.fijarTotalCentimos, actual.igvPorcentaje);
@@ -106,7 +109,7 @@ const fotoDe = (p: Pedido, lineas: readonly LineaActual[]): FotoDeVersionDto => 
   subtotalCentimos: p.subtotalCentimos,
   igvCentimos: p.igvCentimos,
   totalCentimos: p.totalCentimos,
-  lineas: lineas.map(({ id, posicion, productoId, descripcion, unidad, cantidadMilesimas, precioUnitarioMilesimas, afectoIgv, importeCentimos }) => ({ id, posicion, productoId, descripcion, unidad, cantidadMilesimas, precioUnitarioMilesimas, afectoIgv, importeCentimos })),
+  lineas: lineas.map((l) => ({ id: l.id, posicion: l.posicion, productoId: l.productoId, descripcion: l.descripcion, unidad: l.unidad, cantidadMilesimas: l.cantidadMilesimas, precioUnitarioMilesimas: l.precioUnitarioMilesimas, afectoIgv: l.afectoIgv, importeCentimos: l.importeCentimos, ...fichaNormalizada(l) })),
 });
 
 async function comprobarGuiasDe(tx: Transaccion, ctx: ContextoDeHerramienta, pedidoId: string, r: LineasResueltas) {
@@ -126,7 +129,7 @@ export const pedidoCorregir = definirHerramienta('pedido_corregir', {
       ID,
       { nombre: 'motivoCodigo', queSeAnota: 'Por qué se corrige: igv, precio_acordado, cantidad, lineas, error_digitacion u otro.', ejemplo: 'precio_acordado' },
       { nombre: 'motivoTexto', queSeAnota: 'Explicación breve (obligatoria con «otro»).', ejemplo: 'El cliente negoció por volumen' },
-      { nombre: 'lineas', queSeAnota: 'El pedido completo como debe quedar. Las líneas con id se actualizan; las que faltan se quitan; las sin id se agregan. El precio incluye IGV.', ejemplo: '[{ "id": "...", "descripcion": "Volantes A5", "unidad": "millar", "cantidadMilesimas": 2000, "precioUnitarioMilesimas": 55000, "afectoIgv": true }]' },
+      { nombre: 'lineas', queSeAnota: 'El pedido completo como debe quedar. Las líneas con id se actualizan; las que faltan se quitan; las sin id se agregan. El precio incluye IGV. La ficha de máquina (material, medida, colores, acabado) es opcional: si no llega, la línea conserva la suya; vacío la borra.', ejemplo: '[{ "id": "...", "descripcion": "Volantes A5", "unidad": "millar", "cantidadMilesimas": 2000, "precioUnitarioMilesimas": 55000, "afectoIgv": true }]' },
       { nombre: 'fijarTotalCentimos', queSeAnota: 'Deja el total en ese importe repartiendo el cambio entre los precios (opcional).', ejemplo: '50000' },
       { nombre: 'entregaEl', queSeAnota: 'Nuevo día de entrega, o vacío para quitarlo (opcional).', ejemplo: '2026-03-22' },
       { nombre: 'notas', queSeAnota: 'Nuevas notas, o vacío para borrarlas (opcional).', ejemplo: 'Precio acordado por teléfono' },

@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { exito, rechazo } from '@capaz/shared';
+import { exito, formatearSoles, MONTO_MINIMO_POR_TRABAJO_CENTIMOS, rechazo } from '@capaz/shared';
 import { empresaConfig } from '../../../db/esquema/core.js';
 import { hashCanonico } from '../../herramientas/confirmacion.js';
 import { definirHerramienta } from '../../herramientas/tipos.js';
@@ -17,6 +17,14 @@ const DATOS = {
 } as const;
 type ClaveDeDato = keyof typeof DATOS;
 const CLAVES_DATOS = Object.keys(DATOS) as ClaveDeDato[];
+
+/** Describe el cambio del monto mínimo por trabajo: nulo = valor por defecto, cero = aviso apagado. */
+function describirMontoMinimo(v: number | null | undefined): string[] {
+  if (v === undefined) return [];
+  if (v === null) return [`el monto mínimo vuelve al valor por defecto (${formatearSoles(MONTO_MINIMO_POR_TRABAJO_CENTIMOS)})`];
+  if (v === 0) return ['apagarás el aviso de monto mínimo'];
+  return [`cambiarás el monto mínimo por trabajo a ${formatearSoles(v)}`];
+}
 
 /** Describe los cambios a los datos de la empresa sin repetir su contenido (el logo y los textos no se muestran). */
 function describirDatos(args: Record<string, unknown>): string[] {
@@ -51,6 +59,7 @@ export const empresaActualizarConfiguracion = definirHerramienta('empresa_actual
       { nombre: 'telefono', queSeAnota: 'Teléfono de contacto (máximo 50 caracteres).', ejemplo: '999 888 777' },
       { nombre: 'correo', queSeAnota: 'Correo de contacto (máximo 200 caracteres).', ejemplo: 'ventas@miempresa.pe' },
       { nombre: 'pieDeDocumento', queSeAnota: 'Texto al pie de proformas y recibos: cuentas bancarias, Yape o Plin (máximo 1000 caracteres).', ejemplo: 'BCP 191-1234567-0-12 · Yape 999 888 777' },
+      { nombre: 'montoMinimoCentimos', queSeAnota: 'Monto mínimo por trabajo, en céntimos enteros (de 0 a 10,000,000). Vacío o nulo vuelve al valor por defecto (S/ 40.00); 0 apaga el aviso.', ejemplo: '3000' },
       { nombre: 'logoDataUrl', queSeAnota: 'Logo como imagen PNG, JPEG o WebP en data URL, de hasta 150 000 caracteres. Vacío lo quita. No se aceptan SVG ni direcciones externas.', ejemplo: 'data:image/png;base64,iVBORw0...' },
     ],
     ejemploTecleado: 'cambiar la moneda de la empresa a USD',
@@ -59,6 +68,7 @@ export const empresaActualizarConfiguracion = definirHerramienta('empresa_actual
       'Hay que indicar al menos un dato.',
       'La zona horaria debe ser un nombre válido, como America/Lima.',
       'El RUC debe tener 11 dígitos.',
+      'El monto mínimo va en céntimos enteros, de 0 a 10,000,000 (S/ 100,000.00).',
       'El logo debe ser PNG, JPEG o WebP y no pasar de 150 000 caracteres.',
     ],
     relacionadas: ['empresa_ver_configuracion'],
@@ -70,7 +80,7 @@ export const empresaActualizarConfiguracion = definirHerramienta('empresa_actual
     const cambios = (Object.keys(ETIQUETAS) as (keyof typeof ETIQUETAS)[])
       .filter((k) => args[k] !== undefined)
       .map((k) => `${ETIQUETAS[k]} de «${fila[k]}» a «${args[k]}»`)
-      .concat(describirDatos(args));
+      .concat(describirDatos(args), describirMontoMinimo(args.montoMinimoCentimos));
     return {
       ok: true,
       resumen: {
@@ -79,6 +89,7 @@ export const empresaActualizarConfiguracion = definirHerramienta('empresa_actual
           zonaHoraria: fila.zonaHoraria,
           moneda: fila.moneda,
           locale: fila.locale,
+          montoMinimoCentimos: fila.montoMinimoCentimos,
           ...Object.fromEntries(CLAVES_DATOS.map((k) => [k, fila[k]])),
         }),
       },
@@ -96,6 +107,7 @@ export const empresaActualizarConfiguracion = definirHerramienta('empresa_actual
       ...(args.moneda !== undefined && { moneda: args.moneda }),
       ...(args.locale !== undefined && { locale: args.locale }),
       ...valoresDeDatos(args),
+      ...(args.montoMinimoCentimos !== undefined && { montoMinimoCentimos: args.montoMinimoCentimos }),
     };
     const [nueva] = await tx.update(empresaConfig).set(cambios).where(eq(empresaConfig.tenantId, ctx.empresaId)).returning();
     return nueva ? exito(aConfiguracion(nueva)) : rechazo('no_encontrado', 'La configuración de la empresa aún no existe.');

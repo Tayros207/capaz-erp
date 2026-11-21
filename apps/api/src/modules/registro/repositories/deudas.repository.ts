@@ -23,6 +23,8 @@ export type DatosDeDeuda = {
   notas: string | null;
   origenTipo: string | null;
   origenId: string | null;
+  /** Datos sueltos de la deuda; hoy `{ fijo: true, dia }` (pago fijo de cada mes y el día del mes en que vence, para no desplazarlo en meses cortos). */
+  datosExtra?: { fijo: boolean; dia?: number };
 };
 
 export type FiltrosDeDeudas = {
@@ -133,9 +135,12 @@ export async function editarDeuda(
   tx: Transaccion,
   ctx: ContextoDeEmpresa,
   id: string,
-  cambios: Partial<Pick<Deuda, 'concepto' | 'venceEn' | 'notas'>>,
+  cambios: Partial<Pick<Deuda, 'concepto' | 'venceEn' | 'notas'>> & { fijo?: boolean; dia?: number },
 ): Promise<void> {
-  await tx.update(d).set(cambios).where(and(deEmpresa(ctx), eq(d.id, id)));
+  const { fijo, dia, ...columnas } = cambios;
+  const extra = { ...(fijo !== undefined && { fijo }), ...(dia !== undefined && { dia }) };
+  const datosExtra = Object.keys(extra).length === 0 ? {} : { datosExtra: sql`${d.datosExtra} || ${JSON.stringify(extra)}::jsonb` };
+  await tx.update(d).set({ ...columnas, ...datosExtra }).where(and(deEmpresa(ctx), eq(d.id, id)));
 }
 
 /** Anula una deuda sin abonos. `false` si ya estaba anulada o tiene algo abonado (la condición va también en el `where`). */

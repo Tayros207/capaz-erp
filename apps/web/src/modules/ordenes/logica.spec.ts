@@ -15,7 +15,7 @@ const pedido = (extra: Partial<PedidoDto> = {}): PedidoDto => ({
 });
 const completo = (extra: Partial<PedidoCompletoDto> = {}): PedidoCompletoDto => ({
   ...pedido({ estado: 'borrador', numero: null, serie: null, anio: null, codigo: 'Borrador' }),
-  detalle: [{ id: 'd1', posicion: 0, productoId: null, descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true, importeCentimos: 11_800 }],
+  detalle: [{ id: 'd1', posicion: 0, productoId: null, descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true, importeCentimos: 11_800, material: null, medida: null, colores: null, acabado: null }],
   historial: [], versiones: [], ...extra,
 });
 

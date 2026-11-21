@@ -10,12 +10,7 @@ type Pool = Parameters<typeof comoEmpresa>[0];
 export const codigoDe = (r: RespuestaHttp): string | undefined => r.cuerpo?.error?.codigo;
 export const HOY = hoyEnZona('America/Lima');
 
-/** Día de la empresa desplazado `n` días (negativo: hacia atrás). */
-export function diaMas(n: number, desde: string = HOY.dia): string {
-  const f = new Date(`${desde}T12:00:00Z`);
-  f.setUTCDate(f.getUTCDate() + n);
-  return f.toISOString().slice(0, 10);
-}
+export { diaMas } from '../../../pruebas/fechas.js';
 
 export type EventoGuardado = { tipo: string; carga: any };
 

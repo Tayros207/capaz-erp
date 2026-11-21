@@ -4,6 +4,7 @@ import { emitir } from '../../../core/eventos/emisor.js';
 import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { puedeAnularseLaDeuda, puedeEditarseLaDeuda, validarVencimiento, type EstadoDeDeuda } from '../domain/deuda.js';
+import { alcanceDe } from '../../../core/modulos/alcance.js';
 import { existeSucursal } from '../repositories/cuentas.repository.js';
 import { anularDeuda, bloquearDeuda, deudaVivaPorOrigen, editarDeuda, verDeuda, type Deuda } from '../repositories/deudas.repository.js';
 import { contarAbonosVivos, existeContacto } from '../repositories/movimientos.repository.js';
@@ -14,6 +15,12 @@ import { aDeudaDto, codigoDeLaDeuda } from './mapeo.js';
 // Escrituras de deudas: crear, corregir y anular (crítica). Abonar está en `deudas-abonar.ts`.
 
 const NO_EXISTE = 'No existe esa deuda.';
+const SOLO_POR_PAGAR = 'Solo una deuda por pagar puede ser un pago fijo.';
+const FIJO_SIN_VENCIMIENTO = 'Un pago fijo necesita fecha de vencimiento.';
+const FIJO_SOLO_CON_TODOS = 'Solo quien ve todos los registros puede marcar un pago fijo.';
+const ORIGEN_RESERVADO = 'Ese origen está reservado para los pagos fijos: usa «Copiar pagos fijos».';
+/** El día del mes en que vence (1 a 31): se guarda para no desplazarlo en los meses cortos. */
+const diaDelMes = (venceEn: string): number => Number(venceEn.slice(8, 10));
 const ID = { nombre: 'id', queSeAnota: 'Identificador de la deuda.', ejemplo: ID_DE_EJEMPLO };
 const AUDITAR = (_a: unknown, d: DeudaDto | null) => ({
   entidadTipo: 'deuda',
@@ -42,6 +49,7 @@ export const deudaCrear = definirHerramienta('deuda_crear', {
       { nombre: 'concepto', queSeAnota: 'Por qué se debe.', ejemplo: 'Banner 3x2 con instalación' },
       { nombre: 'totalCentimos', queSeAnota: 'Total en céntimos, mayor que cero.', ejemplo: '35000' },
       { nombre: 'venceEn', queSeAnota: 'Día en que vence (AAAA-MM-DD, opcional).', ejemplo: '2026-03-25' },
+      { nombre: 'fijo', queSeAnota: 'true si es un pago fijo de cada mes (solo por pagar, opcional).', ejemplo: 'false' },
     ],
     ejemploTecleado: 'José Pérez me debe 350 por un banner, vence el 25 de marzo',
     ejemploHablado: 'anota que José Pérez me debe trescientos cincuenta soles por un banner, hasta el veinticinco',
@@ -56,6 +64,10 @@ export const deudaCrear = definirHerramienta('deuda_crear', {
     if (!vence.ok) return rechazoDe(vence);
     if (!(await existeContacto(tx, ctx, args.contactoId))) return rechazo('no_encontrado', 'No existe ese contacto.');
     if (args.sucursalId && !(await existeSucursal(tx, ctx, args.sucursalId))) return rechazo('no_encontrado', 'No existe esa sucursal.');
+    if (args.fijo === true && args.tipo !== 'por_pagar') return rechazo('argumentos_invalidos', SOLO_POR_PAGAR);
+    if (args.fijo === true && !args.venceEn) return rechazo('argumentos_invalidos', FIJO_SIN_VENCIMIENTO);
+    if (args.fijo === true && alcanceDe(ctx, MODULO) === 'propios') return rechazo('sin_permiso', FIJO_SOLO_CON_TODOS);
+    if (args.origenTipo === 'pago_fijo') return rechazo('argumentos_invalidos', ORIGEN_RESERVADO);
     const origen = args.origenTipo && args.origenId ? { tipo: args.origenTipo, id: args.origenId } : null;
     const viva = origen ? await deudaVivaPorOrigen(tx, ctx, origen.tipo, origen.id) : null;
     if (viva) return yaTieneDeuda(viva);
@@ -70,6 +82,7 @@ export const deudaCrear = definirHerramienta('deuda_crear', {
       notas: args.notas || null,
       origenTipo: origen?.tipo ?? null,
       origenId: origen?.id ?? null,
+      ...(args.fijo === true && args.venceEn && { datosExtra: { fijo: true, dia: diaDelMes(args.venceEn) } }),
     });
     // Otra transacción creó la deuda de ese origen entre la consulta y el alta: el índice único la frenó.
     if (!creada) return conflictoDeOrigen();
@@ -99,7 +112,14 @@ export const deudaEditar = definirHerramienta('deuda_editar', {
     if (!editable.ok) return rechazoDe(editable);
     const vence = validarVencimiento(actual.fecha, args.venceEn);
     if (!vence.ok) return rechazoDe(vence);
+    if (args.fijo === true && actual.tipo !== 'por_pagar') return rechazo('argumentos_invalidos', SOLO_POR_PAGAR);
+    const seraFijo = args.fijo ?? (actual.datosExtra as { fijo?: unknown } | null)?.fijo === true;
+    const venceNuevo = args.venceEn !== undefined ? args.venceEn : actual.venceEn;
+    if (seraFijo && !venceNuevo) return rechazo('argumentos_invalidos', FIJO_SIN_VENCIMIENTO);
+    if (args.fijo === true && alcanceDe(ctx, MODULO) === 'propios') return rechazo('sin_permiso', FIJO_SOLO_CON_TODOS);
     await editarDeuda(tx, ctx, args.id, {
+      ...(seraFijo && venceNuevo && (args.fijo !== undefined || args.venceEn !== undefined) && { dia: diaDelMes(venceNuevo) }),
+      ...(args.fijo !== undefined && { fijo: args.fijo }),
       ...(args.concepto !== undefined && { concepto: args.concepto }),
       ...(args.venceEn !== undefined && { venceEn: args.venceEn }),
       ...(args.notas !== undefined && { notas: args.notas || null }),

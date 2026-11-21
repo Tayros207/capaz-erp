@@ -4,11 +4,14 @@ import { proponerBorrador, reproponerBorradores } from '../../core/borradores/pr
 import { borradores } from '../../db/esquema/core-automatizaciones.js';
 import type { Consumidor } from '../../core/eventos/tipos.js';
 import type { Transaccion } from '../../infra/database/con-empresa.js';
+import { hoyDeLaEmpresa } from '../../core/empresas/hoy.js';
+import { diaParaResumen, vencimientoDeCompra } from './domain/compra-a-credito.js';
 import { normalizarNombre } from './domain/catalogos.js';
 import { versionDePedidoEnReferencia } from './domain/ajuste.js';
 import { categoriaConNombre } from './repositories/categorias.repository.js';
 import { aFavorActual, ajustePorOrigen, ultimaVersionAjustada } from './repositories/ajustes.repository.js';
 import { deudaVivaPorOrigen } from './repositories/deudas.repository.js';
+import { plazoDePagoDeProveedor } from './repositories/proveedores.repository.js';
 
 // Consumidores de eventos de otros módulos (ficha §4.5). Regla R5: un consumidor NUNCA ejecuta herramientas ni
 // escribe en las tablas del módulo; solo lee sus propias tablas y PROPONE un borrador. El dinero lo confirma una
@@ -108,6 +111,9 @@ export const registroCompraRecibida: Consumidor = {
     const carga = EVENTOS['compra.recibida'].parse(e.carga);
     if (carga.totalRecibidoCentimos <= 0) return;
     if (await deudaVivaPorOrigen(tx, ctx, ORIGEN_COMPRA, carga.recepcionId)) return;
+    // Un proveedor con plazo (ficha comercial del núcleo) vence a ese plazo contado desde el día de la recepción.
+    const hoy = await hoyDeLaEmpresa(tx, new Date(e.creadoEn));
+    const venceEn = vencimientoDeCompra(hoy.dia, await plazoDePagoDeProveedor(tx, ctx, carga.proveedorId));
     await proponerBorrador(tx, {
       herramienta: 'deuda_crear',
       args: {
@@ -117,8 +123,9 @@ export const registroCompraRecibida: Consumidor = {
         totalCentimos: carga.totalRecibidoCentimos,
         origenTipo: ORIGEN_COMPRA,
         origenId: carga.recepcionId,
+        ...(venceEn && { fecha: hoy.dia, venceEn }),
       },
-      resumen: `Pagar ${formatearSoles(carga.totalRecibidoCentimos)} por la compra ${carga.numero}`,
+      resumen: `Pagar ${formatearSoles(carga.totalRecibidoCentimos)} por la compra ${carga.numero}${venceEn ? ` (vence el ${diaParaResumen(venceEn)})` : ''}`,
       origen: 'modulo',
       origenRef: `compra:${carga.recepcionId}`,
       propuestoPor: 'sistema',

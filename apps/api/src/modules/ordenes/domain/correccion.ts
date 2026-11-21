@@ -9,6 +9,8 @@ import {
   type LineaACorregir,
 } from '@capaz/shared';
 import { NOMBRE_DE_ESTADO } from './estados.js';
+import { fichaNormalizada, mismaFicha, type FichaDeMaquina } from '@capaz/shared';
+import { fichaTocada } from './ficha.js';
 
 // Reglas puras de «Corregir pedido confirmado» (versión 2): quién puede, en qué estado, qué líneas cambian, lo que impiden las
 // guías de remisión, el umbral del trabajador y el reparto de un total fijado. Sin base ni framework.
@@ -26,7 +28,7 @@ export type LineaActual = {
   precioUnitarioMilesimas: number;
   afectoIgv: boolean;
   importeCentimos: number;
-};
+} & Partial<FichaDeMaquina>;
 
 export const esAdministrador = (rol: string | null): boolean => rol === 'owner' || rol === 'admin';
 
@@ -78,7 +80,7 @@ export function resolverLineas(actuales: readonly LineaActual[], nuevas: readonl
 /** Un pedido entregado solo admite cambios de precio e IGV: nada de líneas nuevas o quitadas, cantidades ni descripciones. */
 export function comprobarSoloPrecioEIgv(l: LineasResueltas): { ok: true } | { ok: false; motivo: string } {
   if (l.agregadas.length > 0 || l.quitadas.length > 0) return { ok: false, motivo: 'En un pedido entregado no se agregan ni se quitan líneas: solo se corrige el precio o el IGV.' };
-  const tocada = l.conservadas.find(({ actual: a, nueva: n }) => a.cantidadMilesimas !== n.cantidadMilesimas || a.descripcion !== n.descripcion || a.unidad !== n.unidad || (a.productoId ?? null) !== (n.productoId ?? a.productoId));
+  const tocada = l.conservadas.find(({ actual: a, nueva: n }) => a.cantidadMilesimas !== n.cantidadMilesimas || a.descripcion !== n.descripcion || a.unidad !== n.unidad || (a.productoId ?? null) !== (n.productoId ?? a.productoId) || fichaTocada(a, n));
   return tocada ? { ok: false, motivo: `En un pedido entregado solo se corrige el precio o el IGV: «${tocada.actual.descripcion}» cambia otra cosa.` } : { ok: true };
 }
 
@@ -92,19 +94,20 @@ export type LineaResultante = {
   precioUnitarioMilesimas: number;
   afectoIgv: boolean;
   importeCentimos: number;
-};
+} & Partial<FichaDeMaquina>;
 
-const valores = (l: Pick<LineaActual, 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas' | 'afectoIgv' | 'importeCentimos'>) => ({
+const valores = (l: Pick<LineaActual, 'descripcion' | 'unidad' | 'cantidadMilesimas' | 'precioUnitarioMilesimas' | 'afectoIgv' | 'importeCentimos'> & Partial<FichaDeMaquina>) => ({
   descripcion: l.descripcion,
   unidad: l.unidad,
   cantidadMilesimas: l.cantidadMilesimas,
   precioUnitarioMilesimas: l.precioUnitarioMilesimas,
   afectoIgv: l.afectoIgv,
   importeCentimos: l.importeCentimos,
+  ...fichaNormalizada(l),
 });
 
 const distinta = (a: LineaActual, d: LineaResultante): boolean =>
-  a.descripcion !== d.descripcion || a.unidad !== d.unidad || a.cantidadMilesimas !== d.cantidadMilesimas || a.precioUnitarioMilesimas !== d.precioUnitarioMilesimas || a.afectoIgv !== d.afectoIgv || (a.productoId ?? null) !== (d.productoId ?? null);
+  a.descripcion !== d.descripcion || a.unidad !== d.unidad || a.cantidadMilesimas !== d.cantidadMilesimas || a.precioUnitarioMilesimas !== d.precioUnitarioMilesimas || a.afectoIgv !== d.afectoIgv || (a.productoId ?? null) !== (d.productoId ?? null) || !mismaFicha(a, d);
 
 /** Solo las líneas que cambian, con su antes y su después (la huella). `nuevas` ya trae el `id` de las que se conservan. */
 export function diferenciasDeLineas(antes: readonly LineaActual[], despues: readonly LineaResultante[]): CorreccionDePedidoDto['lineas'] {

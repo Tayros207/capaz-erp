@@ -3,6 +3,7 @@ import { importe } from '../dinero.js';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { entradaDePreciosAnterioresSchema, salidaDePreciosAnterioresSchema } from './precios-anteriores.js';
+import { fichaDeEntradaShape, fichaDeHuellaShape, fichaDeSalidaShape } from './ficha-de-maquina.js';
 
 // Contratos del área «ordenes»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -94,6 +95,8 @@ export const lineaDeEntradaSchema = z
     cantidadMilesimas: z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' }),
     precioUnitarioMilesimas: z.number().int().safe().min(0, { error: 'El precio no puede ser negativo.' }).optional(),
     afectoIgv: z.boolean().optional(),
+    // Ficha de máquina (opcional). En pedido_crear y pedido_editar lo que no llega queda vacío.
+    ...fichaDeEntradaShape,
   })
   .refine((l) => Boolean(l.productoId) || (Boolean(l.descripcion) && l.precioUnitarioMilesimas !== undefined), {
     error: 'Una línea sin producto necesita descripción y precio.',
@@ -110,6 +113,7 @@ export const lineaDePedidoSchema = z.strictObject({
   precioUnitarioMilesimas: z.number().int(),
   afectoIgv: z.boolean(),
   importeCentimos: z.number().int(),
+  ...fichaDeSalidaShape,
 });
 export type LineaDePedidoDto = z.infer<typeof lineaDePedidoSchema>;
 
@@ -155,6 +159,7 @@ const valoresDeLinea = z.strictObject({
   precioUnitarioMilesimas: z.number().int(),
   afectoIgv: z.boolean(),
   importeCentimos: z.number().int(),
+  ...fichaDeHuellaShape,
 });
 
 /** La huella de una corrección de importes o líneas (`corregido`): quién lo decide va en el evento; aquí el antes y el después. */

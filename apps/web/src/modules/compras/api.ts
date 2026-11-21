@@ -20,5 +20,6 @@ export const recibirCompra = (args: EntradaDe<'compra_recibir'>) => llamar('comp
 export const cancelarCompra = (id: string, motivo: string) =>
   llamarConfirmando('compra_cancelar', { id, motivo }, { titulo: 'Cancelar orden de compra', textoConfirmar: 'Cancelar orden', peligroso: true });
 
+export const costosPorArticulo = (args: EntradaDe<'compras_costos_por_articulo'>) => llamar('compras_costos_por_articulo', args);
 export const buscarProveedores = (texto: string) => llamar('clientes_buscar', { texto, limite: 8 });
 export const buscarProductos = (texto: string) => llamar('productos_buscar', { texto, limite: 8 });

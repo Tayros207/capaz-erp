@@ -56,6 +56,7 @@ describe('dictar un pedido', () => {
     expect(resultado.totalCentimos).toBe(42250);
     expect(resultado.detalle.map((l: any) => l.importeCentimos)).toEqual([18250, 24000]);
     expect(resultado.detalle.map((l: any) => l.unidad)).toEqual(['unidad', 'millar']);
+    expect(resultado.detalle.map((l: any) => [l.material, l.medida, l.colores, l.acabado])).toEqual([[null, null, null, null], [null, null, null, null]]);
     expect((await datosDe(dueno, 'borrador_ver', { id: b.id })).corregido).toBe(false);
   });
 

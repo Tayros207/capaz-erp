@@ -24,6 +24,7 @@ import { contratosDeCrm, eventosDeCrm } from './crm.js';
 import { contratosDeOrdenes, eventosDeOrdenes } from './ordenes.js';
 import { contratosDeGuias, eventosDeGuias } from './ordenes-guias.js';
 import { contratosDeOrdenesCorreccion } from './ordenes-correccion.js';
+import { contratosDeOrdenesImportacion } from './ordenes-importacion.js';
 import { contratosDeInsumos, eventosDeInsumos } from './insumos.js';
 import { contratosDeCompras, eventosDeCompras } from './compras.js';
 import { contratosDePersonal, eventosDePersonal } from './personal.js';
@@ -36,6 +37,7 @@ import { contratosDeCotizadorEnlaces } from './cotizador-enlaces.js';
 import { contratosDePreciosAnteriores } from './precios-anteriores.js';
 import { contratosDeMiDia } from './mi-dia.js';
 
+export * from './ficha-de-maquina.js';
 export * from './empresa.js';
 export * from './modulos.js';
 export * from './auditoria.js';
@@ -60,6 +62,7 @@ export * from './crm.js';
 export * from './ordenes.js';
 export * from './ordenes-guias.js';
 export * from './ordenes-correccion.js';
+export * from './ordenes-importacion.js';
 export * from './insumos.js';
 export * from './compras.js';
 export * from './personal.js';
@@ -98,6 +101,7 @@ export const CONTRATOS = {
   ...contratosDeOrdenes,
   ...contratosDeGuias,
   ...contratosDeOrdenesCorreccion,
+  ...contratosDeOrdenesImportacion,
   ...contratosDeInsumos,
   ...contratosDeCompras,
   ...contratosDePersonal,

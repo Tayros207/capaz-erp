@@ -1,4 +1,4 @@
-import { formatearSoles, NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type MovimientoDto } from '@capaz/shared';
+import { formatearSoles, NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type FijosCopiadosDto, type MovimientoDto } from '@capaz/shared';
 
 // Lógica pura de las pantallas de `registro`: validación de formularios, armado de argumentos, signo y tono
 // de los montos, textos y mensajes. Sin React ni red: se prueba en `logica.spec.ts`.
@@ -214,27 +214,31 @@ export function argumentosDeAbono(id: string, f: FormularioDeAbono): EntradaDe<'
   return args;
 }
 
-export type FormularioDeDeuda = { concepto: string; venceEn: string; notas: string };
+export const MENSAJE_DE_FIJO_SIN_FECHA = 'Un pago fijo necesita fecha de vencimiento.';
+
+export type FormularioDeDeuda = { concepto: string; venceEn: string; notas: string; fijo: boolean };
 export type ErroresDeDeuda = Partial<Record<'concepto' | 'venceEn' | 'notas', string>>;
 
-export const formularioDeDeuda = (d: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas'>): FormularioDeDeuda => ({ concepto: d.concepto, venceEn: d.venceEn ?? '', notas: d.notas ?? '' });
+export const formularioDeDeuda = (d: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas' | 'fijo'>): FormularioDeDeuda => ({ concepto: d.concepto, venceEn: d.venceEn ?? '', notas: d.notas ?? '', fijo: d.fijo });
 
 export function validarDeuda(f: FormularioDeDeuda): ErroresDeDeuda {
   const e: ErroresDeDeuda = {};
   if (!f.concepto.trim()) e.concepto = 'Indica el concepto.';
   else if (f.concepto.trim().length > 200) e.concepto = 'El concepto admite hasta 200 caracteres.';
   if (f.venceEn && !/^\d{4}-\d{2}-\d{2}$/.test(f.venceEn)) e.venceEn = 'Elige una fecha válida.';
+  else if (f.fijo && !f.venceEn) e.venceEn = MENSAJE_DE_FIJO_SIN_FECHA;
   if (f.notas.trim().length > 2000) e.notas = 'Las notas admiten hasta 2000 caracteres.';
   return e;
 }
 
 /** Argumentos de `deuda_editar`: solo lo que cambió (vaciar el vencimiento o las notas viaja como `null`). `null` si nada cambió. */
-export function argumentosDeEdicionDeDeuda(id: string, f: FormularioDeDeuda, original: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas'>): EntradaDe<'deuda_editar'> | null {
+export function argumentosDeEdicionDeDeuda(id: string, f: FormularioDeDeuda, original: Pick<DeudaDto, 'concepto' | 'venceEn' | 'notas' | 'fijo'>): EntradaDe<'deuda_editar'> | null {
   const args: EntradaDe<'deuda_editar'> = { id };
   let cambio = false;
   if (f.concepto.trim() !== original.concepto) { args.concepto = f.concepto.trim(); cambio = true; }
   if (f.venceEn !== (original.venceEn ?? '')) { args.venceEn = f.venceEn || null; cambio = true; }
   if (f.notas.trim() !== (original.notas ?? '')) { args.notas = f.notas.trim() || null; cambio = true; }
+  if (f.fijo !== original.fijo) { args.fijo = f.fijo; cambio = true; }
   return cambio ? args : null;
 }
 
@@ -283,16 +287,16 @@ const MENSAJES: Record<string, string> = {
 
 /** Mensaje para la persona según el código del rechazo; los de negocio (conflicto, datos inválidos) ya vienen redactados. */
 export function mensajeDeRechazo(codigo: string, mensaje: string): string {
-  if (codigo === 'sin_permiso' && mensaje.startsWith('Tu acceso')) return mensaje;
+  if (codigo === 'sin_permiso' && (mensaje.startsWith('Tu acceso') || mensaje.includes('pago fijo'))) return mensaje;
   return MENSAJES[codigo] ?? mensaje;
 }
 
 // ---- Nueva deuda a mano (por cobrar o por pagar) ----
 
-export type FormularioDeDeudaNueva = { contacto: { id: string; nombre: string } | null; concepto: string; total: Centimos | null; venceEn: string; notas: string };
+export type FormularioDeDeudaNueva = { contacto: { id: string; nombre: string } | null; concepto: string; total: Centimos | null; venceEn: string; notas: string; fijo: boolean };
 export type ErroresDeDeudaNueva = Partial<Record<'contacto' | 'concepto' | 'total' | 'venceEn' | 'notas', string>>;
 
-export const deudaNuevaEnBlanco = (): FormularioDeDeudaNueva => ({ contacto: null, concepto: '', total: null, venceEn: '', notas: '' });
+export const deudaNuevaEnBlanco = (): FormularioDeDeudaNueva => ({ contacto: null, concepto: '', total: null, venceEn: '', notas: '', fijo: false });
 
 /** El vencimiento no puede ser anterior a hoy (la deuda se anota con la fecha de hoy). */
 export function validarDeudaNueva(f: FormularioDeDeudaNueva, hoy: string): ErroresDeDeudaNueva {
@@ -304,6 +308,7 @@ export function validarDeudaNueva(f: FormularioDeDeudaNueva, hoy: string): Error
   else if (!Number.isSafeInteger(f.total) || f.total <= 0) e.total = 'El total debe ser mayor que cero.';
   if (f.venceEn && !/^\d{4}-\d{2}-\d{2}$/.test(f.venceEn)) e.venceEn = 'Elige una fecha válida.';
   else if (f.venceEn && f.venceEn < hoy) e.venceEn = 'El vencimiento no puede ser anterior a hoy.';
+  else if (f.fijo && !f.venceEn) e.venceEn = MENSAJE_DE_FIJO_SIN_FECHA;
   if (f.notas.trim().length > 2000) e.notas = 'Las notas admiten hasta 2000 caracteres.';
   return e;
 }
@@ -315,7 +320,16 @@ export function argumentosDeDeudaNueva(tipo: TipoDeDeuda, f: FormularioDeDeudaNu
   if (f.venceEn) args.venceEn = f.venceEn;
   const notas = f.notas.trim();
   if (notas) args.notas = notas;
+  // Solo una deuda por pagar puede ser un pago fijo.
+  if (tipo === 'por_pagar' && f.fijo) args.fijo = true;
   return args;
+}
+
+/** Aviso tras copiar los pagos fijos al mes nuevo. */
+export function textoDeFijosCopiados(r: Pick<FijosCopiadosDto, 'creadas' | 'yaExistian' | 'mes'>): string {
+  if (r.creadas === 0) return `Los pagos fijos de ${r.mes} ya estaban anotados.`;
+  const copiados = `Se copiaron ${r.creadas} ${r.creadas === 1 ? 'pago fijo' : 'pagos fijos'} a ${r.mes}`;
+  return r.yaExistian > 0 ? `${copiados} (${r.yaExistian} ya estaban anotados).` : `${copiados}.`;
 }
 
 /** Título de la hoja de nueva deuda, según el tipo. */

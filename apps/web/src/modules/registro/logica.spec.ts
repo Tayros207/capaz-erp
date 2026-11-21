@@ -5,7 +5,7 @@ import {
   estaAbierta, formularioDeCuenta, formularioDeDeuda, pasoDeDeuda, textoDeEstadoDeDeuda, tonoDeEstadoDeDeuda, validarAbono, validarCuenta, validarDeuda, validarMotivo, validarNombre,
   argumentosDeListado, argumentosDeAdelanto, argumentosDeMovimiento, faltaCancelar, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
   formularioInicial, mensajeDeRechazo, montoConSigno, siguienteFormulario, validarMovimiento,
-  argumentosDeDeudaNueva, deudaNuevaEnBlanco, validarDeudaNueva,
+  argumentosDeDeudaNueva, deudaNuevaEnBlanco, textoDeFijosCopiados, validarDeudaNueva,
   argumentosDeTransferencia, cuentasDeDestino, esCategoriaDeTransferencia, esTransferencia, invertirTransferencia, puedeTransferir, siguienteTransferencia,
   textoDeTransferenciasNetas, transferenciaInicial, validarTransferencia,
 } from './logica.ts';
@@ -139,8 +139,22 @@ describe('mensajes por código de error', () => {
     expect(mensajeDeRechazo('modulo_no_disponible', 'x')).toContain('no tiene activo');
     expect(mensajeDeRechazo('sin_permiso', 'No tienes permiso para usar «x».')).toBe('No tienes permiso para hacer esto.');
     expect(mensajeDeRechazo('sin_permiso', 'Tu acceso es solo a tus propios registros.')).toBe('Tu acceso es solo a tus propios registros.');
+    expect(mensajeDeRechazo('sin_permiso', 'Solo quien ve todos los registros puede marcar un pago fijo.')).toBe('Solo quien ve todos los registros puede marcar un pago fijo.');
     expect(mensajeDeRechazo('conflicto', 'La cuenta «BCP» está archivada.')).toBe('La cuenta «BCP» está archivada.');
     expect(mensajeDeRechazo('argumentos_invalidos', 'La fecha de un movimiento no puede ser futura.')).toBe('La fecha de un movimiento no puede ser futura.');
+  });
+});
+
+describe('pago fijo sin vencimiento', () => {
+  it('al editar una deuda no deja marcar un pago fijo sin fecha', () => {
+    expect(validarDeuda({ concepto: 'Alquiler', venceEn: '', notas: '', fijo: true }).venceEn).toBe('Un pago fijo necesita fecha de vencimiento.');
+    expect(validarDeuda({ concepto: 'Alquiler', venceEn: '2026-12-05', notas: '', fijo: true })).toEqual({});
+    expect(validarDeuda({ concepto: 'Alquiler', venceEn: '', notas: '', fijo: false })).toEqual({});
+  });
+  it('al anotar una deuda nueva tampoco', () => {
+    const f = { ...deudaNuevaEnBlanco(), contacto: { id: 'x', nombre: 'Proveedor de prueba' }, concepto: 'Luz', total: c(10_000), fijo: true };
+    expect(validarDeudaNueva(f, '2026-03-10')).toEqual({ venceEn: 'Un pago fijo necesita fecha de vencimiento.' });
+    expect(validarDeudaNueva({ ...f, venceEn: '2026-03-20' }, '2026-03-10')).toEqual({});
   });
 });
 
@@ -180,11 +194,16 @@ describe('deudas', () => {
     expect(() => argumentosDeAbono('d1', { ...f, monto: null })).toThrow();
   });
   it('edición de deuda: solo viaja lo que cambió; vaciar manda null', () => {
-    const orig = { concepto: 'Venta', venceEn: '2026-04-01', notas: null };
+    const orig = { concepto: 'Venta', venceEn: '2026-04-01', notas: null, fijo: false };
     expect(argumentosDeEdicionDeDeuda('d', formularioDeDeuda(orig), orig)).toBeNull();
-    expect(argumentosDeEdicionDeDeuda('d', { concepto: 'Venta', venceEn: '', notas: 'x' }, orig)).toEqual({ id: 'd', venceEn: null, notas: 'x' });
-    expect(validarDeuda({ concepto: ' ', venceEn: '', notas: '' }).concepto).toMatch(/concepto/);
-    expect(validarDeuda({ concepto: 'a', venceEn: 'mañana', notas: '' }).venceEn).toBeDefined();
+    expect(argumentosDeEdicionDeDeuda('d', { concepto: 'Venta', venceEn: '', notas: 'x', fijo: false }, orig)).toEqual({ id: 'd', venceEn: null, notas: 'x' });
+    expect(validarDeuda({ concepto: ' ', venceEn: '', notas: '', fijo: false }).concepto).toMatch(/concepto/);
+    expect(validarDeuda({ concepto: 'a', venceEn: 'mañana', notas: '', fijo: false }).venceEn).toBeDefined();
+  });
+  it('marcar o desmarcar «pago fijo» viaja como cambio', () => {
+    const orig = { concepto: 'Alquiler', venceEn: null, notas: null, fijo: false };
+    expect(argumentosDeEdicionDeDeuda('d', { ...formularioDeDeuda(orig), fijo: true }, orig)).toEqual({ id: 'd', fijo: true });
+    expect(argumentosDeEdicionDeDeuda('d', { ...formularioDeDeuda({ ...orig, fijo: true }), fijo: false }, { ...orig, fijo: true })).toEqual({ id: 'd', fijo: false });
   });
   it('motivo de anulación', () => {
     expect(validarMotivo('  ')).toBeDefined();
@@ -224,6 +243,19 @@ describe('nueva deuda a mano', () => {
       tipo: 'por_pagar', contactoId: 'c1', concepto: 'Volantes', totalCentimos: 20_000, venceEn: '2026-04-01', notas: 'x',
     });
     expect(() => argumentosDeDeudaNueva('por_cobrar', deudaNuevaEnBlanco())).toThrow();
+  });
+  it('«pago fijo» solo viaja en las deudas por pagar', () => {
+    expect(argumentosDeDeudaNueva('por_pagar', { ...completa, fijo: true }).fijo).toBe(true);
+    expect(argumentosDeDeudaNueva('por_pagar', completa)).not.toHaveProperty('fijo');
+    expect(argumentosDeDeudaNueva('por_cobrar', { ...completa, fijo: true })).not.toHaveProperty('fijo');
+  });
+});
+
+describe('copiar pagos fijos', () => {
+  it('cuenta lo copiado y lo que ya estaba', () => {
+    expect(textoDeFijosCopiados({ mes: '2026-12', creadas: 0, yaExistian: 3 })).toBe('Los pagos fijos de 2026-12 ya estaban anotados.');
+    expect(textoDeFijosCopiados({ mes: '2026-12', creadas: 1, yaExistian: 0 })).toBe('Se copiaron 1 pago fijo a 2026-12.');
+    expect(textoDeFijosCopiados({ mes: '2026-12', creadas: 4, yaExistian: 2 })).toBe('Se copiaron 4 pagos fijos a 2026-12 (2 ya estaban anotados).');
   });
 });
 

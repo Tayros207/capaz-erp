@@ -70,6 +70,8 @@ export type ColumnaImprimible<F extends Record<string, ValorDeCelda>> = {
   alineacion?: AlineacionDeColumna;
   /** Ancho CSS opcional, p. ej. `'20%'`. */
   ancho?: string;
+  /** Clave de un texto secundario impreso debajo, más chico (la ficha bajo la descripción). */
+  secundaria?: keyof F & string;
 };
 
 const ALINEA: Record<AlineacionDeColumna, string> = { izquierda: 'text-left', centro: 'text-center', derecha: 'text-right tabular-nums' };
@@ -108,6 +110,7 @@ export function TablaImprimible<F extends Record<string, ValorDeCelda>>({ etique
               {columnas.map((c) => (
                 <td key={c.clave} className={alinear(c)}>
                   {formatearCelda(fila[c.clave], c.formato)}
+                  {c.secundaria && fila[c.secundaria] ? <span className="block text-[0.85em] italic">{formatearCelda(fila[c.secundaria])}</span> : null}
                 </td>
               ))}
             </tr>

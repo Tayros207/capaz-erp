@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, pgSchema, text, timestamp } from 'drizzle-orm/pg-core';
+import { bigint, check, pgSchema, text, timestamp } from 'drizzle-orm/pg-core';
 
 // Esquema `core`: lo que todos los módulos comparten (empresa, módulos, permisos, clientes…).
 // RLS, permisos y funciones NO se declaran aquí: van en SQL a mano en cada migración
@@ -20,6 +20,7 @@ export const empresaConfig = core.table('empresa_config', {
   correo: text('correo'),
   pieDeDocumento: text('pie_de_documento'),
   logoDataUrl: text('logo_data_url'),
+  montoMinimoCentimos: bigint('monto_minimo_centimos', { mode: 'number' }),
   creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   actualizadoEn: timestamp('actualizado_en', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -30,5 +31,6 @@ export const empresaConfig = core.table('empresa_config', {
   check('empresa_config_correo_largo', sql`${t.correo} is null or length(${t.correo}) <= 200`),
   check('empresa_config_pie_largo', sql`${t.pieDeDocumento} is null or length(${t.pieDeDocumento}) <= 1000`),
   check('empresa_config_logo_largo', sql`${t.logoDataUrl} is null or length(${t.logoDataUrl}) <= 150000`),
+  check('empresa_config_monto_minimo', sql`${t.montoMinimoCentimos} is null or ${t.montoMinimoCentimos} between 0 and 10000000`),
   check('empresa_config_logo_formato', sql`${t.logoDataUrl} is null or ${t.logoDataUrl} ~ '^data:image/(png|jpeg|webp);base64,'`),
 ]);

@@ -14,6 +14,7 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { listarMovimientos, POR_PAGINA, verCajaDelDia } from './api.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
+import { CoberturaDelMes } from './cobertura-del-mes.tsx';
 import { DetalleDeMovimiento } from './detalle-de-movimiento.tsx';
 import { argumentosDeListado, diaEnZona, FILTROS_VACIOS, textoDeTransferenciasNetas } from './logica.ts';
 import { Monto } from './pantalla-movimientos.tsx';
@@ -58,6 +59,7 @@ export function PantallaCaja() {
   return (
     <div className="flex flex-col gap-4">
       <EncabezadoDePagina titulo="Caja del día" />
+      <CoberturaDelMes hoy={hoy} />
       <div className="max-w-xs">
         <Campo etiqueta="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} />
       </div>

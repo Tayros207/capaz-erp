@@ -3,7 +3,8 @@ import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { agruparCobros, anotacionesDeDeudas, type CobroDeCliente } from '../domain/cobros-pendientes.js';
 import { mensajeDeCobro } from '../domain/mensaje-de-cobro.js';
-import { deudasConOrigen, deudasPorCobrarAbiertas, nombreDeLaEmpresa } from '../repositories/pendientes.repository.js';
+import { tarjetasDePagos } from '../domain/pagos-pendientes.js';
+import { deudasConOrigen, deudasPorCobrarAbiertas, deudasPorPagarProximas, nombreDeLaEmpresa } from '../repositories/pendientes.repository.js';
 import { MODULO, propietarioDe } from './comun.js';
 
 // «Mi día» del módulo registro: a quién cobrar (con su mensaje listo, que se abre a mano) y las anotaciones de pagado o
@@ -36,7 +37,7 @@ export const registroPendientes = definirHerramienta('registro_pendientes', {
   criticidad: 'lectura',
   ayuda: {
     titulo: 'Pendientes de cobro (Mi día)',
-    paraQueSirve: 'Dice a quién conviene cobrar hoy (deudas vencidas por cliente, con su antigüedad y un mensaje de cobro redactado) y si los pedidos y trabajos ya están pagados o con saldo.',
+    paraQueSirve: 'Dice a quién conviene cobrar hoy (deudas vencidas por cliente, con su antigüedad y un mensaje de cobro redactado), qué pagos a proveedores vencen en los próximos 3 días o ya vencieron, y si los pedidos y trabajos ya están pagados o con saldo.',
     cuandoUsarla: 'La usa el panel «Mi día»; también sirve para repasar a quién cobrar sin abrir cada deuda.',
     campos: [{ nombre: 'fecha', queSeAnota: 'Día de corte (AAAA-MM-DD); por defecto, hoy.', ejemplo: '2026-11-18' }],
     ejemploTecleado: 'a quién tengo que cobrar hoy',
@@ -50,7 +51,7 @@ export const registroPendientes = definirHerramienta('registro_pendientes', {
     const propietario = propietarioDe(ctx);
     const cobros = agruparCobros(await deudasPorCobrarAbiertas(tx, ctx, propietario), hoy);
     const empresa = cobros.length > 0 ? await nombreDeLaEmpresa(tx) : null;
-    const { tarjetas, total } = limitarTarjetas(cobros.map((c) => tarjetaDeCobro(c, empresa, hoy)));
+    const { tarjetas, total } = limitarTarjetas([...cobros.map((c) => tarjetaDeCobro(c, empresa, hoy)), ...tarjetasDePagos(await deudasPorPagarProximas(tx, ctx, propietario, hoy), hoy)]);
     const anotaciones = anotacionesDeDeudas(await deudasConOrigen(tx, ctx, propietario));
     return exito({ fecha: hoy, tarjetas, anotaciones, total });
   },

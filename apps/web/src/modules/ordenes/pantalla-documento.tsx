@@ -26,7 +26,7 @@ const COLUMNAS_CON_PRECIO = [
 
 const COLUMNAS_SIN_PRECIO = [
   { clave: 'n', titulo: 'N.º', ancho: '10mm' },
-  { clave: 'descripcion', titulo: 'Descripción' },
+  { clave: 'descripcion', titulo: 'Descripción', secundaria: 'ficha' },
   { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha', ancho: '30mm' },
 ] as const;
 

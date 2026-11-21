@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { contrato } from '../herramientas.js';
+import { MAXIMO_MONTO_MINIMO_CENTIMOS } from '../monto-minimo.js';
 
 // Contratos del área «empresa»: un contrato por herramienta (`entidad_accion`) y un esquema por evento
 // (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -52,6 +53,12 @@ const logo = z
   .max(LIMITES_DATOS_EMPRESA.logoDataUrl, { error: 'El logo es demasiado grande: usa una imagen más pequeña.' })
   .refine((v) => v === '' || PREFIJO_LOGO.test(v), { error: 'El logo debe ser una imagen PNG, JPEG o WebP.' });
 
+const montoMinimo = z
+  .number({ error: 'El monto mínimo va en céntimos enteros, de 0 a 10,000,000 (S/ 100,000.00).' })
+  .int({ error: 'El monto mínimo va en céntimos enteros, de 0 a 10,000,000 (S/ 100,000.00).' })
+  .min(0, { error: 'El monto mínimo va en céntimos enteros, de 0 a 10,000,000 (S/ 100,000.00).' })
+  .max(MAXIMO_MONTO_MINIMO_CENTIMOS, { error: 'El monto mínimo va en céntimos enteros, de 0 a 10,000,000 (S/ 100,000.00).' });
+
 export const configuracionDeEmpresaSchema = z.strictObject({
   zonaHoraria: z.string(),
   moneda: z.string(),
@@ -63,6 +70,8 @@ export const configuracionDeEmpresaSchema = z.strictObject({
   correo: z.string().nullable(),
   pieDeDocumento: z.string().nullable(),
   logoDataUrl: z.string().nullable(),
+  /** `null` = por defecto (S/ 40.00); `0` = aviso apagado. */
+  montoMinimoCentimos: z.number().int().nullable(),
   actualizadoEn: z.iso.datetime(),
 });
 export type ConfiguracionDeEmpresa = z.infer<typeof configuracionDeEmpresaSchema>;
@@ -79,6 +88,7 @@ export const actualizarConfiguracionSchema = z
     telefono: textoOpcional(LIMITES_DATOS_EMPRESA.telefono, 'El teléfono').optional(),
     correo: textoOpcional(LIMITES_DATOS_EMPRESA.correo, 'El correo').optional(),
     pieDeDocumento: textoOpcional(LIMITES_DATOS_EMPRESA.pieDeDocumento, 'El pie de documento').optional(),
+    montoMinimoCentimos: montoMinimo.nullable().optional(),
     logoDataUrl: logo.optional(),
   })
   .refine((v) => Object.values(v).some((x) => x !== undefined), { error: 'Indica al menos un dato que cambiar.' });

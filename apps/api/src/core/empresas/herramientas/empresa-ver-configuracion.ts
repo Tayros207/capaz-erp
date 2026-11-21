@@ -14,6 +14,7 @@ export const aConfiguracion = (f: typeof empresaConfig.$inferSelect): Configurac
   correo: f.correo,
   pieDeDocumento: f.pieDeDocumento,
   logoDataUrl: f.logoDataUrl,
+  montoMinimoCentimos: f.montoMinimoCentimos,
   actualizadoEn: f.actualizadoEn.toISOString(),
 });
 

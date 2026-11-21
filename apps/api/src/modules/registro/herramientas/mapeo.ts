@@ -1,9 +1,10 @@
-import type { CategoriaDto, CuentaDto, DeudaDto, MovimientoDto } from '@capaz/shared';
+import { saldoDeCierreSchema, type CategoriaDto, type CierreDto, type CuentaDto, type DeudaDto, type MovimientoDeSemanaDto, type MovimientoDto } from '@capaz/shared';
 import { codigoDeDeuda, codigoDeMovimiento } from '../domain/codigos.js';
 import { correccionDeReferencia, esCorregible } from '../domain/correccion.js';
 import { transferenciaDeReferencia } from '../domain/transferencia.js';
 import { estaVencida, type EstadoDeDeuda } from '../domain/deuda.js';
 import type { Categoria } from '../repositories/categorias.repository.js';
+import type { Cierre } from '../repositories/cierres.repository.js';
 import type { Cuenta } from '../repositories/cuentas.repository.js';
 import type { Deuda, DeudaConContacto } from '../repositories/deudas.repository.js';
 import type { Movimiento, MovimientoConNombres } from '../repositories/movimientos.repository.js';
@@ -89,9 +90,36 @@ export const aDeudaDto = (f: DeudaConContacto, hoy: string): DeudaDto => ({
   origenId: f.origenId,
   sucursalId: f.sucursalId,
   notas: f.notas,
+  fijo: (f.datosExtra as { fijo?: unknown } | null)?.fijo === true,
   anuladoEn: iso(f.anuladoEn),
   motivoAnulacion: f.motivoAnulacion,
   creadoPor: f.creadoPor,
   creadoEn: f.creadoEn.toISOString(),
   actualizadoEn: f.actualizadoEn.toISOString(),
 });
+
+export const aMovimientoDeSemana = (f: MovimientoConNombres): MovimientoDeSemanaDto => ({
+  id: f.id,
+  codigo: codigoDe(f),
+  fecha: f.fecha,
+  tipo: f.tipo as MovimientoDeSemanaDto['tipo'],
+  montoCentimos: f.montoCentimos,
+  cuentaNombre: f.cuentaNombre,
+  contactoNombre: f.contactoNombre,
+  descripcion: f.descripcion,
+  medioDePago: f.medioDePago,
+});
+
+export const aCierreDto = (f: Cierre): CierreDto => {
+  const saldos = saldoDeCierreSchema.array().parse(f.saldos);
+  return {
+    id: f.id,
+    desde: f.desde,
+    hasta: f.hasta,
+    saldos,
+    diferenciaTotalCentimos: saldos.reduce((suma, s) => suma + s.diferenciaCentimos, 0),
+    notas: f.notas,
+    cerradoPor: f.cerradoPor,
+    cerradoEn: f.cerradoEn.toISOString(),
+  };
+};

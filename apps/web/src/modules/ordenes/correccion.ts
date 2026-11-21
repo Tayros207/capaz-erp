@@ -1,5 +1,6 @@
 import { ponerIgv, precioConIgvEncima, precioSinIgvIncluido, type EntradaDe, type MotivoDeCorreccion, type PedidoCompletoDto } from '@capaz/shared';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
+import { fichaNormalizada, mismaFicha, textoDeFicha, type FichaParcial } from '@capaz/shared';
 import { cambiarPrecio } from './logica-filas.ts';
 import { formularioDesde, sinFilasEnBlanco, totalesDe, validarPedido, type ErroresDePedido, type LineaDeFormulario } from './logica.ts';
 
@@ -57,7 +58,7 @@ export const MOTIVO_DE_ATAJO: MotivoDeCorreccion = 'igv';
 
 const mismaLinea = (l: LineaDeFormulario, d: PedidoCompletoDto['detalle'][number]): boolean =>
   l.clave === d.id && (l.producto?.id ?? null) === d.productoId && l.descripcion.trim() === d.descripcion && l.unidad === d.unidad &&
-  l.cantidadMilesimas === d.cantidadMilesimas && l.precioUnitarioMilesimas === d.precioUnitarioMilesimas && l.afectoIgv === d.afectoIgv;
+  l.cantidadMilesimas === d.cantidadMilesimas && l.precioUnitarioMilesimas === d.precioUnitarioMilesimas && l.afectoIgv === d.afectoIgv && mismaFicha(l, d);
 
 /** Las líneas del formulario difieren de las del pedido (otra cantidad, precio, IGV, fila nueva o quitada). */
 export function lineasCambiaron(p: PedidoCompletoDto, f: FormularioDeCorreccion): boolean {
@@ -102,6 +103,7 @@ export function argumentosDeCorreccion(p: PedidoCompletoDto, f: FormularioDeCorr
     cantidadMilesimas: l.cantidadMilesimas ?? 0,
     precioUnitarioMilesimas: l.precioUnitarioMilesimas ?? 0,
     afectoIgv: l.afectoIgv,
+    ...fichaNormalizada(l),
   }));
   const texto = f.motivoTexto.trim();
   const cambianLineas = lineasCambiaron(p, f);
@@ -131,8 +133,10 @@ export type VistaPrevia = {
   aFavorCentimos: number | null;
 };
 
-const textoDeLinea = (l: { cantidadMilesimas: number | null; unidad: string; precioUnitarioMilesimas: number | null; afectoIgv: boolean }): string =>
-  `${l.cantidadMilesimas === null ? '—' : formatearCantidad(l.cantidadMilesimas, l.unidad)} × S/ ${l.precioUnitarioMilesimas === null ? '—' : milesimasATexto(l.precioUnitarioMilesimas)}${l.afectoIgv ? '' : ' (no afecto)'}`;
+const textoDeLinea = (l: { cantidadMilesimas: number | null; unidad: string; precioUnitarioMilesimas: number | null; afectoIgv: boolean } & FichaParcial): string => {
+  const ficha = textoDeFicha(l);
+  return `${l.cantidadMilesimas === null ? '—' : formatearCantidad(l.cantidadMilesimas, l.unidad)} × S/ ${l.precioUnitarioMilesimas === null ? '—' : milesimasATexto(l.precioUnitarioMilesimas)}${l.afectoIgv ? '' : ' (no afecto)'}${ficha ? ` · ${ficha}` : ''}`;
+};
 
 export function vistaPrevia(p: PedidoCompletoDto, f: FormularioDeCorreccion, abonadoCentimos: number | null): VistaPrevia {
   const nuevas = sinFilasEnBlanco(f.lineas);

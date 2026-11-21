@@ -1,4 +1,4 @@
-import { MAXIMO_DE_LINEAS_DE_PEDIDO, type Centimos } from '@capaz/shared';
+import { CAMPOS_DE_FICHA, MAXIMO_DE_LINEAS_DE_PEDIDO, textoDeFicha, type CampoDeFicha, type Centimos } from '@capaz/shared';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { resolverPrecioEImporte } from '../../shared/formato/precio-total.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
@@ -15,11 +15,18 @@ export type FilaDeLinea = {
   precioUnitarioMilesimas: number | null;
   manda: 'precio' | 'importe';
   importeEscritoCentimos: number | null;
+  /** Ficha de máquina: '' = sin dato. */
+  material: string;
+  medida: string;
+  colores: string;
+  acabado: string;
+  /** Qué claves de la ficha traía la línea original (vaciar una de ellas viaja como null; las demás se omiten). */
+  fichaPresente: readonly CampoDeFicha[];
   /** Todo lo que no se edita aquí (`productoId`, `afectoIgv`…): vuelve intacto. */
   resto: Record<string, unknown>;
 };
 
-const CLAVES_EDITADAS = ['descripcion', 'unidad', 'cantidadMilesimas', 'precioUnitarioMilesimas'];
+const CLAVES_EDITADAS: readonly string[] = ['descripcion', 'unidad', 'cantidadMilesimas', 'precioUnitarioMilesimas', ...CAMPOS_DE_FICHA];
 
 const esObjeto = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === 'object' && !Array.isArray(v);
 const numeroONulo = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
@@ -38,6 +45,11 @@ export function filaDeLinea(l: Record<string, unknown>, clave: string): FilaDeLi
     precioUnitarioMilesimas: numeroONulo(l.precioUnitarioMilesimas),
     manda: 'precio',
     importeEscritoCentimos: null,
+    material: typeof l.material === 'string' ? l.material : '',
+    medida: typeof l.medida === 'string' ? l.medida : '',
+    colores: typeof l.colores === 'string' ? l.colores : '',
+    acabado: typeof l.acabado === 'string' ? l.acabado : '',
+    fichaPresente: CAMPOS_DE_FICHA.filter((c) => c in l),
     resto: Object.fromEntries(Object.entries(l).filter(([k]) => !CLAVES_EDITADAS.includes(k))),
   };
 }
@@ -52,8 +64,23 @@ export const filaVacia = (clave: string): FilaDeLinea => ({
   precioUnitarioMilesimas: null,
   manda: 'precio',
   importeEscritoCentimos: null,
+  material: '',
+  medida: '',
+  colores: '',
+  acabado: '',
+  fichaPresente: [],
   resto: {},
 });
+
+function fichaDeFila(f: FilaDeLinea): Record<string, string | null> {
+  const salida: Record<string, string | null> = {};
+  for (const c of CAMPOS_DE_FICHA) {
+    const v = f[c].trim();
+    if (v !== '') salida[c] = v;
+    else if (f.fichaPresente.includes(c)) salida[c] = null;
+  }
+  return salida;
+}
 
 export function lineaDeFila(f: FilaDeLinea): Record<string, unknown> {
   return {
@@ -61,6 +88,7 @@ export function lineaDeFila(f: FilaDeLinea): Record<string, unknown> {
     ...(f.unidad.trim() !== '' ? { unidad: f.unidad } : {}),
     ...(f.cantidadMilesimas !== null ? { cantidadMilesimas: f.cantidadMilesimas } : {}),
     ...(f.precioUnitarioMilesimas !== null ? { precioUnitarioMilesimas: f.precioUnitarioMilesimas } : {}),
+    ...fichaDeFila(f),
     ...f.resto,
   };
 }
@@ -128,6 +156,8 @@ export function textoDeLinea(l: Record<string, unknown>): string {
   const f = filaDeLinea(l, 'x');
   const cantidad = f.cantidadMilesimas === null ? '' : formatearCantidad(f.cantidadMilesimas, f.unidad);
   const sub = subtotalDeFila(f);
-  if (f.precioUnitarioMilesimas === null || sub === null) return `${f.descripcion} — ${cantidad} — sin precio`;
-  return `${f.descripcion} — ${cantidad} × S/ ${milesimasATexto(f.precioUnitarioMilesimas)} = ${formatearSoles(sub as Centimos)}`;
+  const ficha = textoDeFicha(f);
+  const cola = ficha ? ` — ficha: ${ficha}` : '';
+  if (f.precioUnitarioMilesimas === null || sub === null) return `${f.descripcion} — ${cantidad} — sin precio${cola}`;
+  return `${f.descripcion} — ${cantidad} × S/ ${milesimasATexto(f.precioUnitarioMilesimas)} = ${formatearSoles(sub as Centimos)}${cola}`;
 }

@@ -5,6 +5,7 @@ import { ordenesGuiaLineas, ordenesGuias, ordenesPedidoEventos, ordenesPedidoLin
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import { codigoDeGuia } from '../domain/guia.js';
 import type { LineaResultante } from '../domain/correccion.js';
+import { fotoConFicha } from '../domain/ficha.js';
 import { codificarCursor, decodificarCursor, deAlcance, nombresDeMiembros, type Alcance } from './pedidos.repository.js';
 
 // Repositorio de «Corregir pedido»: guías por línea, versiones (fotos inmutables), aplicación de líneas en el sitio y la lista de correcciones.
@@ -52,7 +53,7 @@ export async function versionesDe(tx: Transaccion, ctx: ContextoDeEmpresa, pedid
     creadoPor: f.creadoPor,
     creadoPorNombre: nombres.get(f.creadoPor) ?? null,
     creadoEn: f.creadoEn.toISOString(),
-    foto: f.foto as FotoDeVersionDto,
+    foto: fotoConFicha(f.foto as FotoDeVersionDto),
   }));
 }
 

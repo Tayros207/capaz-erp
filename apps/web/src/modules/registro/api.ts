@@ -42,7 +42,13 @@ export const editarDeuda = (args: EntradaDe<'deuda_editar'>) => llamar('deuda_ed
 export const abonarDeuda = (args: EntradaDe<'deuda_abonar'>) => llamar('deuda_abonar', args);
 export const anularDeuda = (id: string, motivo: string) =>
   llamarConfirmando('deuda_anular', { id, motivo }, { titulo: 'Anular deuda', textoConfirmar: 'Anular', peligroso: true });
+export const copiarPagosFijos = () =>
+  llamarConfirmando('deudas_copiar_fijos', {}, { titulo: 'Copiar pagos fijos del mes anterior', textoConfirmar: 'Copiar' });
+export const revisarSemana = (fecha?: string) => llamar('semana_revisar', fecha ? { fecha } : {});
+export const cerrarSemana = (args: EntradaDe<'semana_cerrar'>) =>
+  llamarConfirmando('semana_cerrar', args, { titulo: 'Cerrar la semana', textoConfirmar: 'Cerrar semana' });
 export const verCajaDelDia = (fecha: string) => llamar('caja_del_dia', { fecha });
+export const verCoberturaDelMes = (mes?: string) => llamar('registro_cobertura_del_mes', mes ? { mes } : {});
 export const verResumen = (desde: string, hasta: string) => llamar('registro_resumen', { desde, hasta });
 
 /** Datos del cliente (teléfono y nombre) por la herramienta del núcleo de clientes. */

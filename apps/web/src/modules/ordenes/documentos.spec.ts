@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { LineaDePedidoDto } from '@capaz/shared';
 import { documentosDisponibles, enlaceDeWhatsApp, mensajeDeWhatsAppDeVersion, pedidoDeVersion, textoDeReemplazada, textoDeVersion, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
 
-const l = (extra: Partial<LineaDePedidoDto>): LineaDePedidoDto => ({ id: 'a', posicion: 1, productoId: null, descripcion: 'Polo', unidad: 'unidad', cantidadMilesimas: 50_000, precioUnitarioMilesimas: 15_000, afectoIgv: true, importeCentimos: 75_000, ...extra });
+const l = (extra: Partial<LineaDePedidoDto>): LineaDePedidoDto => ({ id: 'a', posicion: 1, productoId: null, descripcion: 'Polo', unidad: 'unidad', cantidadMilesimas: 50_000, precioUnitarioMilesimas: 15_000, afectoIgv: true, importeCentimos: 75_000, material: null, medida: null, colores: null, acabado: null, ...extra });
 
 describe('estados por documento', () => {
   it('proforma: borrador y confirmado', () => {

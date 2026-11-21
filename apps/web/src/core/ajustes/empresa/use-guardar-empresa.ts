@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRevalidator } from 'react-router';
 import type { ConfiguracionDeEmpresa } from '@capaz/shared';
 import { refrescarDatosDeEmpresa } from '../../../shared/impresion/usar-datos-de-empresa.ts';
+import { refrescarMontoMinimo } from '../../../shared/api/use-monto-minimo.ts';
 import { llamarConfirmando } from '../../../shared/api/herramientas.ts';
 import { useFicha } from '../../../shared/ui/datos/use-ficha.ts';
 import { notificar } from '../../../shared/ui/notificar.ts';
@@ -44,6 +45,7 @@ export function useEdicionDeEmpresa(config: ConfiguracionDeEmpresa) {
       setEditado(null);
       notificar('Datos de la empresa guardados.', 'exito');
       void refrescarDatosDeEmpresa();
+      void refrescarMontoMinimo();
       return revalidate();
     }
     enviar('fallo');

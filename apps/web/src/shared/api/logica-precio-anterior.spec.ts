@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { baseMostrada, diaATexto, milesimasATextoPlano, precioParaUsar, puedeSugerir, rutaDelDocumento, unidadAlUsar } from './logica-precio-anterior.ts';
+import { avisoDePrecioAntiguo, baseMostrada, diaATexto, milesimasATextoPlano, precioParaUsar, puedeSugerir, rutaDelDocumento, unidadAlUsar } from './logica-precio-anterior.ts';
 
 describe('unidadAlUsar', () => {
   it('copia la unidad del precio anterior mientras la persona no eligió una', () => {
@@ -57,5 +57,18 @@ describe('formato', () => {
     expect(rutaDelDocumento({ fuente: 'pedido', documento: { id: 'a', codigo: '', estado: '', fecha: '' } })).toBe('/m/ordenes/a');
     expect(rutaDelDocumento({ fuente: 'cotizacion', documento: { id: 'b', codigo: '', estado: '', fecha: '' } })).toBe('/m/cotizador/cotizaciones/b');
     expect(rutaDelDocumento({ fuente: 'orden_trabajo', documento: { id: 'c', codigo: '', estado: '', fecha: '' } })).toBe('/m/produccion/c');
+  });
+});
+
+describe('avisoDePrecioAntiguo', () => {
+  it('avisa desde los 12 meses cumplidos', () => {
+    expect(avisoDePrecioAntiguo('2025-11-20', '2026-11-20')).toBe('Precio de hace 12 meses: ¿lo actualizas?');
+    expect(avisoDePrecioAntiguo('2025-01-15', '2026-11-20')).toBe('Precio de hace 22 meses: ¿lo actualizas?');
+  });
+  it('no avisa con menos de 12 meses (ni un día antes), con fecha futura o inválida', () => {
+    expect(avisoDePrecioAntiguo('2025-11-21', '2026-11-20')).toBeNull();
+    expect(avisoDePrecioAntiguo('2026-05-10', '2026-11-20')).toBeNull();
+    expect(avisoDePrecioAntiguo('2027-01-01', '2026-11-20')).toBeNull();
+    expect(avisoDePrecioAntiguo('ayer', '2026-11-20')).toBeNull();
   });
 });

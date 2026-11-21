@@ -2,6 +2,9 @@ import {
   AVANCES_DE_PEDIDO,
   ESTADOS_ABIERTOS_DE_PEDIDO,
   calcularTotalesDePedido,
+  fichaSinVacios,
+  mismaFicha,
+  tieneFicha,
   importe,
   type EntradaDe,
   type EstadoDePedido,
@@ -103,10 +106,15 @@ export type LineaDeFormulario = {
   importeEscritoCentimos: number | null;
   /** `true` si la unidad la eligió la persona (o vino del producto o del pedido guardado): «Usar» un precio anterior no la cambia. */
   unidadElegida?: boolean;
+  /** Ficha de máquina: '' significa sin dato. */
+  material: string;
+  medida: string;
+  colores: string;
+  acabado: string;
 };
 export type ErroresDeLinea = Partial<Record<'descripcion' | 'cantidad' | 'precio', string>>;
 
-export const lineaVacia = (clave: string): LineaDeFormulario => ({ clave, producto: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: null, afectoIgv: true, manda: 'precio', importeEscritoCentimos: null });
+export const lineaVacia = (clave: string): LineaDeFormulario => ({ clave, producto: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: null, afectoIgv: true, manda: 'precio', importeEscritoCentimos: null, material: '', medida: '', colores: '', acabado: '' });
 
 export const lineaDesdeDto = (l: LineaDePedidoDto): LineaDeFormulario => ({
   clave: l.id,
@@ -119,11 +127,15 @@ export const lineaDesdeDto = (l: LineaDePedidoDto): LineaDeFormulario => ({
   manda: 'precio',
   importeEscritoCentimos: null,
   unidadElegida: true,
+  material: l.material ?? '',
+  medida: l.medida ?? '',
+  colores: l.colores ?? '',
+  acabado: l.acabado ?? '',
 });
 
 /** Una fila sin nada escrito (ni producto, ni descripción, ni precio): la hoja la ignora al validar y al guardar. */
 export const estaEnBlanco = (l: LineaDeFormulario): boolean =>
-  l.producto === null && l.descripcion.trim() === '' && l.precioUnitarioMilesimas === null && l.importeEscritoCentimos === null;
+  l.producto === null && l.descripcion.trim() === '' && l.precioUnitarioMilesimas === null && l.importeEscritoCentimos === null && !tieneFicha(l);
 
 export const sinFilasEnBlanco = (lineas: readonly LineaDeFormulario[]): LineaDeFormulario[] => lineas.filter((l) => !estaEnBlanco(l));
 
@@ -176,6 +188,7 @@ export const aLineaDeEntrada = (l: LineaDeFormulario): LineaDeEntrada => ({
   cantidadMilesimas: l.cantidadMilesimas ?? 0,
   precioUnitarioMilesimas: l.precioUnitarioMilesimas ?? 0,
   afectoIgv: l.afectoIgv,
+  ...fichaSinVacios(l),
 });
 
 // --- Formulario del pedido ---
@@ -243,7 +256,7 @@ export function argumentosDeCreacion(f: FormularioDePedido): EntradaDe<'pedido_c
 
 const mismaLinea = (a: LineaDeEntrada, d: LineaDePedidoDto): boolean =>
   (a.productoId ?? null) === d.productoId && a.descripcion === d.descripcion && a.unidad === d.unidad && a.cantidadMilesimas === d.cantidadMilesimas &&
-  a.precioUnitarioMilesimas === d.precioUnitarioMilesimas && a.afectoIgv === d.afectoIgv;
+  a.precioUnitarioMilesimas === d.precioUnitarioMilesimas && a.afectoIgv === d.afectoIgv && mismaFicha(a, d);
 
 /** Solo lo que cambió respecto al pedido guardado; nulo si no cambió nada. Las líneas van todas o ninguna. */
 export function argumentosDeEdicion(p: PedidoCompletoDto, f: FormularioDePedido): EntradaDe<'pedido_editar'> | null {

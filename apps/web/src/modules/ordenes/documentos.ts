@@ -1,4 +1,5 @@
 import type { CorreccionDePedidoDto, EstadoDePedido, LineaDePedidoDto, PedidoCompletoDto, VersionDePedidoDto } from '@capaz/shared';
+import { textoDeFicha, textoDeFichaConEtiquetas } from '@capaz/shared';
 import { formatearFecha } from '../../shared/formato/fechas.ts';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
@@ -38,7 +39,13 @@ export function textoDeVigencia(fecha: string, dias = DIAS_DE_VIGENCIA): string 
   return `Válida por ${dias} días desde el ${formatearDia(fecha)} (hasta el ${formatearDia(sumarDias(fecha, dias))})`;
 }
 
-export type FilaDeDocumento = { n: number; descripcion: string; cantidad: string; precio?: string; importe?: string };
+export type FilaDeDocumento = { n: number; descripcion: string; cantidad: string; precio?: string; importe?: string; ficha?: string };
+
+/** «Tarjetas — couché 300 g · A5»: la descripción con la ficha pegada (nota y proforma); sin ficha, la descripción tal cual. */
+export const descripcionConFicha = (l: Pick<LineaDePedidoDto, 'descripcion' | 'material' | 'medida' | 'colores' | 'acabado'>): string => {
+  const ficha = textoDeFicha(l);
+  return ficha ? `${l.descripcion} — ${ficha}` : l.descripcion;
+};
 
 /** Filas por posición. El unitario se imprime con sus milésimas (S/ 0.085, no 0.09) para que la cuenta cuadre con el importe. Sin precios (orden de trabajo) las filas no llevan ni precio ni importe. */
 export function filasDelDocumento(detalle: readonly LineaDePedidoDto[], conPrecios: boolean): FilaDeDocumento[] {
@@ -46,8 +53,11 @@ export function filasDelDocumento(detalle: readonly LineaDePedidoDto[], conPreci
     .sort((a, b) => a.posicion - b.posicion)
     .map((l, i) => {
       const base: FilaDeDocumento = { n: i + 1, descripcion: l.descripcion, cantidad: formatearCantidad(l.cantidadMilesimas, l.unidad) };
-      if (!conPrecios) return base;
-      return { ...base, precio: `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`, importe: formatearSoles(l.importeCentimos) };
+      if (!conPrecios) {
+        const ficha = textoDeFichaConEtiquetas(l);
+        return { ...base, ...(ficha && { ficha }) };
+      }
+      return { ...base, descripcion: descripcionConFicha(l), precio: `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`, importe: formatearSoles(l.importeCentimos) };
     });
 }
 
@@ -136,6 +146,12 @@ export function correccionVigente(p: Pick<PedidoCompletoDto, 'version' | 'histor
   return null;
 }
 
-/** La orden de trabajo (sin precios) admite más líneas por hoja que la proforma y la nota. */
-export const formatoDelDocumento = (tipo: TipoDeDocumento, p: Pick<PedidoCompletoDto, 'detalle' | 'notas'>): FormatoDeHoja =>
-  formatoDeHoja(tipo === 'orden-de-trabajo' ? 'sin-precios' : 'con-precios', renglonesDeDocumento(p.detalle.map((x) => x.descripcion), p.notas));
+/** La orden de trabajo (sin precios) admite más líneas por hoja; su ficha cuenta como un renglón propio. */
+export function formatoDelDocumento(tipo: TipoDeDocumento, p: Pick<PedidoCompletoDto, 'detalle' | 'notas'>): FormatoDeHoja {
+  if (tipo !== 'orden-de-trabajo') return formatoDeHoja('con-precios', renglonesDeDocumento(p.detalle.map(descripcionConFicha), p.notas));
+  const renglones = p.detalle.flatMap((x) => {
+    const f = textoDeFichaConEtiquetas(x);
+    return f ? [x.descripcion, f] : [x.descripcion];
+  });
+  return formatoDeHoja('sin-precios', renglonesDeDocumento(renglones, p.notas));
+}

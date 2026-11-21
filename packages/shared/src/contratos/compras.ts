@@ -187,6 +187,55 @@ export const resumenDeComprasSchema = z.strictObject({
 });
 export type ResumenDeCompras = z.infer<typeof resumenDeComprasSchema>;
 
+/** Comparador de costos (F2-5): lo comprado por artículo en un período. Los costos van con IGV, en milésimas de sol por unidad. */
+export const costosPorArticuloEntradaSchema = z.strictObject({
+  desde: dia.optional(),
+  hasta: dia.optional(),
+  productoId: z.uuid().optional(),
+  proveedorId: z.uuid().optional(),
+  buscar: texto(80).optional(),
+});
+
+export const costoPorProveedorSchema = z.strictObject({
+  proveedorId: z.string(),
+  proveedorNombre: z.string(),
+  compras: z.number().int(),
+  ultimoCostoMilesimas: z.number().int(),
+  ultimaFecha: z.iso.date(),
+  medianaMilesimas: z.number().int(),
+  minimoMilesimas: z.number().int(),
+});
+export type CostoPorProveedorDto = z.infer<typeof costoPorProveedorSchema>;
+
+/** `variacionPorcentaje` = (último − mediana) × 100 / mediana, redondeado; `null` si la mediana es cero. `masBaratoProveedorId` es `null` con un solo proveedor. */
+export const costoPorArticuloSchema = z.strictObject({
+  clave: z.string(),
+  productoId: z.string().nullable(),
+  descripcion: z.string(),
+  unidad: z.string(),
+  compras: z.number().int(),
+  ultimoCostoMilesimas: z.number().int(),
+  ultimaFecha: z.iso.date(),
+  ultimoProveedorId: z.string(),
+  ultimoProveedorNombre: z.string(),
+  medianaMilesimas: z.number().int(),
+  minimoMilesimas: z.number().int(),
+  maximoMilesimas: z.number().int(),
+  variacionPorcentaje: z.number().int().nullable(),
+  masBaratoProveedorId: z.string().nullable(),
+  porProveedor: z.array(costoPorProveedorSchema),
+});
+export type CostoPorArticuloDto = z.infer<typeof costoPorArticuloSchema>;
+
+/** `truncado`: había más de 5,000 líneas o más de 200 artículos y se dejó lo más reciente. */
+export const costosPorArticuloSchema = z.strictObject({
+  desde: z.iso.date(),
+  hasta: z.iso.date(),
+  articulos: z.array(costoPorArticuloSchema),
+  truncado: z.boolean(),
+});
+export type CostosPorArticuloDto = z.infer<typeof costosPorArticuloSchema>;
+
 const soloId = z.strictObject({ id: z.uuid() });
 
 export const contratosDeCompras = {
@@ -201,6 +250,7 @@ export const contratosDeCompras = {
     z.strictObject({ desde: dia, hasta: dia }).refine((v) => v.desde <= v.hasta, { error: 'El período empieza antes de terminar.' }),
     resumenDeComprasSchema,
   ),
+  compras_costos_por_articulo: contrato(costosPorArticuloEntradaSchema, costosPorArticuloSchema),
 } as const;
 
 export const eventosDeCompras = {

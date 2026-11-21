@@ -1,4 +1,4 @@
-import { IGV_POR_DEFECTO, rechazo } from '@capaz/shared';
+import { IGV_POR_DEFECTO, ORIGEN_DE_HISTORIAL, rechazo } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { esEditable } from '../domain/estados.js';
@@ -8,7 +8,7 @@ import { ID, MODULO, NO_EXISTE, alcanceDePedidos, auditarPedido, comprobarRefere
 
 const CAMPOS_DE_LINEA = {
   nombre: 'lineas',
-  queSeAnota: 'Lo pedido: por línea, un producto o una descripción con precio (el precio ya incluye IGV) y la cantidad en milésimas.',
+  queSeAnota: 'Lo pedido: por línea, un producto o una descripción con precio (el precio ya incluye IGV) y la cantidad en milésimas. Opcional por línea: la ficha de máquina (material, medida, colores, acabado), solo si la persona la escribió: nunca se supone.',
   ejemplo: '[{ "descripcion": "Volantes A5", "cantidadMilesimas": 2000, "precioUnitarioMilesimas": 59000 }]',
 };
 
@@ -36,6 +36,7 @@ export const pedidoCrear = definirHerramienta('pedido_crear', {
   async ejecutar(args, ctx, tx) {
     const hoy = await hoyDeLaEmpresa(tx);
     const fecha = args.fecha ?? hoy.dia;
+    if (args.origenTipo === ORIGEN_DE_HISTORIAL) return rechazo('argumentos_invalidos', 'Ese origen está reservado para el historial importado.');
     const entregaEl = args.entregaEl ?? null;
     const fechas = comprobarFechas(fecha, entregaEl);
     if (!fechas.ok) return rechazo('argumentos_invalidos', fechas.motivo);

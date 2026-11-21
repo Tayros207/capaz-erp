@@ -49,6 +49,10 @@ export const aLineaDto = (l: LineaDePedido): LineaDePedidoDto => ({
   precioUnitarioMilesimas: l.precioUnitarioMilesimas,
   afectoIgv: l.afectoIgv,
   importeCentimos: l.importeCentimos,
+  material: l.material,
+  medida: l.medida,
+  colores: l.colores,
+  acabado: l.acabado,
 });
 
 export const aEventoDto = (e: EventoDePedido): EventoDePedidoDto => ({

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import type { AjusteDePrecio as AjusteEnviado, ProductoCotizableDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
+import { precioParaUsar, unidadAlUsar } from '../../shared/api/logica-precio-anterior.ts';
 import { milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { Campo } from '../../shared/ui/campo.tsx';
@@ -13,6 +14,7 @@ import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
+import { SugerenciaDePrecio } from '../../shared/ui/sugerencia-de-precio.tsx';
 import { useRetardo } from '../../shared/ui/use-retardo.ts';
 import { AjusteDePrecio } from './ajuste-de-precio.tsx';
 import { buscarProductosParaCotizar, consultarPrecio } from './api.ts';
@@ -52,6 +54,7 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
   const [l, setL] = useState(linea);
   const [errores, setErrores] = useState<ErroresDeLinea>({});
   const encontrados = useRef(new Map<string, ProductoCotizableDto>());
+  const [unidadElegida, setUnidadElegida] = useState(false);
   const [sinPrecio, setSinPrecio] = useState<ProductoCotizableDto | null>(null);
 
   async function buscar(texto: string) {
@@ -114,11 +117,21 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
         <CampoCantidad etiqueta="Cantidad" valor={l.cantidadMilesimas} unidad={l.unidad} error={errores.cantidad} alCambiar={(v) => setL((a) => ({ ...a, cantidadMilesimas: v }))} />
         {l.tipo === 'manual' ? (
           <>
-            <CampoUnidad unidadesDeLaEmpresa={unidadesDeLaEmpresa} valor={l.unidad} alCambiar={(u) => setL((a) => ({ ...a, unidad: u }))} />
+            <CampoUnidad unidadesDeLaEmpresa={unidadesDeLaEmpresa} valor={l.unidad} alCambiar={(u) => { setUnidadElegida(true); setL((a) => ({ ...a, unidad: u })); }} />
             <CampoPrecio etiqueta="Precio unitario" valor={l.precioUnitarioMilesimas} error={errores.precio} ayuda="Sin IGV." alCambiar={(v) => setL((a) => ({ ...a, precioUnitarioMilesimas: v }))} />
           </>
         ) : null}
       </div>
+      {l.tipo === 'manual' ? (
+        <SugerenciaDePrecio
+          clienteId={clienteId}
+          productoId={l.productoId}
+          descripcion={l.descripcion}
+          conIgv={false}
+          precioActualMilesimas={l.precioUnitarioMilesimas}
+          alUsar={(p) => setL((a) => ({ ...a, precioUnitarioMilesimas: precioParaUsar(p, false), unidad: unidadAlUsar(a.unidad, unidadElegida, p.unidad) }))}
+        />
+      ) : null}
       {l.tipo === 'lista' && l.lista ? <AjusteDePrecio ajuste={l.ajuste} error={errores.ajuste} alCambiar={(ajuste) => setL((a) => ({ ...a, ajuste }))} /> : null}
       {l.tipo === 'lista' ? <PrecioDeLista l={l} clienteId={clienteId} /> : null}
       <div className="flex flex-wrap justify-end gap-2">

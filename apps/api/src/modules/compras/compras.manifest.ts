@@ -18,6 +18,7 @@ export const manifiestoCompras: ManifiestoDeEntrada = {
     { id: 'lista', nombre: 'Órdenes de compra', ruta: '/m/compras', construida: true },
     { id: 'solicitudes', nombre: 'Solicitudes', ruta: '/m/compras/solicitudes', construida: true },
     { id: 'facturas', nombre: 'Facturas', ruta: '/m/compras/facturas', construida: true },
+    { id: 'costos', nombre: 'Costos por artículo', ruta: '/m/compras/costos', construida: true },
   ],
   familia: 'compras',
   orden: 1,

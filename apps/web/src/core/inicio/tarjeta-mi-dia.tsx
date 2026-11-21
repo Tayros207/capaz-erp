@@ -8,7 +8,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
 import { unir } from '../../shared/ui/unir.ts';
 import { copiarTexto } from '../conecta/navegador.ts';
-import { enlaceDeWhatsapp, ETIQUETA_DE_URGENCIA, FRANJA_DE_URGENCIA, TONO_DE_URGENCIA } from './mi-dia-logica.ts';
+import { enlaceDeWhatsapp, ETIQUETA_DE_URGENCIA, FRANJA_DE_URGENCIA, textoSinWhatsapp, TONO_DE_URGENCIA } from './mi-dia-logica.ts';
 import { useAccionDeMiDia } from './use-accion-de-mi-dia.ts';
 
 const BOTON_ENLACE =
@@ -37,7 +37,7 @@ function MensajeDeCobro({ t }: { t: TarjetaDeMiDia }) {
   return (
     <div className="flex flex-col gap-2">
       <details className="group rounded-control border border-borde bg-fondo px-3 py-2 text-sm">
-        <summary className="cursor-pointer rounded-chip font-medium text-texto-suave select-none hover:text-texto">Ver el mensaje de cobro</summary>
+        <summary className="cursor-pointer rounded-chip font-medium text-texto-suave select-none hover:text-texto">{t.grupo === 'recompra' ? 'Ver el mensaje' : 'Ver el mensaje de cobro'}</summary>
         <p className="mt-2 whitespace-pre-line text-texto">{m.texto}</p>
       </details>
       <div className="flex flex-wrap gap-2">
@@ -52,7 +52,12 @@ function MensajeDeCobro({ t }: { t: TarjetaDeMiDia }) {
           Copiar mensaje
         </Boton>
       </div>
-      {whatsapp ? null : <p className="text-xs text-texto-suave">Este cliente no tiene un celular válido: copia el mensaje y envíalo por donde prefieras.</p>}
+      {whatsapp ? null : (
+        <p className="text-xs text-texto-suave">
+          {textoSinWhatsapp(t.grupo)}
+          {t.grupo === 'recompra' ? <>{' '}<Link to={rutaDeEntidad(t.entidad.tipo, t.entidad.id)} className="font-medium text-accion underline">Abrir su ficha</Link></> : null}
+        </p>
+      )}
     </div>
   );
 }

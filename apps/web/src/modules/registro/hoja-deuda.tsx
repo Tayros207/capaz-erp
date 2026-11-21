@@ -5,6 +5,7 @@ import { Campo } from '../../shared/ui/campo.tsx';
 import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { notificar } from '../../shared/ui/notificar.ts';
+import { CasillaDePagoFijo } from './casilla-de-pago-fijo.tsx';
 import { editarDeuda } from './api.ts';
 import { resolverAccion } from './acciones.ts';
 import { argumentosDeEdicionDeDeuda, formularioDeDeuda, validarDeuda, type ErroresDeDeuda, type FormularioDeDeuda } from './logica.ts';
@@ -36,6 +37,7 @@ function Contenido({ deuda, alCerrar }: Omit<Props, 'abierto'>) {
     <form noValidate className="flex flex-col gap-4" onSubmit={(ev) => { ev.preventDefault(); void guardar(); }}>
       <Campo etiqueta="Concepto" maxLength={200} value={form.concepto} onChange={(e) => cambiar({ concepto: e.target.value })} error={errores.concepto} />
       <Campo etiqueta="Vence (opcional)" type="date" value={form.venceEn} onChange={(e) => cambiar({ venceEn: e.target.value })} error={errores.venceEn} />
+      {deuda.tipo === 'por_pagar' ? <CasillaDePagoFijo marcado={form.fijo} alCambiar={(fijo) => cambiar({ fijo })} /> : null}
       <CampoTextarea etiqueta="Notas (opcional)" filas={3} maxLength={2000} value={form.notas} onChange={(e) => cambiar({ notas: e.target.value })} error={errores.notas} />
       <div className="flex justify-end gap-2">
         <Boton variante="fantasma" onClick={alCerrar}>Cerrar</Boton>
@@ -45,7 +47,7 @@ function Contenido({ deuda, alCerrar }: Omit<Props, 'abierto'>) {
   );
 }
 
-/** Edición de una deuda abierta: concepto, vencimiento y notas (el monto no se edita). */
+/** Edición de una deuda abierta: concepto, vencimiento, notas y si es un pago fijo (el monto no se edita). */
 export function HojaDeDeuda({ abierto, ...resto }: Props) {
   return (
     <HojaInferior abierto={abierto} alCerrar={resto.alCerrar} titulo={`Editar ${resto.deuda.codigo}`}>

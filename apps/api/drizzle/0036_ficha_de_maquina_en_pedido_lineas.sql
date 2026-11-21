@@ -1,0 +1,5 @@
+ALTER TABLE "ordenes"."pedido_lineas" ADD COLUMN "material" text;--> statement-breakpoint
+ALTER TABLE "ordenes"."pedido_lineas" ADD COLUMN "medida" text;--> statement-breakpoint
+ALTER TABLE "ordenes"."pedido_lineas" ADD COLUMN "colores" text;--> statement-breakpoint
+ALTER TABLE "ordenes"."pedido_lineas" ADD COLUMN "acabado" text;--> statement-breakpoint
+ALTER TABLE "ordenes"."pedido_lineas" ADD CONSTRAINT "linea_ficha" CHECK (("ordenes"."pedido_lineas"."material" is null or length("ordenes"."pedido_lineas"."material") between 1 and 120) and ("ordenes"."pedido_lineas"."medida" is null or length("ordenes"."pedido_lineas"."medida") between 1 and 120) and ("ordenes"."pedido_lineas"."colores" is null or length("ordenes"."pedido_lineas"."colores") between 1 and 120) and ("ordenes"."pedido_lineas"."acabado" is null or length("ordenes"."pedido_lineas"."acabado") between 1 and 120));

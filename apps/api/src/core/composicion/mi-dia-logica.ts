@@ -138,10 +138,11 @@ function sumarBorradores(tarjetas: TarjetaDeMiDia[], borradores: readonly Borrad
 export const grupoDe = (t: Pick<TarjetaDePendiente, 'grupo' | 'urgencia'>): GrupoDeMiDia => {
   if (t.grupo === 'aprobacion') return 'por_aprobar';
   if (t.grupo === 'cobro') return 'por_cobrar';
+  if (t.grupo === 'recompra') return 'por_llamar';
   return t.urgencia === 'atrasado' ? 'atrasado' : t.urgencia === 'hoy' ? 'hoy' : t.urgencia === 'manana' ? 'manana' : 'mas_adelante';
 };
 
-const ORDEN_DE_GRUPOS: readonly GrupoDeMiDia[] = ['atrasado', 'hoy', 'manana', 'por_cobrar', 'por_aprobar', 'mas_adelante'];
+const ORDEN_DE_GRUPOS: readonly GrupoDeMiDia[] = ['atrasado', 'hoy', 'manana', 'por_cobrar', 'por_llamar', 'por_aprobar', 'mas_adelante'];
 
 const porUrgenciaYFecha = (a: TarjetaDeMiDia, b: TarjetaDeMiDia) =>
   ordenDeUrgencia(a.urgencia) - ordenDeUrgencia(b.urgencia) || (a.fecha ?? '9999').localeCompare(b.fecha ?? '9999') || a.clave.localeCompare(b.clave);
@@ -158,7 +159,8 @@ export function componerMiDia(e: EntradaDeMiDia): Pick<MiDiaDto, 'fecha' | 'resu
   const grupos = ORDEN_DE_GRUPOS.flatMap((clave) => {
     const lista = porGrupo.get(clave);
     if (!lista?.length) return [];
-    return [{ clave, tarjetas: clave === 'por_aprobar' ? lista : [...lista].sort(porUrgenciaYFecha) }];
+    // Por aprobar (orden de llegada) y por llamar (orden de la herramienta: venta de 12 meses y días sin comprar) no se reordenan por fecha.
+    return [{ clave, tarjetas: clave === 'por_aprobar' || clave === 'por_llamar' ? lista : [...lista].sort(porUrgenciaYFecha) }];
   });
   const todas = grupos.flatMap((g) => g.tarjetas);
   return {

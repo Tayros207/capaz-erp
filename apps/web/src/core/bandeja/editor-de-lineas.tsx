@@ -5,6 +5,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { CampoCantidad } from '../../shared/ui/campo-cantidad.tsx';
 import { CampoMonto } from '../../shared/ui/campo-monto.tsx';
 import { CampoPrecio } from '../../shared/ui/campo-precio.tsx';
+import { FichaDeMaquina } from '../../shared/ui/ficha-de-maquina.tsx';
 import { CampoUnidad } from '../../shared/ui/campo-unidad.tsx';
 import { Campo } from '../../shared/ui/campo.tsx';
 import {
@@ -47,6 +48,7 @@ function FilaEditable({ f, n, alCambiarFila, alQuitar, puedeQuitar }: { f: FilaD
           alCambiar={(c) => alCambiarFila(filaConSubtotal(f, c))}
         />
       </div>
+      <FichaDeMaquina n={n} valores={f} alCambiar={(campo, valor) => alCambiarFila({ ...f, [campo]: valor })} />
       <Boton variante="fantasma" disabled={!puedeQuitar} onClick={alQuitar}>Quitar línea</Boton>
     </div>
   );

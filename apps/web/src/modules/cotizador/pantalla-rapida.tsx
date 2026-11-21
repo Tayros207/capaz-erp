@@ -7,6 +7,7 @@ import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.t
 import { ChipDeCliente } from '../../shared/ui/entidades.tsx';
 import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
+import { SugerenciaDePrecio } from '../../shared/ui/sugerencia-de-precio.tsx';
 import { AjusteDePrecio } from './ajuste-de-precio.tsx';
 import { buscarClientes, buscarProductosParaCotizar } from './api.ts';
 import { clientesIniciales } from './clientes-iniciales.ts';
@@ -61,6 +62,7 @@ export function PantallaRapida() {
         <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={r.setCliente} buscar={buscarDeClientes} buscarSinTexto={clientesIniciales} ayuda="Si tiene un precio especial, se aplica." textoSinResultados="Ningún cliente se parece a eso" />
       </div>
       {cliente ? <div><ChipDeCliente id={cliente.id} nombre={cliente.nombre} /></div> : null}
+      {cliente && elegido && elegido.origen !== 'sin_precio' ? <SugerenciaDePrecio clienteId={cliente.id} productoId={elegido.productoId} descripcion={elegido.nombre} conIgv={false} /> : null}
       {elegido?.origen === 'lista' && elegido.lista ? <PreciosDeLista lista={elegido.lista} /> : null}
       {r.esCatalogo && elegido ? <PrecioDeCatalogo p={elegido} cantidad={cantidad} igv={r.configuracion.data?.igvPorcentaje} {...(configurar && producto && { alFijar: () => setFijando(true) })} /> : null}
       {elegido?.origen === 'sin_precio' ? (

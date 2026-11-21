@@ -8,6 +8,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { CLASES_DE_CONTROL } from '../../shared/ui/campo-comun.ts';
 import { precioParaUsar } from '../../shared/api/logica-precio-anterior.ts';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
+import { FichaDeMaquina } from '../../shared/ui/ficha-de-maquina.tsx';
 import { SelectorDeRegistro } from '../../shared/ui/selector-de-registro.tsx';
 import { SugerenciaDePrecio } from '../../shared/ui/sugerencia-de-precio.tsx';
 import { unir } from '../../shared/ui/unir.ts';
@@ -171,6 +172,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                 <Boton variante="fantasma" icono="cerrar" aria-label={`Quitar el ítem ${n}`} disabled={soloPrecio || lineas.length <= 1} onClick={() => alCambiar(quitarFila(lineas, l.clave))} />
               </div>
               {!cuadra(l) ? <p className="text-sm text-texto-suave md:col-span-8">El unitario guarda tres decimales: el importe queda en {soles(importeMostrado(l))}</p> : null}
+              <FichaDeMaquina n={n} valores={l} deshabilitado={soloPrecio} className="md:col-span-8" alCambiar={(campo, valor) => cambiar(l.clave, (a) => ({ ...a, [campo]: valor }))} />
             </div>
           );
         })}

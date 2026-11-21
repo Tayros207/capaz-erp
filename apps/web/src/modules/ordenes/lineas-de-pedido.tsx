@@ -1,3 +1,4 @@
+import { textoDeFicha } from '@capaz/shared';
 import { formatearCantidad, milesimasATexto } from '../../shared/formato/milesimas.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
 import { Cifra, GrupoDeCifras } from '../../shared/ui/cifra.tsx';
@@ -20,12 +21,18 @@ export function LineasDePedido({ lineas, igvPorcentaje }: Props) {
       id: 'descripcion',
       titulo: 'Descripción',
       principal: true,
-      celda: (l) => (
-        <span className="inline-flex flex-wrap items-center gap-2">
-          {l.descripcion || 'Línea sin descripción'}
-          {l.afectoIgv ? null : <Insignia tono="neutro">No afecto</Insignia>}
-        </span>
-      ),
+      celda: (l) => {
+        const ficha = textoDeFicha(l);
+        return (
+          <span className="flex flex-col gap-0.5">
+            <span className="inline-flex flex-wrap items-center gap-2">
+              {l.descripcion || 'Línea sin descripción'}
+              {l.afectoIgv ? null : <Insignia tono="neutro">No afecto</Insignia>}
+            </span>
+            {ficha ? <span className="break-words text-sm text-texto-suave">Ficha: {ficha}</span> : null}
+          </span>
+        );
+      },
     },
     { id: 'cantidad', titulo: 'Cantidad', alinear: 'derecha', celda: (l) => (l.cantidadMilesimas === null ? '—' : formatearCantidad(l.cantidadMilesimas, l.unidad)) },
     { id: 'precio', titulo: 'Precio unitario', alinear: 'derecha', celda: (l) => (l.precioUnitarioMilesimas === null ? '—' : `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}`) },

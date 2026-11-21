@@ -14,20 +14,21 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
 import { MenuDeAcciones } from '../../shared/ui/datos/menu-de-acciones.tsx';
 import { Insignia } from '../../shared/ui/insignia.tsx';
-import { listarDeudas, POR_PAGINA, verResumen } from './api.ts';
+import { copiarPagosFijos, listarDeudas, POR_PAGINA, verResumen } from './api.ts';
+import { resolverAccion } from './acciones.ts';
 import { HojaDeDeudaNueva } from './hoja-deuda-nueva.tsx';
 import { usePuedeEditar } from './use-registro.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
 import {
   argumentosDeListadoDeDeudas, diaEnZona, ETIQUETA_DE_FILTRO_DE_DEUDAS, formatearDia, textoDeEstadoDeDeuda, TITULO_DE_DEUDAS, tonoDeEstadoDeDeuda,
-  type FiltroDeDeudas, type TipoDeDeuda,
+  textoDeFijosCopiados, type FiltroDeDeudas, type TipoDeDeuda,
 } from './logica.ts';
 
 function columnasDeDeudas(tipo: TipoDeDeuda, ir: (ruta: string) => void): Array<Columna<DeudaDto>> {
   const base: Array<Columna<DeudaDto>> = [
   { id: 'codigo', titulo: 'Código', principal: true, celda: (d) => d.codigo },
   { id: 'contacto', titulo: 'Contacto', celda: (d) => d.contactoNombre },
-  { id: 'concepto', titulo: 'Concepto', celda: (d) => d.concepto },
+  { id: 'concepto', titulo: 'Concepto', celda: (d) => <span className="inline-flex flex-wrap items-center gap-2">{d.concepto}{d.fijo ? <Insignia tono="info">Fijo</Insignia> : null}</span> },
   { id: 'vence', titulo: 'Vence', celda: (d) => (d.venceEn ? formatearDia(d.venceEn) : '—') },
   { id: 'total', titulo: 'Total', alinear: 'derecha', celda: (d) => <span className="tabular-nums">{formatearSoles(d.totalCentimos)}</span> },
   { id: 'saldo', titulo: 'Saldo', alinear: 'derecha', celda: (d) => <span className="font-medium tabular-nums">{formatearSoles(d.saldoCentimos)}</span> },
@@ -67,12 +68,22 @@ function CifrasDeDeudas({ tipo }: { tipo: TipoDeDeuda }) {
   );
 }
 
-/** Por cobrar y por pagar: la misma pantalla con el tipo de deuda distinto. */
-export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
+/** Copiar los pagos fijos del mes anterior (solo por pagar y con permiso de edición). */
+function BotonDeFijos() {
+  const [copiando, setCopiando] = useState(false);
+  async function copiarFijos() {
+    setCopiando(true);
+    const r = await copiarPagosFijos();
+    setCopiando(false);
+    const ok = !('cancelada' in r) && r.ok && 'datos' in r ? r.datos : null;
+    await resolverAccion(r, ok ? textoDeFijosCopiados(ok) : '');
+  }
+  return <Boton variante="secundario" cargando={copiando} onClick={() => void copiarFijos()}>Copiar pagos fijos del mes anterior</Boton>;
+}
+
+/** La lista de deudas con sus estados de carga, error y vacío. */
+function ListaDeDeudas({ tipo, estado }: { tipo: TipoDeDeuda; estado: FiltroDeDeudas }) {
   const navegar = useNavigate();
-  const puedeEditar = usePuedeEditar('registro:editar');
-  const [nueva, setNueva] = useState(false);
-  const [estado, setEstado] = useState<FiltroDeDeudas>('abiertas');
   const lista = useInfiniteQuery({
     queryKey: [...CLAVE_REGISTRO, 'deudas', tipo, estado],
     queryFn: async ({ pageParam }) => datosOError(await listarDeudas(argumentosDeListadoDeDeudas(tipo, estado, POR_PAGINA, pageParam))),
@@ -81,37 +92,47 @@ export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
   });
   const filas = lista.data?.pages.flatMap((p) => p.items) ?? [];
   const titulo = TITULO_DE_DEUDAS[tipo];
+  if (lista.isPending) {
+    return (
+      <div aria-busy="true" aria-label={`Cargando ${titulo.toLowerCase()}`} className="flex flex-col gap-2">
+        <Esqueleto className="h-12" />
+        <Esqueleto className="h-12" />
+        <Esqueleto className="h-12" />
+      </div>
+    );
+  }
+  if (lista.isError) return <EstadoVacio titulo={`No pudimos cargar ${titulo.toLowerCase()}`} descripcion={lista.error.message} icono="caja" accion={<Boton onClick={() => void lista.refetch()}>Reintentar</Boton>} />;
+  return (
+    <>
+      <Lista
+        etiqueta={titulo}
+        columnas={columnasDeDeudas(tipo, (ruta) => void navegar(ruta))}
+        filas={filas}
+        clave={(d) => d.id}
+        onAbrir={(d) => void navegar(`/m/registro/deudas/${d.id}`)}
+        vacio={<EstadoVacio titulo="Ninguna deuda con ese estado" descripcion="Cambia el estado para ver otras." icono="caja" />}
+      />
+      <CargarMas cursor={lista.hasNextPage ? (lista.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={lista.isFetchingNextPage} onCargar={() => void lista.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
+    </>
+  );
+}
 
+/** Por cobrar y por pagar: la misma pantalla con el tipo de deuda distinto. */
+export function PantallaDeudas({ tipo }: { tipo: TipoDeDeuda }) {
+  const puedeEditar = usePuedeEditar('registro:editar');
+  const [nueva, setNueva] = useState(false);
+  const [estado, setEstado] = useState<FiltroDeDeudas>('abiertas');
+  const botonDeFijos = tipo === 'por_pagar' && puedeEditar ? <BotonDeFijos /> : undefined;
   return (
     <div className="flex flex-col gap-4">
-      <EncabezadoDePagina titulo={titulo} accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNueva(true)}>Nueva deuda</Boton> : undefined} />
+      <EncabezadoDePagina titulo={TITULO_DE_DEUDAS[tipo]} accionPrincipal={puedeEditar ? <Boton variante="primario" icono="mas" onClick={() => setNueva(true)}>Nueva deuda</Boton> : undefined} accionesSecundarias={botonDeFijos} />
       <CifrasDeDeudas tipo={tipo} />
       <div className="max-w-xs">
         <CampoSelect etiqueta="Estado" value={estado} onChange={(e) => setEstado(e.target.value as FiltroDeDeudas)}>
           {Object.entries(ETIQUETA_DE_FILTRO_DE_DEUDAS).map(([valor, texto]) => <option key={valor} value={valor}>{texto}</option>)}
         </CampoSelect>
       </div>
-      {lista.isPending ? (
-        <div aria-busy="true" aria-label={`Cargando ${titulo.toLowerCase()}`} className="flex flex-col gap-2">
-          <Esqueleto className="h-12" />
-          <Esqueleto className="h-12" />
-          <Esqueleto className="h-12" />
-        </div>
-      ) : lista.isError ? (
-        <EstadoVacio titulo={`No pudimos cargar ${titulo.toLowerCase()}`} descripcion={lista.error.message} icono="caja" accion={<Boton onClick={() => void lista.refetch()}>Reintentar</Boton>} />
-      ) : (
-        <>
-          <Lista
-            etiqueta={titulo}
-            columnas={columnasDeDeudas(tipo, (ruta) => void navegar(ruta))}
-            filas={filas}
-            clave={(d) => d.id}
-            onAbrir={(d) => void navegar(`/m/registro/deudas/${d.id}`)}
-            vacio={<EstadoVacio titulo="Ninguna deuda con ese estado" descripcion="Cambia el estado para ver otras." icono="caja" />}
-          />
-          <CargarMas cursor={lista.hasNextPage ? (lista.data?.pages.at(-1)?.siguiente ?? null) : null} cargando={lista.isFetchingNextPage} onCargar={() => void lista.fetchNextPage()} resumen={`Mostrando ${filas.length}`} />
-        </>
-      )}
+      <ListaDeDeudas tipo={tipo} estado={estado} />
       <HojaDeDeudaNueva abierto={nueva} tipo={tipo} alCerrar={() => setNueva(false)} />
     </div>
   );

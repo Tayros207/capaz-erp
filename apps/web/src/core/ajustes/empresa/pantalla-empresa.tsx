@@ -9,6 +9,7 @@ import { EncabezadoDePagina } from '../../../shared/ui/datos/encabezado-de-pagin
 import { Ficha, type SeccionDeFicha } from '../../../shared/ui/datos/ficha.tsx';
 import { EstadoVacio } from '../../../shared/ui/estado-vacio.tsx';
 import { Dato, EdicionDeIdentidad, EdicionDePie, LecturaDeIdentidad, LecturaDePie } from './campos-de-empresa.tsx';
+import { EdicionDeMontoMinimo, LecturaDeMontoMinimo } from './seccion-monto-minimo.tsx';
 import { zonasDisponibles } from './logica.ts';
 import { useEdicionDeEmpresa } from './use-guardar-empresa.ts';
 
@@ -17,6 +18,7 @@ function seccionesDeEmpresa(config: ConfiguracionDeEmpresa, e: ReturnType<typeof
   return [
     { id: 'identidad', titulo: 'Datos para tus documentos', lectura: <LecturaDeIdentidad config={config} />, edicion: <EdicionDeIdentidad form={form} errores={errores} cambiar={cambiar} /> },
     { id: 'pie', titulo: 'Pie de documento', lectura: <LecturaDePie config={config} />, edicion: <EdicionDePie form={form} errores={errores} cambiar={cambiar} /> },
+    { id: 'monto-minimo', titulo: 'Monto mínimo por trabajo', lectura: <LecturaDeMontoMinimo config={config} />, edicion: <EdicionDeMontoMinimo form={form} errores={errores} cambiar={cambiar} /> },
     {
       id: 'regional',
       titulo: 'Zona horaria y formato',

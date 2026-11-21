@@ -253,6 +253,20 @@
       "when": 1795105022888,
       "tag": "0035_pedido_versiones_y_ajustes_de_deuda",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1795198297290,
+      "tag": "0036_ficha_de_maquina_en_pedido_lineas",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795214786467,
+      "tag": "0037_cierres_y_monto_minimo",
+      "breakpoints": true
     }
   ]
 }

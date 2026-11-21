@@ -1,4 +1,4 @@
-import { exito, rechazo, type SucursalDto } from '@capaz/shared';
+import { exito, rechazo, SERIE_DE_HISTORIAL, type SucursalDto } from '@capaz/shared';
 import { hashCanonico } from '../../herramientas/confirmacion.js';
 import { definirHerramienta } from '../../herramientas/tipos.js';
 import { prepararSucursal } from '../domain/sucursal.js';
@@ -70,6 +70,7 @@ export const sucursalCrear = definirHerramienta('sucursal_crear', {
   async ejecutar(args, ctx, tx) {
     const p = prepararSucursal(args);
     if (!p.ok) return rechazo('argumentos_invalidos', p.motivo);
+    if (p.datos.codigo === SERIE_DE_HISTORIAL) return rechazo('argumentos_invalidos', `El código ${SERIE_DE_HISTORIAL} está reservado para el historial importado.`);
     const r = await crearSucursal(tx, ctx, p.datos);
     if (!r.creada) return rechazo('conflicto', `Ya existe la sucursal «${r.existente.nombre}» con el código ${r.existente.codigo}.`, [{ id: r.existente.id, nombre: r.existente.nombre, detalle: r.existente.codigo }]);
     return exito(aSucursalDto(r.sucursal));

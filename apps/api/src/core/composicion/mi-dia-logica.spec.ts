@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Anotacion, Borrador, TarjetaDePendiente } from '@capaz/shared';
-import { componerMiDia, entidadDeBorrador, type FuenteLeida } from './mi-dia-logica.js';
+import { componerMiDia, entidadDeBorrador, grupoDe, type FuenteLeida } from './mi-dia-logica.js';
 
 const tarjeta = (o: Partial<TarjetaDePendiente> & { clave: string }): TarjetaDePendiente => ({
   grupo: 'entrega', urgencia: 'hoy', titulo: 'T', detalle: 'Entrega hoy · Listo: ¿ya se entregó?', fecha: '2026-11-18', montoCentimos: null, cliente: null,
@@ -136,5 +136,26 @@ describe('entidadDeBorrador', () => {
     expect(entidadDeBorrador({ id: 'b', origenRef: 'produccion:o1' })).toEqual({ tipo: 'orden_trabajo', id: 'o1' });
     expect(entidadDeBorrador({ id: 'b', origenRef: 'adelanto:z' })).toEqual({ tipo: 'borrador', id: 'b' });
     expect(entidadDeBorrador({ id: 'b', origenRef: null })).toEqual({ tipo: 'borrador', id: 'b' });
+  });
+});
+
+describe('«Clientes por llamar» (recompra)', () => {
+  it('las tarjetas de recompra caen en por_llamar, después de por_cobrar y antes de por_aprobar', () => {
+    const recompra = tarjeta({ clave: 'recompra:c1', grupo: 'recompra', urgencia: 'info', acciones: [], entidad: { tipo: 'cliente', id: 'c1', codigo: 'Cliente de prueba' } });
+    const cobro = tarjeta({ clave: 'cobrar:x', grupo: 'cobro', urgencia: 'atrasado', acciones: [], entidad: { tipo: 'cliente', id: 'x', codigo: 'X' } });
+    const r = componerMiDia({
+      fecha: '2026-11-18', puedeEjecutar: todo, fuentes: [fuente('ordenes', [recompra]), fuente('registro', [cobro])],
+      borradores: [borrador({ id: 'b1', origenRef: null })],
+    });
+    expect(r.grupos.map((g) => g.clave)).toEqual(['por_cobrar', 'por_llamar', 'por_aprobar']);
+    expect(grupoDe(recompra)).toBe('por_llamar');
+  });
+
+  it('«por llamar» no se reordena por fecha: queda como lo dejó la herramienta', () => {
+    const r = (clave: string, fecha: string) => tarjeta({ clave, grupo: 'recompra', urgencia: 'info', fecha, acciones: [], entidad: { tipo: 'cliente', id: clave, codigo: clave } });
+    // Mayor venta primero aunque su fecha sea la más tardía.
+    const orden = [r('recompra:grande', '2026-11-30'), r('recompra:mediano', '2026-11-01'), r('recompra:chico', '2026-11-15')];
+    const out = componerMiDia({ fecha: '2026-11-18', puedeEjecutar: todo, fuentes: [fuente('ordenes', orden)], borradores: [] });
+    expect(out.grupos.find((g) => g.clave === 'por_llamar')!.tarjetas.map((t) => t.clave)).toEqual(['recompra:grande', 'recompra:mediano', 'recompra:chico']);
   });
 });

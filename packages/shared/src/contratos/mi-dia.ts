@@ -9,7 +9,7 @@ export const URGENCIAS_DE_MI_DIA = ['atrasado', 'hoy', 'manana', 'pronto', 'info
 export type UrgenciaDeMiDia = (typeof URGENCIAS_DE_MI_DIA)[number];
 
 /** De qué se trata la tarjeta (para el icono y para que el núcleo decida dónde cae). */
-export const GRUPOS_DE_TARJETA = ['entrega', 'adelanto', 'cobro', 'seguimiento', 'inventario', 'aprobacion'] as const;
+export const GRUPOS_DE_TARJETA = ['entrega', 'adelanto', 'cobro', 'seguimiento', 'inventario', 'aprobacion', 'recompra'] as const;
 export type GrupoDeTarjeta = (typeof GRUPOS_DE_TARJETA)[number];
 
 export const TIPOS_DE_ENTIDAD_DE_MI_DIA = ['pedido', 'orden_trabajo', 'cotizacion', 'cliente', 'articulo', 'oportunidad', 'deuda', 'borrador'] as const;
@@ -88,7 +88,7 @@ export type SalidaDePendientes = z.infer<typeof salidaDePendientesSchema>;
 
 // --- el composer `mi_dia_ver` ---
 
-export const GRUPOS_DE_MI_DIA = ['atrasado', 'hoy', 'manana', 'por_cobrar', 'por_aprobar', 'mas_adelante'] as const;
+export const GRUPOS_DE_MI_DIA = ['atrasado', 'hoy', 'manana', 'por_cobrar', 'por_llamar', 'por_aprobar', 'mas_adelante'] as const;
 export type GrupoDeMiDia = (typeof GRUPOS_DE_MI_DIA)[number];
 
 export const notaDeTarjetaSchema = z.strictObject({ texto: z.string(), tono: z.enum(TONOS_DE_NOTA) });

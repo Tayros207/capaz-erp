@@ -20,3 +20,17 @@ describe('actualizarConfiguracionSchema: datos de la empresa', () => {
     expect(esquema.safeParse({}).success).toBe(false);
   });
 });
+
+describe('actualizarConfiguracionSchema: monto mínimo', () => {
+  it('acepta 0, un valor, el tope y null (vuelve al valor por defecto)', () => {
+    expect(esquema.safeParse({ montoMinimoCentimos: 0 }).success).toBe(true);
+    expect(esquema.safeParse({ montoMinimoCentimos: 3000 }).success).toBe(true);
+    expect(esquema.safeParse({ montoMinimoCentimos: 10_000_000 }).success).toBe(true);
+    expect(esquema.safeParse({ montoMinimoCentimos: null }).success).toBe(true);
+  });
+  it('rechaza negativos, pasarse del tope y decimales', () => {
+    expect(esquema.safeParse({ montoMinimoCentimos: -1 }).success).toBe(false);
+    expect(esquema.safeParse({ montoMinimoCentimos: 10_000_001 }).success).toBe(false);
+    expect(esquema.safeParse({ montoMinimoCentimos: 12.5 }).success).toBe(false);
+  });
+});

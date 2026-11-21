@@ -95,6 +95,11 @@ export const ordenesPedidoLineas = ordenes.table(
     precioUnitarioMilesimas: bigint('precio_unitario_milesimas', { mode: 'number' }).notNull(),
     afectoIgv: boolean('afecto_igv').notNull().default(true),
     importeCentimos: bigint('importe_centimos', { mode: 'number' }).notNull(),
+    /** Ficha de máquina (0036): texto libre opcional, como en `produccion.orden_items`. `null` = sin dato; nunca vacío. */
+    material: text('material'),
+    medida: text('medida'),
+    colores: text('colores'),
+    acabado: text('acabado'),
     creadoEn: timestamp('creado_en', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
@@ -106,6 +111,11 @@ export const ordenesPedidoLineas = ordenes.table(
     check('linea_cantidad', sql`${t.cantidadMilesimas} > 0`),
     check('linea_precio', sql`${t.precioUnitarioMilesimas} >= 0`),
     check('linea_importe', sql`${t.importeCentimos} >= 0`),
+    // 120 = MAXIMO_DE_CAMPO_DE_FICHA de @capaz/shared (el esquema no importa el paquete).
+    check(
+      'linea_ficha',
+      sql`(${t.material} is null or length(${t.material}) between 1 and 120) and (${t.medida} is null or length(${t.medida}) between 1 and 120) and (${t.colores} is null or length(${t.colores}) between 1 and 120) and (${t.acabado} is null or length(${t.acabado}) between 1 and 120)`,
+    ),
   ],
 );
 
