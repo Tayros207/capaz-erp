@@ -58,6 +58,7 @@ export const aMovimientoDto = (f: MovimientoConNombres): MovimientoDto => ({
   corregible: esCorregible(f),
   correccionDe: correccionDeReferencia(f.origenRef),
   reemplazadoPor: null,
+  lineas: [],
   origen: f.origen as MovimientoDto['origen'],
   estado: f.estado as MovimientoDto['estado'],
   anuladoEn: iso(f.anuladoEn),

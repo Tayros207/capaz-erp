@@ -89,7 +89,7 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     modo: 'completo',
   },
   'registro.movimientos': {
-    sql: `insert into registro.movimientos (tenant_id, numero, anio, tipo, fecha, monto_centimos, cuenta_id, creado_por) values ($1, 1, 2026, 'ingreso', date '2026-01-01', 500, md5($1::text || 'r1')::uuid, 'u1')`,
+    sql: `insert into registro.movimientos (id, tenant_id, numero, anio, tipo, fecha, monto_centimos, cuenta_id, creado_por) values (md5($1::text || 'm1')::uuid, $1, 1, 2026, 'ingreso', date '2026-01-01', 500, md5($1::text || 'r1')::uuid, 'u1')`,
     modo: 'insercion',
   },
   'crm.etapas': {
@@ -122,6 +122,10 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
   },
   'registro.deuda_ajustes': {
     sql: `insert into registro.deuda_ajustes (tenant_id, deuda_id, monto_centimos, total_anterior_centimos, total_nuevo_centimos, motivo_codigo, creado_por) values ($1, md5($1::text || 'r3')::uuid, 100, 1000, 1100, 'otro', 'u1')`,
+    modo: 'insercion',
+  },
+  'registro.movimiento_lineas': {
+    sql: `insert into registro.movimiento_lineas (tenant_id, movimiento_id, orden, descripcion, cantidad_milesimas, precio_unitario_milesimas, subtotal_centimos) values ($1, md5($1::text || 'm1')::uuid, 0, 'Línea', 1000, 5000, 500)`,
     modo: 'insercion',
   },
   'registro.cierres': {

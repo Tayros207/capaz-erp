@@ -1,4 +1,5 @@
 import { formatearSoles, NOMBRE_DE_CATEGORIA_DE_TRANSFERENCIA, type CategoriaDto, type Centimos, type CuentaDto, type DeudaDto, type EntradaDe, type FijosCopiadosDto, type MovimientoDto } from '@capaz/shared';
+import { lineasDeFilas, motivoDeProductosIncompletos, totalDeFilas, type FilaDeProducto } from './logica-lineas.ts';
 
 // Lógica pura de las pantallas de `registro`: validación de formularios, armado de argumentos, signo y tono
 // de los montos, textos y mensajes. Sin React ni red: se prueba en `logica.spec.ts`.
@@ -61,8 +62,21 @@ export type FormularioDeMovimiento = {
   adelanto: Centimos | null;
   /** Hasta cuándo se espera el resto (opcional, solo con adelanto). */
   venceEn: string;
+  /** Productos con cantidad y precio (opcional). Con ellos, el monto es la suma de sus importes. Con adelanto todavía no se guardan. */
+  productos: FilaDeProducto[];
 };
-export type ErroresDeMovimiento = Partial<Record<'monto' | 'fecha' | 'cuentaId' | 'descripcion' | 'adelanto' | 'contacto' | 'venceEn', string>>;
+export type ErroresDeMovimiento = Partial<Record<'monto' | 'fecha' | 'cuentaId' | 'descripcion' | 'adelanto' | 'contacto' | 'venceEn' | 'productos', string>>;
+
+/** ¿Los productos mandan sobre el monto? Sí cuando hay alguno y no se pidió adelanto (con adelanto no llevan líneas todavía). */
+export const llevaProductos = (f: Pick<FormularioDeMovimiento, 'productos' | 'conAdelanto'>): boolean => f.productos.length > 0 && !f.conAdelanto;
+
+/** El monto que vale: la suma de los productos si los hay; si no, lo tecleado. */
+export const montoDelFormulario = (f: Pick<FormularioDeMovimiento, 'productos' | 'conAdelanto' | 'monto'>): Centimos | null =>
+  llevaProductos(f) ? (totalDeFilas(f.productos) as Centimos | null) : f.monto;
+
+/** Al pedir adelanto los productos aún no se guardan: su suma pasa a ser el total tecleado y la lista se vacía. */
+export const conAdelantoActivado = (f: FormularioDeMovimiento): FormularioDeMovimiento =>
+  f.productos.length === 0 ? { ...f, conAdelanto: true } : { ...f, conAdelanto: true, monto: (totalDeFilas(f.productos) as Centimos | null) ?? f.monto, productos: [] };
 
 /** Lo que falta cancelar: el total menos lo que se dejó a cuenta (nunca negativo en pantalla). */
 export const faltaCancelar = (f: Pick<FormularioDeMovimiento, 'monto' | 'adelanto'>): number => Math.max(0, (f.monto ?? 0) - (f.adelanto ?? 0));
@@ -71,11 +85,11 @@ export const faltaCancelar = (f: Pick<FormularioDeMovimiento, 'monto' | 'adelant
 export function formularioInicial(tipo: TipoDeMovimiento, hoy: string, cuentas: readonly CuentaDto[]): FormularioDeMovimiento {
   const vivas = cuentas.filter((c) => c.archivadoEn === null);
   const principal = vivas.find((c) => c.esPrincipal) ?? vivas[0];
-  return { tipo, monto: null, fecha: hoy, cuentaId: principal?.id ?? '', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' };
+  return { tipo, monto: null, fecha: hoy, cuentaId: principal?.id ?? '', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '', productos: [] };
 }
 
 /** Tras guardar, la hoja queda lista para el siguiente: se conservan tipo, fecha, cuenta y medio; se vacía lo demás. */
-export const siguienteFormulario = (f: FormularioDeMovimiento): FormularioDeMovimiento => ({ ...f, monto: null, categoriaId: '', contacto: null, descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
+export const siguienteFormulario = (f: FormularioDeMovimiento): FormularioDeMovimiento => ({ ...f, monto: null, categoriaId: '', contacto: null, descripcion: '', conAdelanto: false, adelanto: null, venceEn: '', productos: [] });
 
 /** Las categorías en uso del tipo del movimiento. */
 export const categoriasDe = (tipo: TipoDeMovimiento, categorias: readonly CategoriaDto[]): CategoriaDto[] =>
@@ -83,7 +97,10 @@ export const categoriasDe = (tipo: TipoDeMovimiento, categorias: readonly Catego
 
 export function validarMovimiento(f: FormularioDeMovimiento, hoy: string): ErroresDeMovimiento {
   const e: ErroresDeMovimiento = {};
-  if (f.monto === null) e.monto = 'Escribe el monto.';
+  if (llevaProductos(f)) {
+    const motivo = motivoDeProductosIncompletos(f.productos);
+    if (motivo) e.productos = motivo;
+  } else if (f.monto === null) e.monto = 'Escribe el monto.';
   else if (!Number.isSafeInteger(f.monto) || f.monto <= 0) e.monto = 'El monto debe ser mayor que cero.';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.fecha)) e.fecha = 'Elige la fecha.';
   else if (f.fecha > hoy) e.fecha = 'La fecha no puede ser futura.';
@@ -99,8 +116,10 @@ export function validarMovimiento(f: FormularioDeMovimiento, hoy: string): Error
 
 /** Argumentos de `movimiento_registrar`: solo lo que la persona eligió (sin cuenta, el servidor usa la principal). */
 export function argumentosDeMovimiento(f: FormularioDeMovimiento): EntradaDe<'movimiento_registrar'> {
-  if (f.monto === null) throw new Error('No se arma un movimiento sin monto.');
-  const args: EntradaDe<'movimiento_registrar'> = { tipo: f.tipo, montoCentimos: f.monto, fecha: f.fecha, medioDePago: f.medioDePago };
+  const monto = montoDelFormulario(f);
+  if (monto === null) throw new Error('No se arma un movimiento sin monto.');
+  const args: EntradaDe<'movimiento_registrar'> = { tipo: f.tipo, montoCentimos: monto, fecha: f.fecha, medioDePago: f.medioDePago };
+  if (llevaProductos(f)) args.lineas = lineasDeFilas(f.productos);
   if (f.cuentaId) args.cuentaId = f.cuentaId;
   if (f.categoriaId) args.categoriaId = f.categoriaId;
   if (f.contacto) args.contactoId = f.contacto.id;

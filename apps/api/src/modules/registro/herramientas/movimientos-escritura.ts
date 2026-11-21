@@ -15,6 +15,7 @@ import { anularMovimiento, bloquearMovimiento, existeContacto, verMovimiento } f
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
 import { guardarMovimiento, resolverCuenta } from './guardar-movimiento.js';
 import { aMovimientoDto, codigoDe, codigoDeLaDeuda } from './mapeo.js';
+import { conLineas, montoDeLasLineas, prepararLineas } from './movimientos-lineas.js';
 import { anularTransferencia, resumirAnulacionDeTransferencia } from './transferencias-anulacion.js';
 
 // Escrituras de movimientos: registrar (mueve dinero) y anular (crítica). Un movimiento nunca se edita ni se borra:
@@ -41,10 +42,11 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
       { nombre: 'contactoId', queSeAnota: 'Cliente o proveedor (opcional).', ejemplo: ID_DE_EJEMPLO },
       { nombre: 'medioDePago', queSeAnota: 'efectivo, transferencia, yape, plin, tarjeta u otro.', ejemplo: 'yape' },
       { nombre: 'descripcion', queSeAnota: 'Nota breve (opcional).', ejemplo: 'Tinta para plotter' },
+      { nombre: 'lineas', queSeAnota: 'Productos con cantidad y precio (opcional, hasta 50): cada uno con productoId del catálogo o descripcion libre, cantidadMilesimas y precioUnitarioMilesimas. El monto debe ser la suma de sus subtotales.', ejemplo: '[{"descripcion":"Etiquetas","unidad":"millar","cantidadMilesimas":2000,"precioUnitarioMilesimas":65000}]' },
     ],
     ejemploTecleado: 'egreso de 45.50 por tinta para plotter, pagado con yape',
     ejemploHablado: 'anota un gasto de cuarenta y cinco soles con cincuenta en tinta, lo pagué por yape',
-    erroresComunes: ['La fecha no puede ser futura.', 'La categoría es del otro tipo de movimiento.', 'La cuenta está archivada.'],
+    erroresComunes: ['La fecha no puede ser futura.', 'La categoría es del otro tipo de movimiento.', 'La cuenta está archivada.', 'El monto no coincide con la suma de los productos.'],
     relacionadas: ['movimientos_listar', 'cuentas_listar', 'categorias_listar', 'deuda_abonar'],
   },
   auditar: (_a, d) => ({ entidadTipo: 'movimiento', entidadId: d?.id, resumen: d ? { codigo: d.codigo, tipo: d.tipo, montoCentimos: d.montoCentimos } : undefined }),
@@ -66,6 +68,10 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
     }
     if (args.contactoId && !(await existeContacto(tx, ctx, args.contactoId))) return rechazo('no_encontrado', 'No existe ese contacto.');
     if (args.sucursalId && !(await existeSucursal(tx, ctx, args.sucursalId))) return rechazo('no_encontrado', 'No existe esa sucursal.');
+    const productos = await prepararLineas(tx, ctx, args.lineas ?? []);
+    if (!productos.ok) return productos;
+    const cuadra = montoDeLasLineas(productos.lineas.length > 0 ? args.montoCentimos : undefined, productos.totalCentimos);
+    if (!cuadra.ok) return cuadra;
     const r = await guardarMovimiento(tx, ctx, hoy.anio, cuenta.cuenta, {
       tipo: args.tipo,
       fecha: fecha.fecha,
@@ -78,8 +84,9 @@ export const movimientoRegistrar = definirHerramienta('movimiento_registrar', {
       sucursalId: args.sucursalId ?? null,
       origen: args.origen,
       origenRef: args.origenRef || null,
+      lineas: productos.lineas,
     });
-    return exito(aMovimientoDto(r.movimiento), { avisos: r.avisos });
+    return exito((await conLineas(tx, ctx, [aMovimientoDto(r.movimiento)]))[0]!, { avisos: r.avisos });
   },
 });
 
@@ -137,6 +144,6 @@ export const movimientoAnular = definirHerramienta('movimiento_anular', {
     await emitir(tx, 'movimiento.anulado', { id: mov.id, codigo: codigoDe(mov), deudaId: mov.deudaId });
     const final = await verMovimiento(tx, ctx, mov.id, null);
     if (!final) throw new Error('El movimiento anulado no se pudo leer.');
-    return exito(aMovimientoDto(final));
+    return exito((await conLineas(tx, ctx, [aMovimientoDto(final)]))[0]!);
   },
 });

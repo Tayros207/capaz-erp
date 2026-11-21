@@ -33,10 +33,12 @@ type Props = {
   textoCrear?: string;
   /** Botón siempre visible junto a la etiqueta (p. ej. «Nuevo cliente»): llama a `alCrear` con lo escrito, aunque esté vacío. Solo con `alCrear`. */
   botonCrear?: string;
+  /** Ejemplo dentro del campo; sin él, «Escribe para buscar». */
+  placeholder?: string;
 };
 
 /** Elige un registro buscándolo por texto. Quien lo usa aporta `buscar`; no conoce ninguna API. */
-export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarSinTexto, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear', botonCrear }: Props) {
+export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarSinTexto, error, ayuda, textoSinResultados = 'Sin resultados', alCrear, textoCrear = 'Crear', botonCrear, placeholder = 'Escribe para buscar' }: Props) {
   const id = useId();
   const [texto, setTexto] = useState('');
   const [abierto, setAbierto] = useState(false);
@@ -76,7 +78,7 @@ export function SelectorDeRegistro({ etiqueta, valor, alCambiar, buscar, buscarS
           id={`${id}-entrada`} type="text" role="combobox" autoComplete="off" aria-expanded={abierto} aria-controls={`${id}-lista`} aria-autocomplete="list"
           aria-activedescendant={abierto && activo >= 0 ? `${id}-op-${activo}` : undefined}
           aria-invalid={error ? true : undefined} aria-describedby={descritoPor(`${id}-entrada`, error, ayuda)}
-          value={texto} placeholder="Escribe para buscar"
+          value={texto} placeholder={placeholder}
           className={unir(CLASES_DE_CONTROL, error ? 'border-peligro' : 'border-borde-fuerte')}
           onChange={(e) => { setTexto(e.target.value); setAbierto(true); setActivo(-1); }}
           onFocus={() => setAbierto(true)} onBlur={() => setAbierto(false)} onKeyDown={alTeclear}

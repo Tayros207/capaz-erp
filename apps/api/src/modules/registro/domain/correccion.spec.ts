@@ -84,3 +84,36 @@ describe('restaurar', () => {
     expect(puedeRestaurarseElAbono({ ...abierta, estado: 'pagada', abonadoCentimos: 10_000 }, 1_000).ok).toBe(false);
   });
 });
+
+describe('aplicarCorreccion con productos', () => {
+  const linea = (cantidadMilesimas: number, precio = 65_000) => ({ productoId: null, descripcion: 'Etiquetas', unidad: 'millar', cantidadMilesimas, precioUnitarioMilesimas: precio, subtotalCentimos: Math.round((cantidadMilesimas * precio) / 10_000) });
+  const conLineas: DatosCorregibles = { ...ACTUAL, montoCentimos: 13_000, lineas: [linea(2000)] };
+
+  it('cambiar una cantidad es un cambio de «productos» y lo describe antes y después', () => {
+    const r = aplicarCorreccion(conLineas, { lineas: [linea(3000)], montoCentimos: 19_500 });
+    if (!r.ok) throw new Error('debía aplicar');
+    expect(r.cambios.map((c) => c.campo)).toEqual(['monto', 'productos']);
+    expect(r.cambios.at(-1)?.texto).toBe('productos: Etiquetas 2 millar = S/ 130.00 → Etiquetas 3 millar = S/ 195.00');
+    expect(r.final.lineas).toEqual([linea(3000)]);
+  });
+
+  it('las mismas líneas no son un cambio; sin indicar líneas se conservan', () => {
+    expect(aplicarCorreccion(conLineas, { lineas: [linea(2000)] }).ok).toBe(false);
+    const r = aplicarCorreccion(conLineas, { descripcion: 'Otra' });
+    if (!r.ok) throw new Error('debía aplicar');
+    expect(r.final.lineas).toEqual([linea(2000)]);
+  });
+
+  it('quitar todos los productos se describe como «sin productos»', () => {
+    const r = aplicarCorreccion(conLineas, { lineas: [] });
+    if (!r.ok) throw new Error('debía aplicar');
+    expect(r.cambios[0]?.texto).toBe('productos: Etiquetas 2 millar = S/ 130.00 → sin productos');
+    expect(r.final.lineas).toEqual([]);
+  });
+
+  it('agregar productos a un movimiento que no los tenía', () => {
+    const r = aplicarCorreccion(ACTUAL, { lineas: [linea(1000)] });
+    if (!r.ok) throw new Error('debía aplicar');
+    expect(r.cambios[0]?.texto).toContain('sin productos →');
+  });
+});

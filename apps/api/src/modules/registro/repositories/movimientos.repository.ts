@@ -4,6 +4,8 @@ import { registroCategorias, registroCuentas, registroMovimientos } from '../../
 import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con-empresa.js';
 import { codificarCursorPorFecha, type CursorPorFecha } from '../domain/cursor.js';
 import { raizDeFamilia, referenciaDeCorreccion } from '../domain/correccion.js';
+import { insertarLineasDeMovimiento } from './movimiento-lineas.repository.js';
+import type { LineaCalculada } from '@capaz/shared';
 
 // Repositorio de movimientos de dinero. Un movimiento no se edita ni se borra: se anula (la base solo deja
 // cambiar las columnas de anulación). `propietario`: con alcance «propios», el usuario dueño de las filas.
@@ -28,6 +30,8 @@ export type DatosDeMovimiento = {
   origenRef: string | null;
   /** Solo las correcciones lo indican: el reemplazo conserva a quien registró el original. Si no, `ctx.usuarioId`. */
   creadoPor?: string;
+  /** Productos con su subtotal; se guardan junto con el movimiento (monto = suma de subtotales). */
+  lineas?: readonly LineaCalculada[];
 };
 
 export type FiltrosDeMovimientos = {
@@ -60,11 +64,13 @@ type FilaConNombres = { fila: Movimiento; cuentaNombre: string; categoriaNombre:
 const aplanar = (f: FilaConNombres): MovimientoConNombres => ({ ...f.fila, cuentaNombre: f.cuentaNombre, categoriaNombre: f.categoriaNombre, contactoNombre: f.contactoNombre });
 
 export async function insertarMovimiento(tx: Transaccion, ctx: ContextoDeEmpresa, datos: DatosDeMovimiento): Promise<string> {
+  const { lineas, ...columnas } = datos;
   const [fila] = await tx
     .insert(m)
-    .values({ ...datos, tenantId: ctx.empresaId, creadoPor: datos.creadoPor ?? ctx.usuarioId })
+    .values({ ...columnas, tenantId: ctx.empresaId, creadoPor: columnas.creadoPor ?? ctx.usuarioId })
     .returning({ id: m.id });
   if (!fila) throw new Error('No se pudo guardar el movimiento.');
+  await insertarLineasDeMovimiento(tx, ctx, fila.id, lineas ?? []);
   return fila.id;
 }
 

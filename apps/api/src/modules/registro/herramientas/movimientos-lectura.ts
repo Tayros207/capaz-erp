@@ -6,13 +6,15 @@ import type { ContextoDeEmpresa, Transaccion } from '../../../infra/database/con
 import { listarMovimientos, verMovimiento, vigentesDeFamilias, type MovimientoConNombres } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe } from './comun.js';
 import { aMovimientoDto, codigoDe, conReemplazo } from './mapeo.js';
+import { conLineas } from './movimientos-lineas.js';
 
 /** Los DTO; en cada anulado, la versión vigente de su cadena de correcciones (una sola consulta para toda la página). */
 async function conReemplazos(tx: Transaccion, ctx: ContextoDeEmpresa, filas: readonly MovimientoConNombres[]) {
   const raices = [...new Set(filas.filter((f) => f.estado === 'anulado').map(raizDeFamilia))];
   const vigentes = await vigentesDeFamilias(tx, ctx, raices);
-  return filas.map((f) => {
-    const dto = aMovimientoDto(f);
+  const dtos = await conLineas(tx, ctx, filas.map(aMovimientoDto));
+  return dtos.map((dto, i) => {
+    const f = filas[i]!;
     const v = f.estado === 'anulado' ? vigentes.get(raizDeFamilia(f)) : undefined;
     return v ? conReemplazo(dto, { id: v.id, codigo: codigoDe(v) }) : dto;
   });
@@ -26,7 +28,7 @@ export const movimientoVer = definirHerramienta('movimiento_ver', {
   criticidad: 'lectura',
   ayuda: {
     titulo: 'Ver un movimiento',
-    paraQueSirve: 'Muestra un ingreso o egreso con su cuenta, categoría, contacto y, si fue anulado, el motivo.',
+    paraQueSirve: 'Muestra un ingreso o egreso con su cuenta, categoría, contacto, los productos con cantidad y precio y, si fue anulado, el motivo.',
     cuandoUsarla: 'Para revisar el detalle de un movimiento antes de anularlo o de responder una consulta.',
     campos: [{ nombre: 'id', queSeAnota: 'Identificador del movimiento.', ejemplo: ID_DE_EJEMPLO }],
     ejemploTecleado: 'ver el movimiento MOV-2026-000123',

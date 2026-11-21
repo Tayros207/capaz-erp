@@ -15,7 +15,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { clientes, sucursales } from './core-maestros.js';
+import { clientes, productos, sucursales } from './core-maestros.js';
 
 // Módulo `registro` · Finanzas ligeras (fase 14, 0014). Especificación: docs/FICHAS-OLA-2.md §3.1.
 
@@ -193,6 +193,38 @@ export const registroMovimientos = registro.table(
     index('idx_registro_movimientos_deuda').on(t.tenantId, t.deudaId).where(sql`${t.deudaId} is not null`),
     index('idx_registro_movimientos_contacto').on(t.tenantId, t.contactoId, t.fecha.desc()).where(sql`${t.contactoId} is not null`),
     index('idx_registro_movimientos_creador').on(t.tenantId, t.creadoPor, t.fecha.desc()),
+  ],
+);
+
+/**
+ * Productos de un movimiento (0038): detalle de cantidad y precio. Se insertan junto con el movimiento y nunca se tocan
+ * (el movimiento es inmutable, ADR-012: corregir = anular y registrar otro con sus líneas copiadas o cambiadas).
+ * Con líneas, `monto_centimos` del movimiento es la suma de `subtotal_centimos`.
+ */
+export const registroMovimientoLineas = registro.table(
+  'movimiento_lineas',
+  {
+    id: uuid('id').primaryKey().default(sql`uuidv7()`),
+    tenantId: text('tenant_id').notNull(),
+    movimientoId: uuid('movimiento_id').notNull(),
+    orden: integer('orden').notNull(),
+    productoId: uuid('producto_id'),
+    descripcion: text('descripcion').notNull(),
+    unidad: text('unidad').notNull().default('unidad'),
+    cantidadMilesimas: bigint('cantidad_milesimas', { mode: 'number' }).notNull(),
+    precioUnitarioMilesimas: bigint('precio_unitario_milesimas', { mode: 'number' }).notNull(),
+    subtotalCentimos: bigint('subtotal_centimos', { mode: 'number' }).notNull(),
+  },
+  (t) => [
+    unique('registro_movimiento_lineas_orden').on(t.tenantId, t.movimientoId, t.orden),
+    foreignKey({ name: 'movimiento_lineas_movimiento_fk', columns: [t.tenantId, t.movimientoId], foreignColumns: [registroMovimientos.tenantId, registroMovimientos.id] }),
+    foreignKey({ name: 'movimiento_lineas_producto_fk', columns: [t.tenantId, t.productoId], foreignColumns: [productos.tenantId, productos.id] }),
+    check('movimiento_linea_orden', sql`${t.orden} >= 0 and ${t.orden} < 50`),
+    check('movimiento_linea_descripcion', sql`length(${t.descripcion}) between 1 and 300`),
+    check('movimiento_linea_unidad', sql`length(${t.unidad}) between 1 and 20`),
+    check('movimiento_linea_cantidad', sql`${t.cantidadMilesimas} > 0`),
+    check('movimiento_linea_precio', sql`${t.precioUnitarioMilesimas} >= 0`),
+    check('movimiento_linea_subtotal', sql`${t.subtotalCentimos} >= 0`),
   ],
 );
 

@@ -1,4 +1,4 @@
-import { formatearSoles } from '@capaz/shared';
+import { formatearSoles, type LineaCalculada } from '@capaz/shared';
 import { aplicarAbono, type DespuesDeAbonar, type SaldoDeDeuda } from './deuda.js';
 import { PREFIJO_DE_CIERRE } from './cierre.js';
 import { PREFIJO_DE_TRANSFERENCIA } from './transferencia.js';
@@ -52,6 +52,8 @@ export type DatosCorregibles = {
   contactoId: string | null;
   medioDePago: string;
   descripcion: string | null;
+  /** Productos del movimiento (0038). Sin indicar, no tiene. */
+  lineas?: readonly LineaCalculada[];
 };
 
 export type CambiosPedidos = {
@@ -62,9 +64,23 @@ export type CambiosPedidos = {
   contactoId?: string | null | undefined;
   medioDePago?: string | undefined;
   descripcion?: string | null | undefined;
+  /** La lista completa que debe quedar; vacía = sin productos. */
+  lineas?: readonly LineaCalculada[] | undefined;
 };
 
-export type CampoCorregido = 'monto' | 'fecha' | 'cuenta' | 'categoría' | 'cliente o proveedor' | 'medio de pago' | 'descripción';
+export type CampoCorregido = 'monto' | 'fecha' | 'cuenta' | 'categoría' | 'cliente o proveedor' | 'medio de pago' | 'descripción' | 'productos';
+
+const cantidadATexto = (milesimas: number): string => String(milesimas / 1000);
+const textoDeLinea = (l: LineaCalculada): string => `${l.descripcion} ${cantidadATexto(l.cantidadMilesimas)} ${l.unidad} = ${formatearSoles(l.subtotalCentimos)}`;
+/** Los productos en una frase para el detalle de la corrección. */
+export const textoDeLineas = (lineas: readonly LineaCalculada[]): string => (lineas.length === 0 ? 'sin productos' : lineas.map(textoDeLinea).join(', '));
+/** ¿Son las mismas líneas (mismo producto, descripción, unidad, cantidad y precio, en el mismo orden)? */
+export const mismasLineas = (a: readonly LineaCalculada[], b: readonly LineaCalculada[]): boolean =>
+  a.length === b.length &&
+  a.every((x, i) => {
+    const y = b[i]!;
+    return x.productoId === y.productoId && x.descripcion === y.descripcion && x.unidad === y.unidad && x.cantidadMilesimas === y.cantidadMilesimas && x.precioUnitarioMilesimas === y.precioUnitarioMilesimas;
+  });
 
 const vacioANulo = (texto: string | null | undefined): string | null => (texto === undefined || texto === null || texto.trim() === '' ? null : texto.trim());
 
@@ -102,6 +118,10 @@ export function aplicarCorreccion(actual: DatosCorregibles, pedido: CambiosPedid
   if (pedido.descripcion !== undefined && vacioANulo(pedido.descripcion) !== actual.descripcion) {
     final.descripcion = vacioANulo(pedido.descripcion);
     cambios.push({ campo: 'descripción', texto: 'descripción' });
+  }
+  if (pedido.lineas !== undefined && !mismasLineas(pedido.lineas, actual.lineas ?? [])) {
+    cambios.push({ campo: 'productos', texto: `productos: ${textoDeLineas(actual.lineas ?? [])} → ${textoDeLineas(pedido.lineas)}` });
+    final.lineas = pedido.lineas;
   }
   if (cambios.length === 0) return rechazada('argumentos_invalidos', 'No cambiaste nada: indica al menos un dato distinto al actual.');
   return { ok: true, final, cambios };

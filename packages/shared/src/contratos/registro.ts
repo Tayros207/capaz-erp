@@ -3,8 +3,10 @@ import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { MOTIVOS_DE_CORRECCION } from './ordenes.js';
 import { contratosDeRegistroCierre } from './registro-cierre.js';
+import { lineaDeMovimientoSchema, lineasDeMovimientoEntradaSchema } from './registro-lineas.js';
 
 export * from './registro-cierre.js';
+export * from './registro-lineas.js';
 
 // Contratos del área «registro» (Finanzas ligeras): un contrato por herramienta (`entidad_accion`) y un
 // esquema por evento (`entidad.hecho`). Solo el carril de esta área edita este archivo.
@@ -79,6 +81,8 @@ export const movimientoSchema = z.strictObject({
   correccionDe: z.string().nullable(),
   /** Para un movimiento anulado: la versión vigente de su cadena de correcciones, si la hay. */
   reemplazadoPor: z.strictObject({ id: z.string(), codigo: z.string() }).nullable(),
+  /** Productos del movimiento (vacío si se anotó solo el monto). Con líneas, el monto es la suma de sus subtotales. */
+  lineas: z.array(lineaDeMovimientoSchema),
   origen: z.enum(ORIGENES_DE_MOVIMIENTO),
   estado: z.enum(ESTADOS_DE_MOVIMIENTO),
   anuladoEn: z.iso.datetime().nullable(),
@@ -174,6 +178,8 @@ export const registrarMovimientoSchema = z.strictObject({
   sucursalId: z.uuid().nullish(),
   origen: z.enum(ORIGENES_DE_MOVIMIENTO).default('teclado'),
   origenRef: texto(200).optional(),
+  /** Productos con cantidad y precio. Si vienen, `montoCentimos` debe ser la suma de sus subtotales. */
+  lineas: lineasDeMovimientoEntradaSchema.optional(),
 });
 
 export const transferirCuentasSchema = z.strictObject({
@@ -199,6 +205,8 @@ export const corregirMovimientoSchema = z
     contactoId: z.uuid().nullish(),
     medioDePago: z.enum(MEDIOS_DE_PAGO).optional(),
     descripcion: texto(500).nullish(),
+    /** La lista completa de productos que debe quedar (vacía = quitarlos todos). Sin indicarla, se conservan. */
+    lineas: lineasDeMovimientoEntradaSchema.optional(),
   })
   .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && k !== 'motivo' && x !== undefined), SIN_CAMBIOS);
 /** Lo que deja una corrección: el movimiento anulado y el nuevo que lo reemplaza. */

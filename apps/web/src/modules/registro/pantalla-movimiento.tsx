@@ -18,6 +18,7 @@ import { useCuentas, usePuedeEditar } from './use-registro.ts';
 import { CLAVE_REGISTRO } from './claves.ts';
 import { esTransferencia, ETIQUETA_DE_MEDIO, ETIQUETA_DE_TIPO, formatearDia } from './logica.ts';
 import { Monto } from './pantalla-movimientos.tsx';
+import { ProductosDelMovimiento } from './productos-del-movimiento.tsx';
 
 function Dato({ nombre, children }: { nombre: string; children: ReactNode }) {
   return (
@@ -28,7 +29,7 @@ function Dato({ nombre, children }: { nombre: string; children: ReactNode }) {
   );
 }
 
-/** Ficha de un movimiento. No se edita en sitio: se corrige (se anula y se registra uno nuevo), se anula o, si está anulado, se restaura. */
+/** Ficha de un movimiento. «Editar» lo corrige (se anula y se registra uno nuevo, ADR-012), se anula o, si está anulado, se restaura. */
 export function PantallaMovimiento() {
   const { id = '' } = useParams();
   const consulta = useQuery({ queryKey: [...CLAVE_REGISTRO, 'movimiento', id], queryFn: async () => datosOError(await verMovimiento(id)) });
@@ -60,7 +61,7 @@ export function PantallaMovimiento() {
             </>
           ) : puedeAnular ? (
             <>
-              {m.corregible ? <Boton onClick={() => setCorrigiendo(true)}>Corregir</Boton> : null}
+              {m.corregible ? <Boton onClick={() => setCorrigiendo(true)}>Editar</Boton> : null}
               <Boton variante="peligro" onClick={() => setAnulando(true)}>Anular</Boton>
             </>
           ) : undefined
@@ -80,7 +81,7 @@ export function PantallaMovimiento() {
         alEnviar={async (args) => {
           const r = await corregirMovimiento(args);
           if ('cancelada' in r) return false;
-          const hecho = await resolverAccion(r, `${m.codigo} corregido.`);
+          const hecho = await resolverAccion(r, `${m.codigo} editado: el anterior quedó en la papelera.`);
           if (hecho && r.ok && 'datos' in r) void navegar(`/m/registro/movimientos/${r.datos.nuevo.id}`);
           return hecho;
         }}
@@ -101,6 +102,7 @@ export function PantallaMovimiento() {
         {m.correccionDe ? <Dato nombre="Es una corrección"><Link to={`/m/registro/movimientos/${m.correccionDe}`}>Ver el movimiento original</Link></Dato> : null}
         {m.anuladoEn ? <Dato nombre="Anulado">{formatearFechaHora(m.anuladoEn)} · {m.motivoAnulacion ?? 'Sin motivo'}</Dato> : null}
       </dl>
+      <ProductosDelMovimiento lineas={m.lineas} />
     </div>
   );
 }

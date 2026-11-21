@@ -8,6 +8,7 @@ export function DetalleDeMovimiento({ m }: { m: MovimientoDto }) {
     <span className="inline-flex flex-wrap items-center gap-2">
       {detalleDeMovimiento(m)}
       {esTransferencia(m) ? <Insignia tono="info">Transferencia</Insignia> : null}
+      {m.lineas.length > 0 ? <Insignia tono="neutro">{m.lineas.length === 1 ? '1 producto' : `${m.lineas.length} productos`}</Insignia> : null}
       {m.estado === 'anulado' ? <Insignia tono="neutro">{m.reemplazadoPor ? 'Corregido' : 'Anulado'}</Insignia> : null}
     </span>
   );

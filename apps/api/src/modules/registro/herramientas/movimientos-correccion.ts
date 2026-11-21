@@ -1,4 +1,4 @@
-import { exito, formatearSoles, rechazo, type ErrorDeRespuesta } from '@capaz/shared';
+import { exito, formatearSoles, rechazo, type ErrorDeRespuesta, type LineaDeMovimientoEntrada } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { emitir } from '../../../core/eventos/emisor.js';
 import { hashCanonico } from '../../../core/herramientas/confirmacion.js';
@@ -13,6 +13,7 @@ import { anularMovimiento, bloquearFamiliaDeCorreccion, existeContacto, verMovim
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
 import { guardarMovimiento, resolverCuenta } from './guardar-movimiento.js';
 import { aMovimientoDto, codigoDe, conReemplazo } from './mapeo.js';
+import { conLineas, lineasGuardadas, montoDeLasLineas, prepararLineas } from './movimientos-lineas.js';
 
 // Corregir un movimiento ya guardado. ADR-012: un movimiento no se edita; la corrección anula el original y registra
 // uno nuevo en la misma transacción, enlazado a la raíz de su cadena de correcciones.
@@ -29,6 +30,7 @@ type Pedido = {
   contactoId?: string | null | undefined;
   medioDePago?: string | undefined;
   descripcion?: string | null | undefined;
+  lineas?: LineaDeMovimientoEntrada[] | undefined;
 };
 type Preparada = {
   ok: true;
@@ -40,7 +42,7 @@ type Preparada = {
   hoy: { dia: string; anio: number };
 };
 
-const datosDe = (m: MovimientoConNombres): DatosCorregibles => ({
+const datosDe = (m: MovimientoConNombres, lineas: DatosCorregibles['lineas'] = []): DatosCorregibles => ({
   montoCentimos: m.montoCentimos,
   fecha: m.fecha,
   cuentaId: m.cuentaId,
@@ -48,6 +50,7 @@ const datosDe = (m: MovimientoConNombres): DatosCorregibles => ({
   contactoId: m.contactoId,
   medioDePago: m.medioDePago,
   descripcion: m.descripcion,
+  lineas,
 });
 
 /** Valida solo lo que cambia (lo heredado se conserva aunque hoy no se pudiera elegir); la cuenta se valida siempre. */
@@ -71,6 +74,26 @@ async function validarCambios(tx: Transaccion, ctx: ContextoDeEmpresa, previo: M
   return { ok: true, cuenta: cuenta.cuenta };
 }
 
+/**
+ * Con productos, el monto es la suma de sus subtotales. Si llegan productos nuevos, el monto sale de ellos; si el
+ * movimiento ya tenía productos y solo llega otro monto, se rechaza (el monto no puede contradecir a las líneas).
+ */
+async function pedidoConProductos(tx: Transaccion, ctx: ContextoDeEmpresa, previo: MovimientoConNombres, previas: DatosCorregibles['lineas'], args: Pedido): Promise<Rechazo | { ok: true; pedido: Parameters<typeof aplicarCorreccion>[1] }> {
+  const { lineas: entradas, ...resto } = args;
+  if (entradas === undefined) {
+    if ((previas?.length ?? 0) > 0 && args.montoCentimos !== undefined && args.montoCentimos !== previo.montoCentimos) {
+      return rechazo('argumentos_invalidos', 'Este movimiento tiene productos: el monto es la suma de ellos. Cambia las cantidades o los precios, o quita los productos.');
+    }
+    return { ok: true, pedido: resto };
+  }
+  const nuevas = await prepararLineas(tx, ctx, entradas, previas);
+  if (!nuevas.ok) return nuevas;
+  if (nuevas.lineas.length === 0) return { ok: true, pedido: { ...resto, lineas: [] } };
+  const cuadra = montoDeLasLineas(args.montoCentimos, nuevas.totalCentimos);
+  if (!cuadra.ok) return cuadra;
+  return { ok: true, pedido: { ...resto, montoCentimos: nuevas.totalCentimos, lineas: nuevas.lineas } };
+}
+
 /** Lo común de `resumir` (sin bloquear) y `ejecutar` (bloqueando la cadena entera): leer, comprobar reglas y calcular. */
 async function prepararCorreccion(tx: Transaccion, ctx: ContextoDeHerramienta, args: Pedido, bloquear: boolean): Promise<Rechazo | Preparada> {
   const propietario = propietarioDe(ctx);
@@ -85,7 +108,10 @@ async function prepararCorreccion(tx: Transaccion, ctx: ContextoDeHerramienta, a
   }
   const elegible = puedeCorregirse(previo);
   if (!elegible.ok) return rechazoDe(elegible);
-  const aplicado = aplicarCorreccion(datosDe(previo), args);
+  const previas = await lineasGuardadas(tx, ctx, previo.id);
+  const pedido = await pedidoConProductos(tx, ctx, previo, previas, args);
+  if (!pedido.ok) return pedido;
+  const aplicado = aplicarCorreccion(datosDe(previo, previas), pedido.pedido);
   if (!aplicado.ok) return rechazoDe(aplicado);
   const hoy = await hoyDeLaEmpresa(tx);
   const valido = await validarCambios(tx, ctx, previo, aplicado.final, hoy.dia);
@@ -100,7 +126,7 @@ export const movimientoCorregir = definirHerramienta('movimiento_corregir', {
   mueveDinero: true,
   ayuda: {
     titulo: 'Corregir un movimiento',
-    paraQueSirve: 'Arregla un ingreso o egreso mal anotado (monto, fecha, cuenta, categoría, cliente o proveedor, medio de pago, descripción). El movimiento original queda anulado en la papelera y se registra uno nuevo, con otro número, ya corregido.',
+    paraQueSirve: 'Arregla un ingreso o egreso mal anotado (monto, fecha, cuenta, categoría, cliente o proveedor, medio de pago, descripción y los productos con su cantidad y precio). El movimiento original queda anulado en la papelera y se registra uno nuevo, con otro número, ya corregido.',
     cuandoUsarla: 'Cuando anotaste algo con un dato equivocado y quieres dejarlo bien sin anular y volver a escribir todo. Si cambia el tipo (ingreso a egreso), anúlalo y regístralo de nuevo.',
     campos: [
       { nombre: 'id', queSeAnota: 'Identificador del movimiento a corregir.', ejemplo: ID_DE_EJEMPLO },
@@ -108,6 +134,7 @@ export const movimientoCorregir = definirHerramienta('movimiento_corregir', {
       { nombre: 'fecha', queSeAnota: 'Día correcto (AAAA-MM-DD, no futuro).', ejemplo: '2026-03-10' },
       { nombre: 'categoriaId', queSeAnota: 'Categoría correcta, o null para quitarla.', ejemplo: ID_DE_EJEMPLO },
       { nombre: 'contactoId', queSeAnota: 'Cliente o proveedor correcto, o null para quitarlo.', ejemplo: ID_DE_EJEMPLO },
+      { nombre: 'lineas', queSeAnota: 'La lista COMPLETA de productos que debe quedar (descripcion o productoId, cantidadMilesimas, precioUnitarioMilesimas); vacía quita los productos. El monto pasa a ser la suma de sus subtotales.', ejemplo: '[]' },
       { nombre: 'motivo', queSeAnota: 'Nota opcional; el sistema ya anota qué cambió.', ejemplo: 'Me equivoqué al tipear' },
     ],
     ejemploTecleado: 'corregir MOV-2026-000123: el monto era 380 y no 350',
@@ -146,12 +173,13 @@ export const movimientoCorregir = definirHerramienta('movimiento_corregir', {
       sucursalId: original.sucursalId,
       origen: original.origen,
       origenRef: referenciaDeCorreccion(p.raiz),
+      lineas: p.final.lineas ?? [],
       // El reemplazo sigue siendo «de» quien registró el original (con alcance «propios» no deja de verlo).
       creadoPor: original.creadoPor,
     });
     const anulado = await verMovimiento(tx, ctx, original.id, null);
     if (!anulado) throw new Error('El movimiento anulado no se pudo leer.');
-    const nuevo = aMovimientoDto(r.movimiento);
-    return exito({ anulado: conReemplazo(aMovimientoDto(anulado), { id: nuevo.id, codigo: nuevo.codigo }), nuevo }, { avisos: r.avisos });
+    const [nuevo, anuladoConLineas] = await conLineas(tx, ctx, [aMovimientoDto(r.movimiento), aMovimientoDto(anulado)]);
+    return exito({ anulado: conReemplazo(anuladoConLineas!, { id: nuevo!.id, codigo: nuevo!.codigo }), nuevo: nuevo! }, { avisos: r.avisos });
   },
 });

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { filaConCantidad, filaDeCatalogo, filaLibre } from './logica-lineas.ts';
 import type { CategoriaDto, Centimos, CuentaDto } from '@capaz/shared';
 import {
   abonoInicial, argumentosDeAbono, argumentosDeCuentaEditada, argumentosDeCuentaNueva, argumentosDeEdicionDeDeuda, argumentosDeListadoDeDeudas, cuentaEnBlanco,
   estaAbierta, formularioDeCuenta, formularioDeDeuda, pasoDeDeuda, textoDeEstadoDeDeuda, tonoDeEstadoDeDeuda, validarAbono, validarCuenta, validarDeuda, validarMotivo, validarNombre,
   argumentosDeListado, argumentosDeAdelanto, argumentosDeMovimiento, faltaCancelar, categoriasDe, debeIniciar, detalleDeMovimiento, diaEnZona, errorDeRango, FILTROS_VACIOS, formatearDia,
-  formularioInicial, mensajeDeRechazo, montoConSigno, siguienteFormulario, validarMovimiento,
+  conAdelantoActivado, formularioInicial, llevaProductos, mensajeDeRechazo, montoConSigno, montoDelFormulario, siguienteFormulario, validarMovimiento,
   argumentosDeDeudaNueva, deudaNuevaEnBlanco, textoDeFijosCopiados, validarDeudaNueva,
   argumentosDeTransferencia, cuentasDeDestino, esCategoriaDeTransferencia, esTransferencia, invertirTransferencia, puedeTransferir, siguienteTransferencia,
   textoDeTransferenciasNetas, transferenciaInicial, validarTransferencia,
@@ -46,7 +47,7 @@ describe('formulario de movimiento', () => {
   const cuentas = [cuenta('banco', { tipo: 'banco' }), cuenta('caja', { esPrincipal: true }), cuenta('vieja', { archivadoEn: '2026-02-01T00:00:00.000Z' })];
 
   it('empieza con la fecha de hoy, la cuenta principal y efectivo', () => {
-    expect(formularioInicial('egreso', HOY, cuentas)).toEqual({ tipo: 'egreso', monto: null, fecha: HOY, cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
+    expect(formularioInicial('egreso', HOY, cuentas)).toEqual({ tipo: 'egreso', monto: null, fecha: HOY, cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'efectivo', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '', productos: [] });
     expect(formularioInicial('ingreso', HOY, [cuentas[2]!, cuentas[0]!]).cuentaId).toBe('banco');
     expect(formularioInicial('ingreso', HOY, []).cuentaId).toBe('');
   });
@@ -95,7 +96,7 @@ describe('formulario de movimiento', () => {
 
   it('tras guardar queda listo para el siguiente, con el mismo tipo, fecha, cuenta y medio', () => {
     const lleno = { ...formularioInicial('egreso', '2026-03-09', cuentas), monto: c(100), categoriaId: 'cat', contacto: { id: 'cli', nombre: 'José' }, medioDePago: 'yape' as const, descripcion: 'Tinta' };
-    expect(siguienteFormulario(lleno)).toEqual({ tipo: 'egreso', monto: null, fecha: '2026-03-09', cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'yape', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '' });
+    expect(siguienteFormulario(lleno)).toEqual({ tipo: 'egreso', monto: null, fecha: '2026-03-09', cuentaId: 'caja', categoriaId: '', contacto: null, medioDePago: 'yape', descripcion: '', conAdelanto: false, adelanto: null, venceEn: '', productos: [] });
   });
 
   it('ofrece solo las categorías vivas del tipo', () => {
@@ -309,5 +310,41 @@ describe('transferencia entre cuentas', () => {
     expect(textoDeTransferenciasNetas(-20_001)).toBe('− S/ 200.01');
     expect(textoDeTransferenciasNetas(20_001)).toBe('+ S/ 200.01');
     expect(textoDeTransferenciasNetas(0)).toBe('S/ 0.00');
+  });
+});
+
+describe('formulario de movimiento con productos', () => {
+  const cuentas = [{ id: 'caja', esPrincipal: true, archivadoEn: null }] as unknown as CuentaDto[];
+  const vacio = formularioInicial('ingreso', HOY, cuentas);
+  const etiquetas = filaConCantidad(filaDeCatalogo('a', { id: 'p1', nombre: 'Etiquetas', unidad: 'millar', precioUnitarioMilesimas: 65_000 }), 2000);
+
+  it('sin productos todo sigue igual: el monto es lo tecleado', () => {
+    expect(vacio.productos).toEqual([]);
+    expect(llevaProductos(vacio)).toBe(false);
+    expect(montoDelFormulario({ ...vacio, monto: 4_550 as Centimos })).toBe(4_550);
+  });
+
+  it('con productos el monto es la suma y viajan las líneas', () => {
+    const f = { ...vacio, productos: [etiquetas] };
+    expect(llevaProductos(f)).toBe(true);
+    expect(montoDelFormulario(f)).toBe(13_000);
+    expect(argumentosDeMovimiento(f)).toMatchObject({ tipo: 'ingreso', montoCentimos: 13_000, lineas: [{ productoId: 'p1', descripcion: 'Etiquetas', unidad: 'millar', cantidadMilesimas: 2000, precioUnitarioMilesimas: 65_000 }] });
+    expect(validarMovimiento(f, HOY)).toEqual({});
+  });
+
+  it('un producto incompleto no deja guardar y el monto tecleado deja de pedirse', () => {
+    const e = validarMovimiento({ ...vacio, productos: [filaLibre('x', 'Diseño')] }, HOY);
+    expect(e.productos).toBe('Producto 1: Falta el precio.');
+    expect(e.monto).toBeUndefined();
+  });
+
+  it('con adelanto los productos no viajan: su suma pasa a ser el total y la lista se vacía', () => {
+    const f = conAdelantoActivado({ ...vacio, productos: [etiquetas] });
+    expect(f).toMatchObject({ conAdelanto: true, monto: 13_000, productos: [] });
+    expect(llevaProductos({ ...vacio, productos: [etiquetas], conAdelanto: true })).toBe(false);
+  });
+
+  it('tras guardar, el siguiente formulario sale sin productos', () => {
+    expect(siguienteFormulario({ ...vacio, productos: [etiquetas] }).productos).toEqual([]);
   });
 });

@@ -12,6 +12,7 @@ import { bloquearDeuda, guardarAbonado, verDeuda } from '../repositories/deudas.
 import { bloquearFamiliaDeCorreccion, restaurarMovimiento, verMovimiento, vigenteDeFamilia, type MovimientoConNombres } from '../repositories/movimientos.repository.js';
 import { ID_DE_EJEMPLO, MODULO, propietarioDe, rechazoDe } from './comun.js';
 import { aMovimientoDto, codigoDe, codigoDeLaDeuda } from './mapeo.js';
+import { conLineas } from './movimientos-lineas.js';
 
 // Restaurar (sacar de la papelera) un movimiento anulado. La base solo deja cambiar las columnas de anulación: el
 // movimiento vuelve a activo tal como estaba. Corregir y restaurar toman la cadena de correcciones en el mismo orden.
@@ -102,6 +103,6 @@ export const movimientoRestaurar = definirHerramienta('movimiento_restaurar', {
     });
     const final = await verMovimiento(tx, ctx, m.id, null);
     if (!final) throw new Error('El movimiento restaurado no se pudo leer.');
-    return exito(aMovimientoDto(final));
+    return exito((await conLineas(tx, ctx, [aMovimientoDto(final)]))[0]!);
   },
 });

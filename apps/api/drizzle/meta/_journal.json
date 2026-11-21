@@ -267,6 +267,13 @@
       "when": 1795214786467,
       "tag": "0037_cierres_y_monto_minimo",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795280495841,
+      "tag": "0038_movimiento_lineas",
+      "breakpoints": true
     }
   ]
 }

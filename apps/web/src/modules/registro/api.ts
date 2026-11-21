@@ -1,4 +1,4 @@
-import type { EntradaDe } from '@capaz/shared';
+import type { EntradaDe, ProductoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { llamar, llamarConfirmando } from '../../shared/api/herramientas.ts';
 import type { Opcion } from '../../shared/ui/selector-de-registro.tsx';
@@ -22,10 +22,15 @@ export async function buscarContactos(texto: string): Promise<Opcion[]> {
   return r.items.map((c) => ({ id: c.id, nombre: c.nombre, detalle: c.documentoNumero ?? c.telefono ?? undefined }));
 }
 
+/** Productos del catálogo para elegir en una línea (la hoja guarda lo que devuelve para traer unidad y precio al elegir). */
+export async function buscarProductosParaLinea(texto: string): Promise<ProductoDto[]> {
+  return datosOError(await llamar('productos_buscar', { texto, limite: 8 })).items;
+}
+
 export const anularMovimiento = (id: string, motivo: string) =>
   llamarConfirmando('movimiento_anular', { id, motivo }, { titulo: 'Anular movimiento', textoConfirmar: 'Anular', peligroso: true });
 export const corregirMovimiento = (args: EntradaDe<'movimiento_corregir'>) =>
-  llamarConfirmando('movimiento_corregir', args, { titulo: 'Corregir movimiento', textoConfirmar: 'Corregir' });
+  llamarConfirmando('movimiento_corregir', args, { titulo: 'Editar movimiento', textoConfirmar: 'Guardar cambios' });
 export const restaurarMovimiento = (id: string) =>
   llamarConfirmando('movimiento_restaurar', { id }, { titulo: 'Restaurar movimiento', textoConfirmar: 'Restaurar' });
 export const crearCuenta = (args: EntradaDe<'cuenta_crear'>) => llamar('cuenta_crear', args);
