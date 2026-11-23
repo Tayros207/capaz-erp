@@ -4,14 +4,34 @@ import { formatearFechaHora } from '../../shared/formato/fechas.ts';
 import { formatearSoles } from '../../shared/formato/soles.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import type { SaldoDelPedido } from './deuda-del-pedido.ts';
+import { ETIQUETA_DE_MEDIO } from './adelanto.ts';
+import { estadoDePago, textoDeVencimiento } from './documentos.ts';
 import { textoDeMotivo } from './huella-de-correccion.ts';
+import { formatearDia } from './logica.ts';
 
-/** Lo pagado y lo que falta; «A favor del cliente» solo cuando pagó de más (no se devuelve: no hay botón de devolver). */
-export function PagosDelPedido({ saldo, version }: { saldo: SaldoDelPedido | null; version: number }) {
-  if (!saldo || (version <= 1 && saldo.aFavorCentimos <= 0)) return null;
+/** Lo pagado y lo que falta, siempre que el pedido tenga deuda: estado, vencimiento y cada abono con su medio. «A favor del cliente» solo si pagó de más. */
+export function PagosDelPedido({ saldo }: { saldo: SaldoDelPedido | null }) {
+  if (!saldo) return null;
+  const estado = estadoDePago(saldo.estadoDeuda);
+  const vence = textoDeVencimiento(saldo.estadoDeuda);
+  const sinAdelanto = saldo.abonadoCentimos <= 0;
   return (
-    <section aria-label="Pagos del pedido" className="flex flex-col gap-1 rounded-tarjeta border border-borde bg-superficie p-3 text-texto">
-      <p>Ya pagó <strong>{formatearSoles(saldo.abonadoCentimos)}</strong> · Falta <strong>{formatearSoles(saldo.saldoCentimos)}</strong></p>
+    <section aria-label="Pagos del pedido" className="flex flex-col gap-2 rounded-tarjeta border border-borde bg-superficie p-3 text-texto">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <h2 className="font-titulo font-semibold">Pago</h2>
+        {estado ? <span className={estado === 'Pagado' ? 'font-semibold text-exito' : estado === 'Vencida' ? 'font-semibold text-peligro' : 'font-semibold text-aviso'}>{estado}</span> : null}
+        {vence ? <span className="text-sm text-texto-suave">{vence}</span> : null}
+      </div>
+      <p>
+        {sinAdelanto ? 'Sin adelanto' : <>Ya pagó <strong>{formatearSoles(saldo.abonadoCentimos)}</strong></>} · Falta <strong>{formatearSoles(saldo.saldoCentimos)}</strong> de {formatearSoles(saldo.totalCentimos)}
+      </p>
+      {saldo.abonos.length > 0 ? (
+        <ul className="flex flex-col gap-0.5 text-sm text-texto-suave">
+          {saldo.abonos.map((a, i) => (
+            <li key={`${a.fecha}-${i}`}>{formatearDia(a.fecha)} · {formatearSoles(a.montoCentimos)} · {ETIQUETA_DE_MEDIO[a.medio]} · {a.cuentaNombre}</li>
+          ))}
+        </ul>
+      ) : null}
       {saldo.aFavorCentimos > 0 ? <p className="font-semibold text-exito">A favor del cliente: {formatearSoles(saldo.aFavorCentimos)}</p> : null}
       <Link to={`/m/registro/deudas/${saldo.deudaId}`} className="w-fit text-sm font-medium text-accion underline">Ver la deuda {saldo.codigo}</Link>
     </section>

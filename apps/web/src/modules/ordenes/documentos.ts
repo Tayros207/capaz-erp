@@ -69,6 +69,26 @@ export function totalesDelDocumento(p: Pick<PedidoCompletoDto, 'subtotalCentimos
 /** Lo que el cliente ya dejó a cuenta del pedido, tomado de su deuda en Finanzas. */
 export type AdelantoDelPedido = { abonadoCentimos: number; saldoCentimos: number };
 
+/** Lo que dice la deuda real del pedido: estado, vencimiento y si ya pasó (`vencida` lo calcula Finanzas con el día de la empresa). */
+export type EstadoDeLaDeuda = { estado: 'pendiente' | 'parcial' | 'pagada' | 'anulada'; vencida: boolean; venceEn: string | null };
+
+export type EstadoDePago = 'Pagado' | 'Con saldo' | 'Sin pago' | 'Vencida';
+
+/**
+ * El estado de pago con palabras claras, sacado de la deuda real: «Vencida» si pasó el vencimiento y aún se debe algo, «Pagado»
+ * si no queda saldo, «Con saldo» si hubo abonos y «Sin pago» si no. Sin deuda (o anulada) no hay estado: no se inventa ninguno.
+ */
+export function estadoDePago(d: EstadoDeLaDeuda | null | undefined): EstadoDePago | null {
+  if (!d || d.estado === 'anulada') return null;
+  if (d.estado === 'pagada') return 'Pagado';
+  if (d.vencida) return 'Vencida';
+  return d.estado === 'parcial' ? 'Con saldo' : 'Sin pago';
+}
+
+/** «vence el 30/11/2026» (o «venció el …» si ya pasó) mientras quede algo por cobrar y la deuda tenga fecha; si no, nada. */
+export const textoDeVencimiento = (d: EstadoDeLaDeuda | null | undefined): string | null =>
+  d && d.venceEn && (d.estado === 'pendiente' || d.estado === 'parcial') ? `${d.vencida ? 'venció' : 'vence'} el ${formatearDia(d.venceEn)}` : null;
+
 /**
  * Con adelanto cobrado, el documento agrega «Adelanto recibido» y «Saldo por pagar» debajo del total. Sin adelanto, queda igual.
  * Si una corrección bajó el pedido por debajo de lo ya pagado, agrega «A favor del cliente» (no se devuelve) con la diferencia.

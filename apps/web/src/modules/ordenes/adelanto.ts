@@ -18,13 +18,6 @@ export const ORIGEN_DE_PEDIDO = 'pedido';
 /** El 50 % del total, redondeado al céntimo (nunca más que el total). */
 export const sugerirAdelanto = (totalCentimos: number): number => (totalCentimos > 0 ? Math.min(totalCentimos, Math.round(totalCentimos / 2)) : 0);
 
-/** El adelanto tal como se ve en la hoja del pedido: la casilla, el monto (si alguien lo tocó) y el medio. */
-export type AdelantoDeHoja = { cobrar: boolean; tocado: boolean; montoCentimos: number | null; medio: MedioDePago };
-export const ADELANTO_INICIAL: AdelantoDeHoja = { cobrar: false, tocado: false, montoCentimos: null, medio: 'efectivo' };
-
-/** El monto que vale hoy: el que escribió la persona o, mientras nadie lo toque, el 50 % sugerido del total vigente. */
-export const montoDeAdelanto = (a: AdelantoDeHoja, totalCentimos: number): number | null => (a.tocado ? a.montoCentimos : sugerirAdelanto(totalCentimos));
-
 /** La casilla solo se ofrece a quien escribe en Finanzas, con cliente y total mayor que cero. */
 export const sePuedeCobrarAdelanto = (a: { puedeEscribirEnRegistro: boolean; clienteId: string | null | undefined; totalCentimos: number | null }): boolean =>
   a.puedeEscribirEnRegistro && !!a.clienteId && (a.totalCentimos ?? 0) > 0;
@@ -41,7 +34,7 @@ export function validarAdelanto(monto: number | null, totalCentimos: number): st
 export type Res<T> = { ok: true; datos: T } | { ok: false; codigo: string; mensaje: string };
 export type PedidoConfirmado = { id: string; codigo: string; clienteId: string; totalCentimos: number };
 export type DeudaDelAdelanto = { id: string; codigo: string; totalCentimos: number; abonadoCentimos: number; saldoCentimos: number };
-export type ArgsDeDeuda = { contactoId: string; concepto: string; totalCentimos: number; origenTipo: typeof ORIGEN_DE_PEDIDO; origenId: string };
+export type ArgsDeDeuda = { contactoId: string; concepto: string; totalCentimos: number; origenTipo: typeof ORIGEN_DE_PEDIDO; origenId: string; venceEn?: string | null };
 
 export type DependenciasDelAdelanto = {
   confirmar: () => Promise<Res<PedidoConfirmado>>;
@@ -78,7 +71,7 @@ async function obtenerDeuda(dep: DependenciasDelAdelanto, p: PedidoConfirmado): 
 
 
 /** Tras un fallo del abono: ¿llegó igual? Se mira cuánto lleva abonado la deuda. */
-async function abonoLlego(dep: DependenciasDelAdelanto, p: PedidoConfirmado, antes: number, monto: number): Promise<boolean | null> {
+export async function abonoLlego(dep: Pick<DependenciasDelAdelanto, 'buscarDeuda'>, p: PedidoConfirmado, antes: number, monto: number): Promise<boolean | null> {
   const r = await dep.buscarDeuda(p.id, p.clienteId);
   if (!r.ok || !r.datos) return null;
   return r.datos.abonadoCentimos >= antes + monto;

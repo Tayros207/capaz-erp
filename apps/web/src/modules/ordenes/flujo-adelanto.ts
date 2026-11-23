@@ -8,13 +8,23 @@ import { mensajeDeRechazo } from './logica.ts';
 // Adaptadores del flujo «Confirmar y cobrar adelanto»: llaman por NOMBRE a las herramientas de
 // Finanzas (un módulo no importa a otro) y entregan los resultados a la lógica pura de `adelanto.ts`.
 
-function normalizar<T, U>(r: Respuesta<T>, mapa: (d: T) => U): Res<U> {
+export function normalizar<T, U>(r: Respuesta<T>, mapa: (d: T) => U): Res<U> {
   if (r.ok && 'datos' in r) return { ok: true, datos: mapa(r.datos) };
   if ('error' in r) return { ok: false, codigo: r.error.codigo, mensaje: mensajeDeRechazo(r.error.codigo, r.error.mensaje) };
   return { ok: false, codigo: 'requiere_confirmacion', mensaje: 'Esta operación pide una confirmación que aquí no está disponible.' };
 }
 
-const deMinima = (d: DeudaDto) => ({ id: d.id, codigo: d.codigo, totalCentimos: d.totalCentimos, abonadoCentimos: d.abonadoCentimos, saldoCentimos: d.saldoCentimos });
+/** La deuda con lo que necesitan el cobro y el documento: importes, su estado real y el vencimiento (`vencida` lo calcula Finanzas). */
+export const deMinima = (d: DeudaDto) => ({
+  id: d.id,
+  codigo: d.codigo,
+  totalCentimos: d.totalCentimos,
+  abonadoCentimos: d.abonadoCentimos,
+  saldoCentimos: d.saldoCentimos,
+  estado: d.estado,
+  venceEn: d.venceEn,
+  vencida: d.vencida,
+});
 
 /** La deuda viva del pedido: una sola consulta con el filtro por origen (sin recorrer páginas). */
 export async function buscarDeudaDelPedido(pedidoId: string, _clienteId: string): Promise<Res<ReturnType<typeof deMinima> | null>> {

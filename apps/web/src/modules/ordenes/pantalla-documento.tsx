@@ -9,7 +9,7 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { verPedido } from './api.ts';
 import { buscarDeudaDelPedido } from './flujo-adelanto.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
-import { TITULO_DE_DOCUMENTO, correccionVigente, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, pedidoDeVersion, sePuedeImprimir, textoDeIgvIncluido, textoDeReemplazada, textoDeVersion, textoDeVigencia, totalesConAdelanto, totalesDelDocumento, type AdelantoDelPedido, type TipoDeDocumento } from './documentos.ts';
+import { TITULO_DE_DOCUMENTO, correccionVigente, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, pedidoDeVersion, sePuedeImprimir, textoDeIgvIncluido, textoDeReemplazada, textoDeVersion, textoDeVigencia, totalesConAdelanto, totalesDelDocumento, estadoDePago, textoDeVencimiento, type AdelantoDelPedido, type EstadoDeLaDeuda, type TipoDeDocumento } from './documentos.ts';
 import { RecuadroQueCambio, SelloDeReemplazada } from './bloques-de-version.tsx';
 import { ETIQUETA_DE_ESTADO, formatearDia } from './logica.ts';
 import { Cargando } from './marco.tsx';
@@ -41,7 +41,14 @@ function AvisoDeEmpresa({ razonSocial, ruc }: { razonSocial: string | null; ruc:
   );
 }
 
-function DatosDelPedido({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumento }) {
+/** El estado de pago (y su vencimiento) de la deuda del pedido; vacío si el pedido no tiene deuda o no se pudo ver. */
+function paresDePago(deuda: EstadoDeLaDeuda | null): { etiqueta: string; valor: string }[] {
+  const estado = estadoDePago(deuda);
+  const vence = textoDeVencimiento(deuda);
+  return estado ? [{ etiqueta: 'Estado de pago', valor: vence ? `${estado} · ${vence}` : estado }] : [];
+}
+
+function DatosDelPedido({ p, tipo, deuda }: { p: PedidoCompletoDto; tipo: TipoDeDocumento; deuda: EstadoDeLaDeuda | null }) {
   const version = textoDeVersion(p.version, p.fecha, p.versiones);
   const pares =
     tipo === 'proforma'
@@ -58,23 +65,26 @@ function DatosDelPedido({ p, tipo }: { p: PedidoCompletoDto; tipo: TipoDeDocumen
           { etiqueta: 'Fecha de entrega', valor: formatearDia(p.entregaEl) },
           ...(tipo === 'nota' ? [{ etiqueta: 'Estado', valor: ETIQUETA_DE_ESTADO[p.estado] }] : []),
         ];
-  return <BloqueDeDatos titulo="Datos del pedido" pares={version ? [...pares, { etiqueta: 'Versión', valor: version }] : pares} />;
+  const conVersion = version ? [...pares, { etiqueta: 'Versión', valor: version }] : pares;
+  return <BloqueDeDatos titulo="Datos del pedido" pares={[...conVersion, ...paresDePago(deuda)]} />;
 }
 
 type Reimpresion = { reemplazadaPor: number } | null;
 
-function Cuerpo({ p, tipo, adelanto, reimpresion, vigente }: { p: PedidoCompletoDto; tipo: TipoDeDocumento; adelanto: AdelantoDelPedido | null; reimpresion: Reimpresion; vigente: ReturnType<typeof correccionVigente> }) {
+type DeudaDelDocumento = AdelantoDelPedido & EstadoDeLaDeuda;
+
+function Cuerpo({ p, tipo, deuda, reimpresion, vigente }: { p: PedidoCompletoDto; tipo: TipoDeDocumento; deuda: DeudaDelDocumento | null; reimpresion: Reimpresion; vigente: ReturnType<typeof correccionVigente> }) {
   const conPrecios = tipo !== 'orden-de-trabajo';
   return (
     <>
       {reimpresion ? <SelloDeReemplazada texto={textoDeReemplazada(reimpresion.reemplazadaPor)} /> : null}
-      <DatosDelPedido p={p} tipo={tipo} />
+      <DatosDelPedido p={p} tipo={tipo} deuda={deuda} />
       {p.notas ? <BloqueDeDatos titulo="Notas" columnas={1} pares={[{ etiqueta: 'Observaciones', valor: p.notas }]} /> : null}
       <TablaImprimible
         etiqueta={`Detalle: ${TITULO_DE_DOCUMENTO[tipo]}`}
         columnas={[...(conPrecios ? COLUMNAS_CON_PRECIO : COLUMNAS_SIN_PRECIO)]}
         filas={filasDelDocumento(p.detalle, conPrecios)}
-        totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), adelanto, p.totalCentimos) : undefined}
+        totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), deuda, p.totalCentimos) : undefined}
       />
       {conPrecios ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
       {conPrecios && vigente ? <RecuadroQueCambio correccion={vigente} /> : null}
@@ -120,7 +130,7 @@ function Documento({ pedido, tipo, version }: { pedido: PedidoCompletoDto; tipo:
       <AvisoDeEmpresa razonSocial={empresa.razonSocial} ruc={empresa.ruc} />
       <VistaPreviaDeHoja>
         <HojaImprimible titulo={`${TITULO_DE_DOCUMENTO[tipo]} ${p.codigo}${p.version > 1 ? ` · versión ${p.version}` : ''}`} empresa={datos} aviso={aviso} formato={formatoDelDocumento(tipo, p)}>
-          <Cuerpo p={p} tipo={tipo} adelanto={deuda.data ?? null} reimpresion={reimpresion} vigente={vigente} />
+          <Cuerpo p={p} tipo={tipo} deuda={deuda.data ?? null} reimpresion={reimpresion} vigente={vigente} />
         </HojaImprimible>
       </VistaPreviaDeHoja>
     </div>

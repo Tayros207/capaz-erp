@@ -36,6 +36,8 @@ export const buscarProductos = (texto: string) => llamar('productos_buscar', { t
 /** Lo que muestran los selectores al abrirse sin haber escrito nada: los primeros por orden alfabético. */
 export const primerosProductos = () => llamar('productos_listar', { estado: 'activos', limite: 8 });
 export const listarMiembros = () => llamar('miembros_listar', {});
+/** Las cuentas de Finanzas donde puede entrar un cobro (por herramienta: Pedidos no importa nada de Registro). */
+export const listarCuentasParaCobrar = () => llamar('cuentas_listar', { incluirArchivadas: false });
 
 // Guías de remisión (control interno).
 export const prepararGuia = (args: EntradaDe<'guia_preparar'>) => llamar('guia_preparar', args);

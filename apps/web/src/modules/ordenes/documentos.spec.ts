@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LineaDePedidoDto } from '@capaz/shared';
-import { documentosDisponibles, enlaceDeWhatsApp, mensajeDeWhatsAppDeVersion, pedidoDeVersion, textoDeReemplazada, textoDeVersion, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
+import { documentosDisponibles, enlaceDeWhatsApp, estadoDePago, textoDeVencimiento, mensajeDeWhatsAppDeVersion, pedidoDeVersion, textoDeReemplazada, textoDeVersion, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
 
 const l = (extra: Partial<LineaDePedidoDto>): LineaDePedidoDto => ({ id: 'a', posicion: 1, productoId: null, descripcion: 'Polo', unidad: 'unidad', cantidadMilesimas: 50_000, precioUnitarioMilesimas: 15_000, afectoIgv: true, importeCentimos: 75_000, material: null, medida: null, colores: null, acabado: null, ...extra });
 
@@ -78,6 +78,34 @@ describe('adelanto en el documento', () => {
   it('si la versión corregida quedó por debajo de lo pagado, dice cuánto queda a favor del cliente', () => {
     const t = totalesConAdelanto(base, { abonadoCentimos: 11_800, saldoCentimos: 0 }, 8_000);
     expect(t.slice(1).map((f) => [f.etiqueta, f.valor])).toEqual([['Adelanto recibido', 'S/ 118.00'], ['Saldo por pagar', 'S/ 0.00'], ['A favor del cliente (no se devuelve)', 'S/ 38.00']]);
+  });
+});
+
+describe('estado de pago del documento', () => {
+  const d = (estado: 'pendiente' | 'parcial' | 'pagada' | 'anulada', extra: { vencida?: boolean; venceEn?: string | null } = {}) => ({ estado, vencida: false, venceEn: null, ...extra });
+  it('lo saca de la deuda real: Pagado, Con saldo o Sin pago', () => {
+    expect(estadoDePago(d('pagada'))).toBe('Pagado');
+    expect(estadoDePago(d('parcial'))).toBe('Con saldo');
+    expect(estadoDePago(d('pendiente'))).toBe('Sin pago');
+  });
+  it('«Vencida» gana cuando pasó el vencimiento y aún se debe algo, tenga o no abonos', () => {
+    expect(estadoDePago(d('pendiente', { vencida: true, venceEn: '2026-11-01' }))).toBe('Vencida');
+    expect(estadoDePago(d('parcial', { vencida: true, venceEn: '2026-11-01' }))).toBe('Vencida');
+  });
+  it('una deuda pagada nunca figura vencida (un pedido corregido que quedó a favor sigue «Pagado»)', () => {
+    expect(estadoDePago(d('pagada', { vencida: true, venceEn: '2026-11-01' }))).toBe('Pagado');
+  });
+  it('sin deuda, o con la deuda anulada, no hay estado: no se inventa ninguno', () => {
+    expect(estadoDePago(null)).toBeNull();
+    expect(estadoDePago(undefined)).toBeNull();
+    expect(estadoDePago(d('anulada'))).toBeNull();
+  });
+  it('el vencimiento se dice solo mientras quede algo por cobrar', () => {
+    expect(textoDeVencimiento(d('parcial', { venceEn: '2026-12-15' }))).toBe('vence el 15/12/2026');
+    expect(textoDeVencimiento(d('pendiente', { vencida: true, venceEn: '2026-11-01' }))).toBe('venció el 01/11/2026');
+    expect(textoDeVencimiento(d('pagada', { venceEn: '2026-12-15' }))).toBeNull();
+    expect(textoDeVencimiento(d('pendiente'))).toBeNull();
+    expect(textoDeVencimiento(null)).toBeNull();
   });
 });
 

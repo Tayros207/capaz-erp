@@ -10,7 +10,7 @@ import { enviarPorWhatsApp } from './acciones-documentos.ts';
 import { usePermisosDePedidos } from './acciones.ts';
 import { verPedido } from './api.ts';
 import { AvisoDeConfirmacion } from './aviso-de-confirmacion.tsx';
-import { BloqueAdelanto } from './bloque-adelanto.tsx';
+import { BloqueDePago } from './bloque-pago.tsx';
 import { CLAVE_PEDIDOS } from './claves.ts';
 import { TITULO_DE_DOCUMENTO } from './documentos.ts';
 import { FormularioPedido } from './formulario-pedido.tsx';
@@ -33,8 +33,8 @@ function Dato({ etiqueta, valor }: { etiqueta: string; valor: string }) {
 function Confirmada({ r, alNuevo }: { r: Confirmado; alNuevo: () => void }) {
   const navegar = useNavigate();
   const consulta = useQuery({ queryKey: [...CLAVE_PEDIDOS, 'ficha', r.id], queryFn: async (): Promise<PedidoCompletoDto> => datosOError(await verPedido(r.id)) });
-  const parcial = r.adelanto !== null && r.adelanto.estado !== 'completo';
-  const deuda = r.adelanto && 'deuda' in r.adelanto ? r.adelanto.deuda : null;
+  const parcial = r.cobro !== null && r.cobro.estado !== 'completo';
+  const deuda = r.cobro && 'deuda' in r.cobro ? r.cobro.deuda : null;
   const p = consulta.data;
   return (
     <div className="flex flex-col gap-4">
@@ -50,7 +50,7 @@ function Confirmada({ r, alNuevo }: { r: Confirmado; alNuevo: () => void }) {
           </>
         }
       />
-      <AvisoDeConfirmacion tono={parcial ? 'alerta' : 'exito'} mensaje={r.adelanto?.mensaje ?? `Pedido ${r.codigo} confirmado.`} deuda={deuda} />
+      <AvisoDeConfirmacion tono={parcial ? 'alerta' : 'exito'} mensaje={r.cobro?.mensaje ?? `Pedido ${r.codigo} confirmado.`} deuda={deuda} />
       {consulta.isPending ? <Cargando etiqueta="Cargando el pedido confirmado" /> : null}
       {consulta.isError ? <p role="alert" className="text-sm font-medium text-peligro">No se pudo cargar el detalle: {consulta.error.message}</p> : null}
       {p ? (
@@ -67,7 +67,7 @@ function Confirmada({ r, alNuevo }: { r: Confirmado; alNuevo: () => void }) {
   );
 }
 
-/** Pedido en una sola hoja: cliente, detalle en filas, adelanto y confirmación; tras confirmar queda en lectura con sus acciones. */
+/** Pedido en una sola hoja: cliente, detalle en filas, pago y confirmación; tras confirmar queda en lectura con sus acciones. */
 export function PantallaNuevoPedido() {
   const navegar = useNavigate();
   const { editar } = usePermisosDePedidos();
@@ -87,13 +87,15 @@ export function PantallaNuevoPedido() {
     <form noValidate className="flex flex-col gap-6" onSubmit={(ev) => ev.preventDefault()}>
       <EncabezadoDePagina titulo="Nuevo pedido" migas={MIGAS} />
       <FormularioPedido valor={h.form} errores={h.errores} igvPorcentaje={IGV_POR_DEFECTO} fecha={h.hoy} alCambiar={h.cambiar} />
-      {h.ofreceAdelanto ? <BloqueAdelanto totalCentimos={h.totalCentimos} adelanto={h.adelanto} alCambiar={h.cambiarAdelanto} /> : null}
+      {h.pago.visible ? (
+        <BloqueDePago habilitado={h.pago.habilitado} totalCentimos={h.totalCentimos} hoy={h.hoy} pago={h.pago.pago} errores={h.pago.errores} cuentas={h.pago.cuentas} cargandoCuentas={h.pago.cargandoCuentas} alCambiar={h.pago.cambiar} />
+      ) : null}
       <AvisoDeMontoMinimo totalCentimos={h.totalCentimos} />
       {h.aviso ? <p role="alert" className="text-sm font-medium text-peligro">{h.aviso}</p> : null}
       <div className="flex flex-wrap justify-end gap-2">
         <Boton variante="fantasma" disabled={h.enviando} onClick={() => void navegar('/m/ordenes')}>Cancelar</Boton>
         <Boton disabled={h.enviando} onClick={() => void h.guardarBorrador()}>Guardar borrador</Boton>
-        <Boton variante="primario" cargando={h.enviando} onClick={() => void h.confirmar()}>Confirmar pedido</Boton>
+        <Boton variante="primario" cargando={h.enviando} onClick={() => void h.confirmar()}>{h.pago.textoDeConfirmar}</Boton>
       </div>
     </form>
   );

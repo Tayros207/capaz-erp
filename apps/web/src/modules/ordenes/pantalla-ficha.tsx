@@ -192,7 +192,7 @@ function Contenido({ pedido, corregido, alCorregir }: PropsDeContenido) {
       ) : (
         <Lectura p={pedido} />
       )}
-      <PagosDelPedido saldo={pagos} version={pedido.version} />
+      <PagosDelPedido saldo={pagos} />
       <GuiasDelPedido pedidoId={pedido.id} />
       <VersionesAnteriores pedido={pedido} />
       <Historial p={pedido} />
