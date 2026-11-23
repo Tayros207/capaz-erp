@@ -9,7 +9,7 @@ import { EstadoVacio } from '../../shared/ui/estado-vacio.tsx';
 import { verPedido } from './api.ts';
 import { buscarDeudaDelPedido } from './flujo-adelanto.ts';
 import { CLAVE_PEDIDOS } from './claves.ts';
-import { TITULO_DE_DOCUMENTO, correccionVigente, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, pedidoDeVersion, sePuedeImprimir, textoDeIgvIncluido, textoDeReemplazada, textoDeVersion, textoDeVigencia, totalesConAdelanto, totalesDelDocumento, estadoDePago, textoDeVencimiento, type AdelantoDelPedido, type EstadoDeLaDeuda, type TipoDeDocumento } from './documentos.ts';
+import { TITULO_DE_DOCUMENTO, correccionVigente, documentoLlevaIgv, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, pedidoDeVersion, sePuedeImprimir, textoDeIgvIncluido, textoDeReemplazada, textoDeVersion, textoDeVigencia, totalesConAdelanto, totalesDelDocumento, estadoDePago, textoDeVencimiento, type AdelantoDelPedido, type EstadoDeLaDeuda, type TipoDeDocumento } from './documentos.ts';
 import { RecuadroQueCambio, SelloDeReemplazada } from './bloques-de-version.tsx';
 import { ETIQUETA_DE_ESTADO, formatearDia } from './logica.ts';
 import { Cargando } from './marco.tsx';
@@ -86,7 +86,7 @@ function Cuerpo({ p, tipo, deuda, reimpresion, vigente }: { p: PedidoCompletoDto
         filas={filasDelDocumento(p.detalle, conPrecios)}
         totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), deuda, p.totalCentimos) : undefined}
       />
-      {conPrecios && p.igvPorcentaje > 0 ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
+      {conPrecios && documentoLlevaIgv(p) ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
       {conPrecios && vigente ? <RecuadroQueCambio correccion={vigente} /> : null}
       {tipo === 'orden-de-trabajo' ? (
         <>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LineaDePedidoDto } from '@capaz/shared';
-import { documentosDisponibles, enlaceDeWhatsApp, estadoDePago, textoDeVencimiento, mensajeDeWhatsAppDeVersion, pedidoDeVersion, textoDeReemplazada, textoDeVersion, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
+import { documentoLlevaIgv, documentosDisponibles, enlaceDeWhatsApp, estadoDePago, textoDeVencimiento, mensajeDeWhatsAppDeVersion, pedidoDeVersion, textoDeReemplazada, textoDeVersion, esTipoDeDocumento, filasDelDocumento, formatoDelDocumento, mensajeDeWhatsApp, sePuedeImprimir, telefonoParaWhatsApp, textoDeVigencia, totalesConAdelanto, totalesDelDocumento } from './documentos.ts';
 
 const l = (extra: Partial<LineaDePedidoDto>): LineaDePedidoDto => ({ id: 'a', posicion: 1, productoId: null, descripcion: 'Polo', unidad: 'unidad', cantidadMilesimas: 50_000, precioUnitarioMilesimas: 15_000, afectoIgv: true, importeCentimos: 75_000, material: null, medida: null, colores: null, acabado: null, ...extra });
 
@@ -44,6 +44,13 @@ describe('filas', () => {
     const t = totalesDelDocumento({ subtotalCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800, igvPorcentaje: 18 });
     expect(t.map((f) => f.valor)).toEqual(['S/ 100.00', 'S/ 18.00', 'S/ 118.00']);
     expect(t[1]?.etiqueta).toBe('IGV (18%)');
+  });
+  it('con IGV en el pedido pero ninguna línea afecta, no desglosa ni menciona el IGV', () => {
+    const base = { subtotalCentimos: 6_500, igvCentimos: 0, totalCentimos: 6_500, igvPorcentaje: 18 };
+    expect(totalesDelDocumento({ ...base, detalle: [{ afectoIgv: false }] }).map((f) => f.etiqueta)).toEqual(['Total']);
+    expect(documentoLlevaIgv({ igvPorcentaje: 18, detalle: [{ afectoIgv: false }] })).toBe(false);
+    expect(documentoLlevaIgv({ igvPorcentaje: 18, detalle: [{ afectoIgv: false }, { afectoIgv: true }] })).toBe(true);
+    expect(documentoLlevaIgv({ igvPorcentaje: 0, detalle: [{ afectoIgv: true }] })).toBe(false);
   });
 });
 

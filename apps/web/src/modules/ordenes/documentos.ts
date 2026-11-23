@@ -61,11 +61,18 @@ export function filasDelDocumento(detalle: readonly LineaDePedidoDto[], conPreci
     });
 }
 
+/**
+ * Si el documento habla del IGV: el pedido lo lleva (porcentaje > 0) y al menos una línea está afecta. Un pedido con IGV
+ * pero con todas sus líneas no afectas no cobra nada de IGV, así que no se desglosa ni se menciona.
+ */
+export const documentoLlevaIgv = (p: Pick<PedidoCompletoDto, 'igvPorcentaje'> & { detalle?: readonly Pick<PedidoCompletoDto['detalle'][number], 'afectoIgv'>[] }): boolean =>
+  p.igvPorcentaje > 0 && (p.detalle === undefined || p.detalle.some((l) => l.afectoIgv));
+
 /** Subtotal, IGV con su porcentaje y total, tal como los calculó el servidor; sin IGV, solo el total. */
-export function totalesDelDocumento(p: Pick<PedidoCompletoDto, 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos' | 'igvPorcentaje'>): FilaDeTotal[] {
+export function totalesDelDocumento(p: Pick<PedidoCompletoDto, 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos' | 'igvPorcentaje'> & { detalle?: readonly Pick<PedidoCompletoDto['detalle'][number], 'afectoIgv'>[] }): FilaDeTotal[] {
   const filas = filasDeTotales({ subtotal: p.subtotalCentimos, igv: p.igvCentimos, total: p.totalCentimos }, p.igvPorcentaje / 100);
-  // Sin IGV (no se factura): solo el total, sin desglose.
-  return p.igvPorcentaje > 0 ? filas : filas.filter((f) => f.destacado);
+  // Sin IGV (no se factura, o ninguna línea es afecta): solo el total, sin desglose.
+  return documentoLlevaIgv(p) ? filas : filas.filter((f) => f.destacado);
 }
 
 /** Lo que el cliente ya dejó a cuenta del pedido, tomado de su deuda en Finanzas. */
