@@ -13,7 +13,7 @@
     "web": {
       "root": "apps/web",
       "framework": "vite",
-      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter web build",
+      "buildCommand": "pnpm --filter @capaz/shared build && pnpm --filter web build && mv dist/index.html dist/app.html && cp dist/presentacion/index.html dist/index.html",
       "headers": [
         {
           "source": "/assets/(.*)",
@@ -28,18 +28,11 @@
       "rewrites": [
         {
           "source": "/((?!assets/).*)",
-          "destination": "/index.html"
+          "destination": "/app.html"
         }
       ]
     }
   },
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/presentacion/",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
