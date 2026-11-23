@@ -44,11 +44,15 @@ export function filasDelDocumento(lineas: CotizacionCompletaDto['lineas']): Fila
 /** Subtotal, IGV y total de la versión; sin total general cuando las líneas son opciones. */
 export function totalesDelDocumento(c: Pick<CotizacionCompletaDto, 'conOpciones' | 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos' | 'igvPorcentaje'>): FilaDeTotal[] | undefined {
   if (c.conOpciones) return undefined;
-  return filasDeTotales({ subtotal: c.subtotalCentimos, igv: c.igvCentimos, total: c.totalCentimos }, c.igvPorcentaje / 100);
+  const filas = filasDeTotales({ subtotal: c.subtotalCentimos, igv: c.igvCentimos, total: c.totalCentimos }, c.igvPorcentaje / 100);
+  // Sin IGV (no se factura): solo el total, sin desglose.
+  return c.igvPorcentaje > 0 ? filas : filas.filter((f) => f.destacado);
 }
 
-export const textoDeOpciones = 'Estas líneas son opciones: puedes elegir una o varias. El importe de cada una ya incluye su IGV en la última columna.';
-export const textoDeIgv = (igvPorcentaje: number): string => (igvPorcentaje > 0 ? `Precios sin IGV; el IGV (${igvPorcentaje} %) se suma en cada línea.` : 'Operación sin IGV.');
+export const textoDeOpciones = (igvPorcentaje: number): string =>
+  `Estas líneas son opciones: puedes elegir una o varias.${igvPorcentaje > 0 ? ' El importe de cada una ya incluye su IGV en la última columna.' : ''}`;
+/** Aviso del IGV al pie; sin IGV (no se factura) no se dice nada. */
+export const textoDeIgv = (igvPorcentaje: number): string => (igvPorcentaje > 0 ? `Precios sin IGV; el IGV (${igvPorcentaje} %) se suma en cada línea.` : '');
 
 /** Condiciones con texto, en el orden en que se leen. Las vacías no salen. */
 export function condicionesParaDocumento(c: Pick<CotizacionCompletaDto, 'condiciones' | 'validaHasta'>): Array<{ etiqueta: string; valor: string }> {

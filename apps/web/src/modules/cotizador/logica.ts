@@ -148,7 +148,7 @@ export const tituloDeCotizacionRapida = (lista: Pick<ListaDePrecioDto, 'nombre'>
   (cliente ? `${lista.nombre} · ${cliente}` : lista.nombre).slice(0, 200);
 
 /** Con lista (de producto o heredada) la línea es de lista y el servidor calcula el precio; con precio de catálogo, manual con su `productoId`. */
-export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null, ajuste?: AjusteDePrecio): EntradaDe<'cotizacion_crear'> {
+export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cantidadMilesimas: number, cliente: { id: string; nombre: string } | null, ajuste?: AjusteDePrecio, conIgv = false): EntradaDe<'cotizacion_crear'> {
   const conAjuste = ajuste && ajuste.tipo !== 'ninguno' ? { ajuste } : {};
   const linea: LineaDeCotizacionEntrada = elegido.origen === 'lista' && elegido.listaId ? { tipo: 'lista', listaId: elegido.listaId, cantidadMilesimas, ...conAjuste } : lineaManualDeCatalogo(elegido, cantidadMilesimas);
   return {
@@ -156,6 +156,7 @@ export function argumentosDeCotizacionRapida(elegido: ProductoCotizableDto, cant
     ...(cliente && { clienteId: cliente.id }),
     lineas: [linea],
     conOpciones: false,
+    conIgv,
   };
 }
 

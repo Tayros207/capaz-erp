@@ -9,6 +9,7 @@ import { PreciosIntermedios } from './precios-intermedios.tsx';
 /** El precio de la cantidad pedida: importe, IGV y total; insignias y avisos de lo que lo explica; y la tabla por cantidad. */
 export function ResultadoRapido({ precio }: { precio: PrecioConsultadoDto }) {
   const avisos = avisosDeRapida(precio);
+  const conIgv = precio.igvPorcentaje > 0;
   const ajustado = precio.importeCentimos !== precio.precioListaCentimos;
   return (
     <section aria-label="Resultado" className="flex flex-col gap-3">
@@ -19,10 +20,10 @@ export function ResultadoRapido({ precio }: { precio: PrecioConsultadoDto }) {
         {avisos.estimacion ? <Insignia tono="aviso">Precio estimado</Insignia> : null}
       </div>
       <GrupoDeCifras etiqueta="Precio de esta cantidad">
-        <Cifra etiqueta="Precio (sin IGV)" valor={soles(precio.importeCentimos)} ayuda={ajustado ? `Precio de lista: ${soles(precio.precioListaCentimos)}` : undefined} />
-        <Cifra etiqueta={`IGV (${precio.igvPorcentaje} %)`} valor={soles(precio.igvCentimos)} />
-        <Cifra etiqueta="Total" valor={soles(precio.totalCentimos)} tono="exito" />
-        <Cifra etiqueta={`Cada ${precio.unidad}`} valor={`S/ ${milesimasATexto(precio.precioUnitarioMilesimas)}`} ayuda="Sin IGV · informativo" />
+        <Cifra etiqueta={conIgv ? 'Precio (sin IGV)' : 'Precio'} valor={soles(precio.importeCentimos)} ayuda={ajustado ? `Precio de lista: ${soles(precio.precioListaCentimos)}` : undefined} />
+        {conIgv ? <Cifra etiqueta={`IGV (${precio.igvPorcentaje} %)`} valor={soles(precio.igvCentimos)} /> : null}
+        {conIgv ? <Cifra etiqueta="Total" valor={soles(precio.totalCentimos)} tono="exito" /> : null}
+        <Cifra etiqueta={`Cada ${precio.unidad}`} valor={`S/ ${milesimasATexto(precio.precioUnitarioMilesimas)}`} ayuda={conIgv ? 'Sin IGV · informativo' : 'Informativo'} />
       </GrupoDeCifras>
       <ul className="flex flex-col gap-1 text-sm text-texto-suave">
         {precio.ajusteClientePct ? <li>Incluye el ajuste del cliente ({precio.ajusteClientePct} %).</li> : null}
@@ -31,7 +32,7 @@ export function ResultadoRapido({ precio }: { precio: PrecioConsultadoDto }) {
         {avisos.cambiaPorTramos ? <li role="note">{TEXTO_DE_TRAMOS}</li> : null}
         <li>{TEXTO_DE_UNITARIO}</li>
       </ul>
-      <PreciosIntermedios tabla={precio.tabla} cantidadActual={precio.cantidadMilesimas} />
+      <PreciosIntermedios tabla={precio.tabla} cantidadActual={precio.cantidadMilesimas} conIgv={conIgv} />
     </section>
   );
 }

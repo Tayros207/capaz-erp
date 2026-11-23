@@ -55,11 +55,11 @@ describe('cotización rápida', () => {
   });
   it('arma la cotización con una línea de la lista y lleva a su ficha', () => {
     const deLista: ProductoCotizableDto = { productoId: 'p1', listaId: 'l1', nombre: 'Volantes', unidad: 'millar', origen: 'lista', lista: lista() };
-    expect(argumentosDeCotizacionRapida(deLista, 2_500_000, null)).toEqual({ titulo: 'Volantes', lineas: [{ tipo: 'lista', listaId: 'l1', cantidadMilesimas: 2_500_000 }], conOpciones: false });
+    expect(argumentosDeCotizacionRapida(deLista, 2_500_000, null)).toEqual({ titulo: 'Volantes', lineas: [{ tipo: 'lista', listaId: 'l1', cantidadMilesimas: 2_500_000 }], conOpciones: false, conIgv: false });
     expect(argumentosDeCotizacionRapida(deLista, 100_000, { id: 'c1', nombre: 'Imprenta Sol' })).toMatchObject({ titulo: 'Volantes · Imprenta Sol', clienteId: 'c1' });
     const deCatalogo: ProductoCotizableDto = { productoId: 'p2', listaId: null, nombre: 'Banner', unidad: 'm²', origen: 'catalogo', precioCatalogoSinIgvMilesimas: 25_000, afectoIgv: true };
     expect(argumentosDeCotizacionRapida(deCatalogo, 3_000, null)).toEqual({
-      titulo: 'Banner', lineas: [{ tipo: 'manual', productoId: 'p2', descripcion: 'Banner', unidad: 'm²', cantidadMilesimas: 3_000, precioUnitarioMilesimas: 25_000 }], conOpciones: false,
+      titulo: 'Banner', lineas: [{ tipo: 'manual', productoId: 'p2', descripcion: 'Banner', unidad: 'm²', cantidadMilesimas: 3_000, precioUnitarioMilesimas: 25_000 }], conOpciones: false, conIgv: false,
     });
     const heredada: ProductoCotizableDto = { productoId: null, listaId: 'l9', nombre: 'Troquel', unidad: 'unidad', origen: 'lista', lista: lista({ id: 'l9' }) };
     expect(argumentosDeCotizacionRapida(heredada, 100_000, null).lineas).toEqual([{ tipo: 'lista', listaId: 'l9', cantidadMilesimas: 100_000 }]);

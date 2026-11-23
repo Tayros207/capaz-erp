@@ -25,6 +25,7 @@ export function useCotizacionRapida() {
   const [cantidad, setCantidad] = useState<number | null>(null);
   const [ajuste, setAjuste] = useState<AjusteDeFormulario>(SIN_AJUSTE);
   const [creando, setCreando] = useState(false);
+  const [conIgv, setConIgv] = useState(false);
 
   // Desde una ficha de cliente se llega con `?cliente=<id>`: el cliente ya viene puesto.
   const clienteDeRuta = parametros.get('cliente');
@@ -45,8 +46,8 @@ export function useCotizacionRapida() {
   const errorDeCantidad = cantidad === null || !elegido ? undefined : esLista ? validarCantidadRapida(cantidad) : validarCantidadDeCatalogo(cantidad);
   const consultable = esLista && cantidadConsultada !== null && cantidadConsultada === cantidad && validarCantidadRapida(cantidadConsultada) === undefined;
   const precio = useQuery({
-    queryKey: [...CLAVE_COTIZADOR, 'precio', elegido?.listaId, cliente?.id ?? null, cantidadConsultada, ajusteConsultado],
-    queryFn: async () => datosOError(await consultarPrecio({ listaId: elegido?.listaId ?? '', cantidadMilesimas: cantidadConsultada ?? 0, ...(cliente && { clienteId: cliente.id }), ajuste: ajusteConsultado })),
+    queryKey: [...CLAVE_COTIZADOR, 'precio', elegido?.listaId, cliente?.id ?? null, cantidadConsultada, ajusteConsultado, conIgv],
+    queryFn: async () => datosOError(await consultarPrecio({ listaId: elegido?.listaId ?? '', cantidadMilesimas: cantidadConsultada ?? 0, ...(cliente && { clienteId: cliente.id }), ajuste: ajusteConsultado, conIgv })),
     enabled: consultable,
     retry: false,
     placeholderData: (anterior) => anterior,
@@ -59,7 +60,7 @@ export function useCotizacionRapida() {
   async function crear(emitir: boolean) {
     if (!elegido || cantidad === null || !puedeCrear) return;
     setCreando(true);
-    const r = await crearCotizacion(argumentosDeCotizacionRapida(elegido, cantidad, cliente, esLista ? ajusteParaEnviar(ajuste) : undefined));
+    const r = await crearCotizacion(argumentosDeCotizacionRapida(elegido, cantidad, cliente, esLista ? ajusteParaEnviar(ajuste) : undefined, conIgv));
     setCreando(false);
     if (!r.ok || !('datos' in r)) return void ('error' in r && notificar(mensajeDeRechazo(r.error.codigo, r.error.mensaje), 'error'));
     const id = r.datos.id;
@@ -73,5 +74,5 @@ export function useCotizacionRapida() {
   }
   const elegirProducto = (p: ProductoCotizableDto | null) => { setElegido(p); setCantidad(null); setAjuste(SIN_AJUSTE); };
 
-  return { elegido, setElegido, elegirProducto, cliente, setCliente, cantidad, setCantidad, ajuste, setAjuste, creando, esLista, esCatalogo, consultable, precio, configuracion, errorDeCantidad, errorDeAjuste, puedeCrear, crear };
+  return { conIgv, setConIgv, elegido, setElegido, elegirProducto, cliente, setCliente, cantidad, setCantidad, ajuste, setAjuste, creando, esLista, esCatalogo, consultable, precio, configuracion, errorDeCantidad, errorDeAjuste, puedeCrear, crear };
 }

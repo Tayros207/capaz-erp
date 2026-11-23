@@ -19,7 +19,7 @@ import { CLAVE_COTIZADOR } from './claves.ts';
 import { formatearDia } from './documento-cotizacion.ts';
 import { AvisoDePrecios } from './aviso-de-precios.tsx';
 import { CajaEmitida } from './caja-emitida.tsx';
-import { COLUMNAS_DE_LINEAS } from './ficha-lineas.tsx';
+import { columnasDeLineas } from './ficha-lineas.tsx';
 import { HistorialDeCotizacion } from './ficha-historial.tsx';
 import { HojaPreciosDeHoy } from './hoja-precios-de-hoy.tsx';
 import { HojaAceptar } from './hoja-aceptar.tsx';
@@ -165,10 +165,10 @@ function Contenido({ c }: { c: CotizacionCompletaDto }) {
       <ResumenDelCuadro c={c} />
       <section aria-label="Líneas de la cotización" className="flex flex-col gap-2">
         <h2 className="font-titulo font-semibold text-texto">Líneas</h2>
-        <Lista etiqueta="Líneas de la cotización" columnas={COLUMNAS_DE_LINEAS} filas={c.lineas} clave={(l) => String(l.posicion)} vacio={<EstadoVacio titulo="Sin líneas todavía" descripcion="Edita el borrador para agregarlas." icono="caja" />} />
+        <Lista etiqueta="Líneas de la cotización" columnas={columnasDeLineas(c.igvPorcentaje > 0)} filas={c.lineas} clave={(l) => String(l.posicion)} vacio={<EstadoVacio titulo="Sin líneas todavía" descripcion="Edita el borrador para agregarlas." icono="caja" />} />
         <GrupoDeCifras etiqueta="Totales de la cotización">
-          <Cifra etiqueta="Subtotal" valor={soles(c.subtotalCentimos)} />
-          <Cifra etiqueta={`IGV ${c.igvPorcentaje} %`} valor={soles(c.igvCentimos)} />
+          {c.igvPorcentaje > 0 ? <Cifra etiqueta="Subtotal" valor={soles(c.subtotalCentimos)} /> : null}
+          {c.igvPorcentaje > 0 ? <Cifra etiqueta={`IGV ${c.igvPorcentaje} %`} valor={soles(c.igvCentimos)} /> : null}
           <Cifra etiqueta="Total" valor={soles(c.totalCentimos)} ayuda={c.conOpciones ? 'Suma de las opciones: no es un total a cobrar.' : undefined} />
         </GrupoDeCifras>
       </section>

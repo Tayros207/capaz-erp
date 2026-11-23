@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CotizacionCompletaDto } from '@capaz/shared';
-import { condicionesParaDocumento, enlaceDeWhatsApp, filasDelDocumento, mensajeDeWhatsApp, precioQueCuadra, telefonoParaWhatsApp, totalesDelDocumento } from './documento-cotizacion.ts';
+import { condicionesParaDocumento, enlaceDeWhatsApp, filasDelDocumento, mensajeDeWhatsApp, precioQueCuadra, telefonoParaWhatsApp, textoDeIgv, textoDeOpciones, totalesDelDocumento } from './documento-cotizacion.ts';
 
 const linea = (posicion: number, extra = {}) => ({
   posicion, tipo: 'manual', productoId: null, listaId: null, descripcion: `L${posicion}`, unidad: 'millar', cantidadMilesimas: 2500, precioUnitarioMilesimas: 138_552, importeCentimos: 34_638, igvCentimos: 6235, totalCentimos: 40_873, ...extra,
@@ -20,6 +20,14 @@ describe('documento Cotización', () => {
     const t = totalesDelDocumento({ conOpciones: false, subtotalCentimos: 34_638, igvCentimos: 6235, totalCentimos: 40_873, igvPorcentaje: 18 });
     expect(t?.map((x) => [x.etiqueta, x.valor])).toEqual([['Subtotal', 'S/ 346.38'], ['IGV (18%)', 'S/ 62.35'], ['Total', 'S/ 408.73']]);
     expect(totalesDelDocumento({ conOpciones: true, subtotalCentimos: 1, igvCentimos: 1, totalCentimos: 2, igvPorcentaje: 18 })).toBeUndefined();
+  });
+  it('sin IGV (no se factura) el documento solo muestra el total y no dice nada del IGV', () => {
+    const t = totalesDelDocumento({ conOpciones: false, subtotalCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000, igvPorcentaje: 0 });
+    expect(t?.map((x) => x.etiqueta)).toEqual(['Total']);
+    expect(textoDeIgv(0)).toBe('');
+    expect(textoDeOpciones(0)).not.toMatch(/IGV/);
+    expect(textoDeIgv(18)).toMatch(/18 %/);
+    expect(textoDeOpciones(18)).toMatch(/IGV/);
   });
   it('condiciones: solo las que tienen texto', () => {
     const c = condicionesParaDocumento({ validaHasta: '2026-12-01', condiciones: { validezDias: 15, plazoEntrega: '5 días', formaPago: '', tolerancia: '  ', noIncluye: 'Flete' } });

@@ -23,10 +23,11 @@ function Descripcion({ l }: { l: Linea }) {
   );
 }
 
-export const COLUMNAS_DE_LINEAS: Array<Columna<Linea>> = [
+/** Las columnas de las líneas: sin IGV no hay «Total con IGV» y el precio no aclara «sin IGV». */
+export const columnasDeLineas = (conIgv: boolean): Array<Columna<Linea>> => [
   { id: 'descripcion', titulo: 'Descripción', principal: true, celda: (l) => <Descripcion l={l} /> },
   { id: 'cantidad', titulo: 'Cantidad', alinear: 'derecha', celda: (l) => formatearCantidad(l.cantidadMilesimas, l.unidad) },
-  { id: 'precio', titulo: 'Cada una (sin IGV)', alinear: 'derecha', celda: (l) => `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}` },
+  { id: 'precio', titulo: conIgv ? 'Cada una (sin IGV)' : 'Cada una', alinear: 'derecha', celda: (l) => `S/ ${milesimasATexto(l.precioUnitarioMilesimas)}` },
   { id: 'importe', titulo: 'Importe', alinear: 'derecha', celda: (l) => soles(l.importeCentimos) },
-  { id: 'total', titulo: 'Total con IGV', alinear: 'derecha', celda: (l) => soles(l.totalCentimos) },
+  ...(conIgv ? [{ id: 'total', titulo: 'Total con IGV', alinear: 'derecha' as const, celda: (l: Linea) => soles(l.totalCentimos) }] : []),
 ];

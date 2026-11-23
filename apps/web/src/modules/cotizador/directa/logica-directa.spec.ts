@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { milesimasATextoPlano } from '../../../shared/api/logica-precio-anterior.ts';
-import { alEnterEnImporte, argumentosDeHojaDirecta, calcularFila, condicionesIniciales, filaVacia, opcionesDeUnidad, opcionesDeValidez, precioLeido, quitarFila, tituloDeHoja, totalesDeHoja, usarPrecioAnterior, validarHoja, type FilaDirecta, type HojaDirecta } from './logica-directa.ts';
+import { alEnterEnImporte, argumentosDeHojaDirecta, calcularFila, condicionesIniciales, filaVacia, igvDeLaHojaDirecta, opcionesDeUnidad, opcionesDeValidez, precioLeido, quitarFila, tituloDeHoja, totalesDeHoja, usarPrecioAnterior, validarHoja, type FilaDirecta, type HojaDirecta } from './logica-directa.ts';
 
 const fila = (extra: Partial<FilaDirecta> = {}): FilaDirecta => ({ ...filaVacia('a'), descripcion: 'Volantes', cantidad: '1.000', precio: '0,42', ...extra });
-const hoja = (extra: Partial<HojaDirecta> = {}): HojaDirecta => ({ cliente: { id: 'c1', nombre: 'Sol' }, referencia: '', filas: [fila()], incluyeIgv: false, validezDias: 15, plazoEntrega: '', formaPago: '', ...extra });
+const hoja = (extra: Partial<HojaDirecta> = {}): HojaDirecta => ({ cliente: { id: 'c1', nombre: 'Sol' }, referencia: '', filas: [fila()], conIgv: false, incluyeIgv: false, validezDias: 15, plazoEntrega: '', formaPago: '', ...extra });
 const config = (c: Partial<{ validezDias: number | null; plazoEntrega: string; formaPago: string }>, unidades: string[] = []) =>
   ({ condiciones: { validezDias: null, plazoEntrega: '', formaPago: '', tolerancia: '', noIncluye: '', ...c }, unidades });
 
@@ -122,8 +122,15 @@ describe('argumentosDeHojaDirecta', () => {
     expect(tituloDeHoja(hoja())).toBe('Volantes');
     expect(tituloDeHoja(hoja({ filas: [fila({ descripcion: 'x'.repeat(300) })] }))).toHaveLength(200);
   });
+  it('sin IGV la hoja no lo manda ni lo cobra, aunque «precios con IGV» haya quedado marcado', () => {
+    const a = argumentosDeHojaDirecta(hoja({ conIgv: false, incluyeIgv: true }));
+    expect(a.conIgv).toBe(false);
+    expect(a.preciosIncluyenIgv).toBe(false);
+    expect(igvDeLaHojaDirecta({ conIgv: false })).toBe(0);
+    expect(igvDeLaHojaDirecta({ conIgv: true })).toBe(18);
+  });
   it('cada línea lleva importeCentimos y el unitario; las vacías no viajan; condiciones y flag', () => {
-    const a = argumentosDeHojaDirecta(hoja({ incluyeIgv: true, plazoEntrega: ' 3 días ', filas: [fila(), fila({ clave: 'b', cantidad: '7', precio: '', importe: '100', manda: 'importe', unidad: 'millar' }), filaVacia('c')] }));
+    const a = argumentosDeHojaDirecta(hoja({ conIgv: true, incluyeIgv: true, plazoEntrega: ' 3 días ', filas: [fila(), fila({ clave: 'b', cantidad: '7', precio: '', importe: '100', manda: 'importe', unidad: 'millar' }), filaVacia('c')] }));
     expect(a).toEqual({
       titulo: 'Volantes',
       clienteId: 'c1',
@@ -131,6 +138,7 @@ describe('argumentosDeHojaDirecta', () => {
         { tipo: 'manual', descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1_000_000, importeCentimos: 42_000, precioUnitarioMilesimas: 420 },
         { tipo: 'manual', descripcion: 'Volantes', unidad: 'millar', cantidadMilesimas: 7_000, importeCentimos: 10_000, precioUnitarioMilesimas: 14_286 },
       ],
+      conIgv: true,
       preciosIncluyenIgv: true,
       condiciones: { validezDias: 15, plazoEntrega: '3 días', formaPago: '' },
     });

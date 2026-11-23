@@ -86,6 +86,13 @@ function Contenido({ id, inicial, puedeVerCostos, alGuardar, alCerrar }: Omit<Pr
         {errores.lineas ? <p role="alert" className="text-sm font-medium text-peligro">{errores.lineas}</p> : null}
         <p className="text-sm text-texto-suave">Los precios y totales los calcula el sistema al guardar.</p>
       </section>
+      <label className="flex w-fit min-h-11 cursor-pointer items-center gap-2">
+        <input type="checkbox" checked={f.conIgv} onChange={(e) => poner('conIgv', e.target.checked)} className="size-5 cursor-pointer accent-accion" />
+        <span className="flex flex-col">
+          <span className="font-medium text-texto">Con IGV (se factura)</span>
+          <span className="text-sm text-texto-suave">Actívalo solo si vas a emitir factura: los precios se escriben sin IGV y se suma el 18 %. Apagado, el IGV no se muestra.</span>
+        </span>
+      </label>
       <CampoSelect etiqueta="Las líneas son" value={f.conOpciones ? 'opciones' : 'juntas'} onChange={(e) => poner('conOpciones', e.target.value === 'opciones')}>
         <option value="juntas">Un solo trabajo (se suman)</option>
         <option value="opciones">Opciones para elegir (no se suman)</option>
@@ -110,6 +117,7 @@ function Contenido({ id, inicial, puedeVerCostos, alGuardar, alCerrar }: Omit<Pr
         linea={abierta?.linea ?? null}
         esNueva={abierta?.esNueva ?? true}
         clienteId={f.cliente?.id ?? null}
+        conIgv={f.conIgv}
         alGuardar={guardarLinea}
         alQuitar={() => { if (abierta) poner('lineas', f.lineas.filter((x) => x.clave !== abierta.linea.clave)); setAbierta(null); }}
         alCerrar={() => setAbierta(null)}

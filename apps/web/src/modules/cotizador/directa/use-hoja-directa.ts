@@ -10,7 +10,7 @@ import { crearCotizacion, verConfiguracion } from '../api.ts';
 import { CLAVE_COTIZADOR } from '../claves.ts';
 import { mensajeDeRechazo } from '../logica.ts';
 import { argumentosDeEmision, rutaDeFicha } from '../logica-cotizaciones.ts';
-import { argumentosDeHojaDirecta, condicionesIniciales, filaVacia, IGV_POR_DEFECTO, validarHoja, type HojaDirecta } from './logica-directa.ts';
+import { argumentosDeHojaDirecta, condicionesIniciales, filaVacia, igvDeLaHojaDirecta, validarHoja, type HojaDirecta } from './logica-directa.ts';
 
 /** El estado de la hoja Directa: lo escrito, las condiciones de Ajustes (una sola vez) y el camino crear → emitir. */
 export function useHojaDirecta() {
@@ -19,7 +19,7 @@ export function useHojaDirecta() {
   const contador = useRef(0);
   const nuevaClave = () => `f${(contador.current += 1)}`;
   const config = useQuery({ queryKey: [...CLAVE_COTIZADOR, 'configuracion'], queryFn: async () => datosOError(await verConfiguracion()), retry: false });
-  const [hoja, setHoja] = useState<HojaDirecta>(() => ({ cliente: null, referencia: '', filas: [filaVacia('f0')], incluyeIgv: false, ...condicionesIniciales(undefined) }));
+  const [hoja, setHoja] = useState<HojaDirecta>(() => ({ cliente: null, referencia: '', filas: [filaVacia('f0')], conIgv: false, incluyeIgv: false, ...condicionesIniciales(undefined) }));
   const [verErrores, setVerErrores] = useState(false);
   const [emitiendo, setEmitiendo] = useState(false);
   const [emitida, setEmitida] = useState<CotizacionCompletaDto | null>(null);
@@ -28,7 +28,6 @@ export function useHojaDirecta() {
   // Las condiciones de Ajustes se copian una sola vez y solo si la persona no las tocó antes de que llegaran.
   const condicionesTocadas = useRef(false);
   const condicionesCopiadas = useRef(false);
-  const igv = config.data?.igvPorcentaje ?? IGV_POR_DEFECTO;
 
   useEffect(() => {
     if (!config.data || condicionesCopiadas.current) return;
@@ -38,8 +37,10 @@ export function useHojaDirecta() {
 
   function cambiar(cambio: Partial<HojaDirecta>) {
     if ('validezDias' in cambio || 'plazoEntrega' in cambio || 'formaPago' in cambio) condicionesTocadas.current = true;
-    setHoja((h) => ({ ...h, ...cambio }));
+    // Sin IGV no hay «precios con IGV»: apagar el IGV apaga también esa casilla.
+    setHoja((h) => ({ ...h, ...cambio, ...('conIgv' in cambio && !cambio.conIgv && { incluyeIgv: false }) }));
   }
+  const igv = igvDeLaHojaDirecta(hoja);
   const validacion = validarHoja(hoja, igv);
 
   async function emitir() {
@@ -73,7 +74,7 @@ export function useHojaDirecta() {
 
   function nuevaHoja() {
     condicionesTocadas.current = false;
-    setHoja({ cliente: null, referencia: '', filas: [filaVacia(nuevaClave())], incluyeIgv: false, ...condicionesIniciales(config.data) });
+    setHoja({ cliente: null, referencia: '', filas: [filaVacia(nuevaClave())], conIgv: false, incluyeIgv: false, ...condicionesIniciales(config.data) });
     setVerErrores(false);
     setEmitida(null);
   }

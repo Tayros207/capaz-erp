@@ -25,16 +25,16 @@ import { opcionDeProducto } from './logica-catalogo.ts';
 import { ajusteParaEnviar } from './logica-precio.ts';
 import { validarLinea, type ErroresDeLinea, type LineaDeFormulario } from './logica-cotizaciones.ts';
 
-type Props = { linea: LineaDeFormulario; esNueva: boolean; clienteId: string | null; alGuardar: (l: LineaDeFormulario) => void; alQuitar: () => void; alCerrar: () => void };
+type Props = { linea: LineaDeFormulario; esNueva: boolean; clienteId: string | null; conIgv: boolean; alGuardar: (l: LineaDeFormulario) => void; alQuitar: () => void; alCerrar: () => void };
 
 /** El precio de una línea de lista lo calcula el servidor (`precio_consultar`); aquí solo se muestra. */
-function PrecioDeLista({ l, clienteId }: { l: LineaDeFormulario; clienteId: string | null }) {
+function PrecioDeLista({ l, clienteId, conIgv }: { l: LineaDeFormulario; clienteId: string | null; conIgv: boolean }) {
   const cantidad = useRetardo(l.cantidadMilesimas);
   const ajuste = JSON.parse(useRetardo(JSON.stringify(ajusteParaEnviar(l.ajuste)))) as AjusteEnviado;
   const listo = l.lista !== null && cantidad !== null && cantidad === l.cantidadMilesimas && cantidad > 0;
   const q = useQuery({
-    queryKey: [...CLAVE_COTIZADOR, 'precio-linea', l.lista?.id, clienteId, cantidad, ajuste],
-    queryFn: async () => datosOError(await consultarPrecio({ listaId: l.lista?.id ?? '', cantidadMilesimas: cantidad ?? 0, ...(clienteId && { clienteId }), ajuste })),
+    queryKey: [...CLAVE_COTIZADOR, 'precio-linea', l.lista?.id, clienteId, cantidad, ajuste, conIgv],
+    queryFn: async () => datosOError(await consultarPrecio({ listaId: l.lista?.id ?? '', cantidadMilesimas: cantidad ?? 0, ...(clienteId && { clienteId }), ajuste, conIgv })),
     enabled: listo,
     retry: false,
   });
@@ -43,13 +43,13 @@ function PrecioDeLista({ l, clienteId }: { l: LineaDeFormulario; clienteId: stri
   if (q.isError) return <p role="alert" className="text-sm font-medium text-peligro">{q.error.message}</p>;
   return (
     <GrupoDeCifras etiqueta="Precio de esta línea">
-      <Cifra etiqueta="Precio (sin IGV)" valor={soles(q.data.importeCentimos)} ayuda={`Cada ${q.data.unidad}: S/ ${milesimasATexto(q.data.precioUnitarioMilesimas)}${q.data.importeCentimos !== q.data.precioListaCentimos ? ` · Precio de lista: ${soles(q.data.precioListaCentimos)}` : ''}`} />
-      <Cifra etiqueta={`Total con IGV (${q.data.igvPorcentaje} %)`} valor={soles(q.data.totalCentimos)} />
+      <Cifra etiqueta={conIgv ? 'Precio (sin IGV)' : 'Precio'} valor={soles(q.data.importeCentimos)} ayuda={`Cada ${q.data.unidad}: S/ ${milesimasATexto(q.data.precioUnitarioMilesimas)}${q.data.importeCentimos !== q.data.precioListaCentimos ? ` · Precio de lista: ${soles(q.data.precioListaCentimos)}` : ''}`} />
+      {conIgv ? <Cifra etiqueta={`Total con IGV (${q.data.igvPorcentaje} %)`} valor={soles(q.data.totalCentimos)} /> : null}
     </GrupoDeCifras>
   );
 }
 
-function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }: Props) {
+function Contenido({ linea, esNueva, clienteId, conIgv, alGuardar, alQuitar, alCerrar }: Props) {
   const unidadesDeLaEmpresa = useUnidadesDeLaEmpresa();
   const [l, setL] = useState(linea);
   const [errores, setErrores] = useState<ErroresDeLinea>({});
@@ -118,7 +118,7 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
         {l.tipo === 'manual' ? (
           <>
             <CampoUnidad unidadesDeLaEmpresa={unidadesDeLaEmpresa} valor={l.unidad} alCambiar={(u) => { setUnidadElegida(true); setL((a) => ({ ...a, unidad: u })); }} />
-            <CampoPrecio etiqueta="Precio unitario" valor={l.precioUnitarioMilesimas} error={errores.precio} ayuda="Sin IGV." alCambiar={(v) => setL((a) => ({ ...a, precioUnitarioMilesimas: v }))} />
+            <CampoPrecio etiqueta="Precio unitario" valor={l.precioUnitarioMilesimas} error={errores.precio} {...(conIgv && { ayuda: 'Sin IGV.' })} alCambiar={(v) => setL((a) => ({ ...a, precioUnitarioMilesimas: v }))} />
           </>
         ) : null}
       </div>
@@ -133,7 +133,7 @@ function Contenido({ linea, esNueva, clienteId, alGuardar, alQuitar, alCerrar }:
         />
       ) : null}
       {l.tipo === 'lista' && l.lista ? <AjusteDePrecio ajuste={l.ajuste} error={errores.ajuste} alCambiar={(ajuste) => setL((a) => ({ ...a, ajuste }))} /> : null}
-      {l.tipo === 'lista' ? <PrecioDeLista l={l} clienteId={clienteId} /> : null}
+      {l.tipo === 'lista' ? <PrecioDeLista l={l} clienteId={clienteId} conIgv={conIgv} /> : null}
       <div className="flex flex-wrap justify-end gap-2">
         {esNueva ? null : <Boton variante="peligro" onClick={alQuitar}>Quitar línea</Boton>}
         <Boton variante="fantasma" onClick={alCerrar}>Cancelar</Boton>

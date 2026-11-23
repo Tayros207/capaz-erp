@@ -10,6 +10,8 @@ import { alcanceDeCotizaciones, auditarCotizacion, calcularLineas, CAMPO_ID, com
 
 // Crear y editar (solo en borrador). El servidor recalcula el precio de cada línea de lista: no confía en la pantalla.
 
+/** El IGV de una cotización que se factura. */
+const IGV_CON_FACTURA = 18;
 const SIN_COSTOS = 'Para anotar el costo necesitas el permiso de costos.';
 const CAMPO_LINEAS = {
   nombre: 'lineas',
@@ -31,6 +33,7 @@ export const cotizacionCrear = definirHerramienta('cotizacion_crear', {
       { nombre: 'clienteId', queSeAnota: 'Cliente (obligatorio para emitirla; si lo pones, se aplica su ajuste de precio).', ejemplo: '0192f0c4-7b1e-7000-8000-000000000001' },
       CAMPO_LINEAS,
       { nombre: 'preciosIncluyenIgv', queSeAnota: 'true si los precios o importes de las líneas manuales ya incluyen IGV: el servidor se lo quita (por defecto false).', ejemplo: 'false' },
+      { nombre: 'conIgv', queSeAnota: 'true si la cotización se factura y lleva IGV; false para una cotización sin IGV, sin desglose (sin dato, el IGV de la configuración).', ejemplo: 'false' },
       { nombre: 'conOpciones', queSeAnota: 'true si las líneas son alternativas (el documento no suma un total general).', ejemplo: 'false' },
       { nombre: 'costoCentimos', queSeAnota: 'Costo en céntimos (opcional; solo con permiso de costos).', ejemplo: '22515' },
     ],
@@ -45,7 +48,7 @@ export const cotizacionCrear = definirHerramienta('cotizacion_crear', {
     if (args.costoCentimos != null && !veCostos(ctx)) return rechazo('sin_permiso', SIN_COSTOS);
     const falta = await comprobarReferencias(tx, ctx, args);
     if (falta) return rechazo('argumentos_invalidos', falta);
-    const calc = await calcularLineas(tx, ctx, args.lineas, args.clienteId ?? null, undefined, { preciosIncluyenIgv: args.preciosIncluyenIgv });
+    const calc = await calcularLineas(tx, ctx, args.lineas, args.clienteId ?? null, args.conIgv === undefined ? undefined : args.conIgv ? IGV_CON_FACTURA : 0, { preciosIncluyenIgv: args.preciosIncluyenIgv });
     if ('error' in calc) return calc;
     const id = await crearCotizacion(tx, ctx, { titulo: args.titulo, clienteId: args.clienteId ?? null, notas: args.notas || null });
     const costoCentimos = args.costoCentimos ?? null;
@@ -95,14 +98,17 @@ export const cotizacionEditar = definirHerramienta('cotizacion_editar', {
     const version = await versionDe(tx, ctx, c.id, c.versionActual);
     if (!version) throw new Error('La cotización no tiene su versión vigente.');
     // Por partes, las líneas, el costo y las opciones salen del cuadro: se editan con las herramientas cuadro_*.
-    if (version.modo === 'cuadro' && (args.lineas !== undefined || args.costoCentimos !== undefined || args.conOpciones !== undefined)) {
-      return rechazo('conflicto', 'Esta cotización es por partes: sus líneas, su costo y sus opciones salen del cuadro. Edítalo con las herramientas cuadro_*.');
+    if (version.modo === 'cuadro' && (args.lineas !== undefined || args.costoCentimos !== undefined || args.conOpciones !== undefined || args.conIgv !== undefined)) {
+      return rechazo('conflicto', 'Esta cotización es por partes: sus líneas, su costo, su IGV y sus opciones salen del cuadro. Edítalo con las herramientas cuadro_*.');
     }
     const actuales = await lineasDe(tx, ctx, version.id);
     const clienteId = args.clienteId !== undefined ? args.clienteId : c.clienteId;
     const cambiaCliente = args.clienteId !== undefined && args.clienteId !== c.clienteId;
-    const recalcular = args.lineas !== undefined || (cambiaCliente && actuales.some((l) => l.origenPrecio === 'lista'));
-    const calc = recalcular ? await calcularLineas(tx, ctx, args.lineas ?? entradasDe(actuales), clienteId) : null;
+    const cambiaIgv = args.conIgv !== undefined && args.conIgv !== version.igvPorcentaje > 0;
+    const recalcular = args.lineas !== undefined || cambiaIgv || (cambiaCliente && actuales.some((l) => l.origenPrecio === 'lista'));
+    // Al recalcular se conserva el IGV que la cotización ya tiene (o el que se pide), no el de la configuración de hoy.
+    const igv = args.conIgv === undefined ? version.igvPorcentaje : args.conIgv ? IGV_CON_FACTURA : 0;
+    const calc = recalcular ? await calcularLineas(tx, ctx, args.lineas ?? entradasDe(actuales), clienteId, igv) : null;
     if (calc && 'error' in calc) return calc;
     const costoCentimos = args.costoCentimos !== undefined ? args.costoCentimos : version.costoCentimos;
     const subtotal = calc ? calc.totales.subtotalCentimos : version.subtotalCentimos;

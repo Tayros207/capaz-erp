@@ -21,6 +21,7 @@ export const precioConsultar = definirHerramienta('precio_consultar', {
       { nombre: 'listaId', queSeAnota: 'El producto de la lista.', ejemplo: ID_DE_EJEMPLO },
       { nombre: 'cantidadMilesimas', queSeAnota: 'Cantidad en milésimas: 2.500 unidades son 2500000.', ejemplo: '2500000' },
       { nombre: 'clienteId', queSeAnota: 'Cliente cuyo ajuste se aplica (opcional).', ejemplo: ID_DE_EJEMPLO },
+      { nombre: 'conIgv', queSeAnota: 'true para calcular con IGV (se factura); false para calcular sin IGV. Sin dato, el IGV de la configuración.', ejemplo: 'false' },
       { nombre: 'ajuste', queSeAnota: 'ninguno, precio (fija el importe) o monto (suma o resta), solo para esta consulta.', ejemplo: '{"tipo":"ninguno"}' },
     ],
     ejemploTecleado: 'cuánto cuestan 2500 volantes A5',
@@ -34,7 +35,7 @@ export const precioConsultar = definirHerramienta('precio_consultar', {
     if (lista.archivadoEn) return rechazo('conflicto', `La lista «${lista.nombre}» está archivada.`);
     const config = await leerConfiguracion(tx, ctx);
     const redondeo = (config?.redondeoComercial ?? CONFIGURACION_POR_DEFECTO.redondeoComercial) as RedondeoComercial;
-    const igvPorcentaje = config?.igvPorcentaje ?? CONFIGURACION_POR_DEFECTO.igvPorcentaje;
+    const igvPorcentaje = args.conIgv === undefined ? (config?.igvPorcentaje ?? CONFIGURACION_POR_DEFECTO.igvPorcentaje) : args.conIgv ? 18 : 0;
     const ajusteCliente = args.clienteId ? await ajusteDe(tx, ctx, args.clienteId) : null;
     const paraCotizar = { ...lista, modoIntermedio: lista.modoIntermedio as 'curva' | 'escalon' };
     const base = { ajusteClientePct: ajusteCliente?.porcentaje ?? null, redondeo, igvPorcentaje };

@@ -61,10 +61,17 @@ export function PantallaRapida() {
         />
         <SelectorDeRegistro etiqueta="Cliente (opcional)" valor={cliente} alCambiar={r.setCliente} buscar={buscarDeClientes} buscarSinTexto={clientesIniciales} ayuda="Si tiene un precio especial, se aplica." textoSinResultados="Ningún cliente se parece a eso" />
       </div>
+      <label className="flex w-fit min-h-11 cursor-pointer items-center gap-2">
+        <input type="checkbox" checked={r.conIgv} onChange={(e) => r.setConIgv(e.target.checked)} className="size-5 cursor-pointer accent-accion" />
+        <span className="flex flex-col">
+          <span className="font-medium text-texto">Con IGV (se factura)</span>
+          <span className="text-sm text-texto-suave">Actívalo solo si vas a emitir factura. Apagado, el IGV no se muestra.</span>
+        </span>
+      </label>
       {cliente ? <div><ChipDeCliente id={cliente.id} nombre={cliente.nombre} /></div> : null}
       {cliente && elegido && elegido.origen !== 'sin_precio' ? <SugerenciaDePrecio clienteId={cliente.id} productoId={elegido.productoId} descripcion={elegido.nombre} conIgv={false} /> : null}
       {elegido?.origen === 'lista' && elegido.lista ? <PreciosDeLista lista={elegido.lista} /> : null}
-      {r.esCatalogo && elegido ? <PrecioDeCatalogo p={elegido} cantidad={cantidad} igv={r.configuracion.data?.igvPorcentaje} {...(configurar && producto && { alFijar: () => setFijando(true) })} /> : null}
+      {r.esCatalogo && elegido ? <PrecioDeCatalogo p={elegido} cantidad={cantidad} igv={r.conIgv ? 18 : 0} {...(configurar && producto && { alFijar: () => setFijando(true) })} /> : null}
       {elegido?.origen === 'sin_precio' ? (
         <EstadoVacio
           titulo="Este producto no tiene precio"

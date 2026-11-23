@@ -23,7 +23,9 @@ export type HojaDirecta = {
   cliente: ClienteDeHoja | null;
   referencia: string;
   filas: FilaDirecta[];
-  /** `true` si los precios e importes escritos ya incluyen IGV. */
+  /** La cotización se factura: lleva IGV (18 %). Apagado, el IGV no se muestra ni se detalla. */
+  conIgv: boolean;
+  /** `true` si los precios e importes escritos ya incluyen IGV (solo con `conIgv`). */
   incluyeIgv: boolean;
   validezDias: number;
   plazoEntrega: string;
@@ -218,13 +220,18 @@ function lineaDeFila(f: FilaDirecta, c: FilaCalculada): LineaDeCotizacionEntrada
   };
 }
 
-export function argumentosDeHojaDirecta(h: HojaDirecta, igv: number = IGV_POR_DEFECTO): EntradaDe<'cotizacion_crear'> {
-  const lineas = filasCompletas(h.filas, h.incluyeIgv, igv).map((f) => lineaDeFila(f, calcularFila(f, h.incluyeIgv, igv)));
+/** El porcentaje de IGV con que se calcula la hoja: 18 si se factura, 0 si no. */
+export const igvDeLaHojaDirecta = (h: Pick<HojaDirecta, 'conIgv'>): number => (h.conIgv ? IGV_POR_DEFECTO : 0);
+
+export function argumentosDeHojaDirecta(h: HojaDirecta, igv: number = igvDeLaHojaDirecta(h)): EntradaDe<'cotizacion_crear'> {
+  const incluye = h.conIgv && h.incluyeIgv;
+  const lineas = filasCompletas(h.filas, incluye, igv).map((f) => lineaDeFila(f, calcularFila(f, incluye, igv)));
   return {
     titulo: tituloDeHoja(h),
     ...(h.cliente && { clienteId: h.cliente.id }),
     lineas,
-    preciosIncluyenIgv: h.incluyeIgv,
+    conIgv: h.conIgv,
+    preciosIncluyenIgv: incluye,
     condiciones: { validezDias: h.validezDias, plazoEntrega: h.plazoEntrega.trim(), formaPago: h.formaPago.trim() },
   };
 }

@@ -33,7 +33,7 @@ function Contenido({ cotizacion: c, alAceptar, alCerrar }: Omit<Props, 'abierto'
           {c.lineas.map((l) => (
             <li key={l.posicion} className="flex items-center gap-2">
               <CasillaDeSeleccion etiqueta={`Aceptar: ${l.descripcion}`} marcada={elegidas.has(l.posicion)} onCambio={() => alternar(l.posicion)} />
-              <span className="min-w-0 flex-1 break-words text-texto">{l.descripcion}<span className="block text-sm text-texto-suave">{formatearCantidad(l.cantidadMilesimas, l.unidad)} · {soles(l.totalCentimos)} con IGV</span></span>
+              <span className="min-w-0 flex-1 break-words text-texto">{l.descripcion}<span className="block text-sm text-texto-suave">{formatearCantidad(l.cantidadMilesimas, l.unidad)} · {soles(l.totalCentimos)}{c.igvPorcentaje > 0 ? ' con IGV' : ''}</span></span>
             </li>
           ))}
         </ul>

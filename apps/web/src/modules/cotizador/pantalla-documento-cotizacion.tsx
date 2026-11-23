@@ -20,8 +20,8 @@ const COLUMNAS = [
   { clave: 'cantidad', titulo: 'Cantidad', alineacion: 'derecha', ancho: '24mm' },
   { clave: 'precio', titulo: 'P. unitario', alineacion: 'derecha', ancho: '27mm' },
   { clave: 'importe', titulo: 'Importe', alineacion: 'derecha', ancho: '29mm' },
-  { clave: 'total', titulo: 'Con IGV', alineacion: 'derecha', ancho: '29mm' },
 ] as const;
+const COLUMNA_CON_IGV = { clave: 'total', titulo: 'Con IGV', alineacion: 'derecha', ancho: '29mm' } as const;
 
 function AvisoDeEmpresa({ razonSocial, ruc }: { razonSocial: string | null; ruc: string | null }) {
   if (razonSocial && ruc) return null;
@@ -50,8 +50,8 @@ function Documento({ c }: { c: CotizacionCompletaDto }) {
             { etiqueta: 'Referencia', valor: c.titulo },
             { etiqueta: 'Emitida', valor: c.emitidaEn ? formatearDia(c.emitidaEn.slice(0, 10)) : '' },
           ]} />
-          <TablaImprimible etiqueta={`Detalle: ${TITULO_DE_DOCUMENTO}`} columnas={[...COLUMNAS]} filas={filasDelDocumento(c.lineas)} totales={totalesDelDocumento(c)} />
-          <p className="text-[9pt]">{c.conOpciones ? textoDeOpciones : textoDeIgv(c.igvPorcentaje)}</p>
+          <TablaImprimible etiqueta={`Detalle: ${TITULO_DE_DOCUMENTO}`} columnas={c.igvPorcentaje > 0 ? [...COLUMNAS, COLUMNA_CON_IGV] : [...COLUMNAS]} filas={filasDelDocumento(c.lineas)} totales={totalesDelDocumento(c)} />
+          {(c.conOpciones ? textoDeOpciones(c.igvPorcentaje) : textoDeIgv(c.igvPorcentaje)) ? <p className="text-[9pt]">{c.conOpciones ? textoDeOpciones(c.igvPorcentaje) : textoDeIgv(c.igvPorcentaje)}</p> : null}
           {condiciones.length > 0 ? <BloqueDeDatos titulo="Condiciones" columnas={1} pares={condiciones.map((p) => ({ etiqueta: p.etiqueta, valor: p.valor }))} /> : null}
           {c.notas ? <BloqueDeDatos titulo="Notas" columnas={1} pares={[{ etiqueta: 'Observaciones', valor: c.notas }]} /> : null}
         </HojaImprimible>

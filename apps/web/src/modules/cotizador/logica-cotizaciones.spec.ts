@@ -91,7 +91,13 @@ describe('formulario', () => {
         { tipo: 'manual', descripcion: 'Diseño', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 50_000 },
       ],
       conOpciones: false,
+      conIgv: false,
     });
+  });
+  it('el IGV viene apagado y se manda tal cual al crear y al editar', () => {
+    expect(FORMULARIO_VACIO.conIgv).toBe(false);
+    expect(argumentosDeCreacion(form({ conIgv: true })).conIgv).toBe(true);
+    expect(argumentosDeEdicion('x', form({ conIgv: true }), false).conIgv).toBe(true);
   });
   it('crear con cliente, opciones, condiciones y costo', () => {
     const a = argumentosDeCreacion(form({ cliente: { id: 'c1', nombre: 'Ana' }, conOpciones: true, validezDias: '15', formaPago: ' 50 % adelanto ', costo: centimosSchema.parse(10_000) }));

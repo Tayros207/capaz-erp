@@ -133,6 +133,8 @@ export type FormularioDeCotizacion = {
   titulo: string;
   cliente: Opcion | null;
   conOpciones: boolean;
+  /** La cotización se factura: lleva IGV (18 %). Apagado, el IGV no se muestra ni se detalla. */
+  conIgv: boolean;
   lineas: LineaDeFormulario[];
   notas: string;
   validezDias: string;
@@ -148,7 +150,7 @@ export const lineaVacia = (clave: string, tipo: 'lista' | 'manual' = 'lista'): L
   clave, tipo, lista: null, productoId: null, descripcion: '', unidad: 'unidad', cantidadMilesimas: null, precioUnitarioMilesimas: null, ajuste: SIN_AJUSTE,
 });
 export const FORMULARIO_VACIO: FormularioDeCotizacion = {
-  titulo: '', cliente: null, conOpciones: false, lineas: [], notas: '', validezDias: '', plazoEntrega: '', formaPago: '', tolerancia: '', noIncluye: '', costo: null,
+  titulo: '', cliente: null, conOpciones: false, conIgv: false, lineas: [], notas: '', validezDias: '', plazoEntrega: '', formaPago: '', tolerancia: '', noIncluye: '', costo: null,
 };
 
 export type ErroresDeLinea = Partial<Record<'lista' | 'descripcion' | 'cantidad' | 'precio' | 'ajuste', string>>;
@@ -157,7 +159,7 @@ export function validarLinea(l: LineaDeFormulario): ErroresDeLinea {
   if (l.tipo === 'lista' && !l.lista) e.lista = 'Elige el producto de tu lista.';
   if (l.tipo === 'manual' && l.descripcion.trim() === '') e.descripcion = 'Escribe la descripción.';
   if (l.cantidadMilesimas === null || l.cantidadMilesimas <= 0) e.cantidad = 'Escribe la cantidad.';
-  if (l.tipo === 'manual' && (l.precioUnitarioMilesimas === null || l.precioUnitarioMilesimas <= 0)) e.precio = 'Escribe el precio, sin IGV.';
+  if (l.tipo === 'manual' && (l.precioUnitarioMilesimas === null || l.precioUnitarioMilesimas <= 0)) e.precio = 'Escribe el precio.';
   const ajuste = l.tipo === 'lista' ? validarAjuste(l.ajuste) : undefined;
   if (ajuste) e.ajuste = ajuste;
   return e;
@@ -207,6 +209,7 @@ export function argumentosDeCreacion(f: FormularioDeCotizacion): EntradaDe<'coti
     ...(f.cliente && { clienteId: f.cliente.id }),
     lineas: f.lineas.map(lineaParaEnviar),
     conOpciones: f.conOpciones,
+    conIgv: f.conIgv,
     ...(f.notas.trim() !== '' && { notas: f.notas.trim() }),
     ...(Object.keys(condiciones).length > 0 && { condiciones }),
     ...(f.costo !== null && { costoCentimos: f.costo }),
@@ -221,6 +224,7 @@ export function argumentosDeEdicion(id: string, f: FormularioDeCotizacion, puede
     clienteId: f.cliente?.id ?? null,
     lineas: f.lineas.map(lineaParaEnviar),
     conOpciones: f.conOpciones,
+    conIgv: f.conIgv,
     notas: f.notas.trim() === '' ? null : f.notas.trim(),
     condiciones: condicionesDe(f),
     ...(puedeVerCostos && { costoCentimos: f.costo }),
@@ -232,6 +236,7 @@ export function formularioDesdeCotizacion(c: CotizacionCompletaDto, centimos: (n
     titulo: c.titulo,
     cliente: c.clienteId && c.clienteNombre ? { id: c.clienteId, nombre: c.clienteNombre } : null,
     conOpciones: c.conOpciones,
+    conIgv: c.igvPorcentaje > 0,
     lineas: [...c.lineas].sort((a, b) => a.posicion - b.posicion).map((l, i): LineaDeFormulario => ({
       clave: `${c.id}-${i}`,
       tipo: l.tipo === 'lista' && l.listaId ? 'lista' : 'manual',

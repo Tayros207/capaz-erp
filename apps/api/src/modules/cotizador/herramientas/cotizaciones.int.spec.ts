@@ -256,3 +256,29 @@ describe('hoja Directa: importe escrito, IGV incluido y condiciones', () => {
     expect((await delCotizador(A)).some((e) => e.tipo === 'cotizacion.emitida')).toBe(true);
   });
 });
+
+describe('IGV opcional por cotización (conIgv)', () => {
+  it('sin IGV no desglosa nada; con IGV calcula el 18 % y se puede encender y apagar en el borrador; editar sin decirlo conserva el IGV', async () => {
+    const sin = await datosDe(dueno, 'cotizacion_crear', { titulo: 'Sin factura', conIgv: false, lineas: [manual('Diseño', 100)] });
+    expect(sin).toMatchObject({ igvPorcentaje: 0, subtotalCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000 });
+    expect(sin.lineas[0]).toMatchObject({ importeCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000 });
+
+    const con = await datosDe(dueno, 'cotizacion_editar', { id: sin.id, conIgv: true });
+    expect(con).toMatchObject({ igvPorcentaje: 18, subtotalCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800 });
+
+    const apagada = await datosDe(dueno, 'cotizacion_editar', { id: sin.id, conIgv: false });
+    expect(apagada).toMatchObject({ igvPorcentaje: 0, igvCentimos: 0, totalCentimos: 10_000 });
+
+    // Editar las líneas sin mencionar el IGV no lo cambia por el de la configuración.
+    const editada = await datosDe(dueno, 'cotizacion_editar', { id: sin.id, lineas: [manual('Diseño', 200)] });
+    expect(editada).toMatchObject({ igvPorcentaje: 0, igvCentimos: 0, totalCentimos: 20_000 });
+  });
+
+  it('precio_consultar respeta conIgv: sin IGV el total es el importe', async () => {
+    const sin = await datosDe(dueno, 'precio_consultar', { listaId: lista.id, cantidadMilesimas: 2_500_000, conIgv: false });
+    expect(sin).toMatchObject({ igvPorcentaje: 0, igvCentimos: 0, totalCentimos: sin.importeCentimos });
+    const con = await datosDe(dueno, 'precio_consultar', { listaId: lista.id, cantidadMilesimas: 2_500_000, conIgv: true });
+    expect(con.igvPorcentaje).toBe(18);
+    expect(con.totalCentimos).toBe(con.importeCentimos + con.igvCentimos);
+  });
+});

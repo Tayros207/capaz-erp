@@ -152,6 +152,8 @@ export const consultarPrecioSchema = z.strictObject({
   cantidadMilesimas: z.number().int().safe().min(1, { error: 'La cantidad debe ser mayor que cero.' }),
   clienteId: z.uuid().optional(),
   ajuste: ajusteDePrecioSchema.default({ tipo: 'ninguno' }),
+  /** `true`: calcula con IGV (18 %); `false`: sin IGV. Sin dato: el IGV de la configuración del cotizador. */
+  conIgv: z.boolean().optional(),
 });
 export const filaDePrecioSchema = z.strictObject({
   cantidadMilesimas: z.number().int(),
@@ -396,6 +398,8 @@ const crearCotizacionSchema = z.strictObject({
   lineas: lineasDeEntrada,
   /** Los precios e importes de las líneas manuales ya traen IGV: el servidor lo quita. */
   preciosIncluyenIgv: z.boolean().default(false),
+  /** `true`: la cotización lleva IGV (se factura); `false`: sin IGV, sin desglose. Sin dato: el IGV de la configuración del cotizador. */
+  conIgv: z.boolean().optional(),
   conOpciones: z.boolean().default(false),
   notas: texto(1000).nullish(),
   observaciones: texto(1000).nullish(),
@@ -408,6 +412,8 @@ const editarCotizacionSchema = z
     titulo: titulo.optional(),
     clienteId: z.uuid().nullish(),
     lineas: lineasDeEntrada.optional(),
+    /** Activa o quita el IGV del borrador y recalcula las líneas; sin dato, conserva el IGV que ya tiene. */
+    conIgv: z.boolean().optional(),
     conOpciones: z.boolean().optional(),
     notas: texto(1000).nullish(),
     observaciones: texto(1000).nullish(),

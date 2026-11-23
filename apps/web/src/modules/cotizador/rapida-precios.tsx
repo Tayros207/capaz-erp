@@ -39,10 +39,10 @@ export function PrecioDeCatalogo({ p, cantidad, igv, alFijar }: { p: ProductoCot
         {alFijar ? <Boton variante="secundario" onClick={alFijar}>Fijar precios por escala</Boton> : null}
       </div>
       <GrupoDeCifras etiqueta="Precio de esta cantidad">
-        <Cifra etiqueta={`Cada ${p.unidad} (sin IGV)`} valor={`S/ ${milesimasATexto(unitario)}`} />
-        {c ? <Cifra etiqueta="Importe (sin IGV)" valor={soles(c.importeCentimos)} /> : null}
-        {c ? <Cifra etiqueta={`IGV (${igv} %)`} valor={soles(c.igvCentimos)} /> : null}
-        {c ? <Cifra etiqueta="Total" valor={soles(c.totalCentimos)} tono="exito" /> : null}
+        <Cifra etiqueta={igv ? `Cada ${p.unidad} (sin IGV)` : `Cada ${p.unidad}`} valor={`S/ ${milesimasATexto(unitario)}`} />
+        {c ? <Cifra etiqueta={igv ? 'Importe (sin IGV)' : 'Total'} valor={soles(c.importeCentimos)} {...(!igv && { tono: 'exito' as const })} /> : null}
+        {c && igv ? <Cifra etiqueta={`IGV (${igv} %)`} valor={soles(c.igvCentimos)} /> : null}
+        {c && igv ? <Cifra etiqueta="Total" valor={soles(c.totalCentimos)} tono="exito" /> : null}
       </GrupoDeCifras>
     </section>
   );

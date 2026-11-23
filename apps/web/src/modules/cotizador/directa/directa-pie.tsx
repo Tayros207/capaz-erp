@@ -37,13 +37,22 @@ export function DirectaPie({ hoja, igv, opcionesDeValidez, emitida, emitiendo, a
 
   return (
     <div className="flex flex-col gap-4">
-      <label className="flex min-h-11 items-center gap-2 text-sm text-texto">
-        <input type="checkbox" className="size-4" checked={hoja.incluyeIgv} disabled={soloLectura} onChange={(e) => alCambiar({ incluyeIgv: e.target.checked })} />
-        Los precios ya incluyen IGV
+      <label className="flex w-fit min-h-11 cursor-pointer items-center gap-2">
+        <input type="checkbox" checked={hoja.conIgv} onChange={(e) => alCambiar({ conIgv: e.target.checked })} className="size-5 cursor-pointer accent-accion" disabled={soloLectura} />
+        <span className="flex flex-col">
+          <span className="font-medium text-texto">Con IGV (se factura)</span>
+          <span className="text-sm text-texto-suave">Actívalo solo si vas a emitir factura. Apagado, el IGV no se muestra.</span>
+        </span>
       </label>
+      {hoja.conIgv ? (
+        <label className="flex min-h-11 items-center gap-2 text-sm text-texto">
+          <input type="checkbox" className="size-4" checked={hoja.incluyeIgv} disabled={soloLectura} onChange={(e) => alCambiar({ incluyeIgv: e.target.checked })} />
+          Los precios ya incluyen IGV
+        </label>
+      ) : null}
       <GrupoDeCifras etiqueta="Totales de la cotización">
-        <Cifra etiqueta="Subtotal" valor={soles(cifras.subtotalCentimos)} />
-        <Cifra etiqueta={`IGV ${igv} %`} valor={soles(cifras.igvCentimos)} />
+        {hoja.conIgv ? <Cifra etiqueta="Subtotal" valor={soles(cifras.subtotalCentimos)} /> : null}
+        {hoja.conIgv ? <Cifra etiqueta={`IGV ${igv} %`} valor={soles(cifras.igvCentimos)} /> : null}
         <Cifra etiqueta="Total" valor={soles(cifras.totalCentimos)} />
       </GrupoDeCifras>
       {soloLectura ? null : <AvisoDeMontoMinimo totalCentimos={cifras.totalCentimos} />}
