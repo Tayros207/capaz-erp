@@ -61,9 +61,11 @@ export function filasDelDocumento(detalle: readonly LineaDePedidoDto[], conPreci
     });
 }
 
-/** Subtotal, IGV con su porcentaje y total, tal como los calculó el servidor. */
+/** Subtotal, IGV con su porcentaje y total, tal como los calculó el servidor; sin IGV, solo el total. */
 export function totalesDelDocumento(p: Pick<PedidoCompletoDto, 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos' | 'igvPorcentaje'>): FilaDeTotal[] {
-  return filasDeTotales({ subtotal: p.subtotalCentimos, igv: p.igvCentimos, total: p.totalCentimos }, p.igvPorcentaje / 100);
+  const filas = filasDeTotales({ subtotal: p.subtotalCentimos, igv: p.igvCentimos, total: p.totalCentimos }, p.igvPorcentaje / 100);
+  // Sin IGV (no se factura): solo el total, sin desglose.
+  return p.igvPorcentaje > 0 ? filas : filas.filter((f) => f.destacado);
 }
 
 /** Lo que el cliente ya dejó a cuenta del pedido, tomado de su deuda en Finanzas. */

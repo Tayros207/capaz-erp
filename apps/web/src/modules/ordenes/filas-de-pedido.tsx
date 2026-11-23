@@ -30,7 +30,8 @@ type Props = {
 };
 
 // En pantallas anchas cada fila es una fila de tabla; a 390 px, una tarjeta «Ítem N» con sus etiquetas a la vista.
-const COLUMNAS = 'md:grid md:grid-cols-[2.5rem_minmax(0,1fr)_6rem_8rem_7rem_7rem_3.5rem_2.75rem] md:items-start md:gap-2';
+const COLUMNAS_CON_IGV = 'md:grid md:grid-cols-[2.5rem_minmax(0,1fr)_6rem_8rem_7rem_7rem_3.5rem_2.75rem] md:items-start md:gap-2';
+const COLUMNAS_SIN_IGV = 'md:grid md:grid-cols-[2.5rem_minmax(0,1fr)_6rem_8rem_7rem_7rem_2.75rem] md:items-start md:gap-2';
 const CONTROL = unir(CLASES_DE_CONTROL, 'border-borde-fuerte');
 const soles = (c: number | null) => (c === null ? '—' : formatearSoles(c));
 
@@ -101,6 +102,8 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
   const foco = useRef<string | null>(null);
   const [catalogo, setCatalogo] = useState(false);
   const totales = totalesDe(lineas, igvPorcentaje);
+  const conIgv = igvPorcentaje > 0;
+  const COLUMNAS = conIgv ? COLUMNAS_CON_IGV : COLUMNAS_SIN_IGV;
   useEffect(() => {
     if (!foco.current) return;
     raiz.current?.querySelector<HTMLInputElement>(`[data-clave="${foco.current}"] [data-campo="descripcion"]`)?.focus();
@@ -120,7 +123,7 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
       <h2 className="font-titulo font-semibold text-texto">Detalle</h2>
       <div ref={raiz} className="flex flex-col gap-3">
         <div aria-hidden="true" className={unir(COLUMNAS, 'hidden border-b border-borde pb-2 text-sm font-medium text-texto-suave')}>
-          <span>N.º</span><span>Descripción</span><span className="text-right">Cantidad</span><span>Unidad</span><span className="text-right">P. unitario</span><span className="text-right">Importe</span><span className="text-center">IGV</span><span />
+          <span>N.º</span><span>Descripción</span><span className="text-right">Cantidad</span><span>Unidad</span><span className="text-right">P. unitario</span><span className="text-right">Importe</span>{conIgv ? <span className="text-center">IGV</span> : null}<span />
         </div>
         {lineas.map((l, i) => {
           const e = errores[l.clave] ?? {};
@@ -138,9 +141,9 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                   clienteId={clienteId}
                   productoId={l.producto?.id}
                   descripcion={l.descripcion}
-                  conIgv
+                  conIgv={conIgv}
                   precioActualMilesimas={l.precioUnitarioMilesimas}
-                  alUsar={(p) => cambiar(l.clave, (a) => usarPrecioAnterior(a, precioParaUsar(p, true), p.unidad))}
+                  alUsar={(p) => cambiar(l.clave, (a) => usarPrecioAnterior(a, precioParaUsar(p, conIgv), p.unidad))}
                 />
               </Celda>
               <div className="grid grid-cols-2 gap-3 md:contents">
@@ -157,22 +160,24 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
                     ))}
                   </select>
                 </Celda>
-                <Celda etiqueta="P. unitario (con IGV)" error={e.precio}>
+                <Celda etiqueta={conIgv ? 'P. unitario (con IGV)' : 'P. unitario'} error={e.precio}>
                   <CeldaNumerica aria-label={`Precio unitario del ítem ${n}`} aria-invalid={e.precio ? true : undefined} valor={l.precioUnitarioMilesimas} aTexto={milesimasATexto} aValor={deMilesimas} alCambiar={(v) => cambiar(l.clave, (a) => cambiarPrecio(a, v))} />
                 </Celda>
-                <Celda etiqueta="Importe (con IGV)">
+                <Celda etiqueta={conIgv ? 'Importe (con IGV)' : 'Importe'}>
                   <CeldaNumerica data-campo="importe" aria-label={`Importe del ítem ${n}`} valor={importeMostrado(l)} aTexto={aCentimosTexto} aValor={deCentimos} alCambiar={(v) => cambiar(l.clave, (a) => cambiarImporte(a, v))} alEnter={() => enter(l.clave)} />
                 </Celda>
               </div>
-              <label className="flex min-h-(--alto-control) cursor-pointer items-center gap-2 md:justify-center">
-                <input type="checkbox" aria-label={`IGV del ítem ${n}`} checked={l.afectoIgv} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, afectoIgv: ev.target.checked }))} className="size-5 cursor-pointer accent-accion" />
-                <span className="text-sm font-medium text-texto md:sr-only">Afecto a IGV</span>
-              </label>
+              {conIgv ? (
+                <label className="flex min-h-(--alto-control) cursor-pointer items-center gap-2 md:justify-center">
+                  <input type="checkbox" aria-label={`IGV del ítem ${n}`} checked={l.afectoIgv} onChange={(ev) => cambiar(l.clave, (a) => ({ ...a, afectoIgv: ev.target.checked }))} className="size-5 cursor-pointer accent-accion" />
+                  <span className="text-sm font-medium text-texto md:sr-only">Afecto a IGV</span>
+                </label>
+              ) : null}
               <div className="flex justify-end md:justify-center">
                 <Boton variante="fantasma" icono="cerrar" aria-label={`Quitar el ítem ${n}`} disabled={soloPrecio || lineas.length <= 1} onClick={() => alCambiar(quitarFila(lineas, l.clave))} />
               </div>
-              {!cuadra(l) ? <p className="text-sm text-texto-suave md:col-span-8">El unitario guarda tres decimales: el importe queda en {soles(importeMostrado(l))}</p> : null}
-              <FichaDeMaquina n={n} valores={l} deshabilitado={soloPrecio} className="md:col-span-8" alCambiar={(campo, valor) => cambiar(l.clave, (a) => ({ ...a, [campo]: valor }))} />
+              {!cuadra(l) ? <p className="text-sm text-texto-suave md:col-span-full">El unitario guarda tres decimales: el importe queda en {soles(importeMostrado(l))}</p> : null}
+              <FichaDeMaquina n={n} valores={l} deshabilitado={soloPrecio} className="md:col-span-full" alCambiar={(campo, valor) => cambiar(l.clave, (a) => ({ ...a, [campo]: valor }))} />
             </div>
           );
         })}
@@ -184,9 +189,9 @@ export function FilasDePedido({ lineas, igvPorcentaje, clienteId, errores = {}, 
       </div>}
       {catalogo && !soloPrecio ? <BuscadorDeCatalogo alCerrar={() => setCatalogo(false)} alElegir={(p) => { alCambiar(agregarDesdeCatalogo(lineas, p, crypto.randomUUID())); setCatalogo(false); }} /> : null}
       <GrupoDeCifras etiqueta="Totales del pedido">
-        <Cifra etiqueta="Subtotal" valor={soles(totales?.subtotalCentimos ?? null)} />
-        <Cifra etiqueta={`IGV ${igvPorcentaje} %`} valor={soles(totales?.igvCentimos ?? null)} />
-        <Cifra etiqueta="Total" valor={soles(totales?.totalCentimos ?? null)} ayuda="Los precios ya incluyen IGV." />
+        {conIgv ? <Cifra etiqueta="Subtotal" valor={soles(totales?.subtotalCentimos ?? null)} /> : null}
+        {conIgv ? <Cifra etiqueta={`IGV ${igvPorcentaje} %`} valor={soles(totales?.igvCentimos ?? null)} /> : null}
+        <Cifra etiqueta="Total" valor={soles(totales?.totalCentimos ?? null)} {...(conIgv && { ayuda: 'Los precios ya incluyen IGV.' })} />
       </GrupoDeCifras>
     </section>
   );

@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import { useNavigate, type NavigateFunction } from 'react-router';
-import { IGV_POR_DEFECTO } from '@capaz/shared';
 import { puedeEscribirEn } from '../../shared/sesion/acceso.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
 import { ZONA_POR_DEFECTO } from '../../shared/formato/fechas.ts';
@@ -10,7 +9,7 @@ import { refrescarPedidos } from './acciones.ts';
 import { confirmarPedido, crearPedido } from './api.ts';
 import { normalizar } from './flujo-adelanto.ts';
 import { ejecutarPago } from './flujo-pago.ts';
-import { FORMULARIO_VACIO, argumentosDeCreacion, diaEnZona, lineaVacia, totalesDe, validarParaConfirmar, validarPedido, type ErroresDePedido, type FormularioDePedido } from './logica.ts';
+import { FORMULARIO_VACIO, argumentosDeCreacion, diaEnZona, igvDeLaHoja, lineaVacia, totalesDe, validarParaConfirmar, validarPedido, type ErroresDePedido, type FormularioDePedido } from './logica.ts';
 import { usePagoDeHoja } from './use-pago-de-hoja.ts';
 
 const hojaVacia = (): FormularioDePedido => ({ ...FORMULARIO_VACIO, lineas: [lineaVacia(crypto.randomUUID())] });
@@ -71,7 +70,7 @@ export function useHojaDePedido() {
   const [confirmado, setConfirmado] = useState<Confirmado | null>(null);
   const [hoy] = useState(() => diaEnZona(new Date(), ZONA_POR_DEFECTO));
   const { enviando, aviso, setAviso, enviar } = useEnvio();
-  const totalCentimos = totalesDe(form.lineas, IGV_POR_DEFECTO)?.totalCentimos ?? 0;
+  const totalCentimos = totalesDe(form.lineas, igvDeLaHoja(form))?.totalCentimos ?? 0;
   const pago = usePagoDeHoja({ visible: !!yo && puedeEscribirEn(yo, 'registro'), clienteId: form.cliente?.id, totalCentimos, hoy });
 
   /** Comportamiento de siempre: guarda el borrador y abre su ficha. El pago no se toca: solo se define al confirmar. */

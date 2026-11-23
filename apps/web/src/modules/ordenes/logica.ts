@@ -1,6 +1,7 @@
 import {
   AVANCES_DE_PEDIDO,
   ESTADOS_ABIERTOS_DE_PEDIDO,
+  IGV_POR_DEFECTO,
   calcularTotalesDePedido,
   fichaSinVacios,
   mismaFicha,
@@ -150,7 +151,7 @@ export function validarLinea(l: LineaDeFormulario): ErroresDeLinea {
   if (!l.descripcion.trim()) e.descripcion = 'Elige un producto o escribe qué se pide.';
   else if (l.descripcion.trim().length > 300) e.descripcion = 'Máximo 300 caracteres.';
   if (l.cantidadMilesimas === null || l.cantidadMilesimas <= 0) e.cantidad = 'La cantidad debe ser mayor que cero.';
-  if (l.precioUnitarioMilesimas === null) e.precio = 'Indica el precio (ya con IGV).';
+  if (l.precioUnitarioMilesimas === null) e.precio = 'Indica el precio.';
   return e;
 }
 
@@ -198,6 +199,8 @@ export type FormularioDePedido = {
   entregaEl: string;
   responsableId: string;
   notas: string;
+  /** El pedido se factura: lleva IGV (18 %). Apagado, el IGV no se muestra ni se detalla. */
+  conIgv: boolean;
   lineas: LineaDeFormulario[];
 };
 export type ErroresDePedido = Partial<Record<'cliente' | 'entregaEl' | 'notas' | 'lineas', string>> & {
@@ -205,15 +208,19 @@ export type ErroresDePedido = Partial<Record<'cliente' | 'entregaEl' | 'notas' |
   porLinea?: Record<string, ErroresDeLinea>;
 };
 
-export const FORMULARIO_VACIO: FormularioDePedido = { cliente: null, entregaEl: '', responsableId: '', notas: '', lineas: [] };
+export const FORMULARIO_VACIO: FormularioDePedido = { cliente: null, entregaEl: '', responsableId: '', notas: '', conIgv: false, lineas: [] };
 
 export const formularioDesde = (p: PedidoCompletoDto): FormularioDePedido => ({
   cliente: { id: p.clienteId, nombre: p.clienteNombre },
   entregaEl: p.entregaEl ?? '',
   responsableId: p.responsableId ?? '',
   notas: p.notas ?? '',
+  conIgv: p.igvPorcentaje > 0,
   lineas: p.detalle.map(lineaDesdeDto),
 });
+
+/** El porcentaje de IGV con que se calcula la hoja: 18 si se factura, 0 si no. */
+export const igvDeLaHoja = (f: Pick<FormularioDePedido, 'conIgv'>): number => (f.conIgv ? IGV_POR_DEFECTO : 0);
 
 /** `fecha` es el día del pedido (hoy en uno nuevo): la entrega no puede ser anterior. */
 export function validarPedido(f: FormularioDePedido, fecha: string): ErroresDePedido {
@@ -250,6 +257,7 @@ export function argumentosDeCreacion(f: FormularioDePedido): EntradaDe<'pedido_c
     ...(f.entregaEl && { entregaEl: f.entregaEl }),
     ...(f.responsableId && { responsableId: f.responsableId }),
     ...(f.notas.trim() && { notas: f.notas.trim() }),
+    conIgv: f.conIgv,
     lineas: sinFilasEnBlanco(f.lineas).map(aLineaDeEntrada),
   };
 }
@@ -266,7 +274,10 @@ export function argumentosDeEdicion(p: PedidoCompletoDto, f: FormularioDePedido)
   if ((f.responsableId || null) !== p.responsableId) args.responsableId = f.responsableId || null;
   if ((f.notas.trim() || null) !== p.notas) args.notas = f.notas.trim() || null;
   const lineas = sinFilasEnBlanco(f.lineas).map(aLineaDeEntrada);
-  if (lineas.length !== p.detalle.length || lineas.some((l, i) => !mismaLinea(l, p.detalle[i]!))) args.lineas = lineas;
+  const cambioElIgv = f.conIgv !== p.igvPorcentaje > 0;
+  if (cambioElIgv) args.conIgv = f.conIgv;
+  // Cambiar el IGV recalcula los importes: las líneas viajan siempre con él.
+  if (cambioElIgv || lineas.length !== p.detalle.length || lineas.some((l, i) => !mismaLinea(l, p.detalle[i]!))) args.lineas = lineas;
   return Object.keys(args).length > 1 ? args : null;
 }
 

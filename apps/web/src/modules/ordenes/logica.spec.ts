@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ESTADOS_DE_PEDIDO, type PedidoCompletoDto, type PedidoDto } from '@capaz/shared';
 import {
-  FORMULARIO_VACIO, agruparEntregas, argumentosDeCreacion, argumentosDeEdicion, columnasDeTablero, conProducto, diaEnZona, formatearDia, formularioDesde,
+  FORMULARIO_VACIO, agruparEntregas, argumentosDeCreacion, argumentosDeEdicion, columnasDeTablero, conProducto, diaEnZona, formatearDia, formularioDesde, igvDeLaHoja,
   importeDeLinea, lineaVacia, validarParaConfirmar, mensajeDeRechazo, otrosPasos, pasoActual, pasosPermitidos, sePuedeCancelar, siguientePaso, sumarDias, textoDeEvento, totalesDe,
   validarLinea, validarPedido, type LineaDeFormulario,
 } from './logica.ts';
@@ -90,8 +90,21 @@ describe('formulario del pedido', () => {
     expect(validarParaConfirmar({ ...f, lineas: [linea()] }, '2026-03-10')).toEqual({});
   });
   it('crear envía solo lo que tiene valor', () => {
-    const args = argumentosDeCreacion({ cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '', responsableId: '', notas: '  ', lineas: [linea({ producto: { id: 'pr1', nombre: 'X' } })] });
-    expect(args).toEqual({ clienteId: 'c1', lineas: [{ productoId: 'pr1', descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true }] });
+    const args = argumentosDeCreacion({ cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '', responsableId: '', notas: '  ', conIgv: false, lineas: [linea({ producto: { id: 'pr1', nombre: 'X' } })] });
+    expect(args).toEqual({ clienteId: 'c1', conIgv: false, lineas: [{ productoId: 'pr1', descripcion: 'Volantes', unidad: 'unidad', cantidadMilesimas: 1000, precioUnitarioMilesimas: 118_000, afectoIgv: true }] });
+  });
+  it('el IGV viene apagado en la hoja vacía y se manda tal cual', () => {
+    expect(FORMULARIO_VACIO.conIgv).toBe(false);
+    expect(igvDeLaHoja({ conIgv: false })).toBe(0);
+    expect(igvDeLaHoja({ conIgv: true })).toBe(18);
+    expect(argumentosDeCreacion({ ...FORMULARIO_VACIO, cliente: { id: 'c1', nombre: 'Sol' }, conIgv: true, lineas: [linea()] }).conIgv).toBe(true);
+  });
+  it('editar: encender o apagar el IGV manda también todas las líneas', () => {
+    const p = completo({});
+    const f = formularioDesde(p);
+    const cambiado = argumentosDeEdicion(p, { ...f, conIgv: !f.conIgv });
+    expect(cambiado).toMatchObject({ id: 'p1', conIgv: !f.conIgv });
+    expect(cambiado?.lineas).toHaveLength(p.detalle.length);
   });
   it('editar envía solo lo que cambió, y nulo si nada cambió', () => {
     const p = completo({ notas: 'vieja', entregaEl: '2026-03-20' });

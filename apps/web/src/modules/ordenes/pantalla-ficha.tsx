@@ -188,7 +188,7 @@ function Contenido({ pedido, corregido, alCorregir }: PropsDeContenido) {
       {pedido.estado === 'cancelado' ? null : <BarraDeEstado pasos={PASOS_DE_PEDIDO} actual={pasoActual(pedido.estado)} etiqueta="Estado del pedido" />}
       {borrador.aviso ? <p role="alert" className="text-sm font-medium text-peligro">{borrador.aviso}</p> : null}
       {editable ? (
-        <FormularioPedido valor={borrador.form} errores={borrador.errores} igvPorcentaje={pedido.igvPorcentaje} fecha={pedido.fecha} alCambiar={borrador.cambiar} />
+        <FormularioPedido valor={borrador.form} errores={borrador.errores} fecha={pedido.fecha} alCambiar={borrador.cambiar} />
       ) : (
         <Lectura p={pedido} />
       )}

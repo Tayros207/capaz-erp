@@ -274,6 +274,8 @@ export const crearPedidoSchema = z
     notas: texto(4000).nullish(),
     sucursalId: z.uuid().nullish(),
     lineas: lineasDeEntrada.default([]),
+    /** `true`: el pedido se factura y lleva IGV (18 %); `false`: sin IGV, no se muestra ni se detalla. Sin dato: el IGV por defecto. */
+    conIgv: z.boolean().optional(),
     origenTipo: texto(40).min(1).optional(),
     origenId: texto(100).min(1).optional(),
   })
@@ -289,7 +291,10 @@ export const editarPedidoSchema = z
     notas: texto(4000).nullish(),
     sucursalId: z.uuid().nullish(),
     lineas: lineasDeEntrada.optional(),
+    /** Activa o quita el IGV del borrador; exige enviar también `lineas` para recalcular los importes. */
+    conIgv: z.boolean().optional(),
   })
+  .refine((v) => v.conIgv === undefined || v.lineas !== undefined, { error: 'Para cambiar el IGV envía también las líneas del pedido.' })
   .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
 
 /**

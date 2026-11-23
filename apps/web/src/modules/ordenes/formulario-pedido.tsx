@@ -6,19 +6,18 @@ import { CampoSelect } from '../../shared/ui/campo-select.tsx';
 import { CampoTextarea } from '../../shared/ui/campo-textarea.tsx';
 import { listarMiembros } from './api.ts';
 import { FilasDePedido } from './filas-de-pedido.tsx';
-import type { ErroresDePedido, FormularioDePedido } from './logica.ts';
+import { igvDeLaHoja, type ErroresDePedido, type FormularioDePedido } from './logica.ts';
 
 type Props = {
   valor: FormularioDePedido;
   errores: ErroresDePedido;
-  igvPorcentaje: number;
   /** Día del pedido: la entrega no puede ser anterior. */
   fecha: string;
   alCambiar: (cambio: Partial<FormularioDePedido>) => void;
 };
 
 /** Los datos editables de un pedido en borrador: cliente, entrega, responsable, notas y líneas. */
-export function FormularioPedido({ valor, errores, igvPorcentaje, fecha, alCambiar }: Props) {
+export function FormularioPedido({ valor, errores, fecha, alCambiar }: Props) {
   // La lista de miembros exige su propio permiso: quien no lo tiene simplemente no ve el campo.
   const miembros = useQuery({ queryKey: ['miembros', 'para-responsable'], queryFn: async () => datosOError(await listarMiembros()).miembros, retry: false });
   return (
@@ -39,7 +38,14 @@ export function FormularioPedido({ valor, errores, igvPorcentaje, fecha, alCambi
           <CampoTextarea etiqueta="Notas" filas={3} maxLength={4000} value={valor.notas} error={errores.notas} onChange={(e) => alCambiar({ notas: e.target.value })} />
         </div>
       </div>
-      <FilasDePedido lineas={valor.lineas} igvPorcentaje={igvPorcentaje} clienteId={valor.cliente?.id} errores={errores.porLinea} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
+      <label className="flex w-fit min-h-(--alto-control) cursor-pointer items-center gap-2">
+        <input type="checkbox" checked={valor.conIgv} onChange={(e) => alCambiar({ conIgv: e.target.checked })} className="size-5 cursor-pointer accent-accion" />
+        <span className="flex flex-col">
+          <span className="font-medium text-texto">Con IGV (se factura)</span>
+          <span className="text-sm text-texto-suave">Actívalo solo si vas a emitir factura: los precios ya incluyen el IGV de 18 %. Apagado, el IGV no se muestra.</span>
+        </span>
+      </label>
+      <FilasDePedido lineas={valor.lineas} igvPorcentaje={igvDeLaHoja(valor)} clienteId={valor.cliente?.id} errores={errores.porLinea} error={errores.lineas} alCambiar={(lineas) => alCambiar({ lineas })} />
     </div>
   );
 }

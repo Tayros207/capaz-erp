@@ -27,7 +27,7 @@ export function LineasDePedido({ lineas, igvPorcentaje }: Props) {
           <span className="flex flex-col gap-0.5">
             <span className="inline-flex flex-wrap items-center gap-2">
               {l.descripcion || 'Línea sin descripción'}
-              {l.afectoIgv ? null : <Insignia tono="neutro">No afecto</Insignia>}
+              {l.afectoIgv || igvPorcentaje === 0 ? null : <Insignia tono="neutro">No afecto</Insignia>}
             </span>
             {ficha ? <span className="break-words text-sm text-texto-suave">Ficha: {ficha}</span> : null}
           </span>
@@ -43,9 +43,9 @@ export function LineasDePedido({ lineas, igvPorcentaje }: Props) {
       <h2 className="font-titulo font-semibold text-texto">Detalle</h2>
       <Lista etiqueta="Detalle del pedido" columnas={columnas} filas={lineas} clave={(l) => l.clave} vacio={<EstadoVacio titulo="Sin líneas" descripcion="Este pedido no tiene líneas." icono="caja" />} />
       <GrupoDeCifras etiqueta="Totales del pedido">
-        <Cifra etiqueta="Subtotal" valor={soles(totales?.subtotalCentimos ?? null)} />
-        <Cifra etiqueta={`IGV ${igvPorcentaje} %`} valor={soles(totales?.igvCentimos ?? null)} />
-        <Cifra etiqueta="Total" valor={soles(totales?.totalCentimos ?? null)} ayuda="Los precios ya incluyen IGV." />
+        {igvPorcentaje > 0 ? <Cifra etiqueta="Subtotal" valor={soles(totales?.subtotalCentimos ?? null)} /> : null}
+        {igvPorcentaje > 0 ? <Cifra etiqueta={`IGV ${igvPorcentaje} %`} valor={soles(totales?.igvCentimos ?? null)} /> : null}
+        <Cifra etiqueta="Total" valor={soles(totales?.totalCentimos ?? null)} {...(igvPorcentaje > 0 && { ayuda: 'Los precios ya incluyen IGV.' })} />
       </GrupoDeCifras>
     </section>
   );

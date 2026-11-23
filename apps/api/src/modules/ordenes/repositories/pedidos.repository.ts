@@ -111,7 +111,7 @@ export async function reemplazarLineas(tx: Transaccion, ctx: ContextoDeEmpresa, 
 export type CambiosDePedido = Partial<
   Pick<
     typeof ordenesPedidos.$inferInsert,
-    | 'clienteId' | 'entregaEl' | 'responsableId' | 'notas' | 'sucursalId' | 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos'
+    | 'clienteId' | 'entregaEl' | 'responsableId' | 'notas' | 'sucursalId' | 'subtotalCentimos' | 'igvCentimos' | 'totalCentimos' | 'igvPorcentaje'
     | 'version' | 'estado' | 'numero' | 'serie' | 'anio' | 'canceladoPor' | 'motivoCancelacion'
   >
 > & { confirmadoAhora?: boolean; entregadoAhora?: boolean; canceladoAhora?: boolean };

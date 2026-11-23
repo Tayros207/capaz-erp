@@ -86,7 +86,7 @@ function Cuerpo({ p, tipo, deuda, reimpresion, vigente }: { p: PedidoCompletoDto
         filas={filasDelDocumento(p.detalle, conPrecios)}
         totales={conPrecios ? totalesConAdelanto(totalesDelDocumento(p), deuda, p.totalCentimos) : undefined}
       />
-      {conPrecios ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
+      {conPrecios && p.igvPorcentaje > 0 ? <p className="text-[0.9em]">{textoDeIgvIncluido(p.igvPorcentaje)}.</p> : null}
       {conPrecios && vigente ? <RecuadroQueCambio correccion={vigente} /> : null}
       {tipo === 'orden-de-trabajo' ? (
         <>

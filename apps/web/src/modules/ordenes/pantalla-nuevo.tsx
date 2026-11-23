@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { IGV_POR_DEFECTO, type PedidoCompletoDto } from '@capaz/shared';
+import type { PedidoCompletoDto } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { EncabezadoDePagina } from '../../shared/ui/datos/encabezado-de-pagina.tsx';
@@ -86,7 +86,7 @@ export function PantallaNuevoPedido() {
     // Sin botón de envío dentro del formulario: Enter en un campo nunca confirma el pedido sin querer.
     <form noValidate className="flex flex-col gap-6" onSubmit={(ev) => ev.preventDefault()}>
       <EncabezadoDePagina titulo="Nuevo pedido" migas={MIGAS} />
-      <FormularioPedido valor={h.form} errores={h.errores} igvPorcentaje={IGV_POR_DEFECTO} fecha={h.hoy} alCambiar={h.cambiar} />
+      <FormularioPedido valor={h.form} errores={h.errores} fecha={h.hoy} alCambiar={h.cambiar} />
       {h.pago.visible ? (
         <BloqueDePago habilitado={h.pago.habilitado} totalCentimos={h.totalCentimos} hoy={h.hoy} pago={h.pago.pago} errores={h.pago.errores} cuentas={h.pago.cuentas} cargandoCuentas={h.pago.cargandoCuentas} alCambiar={h.pago.cambiar} />
       ) : null}

@@ -42,7 +42,8 @@ export const pedidoCrear = definirHerramienta('pedido_crear', {
     if (!fechas.ok) return rechazo('argumentos_invalidos', fechas.motivo);
     const falta = await comprobarReferencias(tx, ctx, args);
     if (falta) return rechazo('argumentos_invalidos', falta);
-    const p = await prepararLineasDe(tx, ctx, args.lineas, IGV_POR_DEFECTO);
+    const igvPorcentaje = args.conIgv === false ? 0 : IGV_POR_DEFECTO;
+    const p = await prepararLineasDe(tx, ctx, args.lineas, igvPorcentaje);
     if (!p.ok) return rechazo('argumentos_invalidos', p.motivo);
     const datos = {
       clienteId: args.clienteId,
@@ -53,7 +54,7 @@ export const pedidoCrear = definirHerramienta('pedido_crear', {
       sucursalId: args.sucursalId ?? null,
       origenTipo: args.origenTipo ?? null,
       origenId: args.origenId ?? null,
-      igvPorcentaje: IGV_POR_DEFECTO,
+      igvPorcentaje,
     };
     const id = await crearPedido(tx, ctx, datos, p);
     if (!id) {
@@ -91,17 +92,23 @@ export const pedidoEditar = definirHerramienta('pedido_editar', {
     const actual = await verPedido(tx, ctx, args.id, { alcance: alcanceDePedidos(ctx), bloquear: true });
     if (!actual) return rechazo('no_encontrado', NO_EXISTE);
     if (!esEditable(estadoDe(actual))) return rechazo('conflicto', 'Solo se edita un pedido en borrador.');
-    const { id, lineas, ...campos } = args;
+    const { id, lineas, conIgv, ...campos } = args;
     const fechas = comprobarFechas(actual.fecha, campos.entregaEl !== undefined ? campos.entregaEl : actual.entregaEl);
     if (!fechas.ok) return rechazo('argumentos_invalidos', fechas.motivo);
     const falta = await comprobarReferencias(tx, ctx, campos);
     if (falta) return rechazo('argumentos_invalidos', falta);
     let totales = {};
     if (lineas) {
-      const p = await prepararLineasDe(tx, ctx, lineas, actual.igvPorcentaje);
+      const igvPorcentaje = conIgv === undefined ? actual.igvPorcentaje : conIgv ? IGV_POR_DEFECTO : 0;
+      const p = await prepararLineasDe(tx, ctx, lineas, igvPorcentaje);
       if (!p.ok) return rechazo('argumentos_invalidos', p.motivo);
       await reemplazarLineas(tx, ctx, id, p.lineas);
-      totales = { subtotalCentimos: p.subtotalCentimos, igvCentimos: p.igvCentimos, totalCentimos: p.totalCentimos };
+      totales = {
+        ...(conIgv !== undefined && { igvPorcentaje }),
+        subtotalCentimos: p.subtotalCentimos,
+        igvCentimos: p.igvCentimos,
+        totalCentimos: p.totalCentimos,
+      };
     }
     await actualizarPedido(tx, ctx, id, {
       ...campos,

@@ -39,6 +39,8 @@ describe('filas', () => {
     expect(JSON.stringify(filas)).not.toMatch(/S\/|precio|importe/);
   });
   it('totales con IGV', () => {
+    const sinIgv = totalesDelDocumento({ subtotalCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000, igvPorcentaje: 0 });
+    expect(sinIgv.map((f) => f.etiqueta)).toEqual(['Total']);
     const t = totalesDelDocumento({ subtotalCentimos: 10_000, igvCentimos: 1_800, totalCentimos: 11_800, igvPorcentaje: 18 });
     expect(t.map((f) => f.valor)).toEqual(['S/ 100.00', 'S/ 18.00', 'S/ 118.00']);
     expect(t[1]?.etiqueta).toBe('IGV (18%)');

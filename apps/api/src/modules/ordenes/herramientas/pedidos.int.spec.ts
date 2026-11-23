@@ -277,3 +277,24 @@ describe('un pedido no se borra y el módulo en baja es de solo lectura', () => 
     ).rejects.toThrow(/no está activo/);
   });
 });
+
+describe('IGV opcional por pedido (conIgv)', () => {
+  it('sin IGV el pedido no desglosa nada; con IGV calcula el 18 % y se puede encender y apagar en el borrador', async () => {
+    const sin = datos(await dueno.herramienta('pedido_crear', { clienteId: cliente, conIgv: false, lineas: [linea('Volantes', 100)] }));
+    expect(sin).toMatchObject({ igvPorcentaje: 0, subtotalCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000 });
+
+    const encendido = datos(await dueno.herramienta('pedido_editar', { id: sin.id, conIgv: true, lineas: [linea('Volantes', 100)] }));
+    expect(encendido).toMatchObject({ igvPorcentaje: 18, subtotalCentimos: 8_475, igvCentimos: 1_525, totalCentimos: 10_000 });
+
+    const apagado = datos(await dueno.herramienta('pedido_editar', { id: sin.id, conIgv: false, lineas: [linea('Volantes', 100)] }));
+    expect(apagado).toMatchObject({ igvPorcentaje: 0, igvCentimos: 0, totalCentimos: 10_000 });
+  });
+
+  it('sin decirlo se conserva el IGV de siempre (18 %) y cambiar el IGV exige enviar las líneas', async () => {
+    const p = datos(await dueno.herramienta('pedido_crear', { clienteId: cliente, lineas: [linea('Volantes', 100)] }));
+    expect(p.igvPorcentaje).toBe(18);
+    const r = await dueno.herramienta('pedido_editar', { id: p.id, conIgv: false });
+    expect(r.estado).toBe(400);
+    expect(mensaje(r)).toMatch(/líneas/);
+  });
+});
