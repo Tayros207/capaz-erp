@@ -59,7 +59,7 @@ describe('filas', () => {
     expect(estaEnBlanco(fila('a'))).toBe(true);
     expect(estaEnBlanco(l)).toBe(false);
     expect(sinFilasEnBlanco([fila('a'), l, fila('b')])).toEqual([l]);
-    const f = { cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '', responsableId: '', notas: '', lineas: [fila('a'), l, fila('b')] };
+    const f = { cliente: { id: 'c1', nombre: 'Sol' }, entregaEl: '', responsableId: '', notas: '', conIgv: false, lineas: [fila('a'), l, fila('b')] };
     expect(validarPedido(f, '2026-03-10')).toEqual({});
     expect(argumentosDeCreacion(f).lineas).toHaveLength(1);
   });

@@ -3,7 +3,7 @@ import { ponerIgv } from '../dinero.js';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
 import { MAXIMO_DE_LINEAS_DE_PEDIDO, MOTIVOS_DE_CORRECCION, correccionDePedidoSchema, pedidoCompletoSchema } from './ordenes.js';
-import { ajusteDeDeudaSchema } from './registro.js';
+import { ESTADOS_DE_DEUDA, ajusteDeDeudaSchema } from './registro.js';
 import { fichaDeEntradaShape } from './ficha-de-maquina.js';
 
 // «Corregir pedido confirmado» (versión 2): `pedido_corregir` (Pedidos), la composición del núcleo `venta_corregir` (pedido +
@@ -94,7 +94,7 @@ export const ventaCorregidaSchema = z.strictObject({
   correccion: correccionDePedidoSchema,
   avisos: z.array(z.string()),
   /** La deuda viva del pedido tal como quedó; `null` si no tiene o la persona no la ve. */
-  deuda: z.strictObject({ id: z.string(), codigo: z.string(), totalCentimos: z.number().int(), abonadoCentimos: z.number().int(), saldoCentimos: z.number().int(), estado: z.string() }).nullable(),
+  deuda: z.strictObject({ id: z.string(), codigo: z.string(), totalCentimos: z.number().int(), abonadoCentimos: z.number().int(), saldoCentimos: z.number().int(), estado: z.enum(ESTADOS_DE_DEUDA), vencida: z.boolean(), venceEn: z.iso.date().nullable() }).nullable(),
   ajuste: ajusteDeDeudaSchema.nullable(),
   /** Lo que el cliente pagó de más y queda a su favor (no se devuelve). */
   aFavorCentimos: z.number().int(),

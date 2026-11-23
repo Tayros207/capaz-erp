@@ -122,7 +122,7 @@ export async function aplicarVentaCorregida(ejecutor: EjecutorDeHerramientas, tx
     pedido,
     correccion,
     avisos,
-    deuda: d ? { id: d.id, codigo: d.codigo, totalCentimos: d.totalCentimos, abonadoCentimos: d.abonadoCentimos, saldoCentimos: d.saldoCentimos, estado: d.estado } : null,
+    deuda: d ? { id: d.id, codigo: d.codigo, totalCentimos: d.totalCentimos, abonadoCentimos: d.abonadoCentimos, saldoCentimos: d.saldoCentimos, estado: d.estado, vencida: d.vencida, venceEn: d.venceEn } : null,
     ajuste: ajustada?.ajuste ?? null,
     aFavorCentimos: ajustada?.aFavorCentimos ?? correccion.aFavorCentimos ?? 0,
     ajustePendiente,

@@ -76,7 +76,7 @@ export function hayCambios(p: PedidoCompletoDto, f: FormularioDeCorreccion): boo
 export type ErroresDeCorreccion = ErroresDePedido & Partial<Record<'motivo' | 'motivoTexto' | 'cambios' | 'total', string>>;
 
 export function validarCorreccion(p: PedidoCompletoDto, f: FormularioDeCorreccion): ErroresDeCorreccion {
-  const base = validarPedido({ cliente: { id: p.clienteId, nombre: p.clienteNombre }, entregaEl: '', responsableId: '', notas: '', lineas: f.lineas }, p.fecha);
+  const base = validarPedido({ cliente: { id: p.clienteId, nombre: p.clienteNombre }, entregaEl: '', responsableId: '', notas: '', conIgv: p.igvPorcentaje > 0, lineas: f.lineas }, p.fecha);
   const e: ErroresDeCorreccion = { ...(base.lineas && { lineas: base.lineas }), ...(base.porLinea && { porLinea: base.porLinea }) };
   if (!f.motivo) e.motivo = 'Elige por qué se corrige.';
   else if (f.motivo === 'otro' && !f.motivoTexto.trim()) e.motivoTexto = 'Con «Otro», escribe qué pasó.';
