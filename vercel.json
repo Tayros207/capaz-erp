@@ -27,16 +27,19 @@
       ],
       "rewrites": [
         {
-          "source": "/",
-          "destination": "/presentacion/index.html"
-        },
-        {
           "source": "/((?!assets/).*)",
           "destination": "/index.html"
         }
       ]
     }
   },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/presentacion/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
