@@ -88,7 +88,7 @@ export const cotizacionEmitir = definirHerramienta('cotizacion_emitir', {
     return {
       ok: true,
       resumen: {
-        resumen: `Se emitirá ${cual} por ${formatearSoles(p.totales.totalCentimos)} (con IGV). Una vez emitida no se edita: para cambiarla harás una nueva versión.${p.avisos.length > 0 ? ' Los precios se actualizaron con los de hoy.' : ''}`,
+        resumen: `Se emitirá ${cual} por ${formatearSoles(p.totales.totalCentimos)}${p.version.igvPorcentaje > 0 ? ' (con IGV)' : ''}. Una vez emitida no se edita: para cambiarla harás una nueva versión.${p.avisos.length > 0 ? ' Los precios se actualizaron con los de hoy.' : ''}`,
         huella: hashCanonico({ estado: p.c.estado, version: p.version.version, subtotalCentimos: p.totales.subtotalCentimos, totalCentimos: p.totales.totalCentimos, lineas: p.lineas }),
       },
     };

@@ -88,13 +88,15 @@ function filasDeLineas(d: DetallePublico, conOpciones: boolean): string {
 }
 
 function tablaDeLineas(d: DetallePublico, conOpciones: boolean): string {
-  return `<table><thead><tr><th>Descripción</th><th class="der">Cantidad</th><th class="der">${d.conOpciones ? 'Importe con IGV' : 'Importe'}</th></tr></thead><tbody>${filasDeLineas(d, conOpciones)}</tbody></table>`;
+  return `<table><thead><tr><th>Descripción</th><th class="der">Cantidad</th><th class="der">${d.conOpciones && d.igvPorcentaje > 0 ? 'Importe con IGV' : 'Importe'}</th></tr></thead><tbody>${filasDeLineas(d, conOpciones)}</tbody></table>`;
 }
 
 function totales(d: DetallePublico): string {
-  if (d.conOpciones) return `<p class="nota">Estas líneas son opciones: puedes elegir una o varias. El importe de cada una ya incluye su IGV (${d.igvPorcentaje} %).</p>`;
-  const igv = d.igvPorcentaje > 0 ? `<div><span>IGV (${d.igvPorcentaje} %)</span><span>${formatearSoles(d.igvCentimos)}</span></div>` : '';
-  return `<div class="totales"><div><span>Subtotal</span><span>${formatearSoles(d.subtotalCentimos)}</span></div>${igv}<div class="total"><span>Total${d.igvPorcentaje > 0 ? ' con IGV' : ''}</span><span>${formatearSoles(d.totalCentimos)}</span></div></div>`;
+  const conIgv = d.igvPorcentaje > 0;
+  if (d.conOpciones) return `<p class="nota">Estas líneas son opciones: puedes elegir una o varias.${conIgv ? ` El importe de cada una ya incluye su IGV (${d.igvPorcentaje} %).` : ''}</p>`;
+  // Sin IGV (no se factura) no hay desglose: solo el total.
+  const desglose = conIgv ? `<div><span>Subtotal</span><span>${formatearSoles(d.subtotalCentimos)}</span></div><div><span>IGV (${d.igvPorcentaje} %)</span><span>${formatearSoles(d.igvCentimos)}</span></div>` : '';
+  return `<div class="totales">${desglose}<div class="total"><span>Total${d.igvPorcentaje > 0 ? ' con IGV' : ''}</span><span>${formatearSoles(d.totalCentimos)}</span></div></div>`;
 }
 
 function condiciones(d: DetallePublico): string {
