@@ -36,6 +36,7 @@ import { contratosDeCotizadorTaller } from './cotizador-taller.js';
 import { contratosDeCotizadorEnlaces } from './cotizador-enlaces.js';
 import { contratosDePreciosAnteriores } from './precios-anteriores.js';
 import { contratosDeMiDia } from './mi-dia.js';
+import { contratosDeAgente } from './agente.js';
 
 export * from './ficha-de-maquina.js';
 export * from './empresa.js';
@@ -75,6 +76,7 @@ export * from './cotizador-taller.js';
 export * from './cotizador-enlaces.js';
 export * from './precios-anteriores.js';
 export * from './mi-dia.js';
+export * from './agente.js';
 
 // Cada área aporta sus contratos y sus eventos; agregar uno solo obliga a editar el archivo del área.
 export const CONTRATOS = {
@@ -113,6 +115,7 @@ export const CONTRATOS = {
   ...contratosDeCotizadorCuadro,
   ...contratosDePreciosAnteriores,
   ...contratosDeMiDia,
+  ...contratosDeAgente,
 } as const satisfies Record<string, ContratoDeHerramienta>;
 
 /** Herramientas de la consola de plataforma: viven aparte (rol de plataforma). */

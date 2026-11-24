@@ -274,4 +274,26 @@ export const EJEMPLOS: Record<string, { sql: string; modo: Modo }> = {
     sql: `insert into cotizador.eventos (tenant_id, cotizacion_id, version, tipo, usuario_id) values ($1, md5($1::text || 'q2')::uuid, 1, 'creada', 'u1')`,
     modo: 'insercion',
   },
+  // Asistente. `comoEmpresa` fija `app.user_id = 'prueba'`, y las conversaciones y mensajes solo las ve su dueña.
+  'core.agente_configuracion': { sql: `insert into core.agente_configuracion (tenant_id, actualizado_por) values ($1, 'prueba')`, modo: 'completo' },
+  'core.agente_conversaciones': {
+    sql: `insert into core.agente_conversaciones (id, tenant_id, usuario_id, titulo) values (md5($1::text || 'agc')::uuid, $1, 'prueba', 'Hola')`,
+    modo: 'completo',
+  },
+  'core.agente_mensajes': {
+    sql: `insert into core.agente_mensajes (tenant_id, usuario_id, conversacion_id, turno_id, rol, contenido) values ($1, 'prueba', md5($1::text || 'agc')::uuid, md5($1::text || 'agt')::uuid, 'persona', 'Hola')`,
+    modo: 'completo',
+  },
+  'core.uso': {
+    sql: `insert into core.uso (tenant_id, usuario_id, origen, turno_id, modelo) values ($1, 'prueba', 'agente', md5($1::text || 'agt')::uuid, 'simulado/uno')`,
+    modo: 'insercion',
+  },
+  'core.agente_acciones': {
+    sql: `insert into core.agente_acciones (tenant_id, usuario_id, modelo, conversacion_id, turno_id, ronda, indice, herramienta, politica, resultado, hash_args) values ($1, 'prueba', 'simulado/uno', md5($1::text || 'agc')::uuid, md5($1::text || 'agt')::uuid, 1, 0, 'clientes_crear', 'directo', 'ok', 'h')`,
+    modo: 'insercion',
+  },
+  'core.agente_lecciones': {
+    sql: `insert into core.agente_lecciones (tenant_id, usuario_id, tipo, clave, texto, origen) values ($1, 'prueba', 'preferencia', 'k', 'Prefiere el RUC', 'persona')`,
+    modo: 'completo',
+  },
 };

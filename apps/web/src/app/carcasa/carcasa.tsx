@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { usePendientes } from '../../core/bandeja/use-pendientes.ts';
 import { cerrarSesion } from '../../core/acceso/api.ts';
+import { LanzadorDelAgente } from '../../core/agente/lanzador-del-agente.tsx';
+import { esAtajoDelAgente } from '../../core/agente/logica-lanzador.ts';
+import { puedeDictar } from '../../core/agente/logica-panel.ts';
 import { useYo } from '../../shared/sesion/use-yo.ts';
 import { notificar } from '../../shared/ui/notificar.ts';
 import { BarraInferior } from './barra-inferior.tsx';
@@ -11,6 +14,9 @@ import { PaletaDeComandos } from './paleta-de-comandos.tsx';
 import { avisoDeAccesoDenegado, menuDesdeYo } from './menu.ts';
 import { migasDeRuta } from './migas.ts';
 import { leerPlegado, guardarPlegado } from './plegado.ts';
+
+// El panel del asistente no pesa nada hasta que alguien lo abre: se descarga en el primer clic.
+const PanelDelAgente = lazy(() => import('../../core/agente/panel-del-agente.tsx').then((m) => ({ default: m.PanelDelAgente })));
 
 async function salir() {
   await cerrarSesion();
@@ -25,6 +31,8 @@ export function Carcasa() {
   const navegar = useNavigate();
   const [plegado, setPlegado] = useState(leerPlegado);
   const [paleta, setPaleta] = useState(false);
+  const [agente, setAgente] = useState(false);
+  const [agenteCargado, setAgenteCargado] = useState(false);
   const menu = useMemo(() => (yo?.empresa ? menuDesdeYo(yo) : null), [yo]);
   const { pendientes } = usePendientes(Boolean(yo?.empresa) && (yo?.permisos.includes('borradores:ver') ?? false));
   const aviso = yo?.empresa ? avisoDeAccesoDenegado(yo, pathname) : null;
@@ -40,6 +48,11 @@ export function Carcasa() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setPaleta((a) => !a);
+      }
+      if (esAtajoDelAgente(e)) {
+        e.preventDefault();
+        setAgente((a) => !a);
+        setAgenteCargado(true);
       }
     };
     window.addEventListener('keydown', alTeclear);
@@ -84,6 +97,12 @@ export function Carcasa() {
       </div>
       <PaletaDeComandos menu={menu} abierta={paleta} alCambiar={setPaleta} puedeVerClientes={menu.nucleo.some((i) => i.clave === 'clientes' && i.ruta !== null)} />
       <BarraInferior menu={menu} alSalir={() => void salir()} pendientes={pendientes} />
+      <LanzadorDelAgente abierto={agente} alAbrir={() => { setAgente(true); setAgenteCargado(true); }} />
+      {agenteCargado ? (
+        <Suspense fallback={null}>
+          <PanelDelAgente abierto={agente} alCerrar={() => setAgente(false)} migas={migasDeRuta(menu, pathname)} puedeDictar={puedeDictar(yo)} />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

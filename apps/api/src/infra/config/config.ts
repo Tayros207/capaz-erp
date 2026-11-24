@@ -44,6 +44,36 @@ export const esquemaDeConfig = z.object({
   CONEXIONES_CLAVE_VERSION: z.coerce.number().int().min(1).default(1),
   /** Solo las pruebas lo activan, para el servidor simulado de conexiones. */
   PERMITIR_DESTINOS_LOCALES: z.stringbool().default(false),
+  /** Asistente: `apagado` (por defecto) no llama a nadie; `simulado` es solo para pruebas; `openrouter` llama al modelo de verdad. */
+  AGENTE_PROVEEDOR: z.enum(['apagado', 'simulado', 'openrouter']).default('apagado'),
+  /** Llave del proveedor del modelo. Solo en `.env` o en las variables de Vercel; nunca en el código. */
+  OPENROUTER_API_KEY: z.string().min(1).optional(),
+  /** Modelo por defecto del despliegue; cada empresa puede elegir otro del catálogo. */
+  AGENTE_MODELO: z
+    .string()
+    .max(100)
+    .regex(/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._:-]*$/i)
+    .default('deepseek/deepseek-v4.1-flash-1017'),
+  /** Esfuerzo de razonamiento. `none` es lo seguro con herramientas: algunos proveedores exigen devolver el razonamiento. */
+  AGENTE_RAZONAMIENTO: z.enum(['none', 'low', 'high']).default('none'),
+  /** Tope mensual por empresa, en dólares (provisional hasta que Moisés fije el suyo). Se convierte a millonésimas al usarlo. */
+  AGENTE_TOPE_MENSUAL_USD: z.coerce.number().min(0).max(1000).default(5),
+  /** Días que se conservan las conversaciones de cada persona. */
+  AGENTE_RETENCION_DIAS: z.coerce.number().int().min(1).max(3650).default(90),
+  /** Rondas de herramientas por turno, como máximo. */
+  AGENTE_MAX_RONDAS: z.coerce.number().int().min(1).max(25).default(12),
+  /** Freno global de emergencia: `apagada` deja TODOS los cambios del asistente como borrador, en todas las empresas. */
+  AGENTE_ESCRITURA: z.enum(['activa', 'apagada']).default('activa'),
+});
+
+/** Reglas que dependen de varias variables a la vez (el asistente no puede salir mal configurado a producción). */
+const esquemaCompleto = esquemaDeConfig.superRefine((c, ctx) => {
+  if (c.AGENTE_PROVEEDOR === 'simulado' && c.NODE_ENV === 'production') {
+    ctx.addIssue({ code: 'custom', path: ['AGENTE_PROVEEDOR'], message: 'El proveedor simulado no se usa en producción.' });
+  }
+  if (c.AGENTE_PROVEEDOR === 'openrouter' && !c.OPENROUTER_API_KEY) {
+    ctx.addIssue({ code: 'custom', path: ['OPENROUTER_API_KEY'], message: 'Falta la llave del proveedor.' });
+  }
 });
 
 export type Config = z.infer<typeof esquemaDeConfig>;
@@ -61,7 +91,7 @@ export class ConfigInvalida extends Error {
 
 /** Valida el entorno. Nunca incluye valores en el error: pueden ser secretos. */
 export function leerConfig(env: Record<string, string | undefined>): Config {
-  const resultado = esquemaDeConfig.safeParse(env);
+  const resultado = esquemaCompleto.safeParse(env);
   if (resultado.success) return resultado.data;
   const variables = [...new Set(resultado.error.issues.map((i) => String(i.path[0] ?? '?')))];
   throw new ConfigInvalida(variables);

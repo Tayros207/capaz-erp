@@ -78,6 +78,44 @@ describe('leerConfig', () => {
     }
   });
 
+  it('el asistente nace apagado y con valores por defecto, sin obligar a tocar el .env', () => {
+    const c = leerConfig(base);
+    expect(c.AGENTE_PROVEEDOR).toBe('apagado');
+    expect(c.OPENROUTER_API_KEY).toBeUndefined();
+    expect(c.AGENTE_MODELO).toBe('deepseek/deepseek-v4.1-flash-1017');
+    expect(c.AGENTE_RAZONAMIENTO).toBe('none');
+    expect(c.AGENTE_TOPE_MENSUAL_USD).toBe(5);
+    expect(c.AGENTE_RETENCION_DIAS).toBe(90);
+    expect(c.AGENTE_MAX_RONDAS).toBe(12);
+    expect(c.AGENTE_ESCRITURA).toBe('activa');
+  });
+
+  it('el proveedor simulado se rechaza en producción y se acepta en pruebas', () => {
+    expect(() => leerConfig({ ...base, NODE_ENV: 'production', AGENTE_PROVEEDOR: 'simulado' })).toThrow(/AGENTE_PROVEEDOR/);
+    expect(leerConfig({ ...base, NODE_ENV: 'test', AGENTE_PROVEEDOR: 'simulado' }).AGENTE_PROVEEDOR).toBe('simulado');
+  });
+
+  it('openrouter exige la llave y nunca la filtra en el error', () => {
+    expect(() => leerConfig({ ...base, AGENTE_PROVEEDOR: 'openrouter' })).toThrow(/OPENROUTER_API_KEY/);
+    expect(leerConfig({ ...base, AGENTE_PROVEEDOR: 'openrouter', OPENROUTER_API_KEY: 'sk-or-secreta' }).AGENTE_PROVEEDOR).toBe('openrouter');
+    try {
+      leerConfig({ ...base, AGENTE_PROVEEDOR: 'openrouter', AGENTE_MAX_RONDAS: '99', OPENROUTER_API_KEY: 'sk-or-secreta' });
+      expect.unreachable();
+    } catch (e) {
+      expect(String(e)).not.toContain('sk-or-secreta');
+    }
+  });
+
+  it('valida los límites del asistente', () => {
+    expect(() => leerConfig({ ...base, AGENTE_MAX_RONDAS: '0' })).toThrow(/AGENTE_MAX_RONDAS/);
+    expect(() => leerConfig({ ...base, AGENTE_MAX_RONDAS: '26' })).toThrow(/AGENTE_MAX_RONDAS/);
+    expect(() => leerConfig({ ...base, AGENTE_RETENCION_DIAS: '0' })).toThrow(/AGENTE_RETENCION_DIAS/);
+    expect(() => leerConfig({ ...base, AGENTE_TOPE_MENSUAL_USD: '-1' })).toThrow(/AGENTE_TOPE_MENSUAL_USD/);
+    expect(() => leerConfig({ ...base, AGENTE_RAZONAMIENTO: 'mucho' })).toThrow(/AGENTE_RAZONAMIENTO/);
+    expect(() => leerConfig({ ...base, AGENTE_MODELO: 'sin-barra' })).toThrow(/AGENTE_MODELO/);
+    expect(leerConfig({ ...base, AGENTE_TOPE_MENSUAL_USD: '2.5' }).AGENTE_TOPE_MENSUAL_USD).toBe(2.5);
+  });
+
   it('rechaza valores fuera de rango o de la lista', () => {
     expect(() => leerConfig({ ...base, PORT: '70000' })).toThrow(/PORT/);
     expect(() => leerConfig({ ...base, ALTA_DE_EMPRESAS: 'siempre' })).toThrow(/ALTA_DE_EMPRESAS/);

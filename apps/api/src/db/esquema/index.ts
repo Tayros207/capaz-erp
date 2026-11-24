@@ -10,6 +10,7 @@ export * from './core-maestros-ampliados.js';
 export * from './core-plataforma.js';
 export * from './core-conexiones.js';
 export * from './core-automatizaciones.js';
+export * from './core-agente.js';
 export * from './registro.js';
 export * from './crm.js';
 export * from './ordenes.js';

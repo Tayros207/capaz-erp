@@ -1,5 +1,6 @@
 import {
-  Box, Check, ChevronDown, ChevronRight, CircleAlert, CircleCheck, Folder, House, Info, Menu, Moon, Plus, Search, Sun, TriangleAlert, User, X,
+  ArrowLeft, ArrowUp, Box, Check, ChevronDown, ChevronRight, CircleAlert, CircleCheck, Cpu, Folder, History, House, Info, Menu, Mic, Moon, Pencil, Plus,
+  Search, Sparkles, Square, SquarePen, Star, Sun, Trash2, TriangleAlert, User, X,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -23,6 +24,18 @@ export const ICONOS = {
   sol: Sun,
   luna: Moon,
   caja: Box,
+  // Asistente
+  asistente: Sparkles,
+  microfono: Mic,
+  enviar: ArrowUp,
+  detener: Square,
+  historial: History,
+  nueva: SquarePen,
+  atras: ArrowLeft,
+  favorita: Star,
+  borrar: Trash2,
+  editar: Pencil,
+  modelo: Cpu,
 } satisfies Record<string, LucideIcon>;
 
 export type NombreDeIcono = keyof typeof ICONOS;

@@ -34,6 +34,7 @@ export {
 } from './herramientas.js';
 export type { ManifiestoDeConector } from './conectores.js';
 export * from './contratos/index.js';
+export * from './agente.js';
 export {
   crearEmpresaSchema,
   empresaCreadaSchema,

@@ -274,6 +274,20 @@
       "when": 1795280495841,
       "tag": "0038_movimiento_lineas",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1795546884347,
+      "tag": "0039_agente",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1795555316253,
+      "tag": "0040_agente_huella_y_memoria",
+      "breakpoints": true
     }
   ]
 }

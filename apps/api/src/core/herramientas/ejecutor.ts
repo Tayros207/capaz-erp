@@ -14,11 +14,34 @@ import { mensajeDeZod, OPCIONES_EN_ESPANOL } from './errores-de-zod.js';
 import { RegistroDeHerramientas } from './registro.js';
 import type { ContextoDeHerramienta, HerramientaRegistrada, Resumen } from './tipos.js';
 
+/** Lo que el asistente deja en su huella por una acción que SÍ se ejecutó (los rechazos los anota quien llama, aparte). */
+export type DatosDeHuellaDeEjecucion = {
+  herramienta: string;
+  hashArgs: string;
+  /** Los argumentos ya validados. */
+  args: unknown;
+  /** La salida ya validada. */
+  despues: unknown;
+  /** Solo en las críticas: el resumen que escribió la propia herramienta y sobre el que se confirmó. */
+  resumenConfirmado: string | null;
+};
+
+/**
+ * Lo pone SOLO el servidor del asistente, nunca los argumentos del modelo. Con esto: (1) una crítica puede confirmarse por el
+ * canal `agente` con la confirmación propia (token de un solo uso que ve el servidor, no el modelo) y (2) lo que se hizo queda
+ * en la huella del asistente en la MISMA transacción que la acción: no hay acción sin huella.
+ */
+export type OpcionesDelAgente = {
+  politica: 'directo' | 'dinero' | 'confirmada';
+  registrarHuella: (tx: Transaccion, d: DatosDeHuellaDeEjecucion) => Promise<void>;
+};
+
 export type OpcionesDeEjecucion = {
   ctx: ContextoDeHerramienta;
   confirmacion?: string;
   /** Cabecera `Idempotency-Key`; solo cuenta en herramientas con `idempotente: true`. */
   claveDeIdempotencia?: string;
+  agente?: OpcionesDelAgente;
 };
 
 type Fallo = {
@@ -146,6 +169,15 @@ export class EjecutorDeHerramientas {
     }
   }
 
+  /**
+   * Las comprobaciones previas de `ejecutar()` (existe, argumentos reservados, módulo, permiso y esquema) sin ejecutar ni
+   * auditar nada. Lo usa quien PROPONE un borrador (el asistente): no debe proponerse lo que ya no podría ejecutarse.
+   */
+  validar(nombre: string, args: unknown, ctx: ContextoDeHerramienta): { ok: true; herramienta: HerramientaRegistrada; datos: unknown } | { ok: false; respuesta: Respuesta<unknown> } {
+    const previo = this.comprobar(nombre, args, ctx);
+    return 'fallo' in previo ? { ok: false, respuesta: previo.fallo.respuesta } : { ok: true, herramienta: previo.h, datos: previo.datos };
+  }
+
   // --- comprobaciones previas, sin tocar la base ---
 
   private comprobar(nombre: string, argsCrudos: unknown, ctx: ContextoDeHerramienta): Previo {
@@ -201,7 +233,7 @@ export class EjecutorDeHerramientas {
       }
       if (reserva.tipo === 'repetida') return reserva.respuesta;
     }
-    if (h.criticidad === 'critica') await this.confirmar(tx, h, datos, hash, opciones);
+    const resumenConfirmado = h.criticidad === 'critica' ? await this.confirmar(tx, h, datos, hash, opciones) : null;
     const respuesta = filtrarPorPermisos(await this.ejecutarYValidar(tx, h, datos, ctx), ctx);
     if (clave) await guardarRespuesta(tx, ctx.empresaId, clave, respuesta);
     await this.escritor.registrar(tx, {
@@ -214,6 +246,9 @@ export class EjecutorDeHerramientas {
       datos: h.auditar?.(datos, respuesta.ok ? respuesta.datos : null),
       duracionMs: performance.now() - inicio,
     });
+    if (opciones.agente && h.criticidad !== 'lectura') {
+      await opciones.agente.registrarHuella(tx, { herramienta: h.nombre, hashArgs: hash, args: datos, despues: respuesta.ok ? respuesta.datos : null, resumenConfirmado });
+    }
     return respuesta;
   }
 
@@ -244,9 +279,11 @@ export class EjecutorDeHerramientas {
     h: HerramientaRegistrada,
     datos: unknown,
     hash: string,
-    { ctx, confirmacion }: OpcionesDeEjecucion,
-  ): Promise<void> {
-    if (ctx.canal !== 'ui') {
+    { ctx, confirmacion, agente }: OpcionesDeEjecucion,
+  ): Promise<string> {
+    // Por la pantalla, siempre. Por el canal `agente` solo con la confirmación propia que armó el servidor del asistente.
+    const confirmaElAgente = ctx.canal === 'agente' && agente?.politica === 'confirmada';
+    if (ctx.canal !== 'ui' && !confirmaElAgente) {
       throw rechazar('confirmacion_solo_ui', 'Las acciones críticas deben confirmarse desde la pantalla.');
     }
     if (h.resumir === null) throw rechazar('error_interno', `La herramienta crítica «${h.nombre}» no define su resumen.`);
@@ -258,6 +295,7 @@ export class EjecutorDeHerramientas {
     // aunque lo que hizo cambiara el estado; si la huella no coincide, se revierte y el `jti` no se gasta.
     if (!(await reservarConfirmacion(tx, ctx.empresaId, carga.jti))) throw rechazar('confirmacion_ya_usada');
     if (carga.huella !== r.resumen.huella) throw rechazar('confirmacion_desactualizada');
+    return r.resumen.resumen;
   }
 
   private rechazoDeHerramienta(error: ErrorDeRespuesta): Revertir {
