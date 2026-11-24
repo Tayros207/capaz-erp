@@ -10,6 +10,7 @@ import { kpisDeEmpresas, type Kpis } from './logica.ts';
 
 const SECCIONES = [
   { a: '/plataforma', texto: 'Empresas', activa: (r: string) => r === '/plataforma' || r.startsWith('/plataforma/empresas') },
+  { a: '/plataforma/modulos', texto: 'Módulos', activa: (r: string) => r.startsWith('/plataforma/modulos') },
   { a: '/plataforma/planes', texto: 'Planes', activa: (r: string) => r.startsWith('/plataforma/planes') },
   { a: '/plataforma/solicitudes', texto: 'Solicitudes', activa: (r: string) => r.startsWith('/plataforma/solicitudes') },
 ] as const;

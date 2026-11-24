@@ -147,7 +147,16 @@ export const NOMBRES_DE_MODULO: Readonly<Record<string, string>> = {
   reportes: 'Reportes',
   webhooks: 'Webhooks y claves',
   cotizador: 'Cotizador',
+  produccion: 'Producción',
 };
+
+export type EstadoDeDesarrollo = 'disponible' | 'en_proceso' | 'en_construccion';
+
+/** «En construcción» lo declara el manifiesto; «en proceso» es un módulo con alguna pantalla aún sin construir. */
+export function estadoDeDesarrollo(m: { enConstruccion: boolean; secciones: ReadonlyArray<{ construida: boolean }> }): EstadoDeDesarrollo {
+  if (m.enConstruccion) return 'en_construccion';
+  return m.secciones.some((s) => !s.construida) ? 'en_proceso' : 'disponible';
+}
 
 export function nombreDeModulo(codigo: string): string {
   return NOMBRES_DE_MODULO[codigo] ?? (codigo ? codigo[0]!.toUpperCase() + codigo.slice(1) : codigo);

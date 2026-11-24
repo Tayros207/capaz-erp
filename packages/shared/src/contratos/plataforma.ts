@@ -101,6 +101,11 @@ export const moduloDelCatalogoSchema = z.strictObject({
   enConstruccion: z.boolean(),
   porDefecto: z.boolean(),
   dependeDe: z.array(z.string()),
+  version: z.string(),
+  /** Pantallas del módulo y si ya están construidas: de aquí sale «en proceso». */
+  secciones: z.array(z.strictObject({ nombre: z.string(), construida: z.boolean() })),
+  /** Empresas con el módulo en prueba o activo. */
+  empresas: z.number().int().nonnegative(),
 });
 
 export const vencimientoSchema = z.strictObject({

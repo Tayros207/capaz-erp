@@ -8,6 +8,7 @@ const p = () => import('./pantallas-de-plataforma.ts');
 export const rutas: RouteObject[] = [
   { path: 'plataforma', lazy: perezosa(p, (m) => <m.Marco><m.PantallaEmpresas /></m.Marco>) },
   { path: 'plataforma/empresas/:id', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaEmpresa /></m.Marco>) },
+  { path: 'plataforma/modulos', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaModulos /></m.Marco>) },
   { path: 'plataforma/planes', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaPlanes /></m.Marco>) },
   { path: 'plataforma/solicitudes', lazy: perezosa(p, (m) => <m.Marco conIndicadores={false}><m.PantallaSolicitudes /></m.Marco>) },
 ];

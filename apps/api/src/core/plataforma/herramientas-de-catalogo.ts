@@ -10,8 +10,12 @@ export function herramientasDeCatalogo(catalogo: Pick<CatalogoDeModulos, 'contra
   const modulos = definirHerramientaDePlataforma('plataforma_modulos_listar', {
     criticidad: 'lectura',
     ayuda: AYUDAS.modulosListar,
-    ejecutar: async () =>
-      exito({
+    async ejecutar(_a, _ctx, db) {
+      const { rows } = await db.query<{ modulo: string; empresas: number }>(
+        `select modulo, count(distinct tenant_id)::int as empresas from core.empresa_modulos where estado in ('activo', 'prueba') group by modulo`,
+      );
+      const porModulo = new Map(rows.map((r) => [r.modulo, r.empresas]));
+      return exito({
         items: catalogo.contratables().map((m) => ({
           codigo: m.codigo,
           nombre: m.nombre,
@@ -20,8 +24,12 @@ export function herramientasDeCatalogo(catalogo: Pick<CatalogoDeModulos, 'contra
           enConstruccion: m.enConstruccion,
           porDefecto: !!m.porDefecto,
           dependeDe: [...m.dependeDe],
+          version: m.version,
+          secciones: m.secciones.map((s) => ({ nombre: s.nombre, construida: s.construida })),
+          empresas: porModulo.get(m.codigo) ?? 0,
         })),
-      }),
+      });
+    },
   });
 
   const vencimientos = definirHerramientaDePlataforma('plataforma_vencimientos_listar', {

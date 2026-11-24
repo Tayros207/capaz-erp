@@ -74,6 +74,7 @@ export function datosOError<S>(r: Respuesta<S>): S {
 
 export const listarEmpresas = (texto?: string) => llamarPlataforma('plataforma_empresas_listar', texto ? { texto } : {});
 export const verEmpresa = (empresa: string) => llamarPlataforma('plataforma_empresas_ver', { empresa });
+export const listarModulos = () => llamarPlataforma('plataforma_modulos_listar', {});
 export const listarPlanes = () => llamarPlataforma('plataforma_planes_listar', {});
 export const listarSolicitudes = (estado: EntradaDePlataforma<'plataforma_solicitudes_listar'>['estado']) =>
   llamarPlataforma('plataforma_solicitudes_listar', { estado });

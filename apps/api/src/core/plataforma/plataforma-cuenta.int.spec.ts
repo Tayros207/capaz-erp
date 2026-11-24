@@ -125,6 +125,8 @@ describe('módulos con nombre (A5)', () => {
     const items = (await plat(operador, 'plataforma_modulos_listar', {})).cuerpo.datos.items as any[];
     const cot = items.find((m) => m.codigo === 'cotizador');
     expect(cot).toMatchObject({ enConstruccion: false, nombre: expect.any(String), familia: expect.any(String), descripcion: expect.any(String) });
+    expect(cot.secciones.length).toBeGreaterThan(0);
+    expect(cot).toMatchObject({ version: expect.stringMatching(/^\d+\.\d+\.\d+$/), empresas: expect.any(Number) });
     expect(items.find((m) => m.codigo === 'compras').dependeDe).toEqual(['insumos']);
     expect(items.some((m) => m.codigo === 'core')).toBe(false);
   });

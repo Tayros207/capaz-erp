@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Centimos, ModuloDeEmpresaDto } from '@capaz/shared';
-import { etiquetaDeActor, accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO } from './logica.ts';
+import { etiquetaDeActor, accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO, estadoDeDesarrollo } from './logica.ts';
 
 const MODULO: ModuloDeEmpresaDto = {
   modulo: 'ventas', nombre: 'Ventas', estado: 'activo', altaEn: '2026-11-01T10:00:00.000Z', pruebaHasta: null, bajaEn: null, motivo: null,
@@ -65,5 +65,13 @@ describe('etiquetaDeActor', () => {
     expect(etiquetaDeActor('sistema:alta-de-empresa')).toBe('Sistema · alta de empresa');
     expect(etiquetaDeActor('ana@x.pe')).toBe('ana@x.pe');
     expect(etiquetaDeActor(null)).toBe('Sin registro');
+  });
+});
+
+describe('estado de desarrollo de un módulo', () => {
+  it('distingue disponible, en proceso y en construcción', () => {
+    expect(estadoDeDesarrollo({ enConstruccion: false, secciones: [{ construida: true }] })).toBe('disponible');
+    expect(estadoDeDesarrollo({ enConstruccion: false, secciones: [{ construida: true }, { construida: false }] })).toBe('en_proceso');
+    expect(estadoDeDesarrollo({ enConstruccion: true, secciones: [{ construida: true }] })).toBe('en_construccion');
   });
 });
