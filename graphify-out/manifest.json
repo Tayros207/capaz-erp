@@ -1440,9 +1440,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/rutas.tsx": {
-    "mtime": 1795274450.0016773,
-    "seen": 1795279166.1775558,
-    "ast_hash": "c25f575532a4bc137541f05948461131",
+    "mtime": 1795540552.887322,
+    "seen": 1795540873.6568494,
+    "ast_hash": "a4f8b642753ac0874611542d7583d72e",
     "semantic_hash": ""
   },
   "apps/web/src/shared/api/cliente.spec.ts": {
@@ -1860,9 +1860,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/plataforma.ts": {
-    "mtime": 1794851350.3951054,
-    "seen": 1794851857.5602384,
-    "ast_hash": "967c6413c156441789872d2f547bb29e",
+    "mtime": 1795540552.8846982,
+    "seen": 1795540873.6573,
+    "ast_hash": "267dd099d5a46f433939d8907a16284f",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/productos.ts": {
@@ -3084,15 +3084,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/api.ts": {
-    "mtime": 1794784947.070469,
-    "seen": 1794785106.1452196,
-    "ast_hash": "e4aff82cb86a65ac40098f6cf3c3168a",
+    "mtime": 1795540552.8867981,
+    "seen": 1795540873.656772,
+    "ast_hash": "2a4431cace58a2b71a03780dc6d815bc",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/claves.ts": {
-    "mtime": 1794784947.070469,
-    "seen": 1794785106.1452215,
-    "ast_hash": "6d82e135a18c236f7557e72a9637ae0f",
+    "mtime": 1795540552.8867981,
+    "seen": 1795540873.6567893,
+    "ast_hash": "f32048126e059c2b3a88381a21276e61",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/hoja-activar.tsx": {
@@ -3126,15 +3126,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/logica.spec.ts": {
-    "mtime": 1794851882.7744107,
-    "seen": 1794852046.6073346,
-    "ast_hash": "cc8d42cbd22648f4a551934cd5184417",
+    "mtime": 1795540755.772228,
+    "seen": 1795540873.656821,
+    "ast_hash": "44dff126e57726f88ffb562e0d2032f2",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/logica.ts": {
-    "mtime": 1794851875.5991411,
-    "seen": 1794852046.6073382,
-    "ast_hash": "7c2d633af60b47f5f170375a03ff217f",
+    "mtime": 1795540661.0585067,
+    "seen": 1795540873.6568232,
+    "ast_hash": "de5d93d65cf60ba81b51fee0ab1746d9",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/marco.tsx": {
@@ -5802,21 +5802,21 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/documentos.spec.ts": {
-    "mtime": 1795455089.3827267,
-    "seen": 1795455165.4915922,
-    "ast_hash": "b1611d95fe3e3b549b65e515a257edad",
+    "mtime": 1795458530.791477,
+    "seen": 1795458663.2375307,
+    "ast_hash": "a392579709cff99135a9dce59bafcb49",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/documentos.ts": {
-    "mtime": 1795455007.4021602,
-    "seen": 1795455165.4915967,
-    "ast_hash": "3bc18a76e4ccd9cddb1e51ac724fbe85",
+    "mtime": 1795458526.513893,
+    "seen": 1795458663.2375345,
+    "ast_hash": "ae0eb2c02eb8671aac7deb668312a7aa",
     "semantic_hash": ""
   },
   "apps/web/src/modules/ordenes/pantalla-documento.tsx": {
-    "mtime": 1795455007.4023404,
-    "seen": 1795455165.491717,
-    "ast_hash": "a433f8350826f157be9be8f81a2c1893",
+    "mtime": 1795458526.5145628,
+    "seen": 1795458663.2376256,
+    "ast_hash": "9edb52d09eb090f1291bea25ffaf278c",
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/entidades-logica.spec.ts": {
@@ -5922,9 +5922,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/cabecera-de-consola.tsx": {
-    "mtime": 1794851671.6016202,
-    "seen": 1794851857.5595064,
-    "ast_hash": "b6c426f157c81f7971f653d5d30796c5",
+    "mtime": 1795540552.887063,
+    "seen": 1795540873.6567807,
+    "ast_hash": "3e0588f9919688a4adeda67b0b6ff086",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/filtros-de-empresas.tsx": {
@@ -5934,9 +5934,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/iconos-de-modulo.ts": {
-    "mtime": 1794849360.0483234,
-    "seen": 1794849660.1965632,
-    "ast_hash": "be157af424612a6d7065418ae5bda9bc",
+    "mtime": 1795540569.9259863,
+    "seen": 1795540873.656813,
+    "ast_hash": "367a19c5cedf5288b9039b5b7c384dd0",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/lista-de-empresas.tsx": {
@@ -5982,9 +5982,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/plataforma/herramientas-de-catalogo.ts": {
-    "mtime": 1794851350.3942895,
-    "seen": 1794851857.555437,
-    "ast_hash": "d382133ba630ebe205b6854718ae02d2",
+    "mtime": 1795540552.8849149,
+    "seen": 1795540873.6532567,
+    "ast_hash": "c9cbfec1dc26fca7e3e1f25770c88fa8",
     "semantic_hash": ""
   },
   "apps/api/src/core/plataforma/herramientas-de-cuenta.ts": {
@@ -5994,9 +5994,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/plataforma/plataforma-cuenta.int.spec.ts": {
-    "mtime": 1794893237.8830261,
-    "seen": 1794894112.9497416,
-    "ast_hash": "700eaa6be982865108eef8c9f529b88f",
+    "mtime": 1795540552.885228,
+    "seen": 1795540873.6532753,
+    "ast_hash": "9c99b5c9eddd441d8a0bab337385a69c",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/atajos-de-lista.ts": {
@@ -7074,9 +7074,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-emision.ts": {
-    "mtime": 1794940616.642661,
-    "seen": 1794940714.9071755,
-    "ast_hash": "b9c9ddd65226b09cdff648c893c9114e",
+    "mtime": 1795457545.3762045,
+    "seen": 1795457859.7052217,
+    "ast_hash": "4e05becee8f84e4fb6852b7fa665d5dd",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-escritura.ts": {
@@ -8142,9 +8142,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/publico/plantilla-publica.ts": {
-    "mtime": 1794935461.5678349,
-    "seen": 1794935565.8767016,
-    "ast_hash": "bceac47fb1d7c21da4b1d6c2caa79b40",
+    "mtime": 1795457545.375955,
+    "seen": 1795457859.7067764,
+    "ast_hash": "cbdffdb2920c573487f0b58e75384e9b",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/repositories/enlaces-publico.repository.ts": {
@@ -10974,9 +10974,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/pantallas-de-plataforma.ts": {
-    "mtime": 1795274449.9946773,
-    "seen": 1795279166.1775498,
-    "ast_hash": "7c7e4d1dea873e11d32ecd42a5958499",
+    "mtime": 1795540552.887199,
+    "seen": 1795540873.6568446,
+    "ast_hash": "5efcfad72792e871432ebbcec5cd8905",
     "semantic_hash": ""
   },
   "apps/web/src/shared/rutas/perezosa.spec.ts": {
@@ -11139,6 +11139,18 @@
     "mtime": 1795455181.2758179,
     "seen": 1795455308.9451916,
     "ast_hash": "0f44b5543e572bf94b01c1e2c15b337e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/publico/plantilla-publica.spec.ts": {
+    "mtime": 1795457586.9721043,
+    "seen": 1795457859.7067704,
+    "ast_hash": "79b6f00926864b8d182aad94e9620c8e",
+    "semantic_hash": ""
+  },
+  "apps/web/src/plataforma/pantalla-modulos.tsx": {
+    "mtime": 1795540660.9995065,
+    "seen": 1795540873.656836,
+    "ast_hash": "06cee4e1ffe6257dacaec3eba4e1d9c2",
     "semantic_hash": ""
   }
 }

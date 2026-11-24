@@ -7074,9 +7074,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-emision.ts": {
-    "mtime": 1794940616.642661,
-    "seen": 1794940714.9071755,
-    "ast_hash": "b9c9ddd65226b09cdff648c893c9114e",
+    "mtime": 1795457545.3762045,
+    "seen": 1795457859.7052217,
+    "ast_hash": "4e05becee8f84e4fb6852b7fa665d5dd",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/herramientas/cotizaciones-escritura.ts": {
@@ -8142,9 +8142,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/publico/plantilla-publica.ts": {
-    "mtime": 1794935461.5678349,
-    "seen": 1794935565.8767016,
-    "ast_hash": "bceac47fb1d7c21da4b1d6c2caa79b40",
+    "mtime": 1795457545.375955,
+    "seen": 1795457859.7067764,
+    "ast_hash": "cbdffdb2920c573487f0b58e75384e9b",
     "semantic_hash": ""
   },
   "apps/api/src/modules/cotizador/repositories/enlaces-publico.repository.ts": {
@@ -10302,9 +10302,9 @@
     "semantic_hash": ""
   },
   "vercel.json": {
-    "mtime": 1795456459.2208104,
-    "seen": 1795456519.9089036,
-    "ast_hash": "be795264fdfe7330b0098ede28ae31df",
+    "mtime": 1795456705.1424527,
+    "seen": 1795456780.0646644,
+    "ast_hash": "8a9db902b1732057a0258ee1cfcfb3ff",
     "semantic_hash": ""
   },
   "apps/api/drizzle/0036_ficha_de_maquina_en_pedido_lineas.sql": {
@@ -11139,6 +11139,12 @@
     "mtime": 1795455181.2758179,
     "seen": 1795455308.9451916,
     "ast_hash": "0f44b5543e572bf94b01c1e2c15b337e",
+    "semantic_hash": ""
+  },
+  "apps/api/src/modules/cotizador/publico/plantilla-publica.spec.ts": {
+    "mtime": 1795457586.9721043,
+    "seen": 1795457859.7067704,
+    "ast_hash": "79b6f00926864b8d182aad94e9620c8e",
     "semantic_hash": ""
   }
 }
