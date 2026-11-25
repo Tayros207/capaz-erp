@@ -17,8 +17,8 @@ export type EntradaDeInterprete = {
   texto: string;
   origen: OrigenDeCaptura;
   modo?: 'ingreso' | 'egreso';
-  /** Lo que extrajo el modelo; `null` en A1. */
-  extraccion: unknown | null;
+  /** Lo que extrajo el modelo, ya validado con `esquemaParaModelo`; `null` en A1 o si el modelo no respondió algo válido. */
+  extraccion: unknown;
 };
 
 export type InterpreteDeCaptura = {
@@ -28,7 +28,11 @@ export type InterpreteDeCaptura = {
   tambienPropone?: readonly string[];
   /** Solo lee (R19). `ctx` es el de la PERSONA que dicta, no el de sistema. */
   interpretar(tx: Transaccion, ctx: ContextoDeHerramienta, e: EntradaDeInterprete): Promise<DictadoInterpretado>;
-  /** Solo A2. */
+  /**
+   * Solo A2: lo que el modelo debe extraer. Campos `nullable()` (no `optional()`): la salida estricta los exige todos. Nunca ids:
+   * el intérprete resuelve nombres a ids con sus reglas. Lo extraído llega validado en `EntradaDeInterprete.extraccion`.
+   */
   esquemaParaModelo?: z.ZodType;
+  /** Cómo segmentar el texto. No lleva datos de la empresa: el modelo solo ve estas instrucciones y el texto dictado. */
   instrucciones?: string;
 };

@@ -29,6 +29,8 @@ const casos: Caso[] = [
   ['pedido para Rosa 25 llaveros a 15 la docena', 'Rosa', [E('25 llaveros', 15000, 'total_o_unitario')], null, null],
   ['sabes qué hazme un pedido para Rosa de quinientas tarjetas a 0.365 me dejó cincuenta soles para el viernes', 'Rosa', [TARJETAS], 5000, '2026-11-20'],
   ['pedido de 300, anticipo 100', null, [], 10000, null],
+  ['pedido para Rosa banner 180 soles deja adelanto 90 soles', 'Rosa', [E('banner', 180000)], 9000, null],
+  ['pedido para Rosa banner 180, dejó un adelanto de 90', 'Rosa', [E('banner', 180000)], 9000, null],
 ];
 
 describe('interpretarPedidoDictado (hoy = miércoles 2026-11-18)', () => {

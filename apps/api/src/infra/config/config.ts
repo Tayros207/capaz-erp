@@ -64,6 +64,12 @@ export const esquemaDeConfig = z.object({
   AGENTE_MAX_RONDAS: z.coerce.number().int().min(1).max(25).default(12),
   /** Freno global de emergencia: `apagada` deja TODOS los cambios del asistente como borrador, en todas las empresas. */
   AGENTE_ESCRITURA: z.enum(['activa', 'apagada']).default('activa'),
+  /** Modelo que entiende el dictado y rellena la propuesta. Solo se usa con `AGENTE_PROVEEDOR=openrouter`; si no, rigen las reglas. */
+  CAPTURA_MODELO: z
+    .string()
+    .max(100)
+    .regex(/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._:-]*$/i)
+    .default('anthropic/claude-sonnet-5.5'),
 });
 
 /** Reglas que dependen de varias variables a la vez (el asistente no puede salir mal configurado a producción). */

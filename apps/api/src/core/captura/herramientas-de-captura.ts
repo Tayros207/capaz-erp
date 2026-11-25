@@ -34,9 +34,10 @@ export function crearHerramientasDeCaptura(interpretes: RegistroDeInterpretes, m
       const interprete = interpretes.para(args.modulo);
       if (!interprete) return rechazo('no_encontrado', 'Todavía no se puede dictar para ese módulo.');
 
+      // El modelo solo PROPONE campos (ya validados con el esquema); el intérprete los fusiona con sus reglas. `null` = solo reglas.
       const extraccion =
         interprete.esquemaParaModelo && interprete.instrucciones
-          ? await modelo.extraer(interprete.esquemaParaModelo, interprete.instrucciones, args.texto)
+          ? await modelo.extraer(interprete.esquemaParaModelo, interprete.instrucciones, args.texto, tx)
           : null;
       const interpretadoCon = extraccion === null ? ('reglas' as const) : ('modelo' as const);
       const r = await interprete.interpretar(tx, ctx, { texto: args.texto, origen: args.origen, modo: args.modo, extraccion });

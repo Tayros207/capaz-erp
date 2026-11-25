@@ -6,6 +6,7 @@ import type { ContextoDeHerramienta } from '../../../core/herramientas/tipos.js'
 import type { Transaccion } from '../../../infra/database/con-empresa.js';
 import { codigoDeDeuda } from '../domain/codigos.js';
 import { categoriaConNombre } from '../repositories/categorias.repository.js';
+import { listarCuentas } from '../repositories/cuentas.repository.js';
 import { listarDeudas, type Deuda } from '../repositories/deudas.repository.js';
 import { categoriasUsadasConContacto } from '../repositories/movimientos.repository.js';
 import { propietarioDe } from '../herramientas/comun.js';
@@ -28,6 +29,22 @@ export async function resolverContacto(tx: Transaccion, ctx: ContextoDeHerramien
   if (probables.length === 1) return { contacto: opcion(probables[0]!), sugerencia: null };
   const opciones = (probables.length > 1 ? probables : candidatos.slice(0, 3)).map(opcion);
   return { contacto: null, sugerencia: { campo: 'contactoId', texto: dictado, opciones } };
+}
+
+export type CuentaResuelta = { id: string | null; faltan: string[] };
+
+/**
+ * De la cuenta nombrada («caja chica», «BCP») a su id: el nombre exacto, o la ÚNICA cuenta activa que lo contiene. Si no hay una
+ * sola, no se elige ninguna (rige la principal) y se avisa: elegir la cuenta equivocada mueve el saldo de otra.
+ */
+export async function resolverCuenta(tx: Transaccion, ctx: ContextoDeHerramienta, dicha: string | null): Promise<CuentaResuelta> {
+  if (dicha === null) return { id: null, faltan: [] };
+  const n = normalizarNombre(dicha);
+  const cuentas = await listarCuentas(tx, ctx, { incluirArchivadas: false });
+  const exacta = cuentas.find((c) => c.nombreNormalizado === n);
+  const parecidas = cuentas.filter((c) => c.nombreNormalizado.includes(n) || n.includes(c.nombreNormalizado));
+  const elegida = exacta ?? (parecidas.length === 1 ? parecidas[0]! : null);
+  return elegida ? { id: elegida.id, faltan: [] } : { id: null, faltan: [`la cuenta «${dicha}»: no encontré una sola con ese nombre, elígela en la tarjeta`] };
 }
 
 /** La categoría habitual del contacto, con las mismas reglas que `sugerirPorHistorial` pero con identificadores. */

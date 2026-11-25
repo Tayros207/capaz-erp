@@ -1,7 +1,12 @@
 import type { z } from 'zod';
+import type { Transaccion } from '../../infra/database/con-empresa.js';
 
 export interface ModeloDeLenguaje {
-  extraer(esquema: z.ZodType, instrucciones: string, texto: string): Promise<unknown | null>;
+  /**
+   * Lo que el modelo entendió de `texto`, YA validado con `esquema`, o `null` (sin modelo, sin presupuesto o respuesta que no sirve).
+   * Nunca lanza: si devuelve `null`, el intérprete sigue con sus reglas. `tx` es la de la persona que dicta (tope y uso de su empresa).
+   */
+  extraer(esquema: z.ZodType, instrucciones: string, texto: string, tx: Transaccion): Promise<unknown>;
 }
 
 export const MODELO_DE_LENGUAJE = Symbol('MODELO_DE_LENGUAJE');

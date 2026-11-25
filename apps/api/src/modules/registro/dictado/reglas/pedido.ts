@@ -17,7 +17,10 @@ export type PedidoDictado = {
 };
 
 // El `y` opcional del principio y el «con»/pronombre («CON adelanto de 100», «ME adelantó 100») se comen con la palabra clave.
-const RE_CLAVE_ADELANTO = /[,;]?\s*(?:\b(?:y|e|con|me|nos)\s+)*\b(?:adelant\w*|anticip\w*|a\s+cuenta|dej[a-z]*)\s*(?:de\s+)?/i;
+// «deja/dejó (un) adelanto 90» (REGLA NUEVA, 2026-11-25): antes «deja» casaba solo, no encontraba número detrás y el adelanto se
+// perdía; el 90 acababa como precio del trabajo.
+const RE_CLAVE_ADELANTO =
+  /[,;]?\s*(?:\b(?:y|e|con|me|nos)\s+)*\b(?:(?:dej[a-z]*\s+(?:(?:de|el|un)\s+)?)?(?:adelant\w*|anticip\w*|a\s+cuenta)|dej[a-z]*)\s*(?:de\s+)?/i;
 
 /** Saca el adelanto dictado («adelanto 100», «a cuenta cincuenta», «me dejó 150»). Sin número no toca nada. */
 export function extraerAdelanto(texto: string): { centimos: number | null; resto: string } {
