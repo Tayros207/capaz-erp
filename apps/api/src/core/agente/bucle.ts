@@ -61,9 +61,11 @@ async function unaRonda(dep: DependenciasDelBucle, e: EntradaDelBucle, est: Esta
   let fin: FinDeRonda | null = null;
   for await (const t of dep.modelo.conversar({ modelo: e.modelo, mensajes, herramientas: tools, senal: e.senal, sesion: e.sesion })) {
     if (t.tipo === 'texto') {
+      // Lo que dice en una ronda nueva no se pega a lo de la anterior («cliente.Ninguna»): entre rondas va un párrafo aparte.
+      const separador = texto === '' && est.texto !== '' && !est.texto.endsWith('\n') ? '\n\n' : '';
       texto += t.delta;
-      est.texto += t.delta;
-      dep.emitir({ type: 'texto', delta: t.delta });
+      est.texto += separador + t.delta;
+      dep.emitir({ type: 'texto', delta: separador + t.delta });
     } else fin = t;
   }
   const cierre = fin ?? { tipo: 'fin' as const, motivo: 'error' as const, llamadas: [], razonamiento: null, uso: null };

@@ -13,6 +13,8 @@ import { CajaDeMensaje } from './caja-de-mensaje.tsx';
 import { Hilo } from './hilo.tsx';
 import { HistorialConectado } from './historial-conectado.tsx';
 import { InsigniaDeUso } from './insignia-de-uso.tsx';
+import { estadoVivo, type EstadoVivo } from './logica-acciones.ts';
+import { OrbeDelAsistente } from './orbe-del-asistente.tsx';
 import { SUGERENCIAS_CON_ASISTENTE, SUGERENCIAS_INICIALES } from './logica-hilo.ts';
 import { AVISO_SIN_IA, AVISO_SIN_PERMISO, AVISO_TOPE, MARCADOR_DE_LA_CAJA, SALUDO_CON_ASISTENTE, SALUDO_VACIO } from './logica-panel.ts';
 import { pantallaDesdeRuta } from './logica-pantalla.ts';
@@ -34,16 +36,20 @@ type Props = {
 type Vista = 'conversacion' | 'historial' | 'modelo';
 type Conversacion = ReturnType<typeof useConversacion>;
 
-type PropsDeCabecera = { pista: string; conectado: boolean; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void };
+type PropsDeCabecera = { pista: string; conectado: boolean; vivo: EstadoVivo | null; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void };
 
-function Cabecera({ pista, conectado, alNueva, alHistorial, alModelo, alCerrar }: PropsDeCabecera): ReactNode {
+/** El cabezal: el orbe (que piensa cuando trabaja), el nombre y una línea que dice qué está haciendo AHORA o dónde está la persona. */
+function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCerrar }: PropsDeCabecera): ReactNode {
   return (
     <div className="flex items-center justify-between gap-2">
-      <div className="min-w-0">
-        {alCerrar ? <h2 className="font-titulo text-base font-semibold tracking-tight">Asistente</h2> : null}
-        {pista ? <p className="truncate text-xs text-texto-suave">{pista}</p> : null}
+      <div className="flex min-w-0 items-center gap-3">
+        <OrbeDelAsistente tamano="size-9" nivel={vivo ? 'trabajando' : 'reposo'} />
+        <div className="min-w-0">
+          {alCerrar ? <h2 className="font-titulo text-base leading-tight font-semibold tracking-tight">Asistente</h2> : null}
+          <p aria-live="polite" className={vivo ? 'truncate text-xs font-medium text-asistente-2' : 'truncate text-xs text-texto-suave'}>{vivo ? vivo.texto : pista || 'En línea'}</p>
+        </div>
       </div>
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-0.5">
         <Boton variante="fantasma" icono="nueva" aria-label="Nueva conversación" onClick={alNueva} />
         <Boton variante="fantasma" icono="historial" aria-label="Historial" onClick={alHistorial} />
         {conectado ? <Boton variante="fantasma" icono="modelo" aria-label="Ajustes del asistente" onClick={alModelo} /> : null}
@@ -79,7 +85,7 @@ function Cuerpo({ c, vista, estado, alVolver, alNavegar, alAbrir, alElegirSugere
   return (
     <div className="flex flex-col gap-3">
       {aviso ? <p role="note" className="rounded-control border border-borde bg-superficie-alta p-2 text-xs text-texto-suave">{aviso}</p> : null}
-      <Hilo elementos={c.hilo} alResolver={c.resolver} alElegirSugerencia={alElegirSugerencia} alNavegar={alNavegar} sugerencias={conectado ? SUGERENCIAS_CON_ASISTENTE : SUGERENCIAS_INICIALES} saludo={conectado ? SALUDO_CON_ASISTENTE : SALUDO_VACIO} reintentable={c.reintentable} alReintentar={c.reintentar} />
+      <Hilo elementos={c.hilo} alResolver={c.resolver} alElegirSugerencia={alElegirSugerencia} alRespuestaRapida={c.enviarTexto ? (f) => void c.enviarTexto?.(f) : undefined} ocupado={c.ocupado} conAsistente={conectado} alNavegar={alNavegar} sugerencias={conectado ? SUGERENCIAS_CON_ASISTENTE : SUGERENCIAS_INICIALES} saludo={conectado ? SALUDO_CON_ASISTENTE : SALUDO_VACIO} reintentable={c.reintentable} alReintentar={c.reintentar} />
       {c.uso ? <InsigniaDeUso uso={c.uso} /> : null}
     </div>
   );
@@ -132,7 +138,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
     if (c.abrir && (await c.abrir(id))) setVista('conversacion');
   };
   const cabecera = (
-    <Cabecera pista={migas.join(' › ')} conectado={estado.data?.activo === true} alNueva={() => { c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} />
+    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} />
   );
   const cuerpo = <Cuerpo c={c} vista={vista} estado={estado.data} alVolver={() => setVista('conversacion')} alNavegar={alNavegar} alAbrir={(id) => void alAbrir(id)} alElegirSugerencia={entrada.alEscribir} />;
   const pie = vista === 'conversacion' ? <Pie c={c} voz={voz} entrada={entrada} puedeDictar={puedeDictar} refTexto={refTexto} /> : null;
@@ -152,11 +158,11 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
       role="dialog"
       aria-modal="false"
       aria-label="Asistente"
-      className="fixed right-6 bottom-6 z-30 flex h-[min(40rem,calc(100dvh-6rem))] w-[26rem] flex-col rounded-tarjeta border border-borde bg-superficie shadow-elevada print:hidden"
+      className="fixed right-6 bottom-6 z-30 flex h-[min(42rem,calc(100dvh-6rem))] w-[27rem] flex-col overflow-hidden rounded-[1.5rem] border border-borde bg-superficie shadow-elevada motion-safe:animate-[asistente-entra_260ms_cubic-bezier(0.2,0.8,0.2,1)_both] print:hidden"
     >
-      <div className="border-b border-borde px-4 py-3">{cabecera}</div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">{cuerpo}</div>
-      {pie ? <div className="border-t border-borde px-4 py-3">{pie}</div> : null}
+      <div className="border-b border-borde bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-asistente-1)_10%,transparent),transparent)] px-4 py-3">{cabecera}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{cuerpo}</div>
+      {pie ? <div className="px-3 pt-1 pb-3">{pie}</div> : null}
     </section>
   );
 }

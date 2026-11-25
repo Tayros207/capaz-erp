@@ -1,9 +1,13 @@
 import type { EventoDelAgente, MensajeDelAgente, MotivoDeErrorDelAgente } from '@capaz/shared';
+import { rutaDeLoHecho } from './logica-acciones.ts';
 import type { ElementoDeHilo } from './logica-hilo.ts';
 
 // Cómo los eventos de un turno se vuelven el hilo que ve la persona, y qué hacer cuando la conexión se corta a mitad. Puras: sin React.
 
 type ElementoAgente = Extract<ElementoDeHilo, { tipo: 'agente' }>;
+
+/** Las herramientas con las que el asistente se orienta (mapa, ficha, llamada indirecta): no son «trabajo» que la persona quiera ver. */
+const HERRAMIENTAS_INTERNAS: ReadonlySet<string> = new Set(['software_mapa', 'herramienta_describir', 'herramienta_llamar']);
 
 export const idDelAgente = (turnoId: string): string => `agente-${turnoId}`;
 export const idDelError = (turnoId: string): string => `error-${turnoId}`;
@@ -16,6 +20,15 @@ function conAgente(hilo: readonly ElementoDeHilo[], turnoId: string, cambio: (a:
   const existe = hilo.some((e) => e.id === id);
   const base: readonly ElementoDeHilo[] = existe ? hilo : [...hilo, { id, tipo: 'agente', texto: '', estado: 'escribiendo' }];
   return base.map((e) => (e.id === id && e.tipo === 'agente' ? cambio(e) : e));
+}
+
+/**
+ * Lo que el asistente consulta, hace o propone en un turno va ANTES de su texto: primero se ve el trabajo y luego la respuesta que lo resume.
+ * La burbuja del turno se crea al empezar (para mostrar «pensando»), así que lo nuevo se coloca delante de ella.
+ */
+function antesDeLaRespuesta(hilo: readonly ElementoDeHilo[], turnoId: string, nuevo: ElementoDeHilo): ElementoDeHilo[] {
+  const i = hilo.findIndex((e) => e.id === idDelAgente(turnoId));
+  return i < 0 ? [...hilo, nuevo] : [...hilo.slice(0, i), nuevo, ...hilo.slice(i)];
 }
 
 /** Cierra las herramientas que seguían «en curso»: si el turno terminó, ninguna puede seguir consultando. */
@@ -39,13 +52,13 @@ export function aplicarEvento(hilo: readonly ElementoDeHilo[], e: EventoDelAgent
     case 'texto':
       return conAgente(hilo, turnoId, (a) => ({ ...a, texto: a.texto + e.delta }));
     case 'herramienta_inicio':
-      return [...hilo, { id: `herramienta-${e.id}`, tipo: 'herramienta', titulo: e.titulo, estado: 'en_curso' }];
+      return antesDeLaRespuesta(hilo, turnoId, { id: `herramienta-${e.id}`, tipo: 'herramienta', titulo: e.titulo, estado: 'en_curso', ...(HERRAMIENTAS_INTERNAS.has(e.nombre) ? { interna: true } : {}) });
     case 'herramienta_fin':
       return hilo.map((x) => (x.id === `herramienta-${e.id}` && x.tipo === 'herramienta' ? { ...x, estado: e.ok ? 'listo' : 'fallo', nota: e.nota } : x));
     case 'accion':
-      return [...hilo, { id: `accion-${turnoId}-${hilo.length}`, tipo: 'aviso', tono: 'info', texto: `Hecho: ${e.titulo}.` }];
+      return antesDeLaRespuesta(hilo, turnoId, { id: `accion-${turnoId}-${hilo.length}`, tipo: 'accion', titulo: e.titulo, ruta: rutaDeLoHecho(e.herramienta, e.entidadId) });
     case 'borrador':
-      return [...hilo, { id: `borrador-${e.borrador.id}`, tipo: 'borrador', propuesta: e.borrador, resuelto: null }];
+      return antesDeLaRespuesta(hilo, turnoId, { id: `borrador-${e.borrador.id}`, tipo: 'borrador', propuesta: e.borrador, resuelto: null });
     case 'fin':
       return cerrarHerramientas(conAgente(hilo, turnoId, (a) => ({ ...a, estado: e.estado === 'completo' ? 'completo' : 'interrumpido' })), 'listo');
     case 'error':

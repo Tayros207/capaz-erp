@@ -11,8 +11,10 @@ export type ElementoDeHilo =
   | { id: string; tipo: 'agente'; texto: string; estado: 'escribiendo' | 'completo' | 'error' | 'interrumpido' }
   | { id: string; tipo: 'borrador'; propuesta: CapturaPropuesta['borradores'][number]; resuelto: Resolucion | null }
   | { id: string; tipo: 'aviso'; tono: TonoDeAviso; texto: string; enlace?: EnlaceDeAviso }
+  /** Algo que el asistente HIZO (lo confirmó el servidor): se pinta como una tarjeta con un enlace a lo creado. */
+  | { id: string; tipo: 'accion'; titulo: string; ruta: string | null }
   /** Una herramienta que el asistente está usando o ya usó: «Consultando pedidos…». Nunca lleva datos, solo una nota corta. */
-  | { id: string; tipo: 'herramienta'; titulo: string; estado: 'en_curso' | 'listo' | 'fallo'; nota?: string };
+  | { id: string; tipo: 'herramienta'; titulo: string; estado: 'en_curso' | 'listo' | 'fallo'; nota?: string; interna?: boolean };
 
 export type AccionDeHilo =
   | { tipo: 'persona_envia'; id: string; texto: string }

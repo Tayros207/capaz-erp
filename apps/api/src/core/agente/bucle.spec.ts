@@ -183,11 +183,19 @@ describe('correrTurno · herramientas', () => {
     expect(mensajesDeLaRonda(t.modelo, 1).at(-2)).toMatchObject({ role: 'assistant', reasoning_details: razonamiento });
   });
 
+  it('el texto de rondas distintas no se pega: entre rondas va un párrafo aparte (en lo guardado y en lo que se emite)', async () => {
+    const t = montar();
+    t.modelo.programar([[guion.texto('Voy a buscar.'), guion.llamar('c1', 'pedidos_listar', {})], guion.respuesta('Listo.')]);
+    const r = await correrTurno(t.dep, entrada());
+    expect(r.texto).toBe('Voy a buscar.\n\nListo.');
+    expect(t.eventos.filter((e) => e.type === 'texto').map((e) => (e as { delta: string }).delta).join('')).toBe('Voy a buscar.\n\nListo.');
+  });
+
   it('el texto de una ronda con herramientas se conserva y se le devuelve al modelo en su mensaje', async () => {
     const t = montar();
     t.modelo.programar([[guion.texto('Voy a buscar. '), guion.llamar('c1', 'pedidos_listar', {})], guion.respuesta('Listo.')]);
     const r = await correrTurno(t.dep, entrada());
-    expect(r.texto).toBe('Voy a buscar. Listo.');
+    expect(r.texto).toBe('Voy a buscar. \n\nListo.');
     expect(mensajesDeLaRonda(t.modelo, 1).at(-2)).toMatchObject({ role: 'assistant', content: 'Voy a buscar. ' });
   });
 

@@ -28,7 +28,13 @@ export function useConversacion(voz: ReconocedorDeVoz, entrada: EntradaDeTexto, 
     turno.nueva();
   }, [captura, turno]);
 
+  /** Envía una frase de un toque (una respuesta rápida) sin pasar por la caja. Solo con el asistente activo. */
+  const enviarTexto = useCallback(async (frase: string) => {
+    if (turno.ocupado || !hayTexto(frase)) return;
+    await turno.enviar(frase, 'texto');
+  }, [turno]);
+
   return conectado
-    ? { hilo: turno.hilo, ocupado: turno.ocupado, uso: turno.uso, reintentable: turno.reintentable, detener: turno.detener, reintentar: turno.reintentar, abrir: turno.abrir, resolver: turno.resolver, enviar, nueva }
-    : { hilo: captura.hilo, ocupado: captura.enviando, uso: null, reintentable: null, detener: undefined, reintentar: undefined, abrir: undefined, resolver: captura.resolver, enviar, nueva };
+    ? { enviarTexto, hilo: turno.hilo, ocupado: turno.ocupado, uso: turno.uso, reintentable: turno.reintentable, detener: turno.detener, reintentar: turno.reintentar, abrir: turno.abrir, resolver: turno.resolver, enviar, nueva }
+    : { enviarTexto: undefined, hilo: captura.hilo, ocupado: captura.enviando, uso: null, reintentable: null, detener: undefined, reintentar: undefined, abrir: undefined, resolver: captura.resolver, enviar, nueva };
 }

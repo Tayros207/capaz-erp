@@ -35,10 +35,11 @@ describe('puedeEnviar', () => {
 });
 
 describe('CajaDeMensaje', () => {
-  it('con voz disponible pinta el micrófono y el contador', () => {
+  it('con voz disponible pinta el micrófono; el contador solo aparece cerca del límite', () => {
     const h = html('hola');
     expect(h).toContain('aria-label="Dictar con el micrófono"');
-    expect(h).toContain('4 de 500');
+    expect(h).not.toContain('de 500');
+    expect(html('x'.repeat(420))).toContain('420 de 500');
     expect(h).toContain('aria-label="Mensaje para el asistente"');
   });
 

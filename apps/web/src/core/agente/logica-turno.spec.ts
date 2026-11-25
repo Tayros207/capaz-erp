@@ -45,7 +45,7 @@ describe('aplicarEvento', () => {
   });
 
   it('una acción hecha se avisa con su título', () => {
-    expect(aplicar([], { type: 'accion', herramienta: 'pedido_editar', titulo: 'Editar pedido', entidadTipo: 'pedido', entidadId: ID })[0]).toMatchObject({ tipo: 'aviso', tono: 'info', texto: 'Hecho: Editar pedido.' });
+    expect(aplicar([], { type: 'accion', herramienta: 'pedido_editar', titulo: 'Editar pedido', entidadTipo: 'pedido', entidadId: ID })[0]).toMatchObject({ tipo: 'accion', titulo: 'Editar pedido', ruta: `/m/ordenes/${ID}` });
   });
 
   it('el uso no cambia el hilo', () => {
@@ -166,5 +166,15 @@ describe('aplicarDetencion y limpiarParaReintentar', () => {
   it('reintentar quita el aviso del intento anterior pero deja la conversación', () => {
     const conError = aplicar([{ id: 'p', tipo: 'persona', texto: 'hola' }], inicio, { type: 'error', motivo: 'interno', mensaje: 'Falló.' });
     expect(limpiarParaReintentar(conError, T).map((e) => e.tipo)).toEqual(['persona']);
+  });
+});
+
+describe('el trabajo va antes de la respuesta', () => {
+  it('lo que consulta, hace y propone se coloca delante de la burbuja del turno, aunque esta ya exista', () => {
+    let h = aplicar([], inicio);
+    h = aplicarEvento(h, { type: 'herramienta_inicio', id: 'c1', nombre: 'pedidos_listar', titulo: 'Listar pedidos' }, T);
+    h = aplicarEvento(h, { type: 'accion', herramienta: 'pedido_crear', titulo: 'Crear un pedido', entidadTipo: 'pedido', entidadId: ID }, T);
+    h = aplicarEvento(h, { type: 'texto', delta: 'Listo.' }, T);
+    expect(h.map((e) => e.tipo)).toEqual(['herramienta', 'accion', 'agente']);
   });
 });
