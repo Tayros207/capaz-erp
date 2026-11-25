@@ -29,6 +29,10 @@ export const CODIGOS = {
   conflicto: 409,
   requiere_aprobacion: 409,
   error_interno: 500,
+  // Modelos de IA fuera del turno del asistente (p. ej. el dictado por audio). Mismos nombres que los motivos del asistente.
+  apagado: 503,
+  modelo_no_disponible: 503,
+  tope_mensual: 429,
 } as const;
 
 export type Codigo = keyof typeof CODIGOS;

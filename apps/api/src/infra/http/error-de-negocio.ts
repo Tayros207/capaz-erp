@@ -25,6 +25,9 @@ export const MENSAJES: Record<Codigo, string> = {
   conflicto: 'Esa operación choca con el estado actual.',
   requiere_aprobacion: 'Este cambio necesita la aprobación del dueño o de un administrador.',
   error_interno: 'Ocurrió un error inesperado. No se aplicó ningún cambio.',
+  apagado: 'Esta función todavía no está activa en este sistema.',
+  modelo_no_disponible: 'El modelo no está disponible ahora mismo. Inténtalo en unos minutos.',
+  tope_mensual: 'Se alcanzó el tope de uso de este mes.',
 };
 
 /** Error de negocio con código del catálogo: guardias, pipes y servicios lo lanzan; el filtro lo traduce. */

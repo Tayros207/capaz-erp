@@ -3,6 +3,7 @@ import { toNodeHandler } from 'better-auth/node';
 import { rechazo } from '@capaz/shared';
 import type { Logger } from 'pino';
 import { AUTH, type Auth } from './core/auth/auth.js';
+import { esCuerpoDeAudio, LIMITE_DEL_CUERPO_DE_AUDIO } from './core/agente/cuerpo-de-audio.js';
 import { rutaDeAutenticacionPermitida } from './core/auth/rutas-permitidas.js';
 import { middlewareDeContexto } from './infra/http/contexto.js';
 import { MENSAJES } from './infra/http/error-de-negocio.js';
@@ -30,6 +31,9 @@ export function configurarApp(app: NestExpressApplication, logger: Logger): void
     return manejadorDeAuth(req, res);
   });
 
+  // El dictado por audio es la única ruta con cuerpo grande: su analizador va primero y solo lee esa ruta; el general ve el cuerpo ya
+  // leído y lo salta. Todo lo demás sigue con 256 kB.
+  app.useBodyParser('json', { limit: LIMITE_DEL_CUERPO_DE_AUDIO, type: esCuerpoDeAudio });
   app.useBodyParser('json', { limit: '256kb' });
   app.useGlobalPipes(crearPipeDeValidacion());
   app.enableShutdownHooks();

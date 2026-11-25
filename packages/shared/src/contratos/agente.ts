@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { contrato } from '../herramientas.js';
 import { listadoSchema, paginaSchema } from '../listado.js';
+import { MAXIMO_DE_TEXTO_DE_CAPTURA } from './captura.js';
 
 // Contratos del área «agente»: la configuración del asistente. Cambiar el modelo o el tope es una operación de negocio
 // (regla 3), así que va por herramienta y no por REST. El asistente NO puede usarlas (no cambia su propio modelo ni su tope).
@@ -137,6 +138,27 @@ export const leccionSchema = z.strictObject({
 export type Leccion = z.infer<typeof leccionSchema>;
 
 const idDeLeccion = z.strictObject({ id: z.uuid() });
+
+// --- El dictado por audio (REST `POST /api/v1/agente/transcribir`, NO es herramienta: no va en `contratosDeAgente`) ---
+
+/** Lo más largo que se transcribe. La web corta antes (45 s); el servidor lo mide en la cabecera WAV. */
+export const SEGUNDOS_MAXIMOS_DE_AUDIO = 60;
+/** Unos 2,2 MB de WAV: de sobra para 60 s en mono a 16 kHz (1,9 MB). */
+export const MAXIMO_DE_AUDIO_BASE64 = 3_000_000;
+
+export const transcribirAudioSchema = z.strictObject({
+  audioBase64: z
+    .string()
+    .min(1, { error: 'Falta el audio.' })
+    .max(MAXIMO_DE_AUDIO_BASE64, { error: 'El audio es demasiado largo.' })
+    .regex(/^[A-Za-z0-9+/]+={0,2}$/, { error: 'El audio no viene en base64.' }),
+  formato: z.literal('wav'),
+});
+export type TranscribirAudio = z.infer<typeof transcribirAudioSchema>;
+
+/** Lo que se oyó, ya recortado al máximo del dictado. Vacío si no se entendió nada. Nunca se envía solo: va a la caja. */
+export const transcripcionSchema = z.strictObject({ texto: z.string().max(MAXIMO_DE_TEXTO_DE_CAPTURA) });
+export type Transcripcion = z.infer<typeof transcripcionSchema>;
 
 export const contratosDeAgente = {
   agente_configuracion_ver: contrato(z.strictObject({}), verSalida),

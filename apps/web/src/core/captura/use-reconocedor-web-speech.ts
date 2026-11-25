@@ -171,5 +171,5 @@ export function useReconocedorWebSpeech(): ReconocedorDeVoz {
     [],
   );
 
-  return { estado, texto, aviso, iniciar, detener, limpiar };
+  return { estado, texto, aviso, iniciar, detener, limpiar, via: 'navegador' };
 }

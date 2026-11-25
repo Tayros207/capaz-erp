@@ -7,7 +7,7 @@ import { Boton } from '../../shared/ui/boton.tsx';
 import { HojaInferior } from '../../shared/ui/hoja-inferior.tsx';
 import { useEsAncho } from '../../shared/ui/use-ancho.ts';
 import type { ReconocedorDeVoz } from '../captura/reconocedor.ts';
-import { useReconocedorWebSpeech } from '../captura/use-reconocedor-web-speech.ts';
+import { useReconocedor } from '../captura/use-reconocedor.ts';
 import { CLAVE_ESTADO_DEL_AGENTE, estadoDelAgente } from './api.ts';
 import { CajaDeMensaje } from './caja-de-mensaje.tsx';
 import { Hilo } from './hilo.tsx';
@@ -136,7 +136,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
   const ancho = useEsAncho();
   const navegar = useNavigate();
   const { pathname } = useLocation();
-  const voz = useReconocedorWebSpeech();
+  const voz = useReconocedor();
   const entrada = useEntradaDeTexto(voz);
   const estado = useQuery({ queryKey: CLAVE_ESTADO_DEL_AGENTE, queryFn: async () => datosOError(await estadoDelAgente()), enabled: abierto, staleTime: 30_000 });
   const c = useConversacion(voz, entrada, pantallaDesdeRuta(pathname), estado.data?.activo === true);

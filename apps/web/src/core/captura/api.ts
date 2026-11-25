@@ -1,4 +1,5 @@
-import type { EntradaDe } from '@capaz/shared';
+import { transcripcionSchema, type EntradaDe } from '@capaz/shared';
+import { pedir } from '../../shared/api/cliente.ts';
 import { datosOError } from '../../shared/api/consultas.ts';
 import { llamar } from '../../shared/api/herramientas.ts';
 import type { Opcion } from '../../shared/ui/selector-de-registro.tsx';
@@ -14,6 +15,9 @@ export const listarCategorias = () => llamar('categorias_listar', { incluirArchi
 export const verCliente = (id: string) => llamar('clientes_ver', { id });
 export const crearCliente = (nombre: string) => llamar('clientes_crear', { nombre });
 export const verDeuda = (id: string) => llamar('deuda_ver', { id });
+
+/** El dictado por audio (navegadores sin Web Speech): un WAV en base64 entra y vuelve el texto. No es herramienta: es REST. */
+export const transcribirAudio = (audioBase64: string) => pedir('POST', '/api/v1/agente/transcribir', transcripcionSchema, { audioBase64, formato: 'wav' });
 
 export async function buscarContactos(texto: string): Promise<Opcion[]> {
   const r = datosOError(await llamar('clientes_buscar', { texto, limite: 8 }));

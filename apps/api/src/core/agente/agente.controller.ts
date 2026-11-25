@@ -3,14 +3,16 @@ import { Body, Controller, Get, Headers, HttpCode, Inject, Param, Post, Query, R
 import type { Response } from 'express';
 import { concatWith, interval, map, Observable, of, take } from 'rxjs';
 import {
-  consultaDeConversacionesSchema, estadoHttp, exito, favoritaConversacionSchema, rechazo, renombrarConversacionSchema, turnoDelAgenteSchema,
-  type ConversacionBorrada, type ConversacionConMensajes, type ConversacionDelAgente, type EstadoDelAgente, type EventoDelAgente, type ListaDeConversaciones, type Respuesta, type TurnoDelAgente,
+  consultaDeConversacionesSchema, estadoHttp, exito, favoritaConversacionSchema, rechazo, renombrarConversacionSchema, transcribirAudioSchema, turnoDelAgenteSchema,
+  type ConversacionBorrada, type ConversacionConMensajes, type ConversacionDelAgente, type EstadoDelAgente, type EventoDelAgente, type ListaDeConversaciones, type Respuesta,
+  type TranscribirAudio, type Transcripcion, type TurnoDelAgente,
 } from '@capaz/shared';
 import { CONFIG, type Config } from '../../infra/config/config.js';
 import { contextoActual, type ContextoDePeticion } from '../../infra/http/contexto.js';
 import { RequiereEmpresa } from '../../infra/http/decoradores.js';
 import { ErrorDeNegocio } from '../../infra/http/error-de-negocio.js';
 import { ServicioDeConversaciones } from './servicio-de-conversaciones.js';
+import { ServicioDeTranscripcion } from './servicio-de-transcripcion.js';
 import { ServicioDeTurnos } from './servicio-de-turnos.js';
 
 /** El contexto de la sesión, ya con empresa y persona. El guardia lo llena antes del manejador; aquí solo se comprueba. */
@@ -29,6 +31,7 @@ export class AgenteController {
   constructor(
     @Inject(ServicioDeTurnos) private readonly turnos: ServicioDeTurnos,
     @Inject(ServicioDeConversaciones) private readonly conversaciones: ServicioDeConversaciones,
+    @Inject(ServicioDeTranscripcion) private readonly transcripcion: ServicioDeTranscripcion,
     @Inject(CONFIG) private readonly config: Config,
   ) {}
 
@@ -56,6 +59,18 @@ export class AgenteController {
   turno(@Body({ schema: turnoDelAgenteSchema }) cuerpo: TurnoDelAgente, @Headers('origin') origen: string | undefined): Observable<MessageEvent> {
     this.comprobarOrigen(origen);
     return this.turnos.iniciar(contextoDeSesion(), cuerpo);
+  }
+
+  /**
+   * El dictado por audio (navegadores sin reconocimiento de voz): un WAV en base64 entra y sale el texto. Es la ÚNICA ruta con el
+   * cuerpo grande (ver `configurar-app.ts`). El audio no se guarda ni se registra.
+   */
+  @Post('transcribir')
+  @HttpCode(200)
+  @RequiereEmpresa()
+  async transcribir(@Body({ schema: transcribirAudioSchema }) cuerpo: TranscribirAudio, @Headers('origin') origen: string | undefined, @Res({ passthrough: true }) res: Response): Promise<Respuesta<Transcripcion>> {
+    this.comprobarOrigen(origen);
+    return this.responder(res, await this.transcripcion.transcribir(contextoDeSesion(), cuerpo));
   }
 
   /** Tres eventos separados por un segundo y un fin, sin modelo: sirve para comprobar que el streaming llega entero al desplegar. */

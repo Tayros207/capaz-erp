@@ -9,10 +9,10 @@ import { notificar } from '../../shared/ui/notificar.ts';
 import { CLAVE_BANDEJA } from '../bandeja/claves.ts';
 import { CLAVE_CAPTURA, proponerCaptura } from './api.ts';
 import { avisoAlAprobar, decidirOrigen, destinoSiEsPreguntaDePrecio, hayTexto, instanteDeInicio, mensajeDeErrorDeCaptura, transcurridoMs } from './logica.ts';
-import { recortarTexto, unirConBase } from './logica-reconocedor.ts';
+import { etiquetaDelBotonDeVoz, recortarTexto, unirConBase } from './logica-reconocedor.ts';
 import { LineaDeMedicion } from './linea-de-medicion.tsx';
 import { TarjetaDeBorrador, type Resolucion } from './tarjeta-de-borrador.tsx';
-import { useReconocedorWebSpeech } from './use-reconocedor-web-speech.ts';
+import { useReconocedor } from './use-reconocedor.ts';
 import { MAXIMO_DE_TEXTO_DE_CAPTURA, type OrigenDeCaptura } from '@capaz/shared';
 
 type Modo = 'ingreso' | 'egreso';
@@ -21,7 +21,7 @@ type Modo = 'ingreso' | 'egreso';
 export function PantallaDictado() {
   const cliente = useQueryClient();
   const navegar = useNavigate();
-  const voz = useReconocedorWebSpeech();
+  const voz = useReconocedor();
   const [texto, setTexto] = useState('');
   const [modo, setModo] = useState<Modo | null>(null);
   const [propuesta, setPropuesta] = useState<CapturaPropuesta | null>(null);
@@ -33,7 +33,8 @@ export function PantallaDictado() {
   const vinoDeVoz = useRef(false);
   const base = useRef('');
   const escuchando = voz.estado === 'escuchando';
-  const hayVoz = voz.estado === 'listo' || escuchando || voz.estado === 'error';
+  const transcribiendo = voz.estado === 'transcribiendo';
+  const hayVoz = voz.estado === 'listo' || escuchando || transcribiendo || voz.estado === 'error';
 
   // Lo que reconoce la voz se suma a lo que ya estaba escrito, y se puede retocar a mano.
   useEffect(() => {
@@ -73,7 +74,7 @@ export function PantallaDictado() {
   }
 
   async function enviar() {
-    if (enviando || !hayTexto(texto)) return;
+    if (enviando || transcribiendo || !hayTexto(texto)) return;
     if (escuchando) voz.detener();
     // «¿Cuánto le cobramos a X por Y?» es una pregunta, no un movimiento: se responde en /precios y no se crea ningún borrador.
     const destino = destinoSiEsPreguntaDePrecio(texto);
@@ -139,10 +140,11 @@ export function PantallaDictado() {
               tamano="grande"
               className="min-h-24 w-full max-w-sm text-lg"
               disabled={!hayVoz}
+              cargando={transcribiendo}
               aria-pressed={escuchando}
               onClick={alternarMicrofono}
             >
-              {escuchando ? 'Escuchando… toca para detener' : 'Tocar para hablar'}
+              {etiquetaDelBotonDeVoz(voz.estado, voz.via)}
             </Boton>
             {voz.aviso ? <p role="status" className="text-center text-sm text-texto-suave">{voz.aviso}</p> : null}
           </div>
@@ -171,7 +173,7 @@ export function PantallaDictado() {
             </div>
           ) : null}
           {fallo ? <p role="alert" className="text-sm font-medium text-peligro">{fallo}</p> : null}
-          <Boton type="submit" variante="primario" tamano="grande" cargando={enviando} disabled={!hayTexto(texto)}>Enviar</Boton>
+          <Boton type="submit" variante="primario" tamano="grande" cargando={enviando} disabled={!hayTexto(texto) || transcribiendo}>Enviar</Boton>
         </form>
       )}
 

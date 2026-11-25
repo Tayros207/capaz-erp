@@ -69,6 +69,27 @@ describe('CajaDeMensaje', () => {
     expect(h).toContain('bg-peligro');
   });
 
+  it('grabando por audio (Firefox) dice «Grabando… (toca para terminar)» y el botón termina la grabación', () => {
+    const h = html('', { voz: voz({ estado: 'escuchando', via: 'audio' }) });
+    expect(h).toContain('Grabando… (toca para terminar)');
+    expect(h).toContain('aria-label="Terminar la grabación"');
+    expect(h).toContain('aria-pressed="true"');
+    expect(h).not.toContain('Escuchando…');
+  });
+
+  it('transcribiendo dice «Transcribiendo…», el micrófono espera y no se puede enviar todavía', () => {
+    const h = html('hola', { voz: voz({ estado: 'transcribiendo', via: 'audio' }) });
+    expect(h).toContain('Transcribiendo…');
+    expect(/<button\b[^>]*aria-label="Transcribiendo el audio"[^>]*>/.exec(h)?.[0]).toContain(' disabled=""');
+    expect(botonEnviar(h)).toContain(' disabled=""');
+  });
+
+  it('si la vía de audio sí sirve, no sale la nota de «no reconoce voz»', () => {
+    const h = html('', { voz: voz({ estado: 'listo', via: 'audio' }) });
+    expect(h).toContain('aria-label="Dictar con el micrófono"');
+    expect(h).not.toContain('no reconoce voz');
+  });
+
   it('con una respuesta en curso, enviar sale deshabilitado', () => {
     const h = html('hola', { ocupado: true });
     expect(botonEnviar(h)).toContain(' disabled=""');

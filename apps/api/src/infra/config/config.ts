@@ -72,6 +72,15 @@ export const esquemaDeConfig = z.object({
     .default('anthropic/claude-sonnet-5.5'),
   /** Freno global de emergencia: `apagada` deja TODOS los cambios del asistente como borrador, en todas las empresas. */
   AGENTE_ESCRITURA: z.enum(['activa', 'apagada']).default('activa'),
+  /**
+   * Modelo que transcribe el dictado por audio (navegadores sin Web Speech, como Firefox). Debe aceptar audio y tener proveedores sin
+   * retención (ZDR). Solo se usa con `AGENTE_PROVEEDOR=openrouter`; cuenta para el mismo tope mensual.
+   */
+  AGENTE_VOZ_MODELO: z
+    .string()
+    .max(100)
+    .regex(/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._:-]*$/i)
+    .default('google/gemini-3.5-flash-lite'),
   /** Modelo que entiende el dictado y rellena la propuesta. Solo se usa con `AGENTE_PROVEEDOR=openrouter`; si no, rigen las reglas. */
   CAPTURA_MODELO: z
     .string()

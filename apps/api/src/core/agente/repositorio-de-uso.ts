@@ -60,6 +60,17 @@ export async function turnosRecientes(tx: Transaccion, segundos: number): Promis
   return filas.rows[0]?.n ?? 0;
 }
 
+/**
+ * Llamadas de dictado (origen `captura`: transcripciones de audio y extracciones) de ESTA persona en los últimos `segundos`. Se cuenta
+ * por `turno_id` distinto: cada transcripción deja su reserva al entrar y su costo al salir, con el mismo `turno_id`.
+ */
+export async function capturasRecientes(tx: Transaccion, segundos: number): Promise<number> {
+  const filas = await tx.execute<{ n: number }>(sql`
+    select count(distinct turno_id)::int as n from core.uso
+    where tenant_id = ${TENANT} and usuario_id = ${USUARIO} and origen = 'captura' and creado_en > now() - make_interval(secs => ${segundos})`);
+  return filas.rows[0]?.n ?? 0;
+}
+
 export type ConfiguracionGuardada = typeof agenteConfiguracion.$inferSelect;
 
 /** La fila de la empresa, o `null` si nunca eligió nada (rigen los valores del despliegue). */

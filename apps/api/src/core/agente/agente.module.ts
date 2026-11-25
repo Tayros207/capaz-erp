@@ -8,7 +8,10 @@ import { MODELO_DE_CHAT, type ModeloDeChat } from './modelo-de-chat.js';
 import { ModeloDeOpenRouter } from './modelo-de-openrouter.js';
 import { ModeloSimulado } from './modelo-simulado.js';
 import { ServicioDeConversaciones } from './servicio-de-conversaciones.js';
+import { ServicioDeTranscripcion } from './servicio-de-transcripcion.js';
 import { ServicioDeTurnos } from './servicio-de-turnos.js';
+import { TranscriptorDeOpenRouter } from './transcriptor-de-openrouter.js';
+import { TRANSCRIPTOR_DE_VOZ, TranscriptorSimulado, type TranscriptorDeVoz } from './transcriptor-de-voz.js';
 
 /**
  * Elige el modelo según la configuración. `apagado` (por defecto) no llama a nadie: el servicio rechaza el turno antes de usar
@@ -22,16 +25,27 @@ export function crearModeloDeChat(config: Pick<Config, 'AGENTE_PROVEEDOR' | 'OPE
   return new ModeloSimulado();
 }
 
+/** Igual que el modelo de chat: solo `openrouter` (con su llave) sale a la red. Apagado, el servicio rechaza antes de usarlo. */
+export function crearTranscriptorDeVoz(config: Pick<Config, 'AGENTE_PROVEEDOR' | 'OPENROUTER_API_KEY' | 'AGENTE_VOZ_MODELO'>): TranscriptorDeVoz {
+  if (config.AGENTE_PROVEEDOR === 'openrouter') {
+    if (!config.OPENROUTER_API_KEY) throw new Error('Falta la llave del proveedor del modelo.');
+    return new TranscriptorDeOpenRouter({ apiKey: config.OPENROUTER_API_KEY, modelo: config.AGENTE_VOZ_MODELO });
+  }
+  return new TranscriptorSimulado();
+}
+
 @Module({
   controllers: [AgenteController],
   providers: [
     { provide: MODELO_DE_CHAT, inject: [CONFIG], useFactory: crearModeloDeChat },
+    { provide: TRANSCRIPTOR_DE_VOZ, inject: [CONFIG], useFactory: crearTranscriptorDeVoz },
     // Los precios se consultan a OpenRouter solo si el proveedor es OpenRouter: con el asistente apagado o simulado no se sale a la red.
     { provide: PreciosDeModelos, inject: [CONFIG], useFactory: (c: Config) => new PreciosDeModelos({ habilitado: c.AGENTE_PROVEEDOR === 'openrouter' }) },
     HerramientasDeAgente,
     HerramientasDeMemoria,
     ServicioDeTurnos,
     ServicioDeConversaciones,
+    ServicioDeTranscripcion,
   ],
 })
 export class AgenteModule {}
