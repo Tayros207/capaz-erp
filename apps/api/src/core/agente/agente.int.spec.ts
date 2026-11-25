@@ -193,6 +193,17 @@ describe('herramientas por el ejecutor real', () => {
     expect(await filas(P.empresa, P.sesion.usuarioId, `select 1 from core.auditoria where herramienta = 'deuda_crear' and canal = 'agente' and resultado = 'ok'`)).toHaveLength(0);
   });
 
+  it('en el turno siguiente el modelo ve el rastro REAL de lo que consultó («[Consulté: …]»), para que no se acuse de haber inventado los datos', async () => {
+    const Q = await empresaNueva('Imprenta con rastro');
+    modelo.programar([[guion.llamar('c1', 'clientes_buscar', { texto: 'Cristina' })], guion.respuesta('No hay nadie con ese nombre.')]);
+    const eventos = await turno(Q.ctx, cuerpoDe({ mensaje: 'Busca a Cristina' }));
+    const conversacionId = (eventos.find((e) => e.type === 'inicio') as { conversacionId: string }).conversacionId;
+    modelo.programar([guion.respuesta('ok')]);
+    await turno(Q.ctx, cuerpoDe({ mensaje: '¿De dónde sacaste eso?', conversacionId }));
+    const previos = modelo.peticiones[0]!.mensajes.filter((m) => m.role === 'assistant').map((m) => (m as { content: string }).content);
+    expect(previos.join('\n')).toMatch(/\[Consulté: [^\]]+\]/);
+  });
+
   it('una herramienta crítica o de configuración tampoco, aunque el modelo la pida por herramienta_llamar', async () => {
     modelo.programar([[guion.llamar('c1', 'herramienta_llamar', { nombre: 'empresa_actualizar_configuracion', args: { razonSocial: 'Hackeada' } })], guion.respuesta('No.')]);
     await turno(P.ctx, cuerpoDe());

@@ -185,10 +185,16 @@ export class ServicioDeTurnos {
       const filas = await tx.execute<{ razon: string | null; moneda: string; zona: string }>(sql`select razon_social as razon, moneda, zona_horaria as zona from core.empresa_config where tenant_id = current_setting('app.tenant_id', true)`);
       const f = filas.rows[0];
       const lecciones = await this.lecciones(tx);
-      return { historial: await historialParaElModelo(tx, marcha.conversacionId, turnoId), empresa: f?.razon ?? null, moneda: f?.moneda ?? 'PEN', zona: f?.zona ?? 'America/Lima', lecciones };
+      return { historial: await historialParaElModelo(tx, marcha.conversacionId, turnoId, this.tituloDeConsulta), empresa: f?.razon ?? null, moneda: f?.moneda ?? 'PEN', zona: f?.zona ?? 'America/Lima', lecciones };
     });
     return { historial, moneda, zona, lecciones, empresa: await this.nombreDeLaEmpresa(c, empresa) };
   }
+
+  /** El título de una herramienta si es una consulta (lectura de negocio): lo que va en «[Consulté: …]» del historial. */
+  private tituloDeConsulta = (herramienta: string): string | null => {
+    const h = this.registro.obtener(herramienta);
+    return h?.criticidad === 'lectura' ? h.ayuda.titulo : null;
+  };
 
   private tituloDe = (herramienta: string): string => this.registro.obtener(herramienta)?.ayuda.titulo ?? herramienta;
 

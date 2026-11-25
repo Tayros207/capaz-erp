@@ -231,6 +231,12 @@ describe('historialParaElModelo', () => {
   it('añade lo que el asistente hizo, para que lo recuerde en el turno siguiente', () => {
     expect(lineaDeHechos({ acciones: [{ titulo: 'Crear pedido' }], borradores: [{ resumen: 'Ingreso de S/ 500' }] })).toBe('[Hizo: Crear pedido] [Propuso, falta aprobar: Ingreso de S/ 500]');
     expect(lineaDeHechos({})).toBe('');
+    const consulta = (n: string): string | null => ({ pedidos_listar: 'Listar pedidos', clientes_crear: null, software_mapa: null }[n] ?? null);
+    const meta = { herramientas: [{ nombre: 'software_mapa', ok: false }, { nombre: 'software_mapa', ok: true }, { nombre: 'pedidos_listar', ok: true }, { nombre: 'pedidos_listar', ok: true }, { nombre: 'clientes_crear', ok: true }, { nombre: 'pedidos_listar', ok: false }] };
+    // El rastro de CONSULTAS reales: sin repetidos, solo lo que salió bien y solo lecturas de negocio (no meta-herramientas ni escrituras).
+    expect(lineaDeHechos(meta, consulta)).toBe('[Consulté: Listar pedidos]');
+    expect(lineaDeHechos({ ...meta, acciones: [{ titulo: 'Crear cliente' }] }, consulta)).toBe('[Consulté: Listar pedidos] [Hizo: Crear cliente]');
+    expect(lineaDeHechos(meta)).toBe('');
     expect(lineaDeHechos(null)).toBe('');
   });
 });

@@ -151,14 +151,30 @@ export async function cerrarTurno(tx: Transaccion, c: CierreDeTurno): Promise<vo
   if (c.uso) await registrarUso(tx, c.uso);
 }
 
-type Hechos = { acciones?: { titulo?: string }[]; borradores?: { resumen?: string }[] };
+type Hechos = { acciones?: { titulo?: string }[]; borradores?: { resumen?: string }[]; herramientas?: { nombre?: string; ok?: boolean }[] };
 
-/** «[Hizo: …]» y «[Propuso, falta aprobar: …]»: lo que el asistente hizo en un turno, para que lo recuerde en el siguiente. */
-export function lineaDeHechos(metadatos: unknown): string {
+/** Dado el nombre de una herramienta, su título si es una CONSULTA (lectura) y `null` si no lo es o no se conoce. */
+export type TituloDeConsulta = (herramienta: string) => string | null;
+
+const unicos = (xs: string[]): string[] => [...new Set(xs)];
+
+/**
+ * «[Consulté: …]», «[Hizo: …]» y «[Propuso, falta aprobar: …]»: el registro REAL de lo que el asistente hizo con sus herramientas en un
+ * turno. Sin él, en el turno siguiente el modelo ve sus datos pero no cómo los obtuvo, y puede acusarse de haberlos inventado (pasó en
+ * producción). Solo cuenta lo que SÍ se consultó con éxito; los datos en sí no se guardan: al retomar vuelve a consultarlos.
+ */
+export function lineaDeHechos(metadatos: unknown, tituloDeConsulta?: TituloDeConsulta): string {
   const m = (metadatos ?? {}) as Hechos;
+  const consulto = tituloDeConsulta
+    ? unicos((m.herramientas ?? []).filter((h) => h.ok === true && typeof h.nombre === 'string').map((h) => tituloDeConsulta(h.nombre as string)).filter((t): t is string => t !== null && t !== ''))
+    : [];
   const hizo = (m.acciones ?? []).map((a) => a.titulo).filter((t): t is string => typeof t === 'string' && t !== '');
   const propuso = (m.borradores ?? []).map((b) => b.resumen).filter((t): t is string => typeof t === 'string' && t !== '');
-  return [hizo.length > 0 ? `[Hizo: ${hizo.join('; ')}]` : '', propuso.length > 0 ? `[Propuso, falta aprobar: ${propuso.join('; ')}]` : ''].filter(Boolean).join(' ');
+  return [
+    consulto.length > 0 ? `[Consulté: ${consulto.join('; ')}]` : '',
+    hizo.length > 0 ? `[Hizo: ${hizo.join('; ')}]` : '',
+    propuso.length > 0 ? `[Propuso, falta aprobar: ${propuso.join('; ')}]` : '',
+  ].filter(Boolean).join(' ');
 }
 
 export type MensajeDeHistorial = { role: 'user' | 'assistant'; content: string };
@@ -168,7 +184,7 @@ export type MensajeDeHistorial = { role: 'user' | 'assistant'; content: string }
  * interrumpidos entran: un turno cortado por rondas o por tiempo pudo haber hecho cosas, y el asistente debe recordarlas para no repetirlas. Lo que el asistente leyó de las
  * herramientas no se guarda: al retomar, vuelve a consultarlo (los datos cambian entre un mensaje y otro).
  */
-export async function historialParaElModelo(tx: Transaccion, conversacionId: string, turnoActual: string): Promise<MensajeDeHistorial[]> {
+export async function historialParaElModelo(tx: Transaccion, conversacionId: string, turnoActual: string, tituloDeConsulta?: TituloDeConsulta): Promise<MensajeDeHistorial[]> {
   const filas = await tx
     .select({ rol: agenteMensajes.rol, contenido: agenteMensajes.contenido, metadatos: agenteMensajes.metadatos })
     .from(agenteMensajes)
@@ -178,7 +194,7 @@ export async function historialParaElModelo(tx: Transaccion, conversacionId: str
   const salida: MensajeDeHistorial[] = [];
   let caracteres = 0;
   for (const f of filas) {
-    const hechos = f.rol === 'agente' ? lineaDeHechos(f.metadatos) : '';
+    const hechos = f.rol === 'agente' ? lineaDeHechos(f.metadatos, tituloDeConsulta) : '';
     const texto = [f.contenido, hechos].filter(Boolean).join('\n');
     if (texto === '') continue;
     if (caracteres + texto.length > MAXIMO_DE_CARACTERES_DE_HISTORIAL && salida.length > 0) break;

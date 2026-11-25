@@ -21,7 +21,10 @@ export function mapaDelSoftware(herramientas: readonly HerramientaRegistrada[], 
     return exito({ areas: [...areas.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([m, nombres]) => ({ modulo: m, herramientas: nombres })) });
   }
   const deEsa = lista.filter((h) => h.modulo === modulo);
-  if (deEsa.length === 0) return rechazo('no_encontrado', `No hay herramientas disponibles en «${modulo}» para esta persona.`);
+  if (deEsa.length === 0) {
+    const areas = [...new Set(lista.map((h) => h.modulo))].sort().join(', ');
+    return rechazo('no_encontrado', `No hay herramientas disponibles en «${modulo}» para esta persona. Las áreas disponibles son: ${areas}.`);
+  }
   const flujos = flujosDelModulo(modulo).map((f) => ({ cuando: f.cuando, efecto: f.efecto }));
   return exito({ modulo, herramientas: deEsa.map((h) => ({ nombre: h.nombre, paraQueSirve: h.ayuda.paraQueSirve, cambiaDatos: h.criticidad !== 'lectura' })), ...(flujos.length > 0 && { flujosEntreAreas: flujos }) });
 }
