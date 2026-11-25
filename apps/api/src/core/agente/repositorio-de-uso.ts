@@ -1,5 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm';
-import { agenteConfiguracion, agenteMensajes, uso } from '../../db/esquema/core-agente.js';
+import { agenteConfiguracion, uso } from '../../db/esquema/core-agente.js';
 import type { Transaccion } from '../../infra/database/con-empresa.js';
 
 // Uso y costo del asistente, el tope mensual, el ritmo de turnos y la configuración de cada empresa. Todo en `core.uso` y
@@ -45,18 +45,19 @@ export async function gastoDelMes(tx: Transaccion, ahora: Date, zona: string): P
 /**
  * Turnos de ESTA persona en los últimos `segundos`: los que ya terminaron (están en `core.uso`, que no se puede borrar ni
  * cambiar) más los que siguen en curso, que todavía no dejaron su fila de uso. Borrar la conversación no baja la cuenta.
+ *
+ * Es UNA sola sentencia a propósito: con dos consultas, un turno que termina justo entre una y otra (pasa de «en curso» a «terminado»)
+ * no se contaría en ninguna y dejaría entrar un turno de más. Una sentencia ve una sola foto de la base.
  */
 export async function turnosRecientes(tx: Transaccion, segundos: number): Promise<number> {
   const ventana = sql`now() - make_interval(secs => ${segundos})`;
-  const [terminados] = await tx
-    .select({ n: sql<number>`count(*)::int` })
-    .from(uso)
-    .where(and(eq(uso.tenantId, TENANT), eq(uso.usuarioId, USUARIO), eq(uso.origen, 'agente'), sql`${uso.creadoEn} > ${ventana}`));
-  const [enCurso] = await tx
-    .select({ n: sql<number>`count(*)::int` })
-    .from(agenteMensajes)
-    .where(and(eq(agenteMensajes.tenantId, TENANT), eq(agenteMensajes.usuarioId, USUARIO), eq(agenteMensajes.rol, 'agente'), eq(agenteMensajes.estado, 'en_curso'), sql`${agenteMensajes.actualizadoEn} > ${ventana}`));
-  return (terminados?.n ?? 0) + (enCurso?.n ?? 0);
+  const filas = await tx.execute<{ n: number }>(sql`
+    select (
+      (select count(*) from core.uso where tenant_id = ${TENANT} and usuario_id = ${USUARIO} and origen = 'agente' and creado_en > ${ventana})
+      +
+      (select count(*) from core.agente_mensajes where tenant_id = ${TENANT} and usuario_id = ${USUARIO} and rol = 'agente' and estado = 'en_curso' and actualizado_en > ${ventana})
+    )::int as n`);
+  return filas.rows[0]?.n ?? 0;
 }
 
 export type ConfiguracionGuardada = typeof agenteConfiguracion.$inferSelect;
