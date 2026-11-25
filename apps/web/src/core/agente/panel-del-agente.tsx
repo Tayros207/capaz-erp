@@ -36,10 +36,21 @@ type Props = {
 type Vista = 'conversacion' | 'historial' | 'modelo';
 type Conversacion = ReturnType<typeof useConversacion>;
 
-type PropsDeCabecera = { pista: string; conectado: boolean; vivo: EstadoVivo | null; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void };
+type PropsDeCabecera = { pista: string; conectado: boolean; vivo: EstadoVivo | null; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void; amplio?: boolean; alAmpliar?: () => void };
+
+const REDONDO = 'rounded-full';
+
+/** Dos flechas que se alejan (ampliar) o se acercan (reducir). Dibujo propio, sin depender del juego de iconos. */
+function IconoAmpliar({ amplio }: { amplio: boolean }): ReactNode {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      {amplio ? <path d="M9 4v5H4M15 20v-5h5M4 9l6-6M20 15l-6 6" /> : <path d="M15 4h5v5M9 20H4v-5M20 4l-6 6M4 20l6-6" />}
+    </svg>
+  );
+}
 
 /** El cabezal: el orbe (que piensa cuando trabaja), el nombre y una línea que dice qué está haciendo AHORA o dónde está la persona. */
-function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCerrar }: PropsDeCabecera): ReactNode {
+function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCerrar, amplio = false, alAmpliar }: PropsDeCabecera): ReactNode {
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-3">
@@ -50,10 +61,15 @@ function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCe
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
-        <Boton variante="fantasma" icono="nueva" aria-label="Nueva conversación" onClick={alNueva} />
-        <Boton variante="fantasma" icono="historial" aria-label="Historial" onClick={alHistorial} />
-        {conectado ? <Boton variante="fantasma" icono="modelo" aria-label="Ajustes del asistente" onClick={alModelo} /> : null}
-        {alCerrar ? <Boton variante="fantasma" icono="cerrar" aria-label="Cerrar" onClick={alCerrar} /> : null}
+        <Boton variante="fantasma" icono="nueva" aria-label="Nueva conversación" className={REDONDO} onClick={alNueva} />
+        <Boton variante="fantasma" icono="historial" aria-label="Historial" className={REDONDO} onClick={alHistorial} />
+        {conectado ? <Boton variante="fantasma" icono="modelo" aria-label="Ajustes del asistente" className={REDONDO} onClick={alModelo} /> : null}
+        {alAmpliar ? (
+          <button type="button" aria-label={amplio ? 'Reducir el panel' : 'Ampliar el panel'} aria-pressed={amplio} onClick={alAmpliar} className="inline-grid min-h-(--alto-control) min-w-(--alto-control) cursor-pointer place-items-center rounded-full text-texto-suave transition-colors duration-150 hover:bg-superficie-alta hover:text-texto active:scale-95">
+            <IconoAmpliar amplio={amplio} />
+          </button>
+        ) : null}
+        {alCerrar ? <Boton variante="fantasma" icono="cerrar" aria-label="Cerrar" className={REDONDO} onClick={alCerrar} /> : null}
       </div>
     </div>
   );
@@ -125,6 +141,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
   const estado = useQuery({ queryKey: CLAVE_ESTADO_DEL_AGENTE, queryFn: async () => datosOError(await estadoDelAgente()), enabled: abierto, staleTime: 30_000 });
   const c = useConversacion(voz, entrada, pantallaDesdeRuta(pathname), estado.data?.activo === true);
   const [vista, setVista] = useState<Vista>('conversacion');
+  const [amplio, setAmplio] = useState(false);
   const refTexto = useRef<HTMLTextAreaElement>(null);
   useEfectosDelPanel({ abierto, ancho, voz, alCerrar, refTexto });
 
@@ -138,7 +155,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
     if (c.abrir && (await c.abrir(id))) setVista('conversacion');
   };
   const cabecera = (
-    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} />
+    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} amplio={amplio} alAmpliar={ancho ? () => setAmplio((a) => !a) : undefined} />
   );
   const cuerpo = <Cuerpo c={c} vista={vista} estado={estado.data} alVolver={() => setVista('conversacion')} alNavegar={alNavegar} alAbrir={(id) => void alAbrir(id)} alElegirSugerencia={entrada.alEscribir} />;
   const pie = vista === 'conversacion' ? <Pie c={c} voz={voz} entrada={entrada} puedeDictar={puedeDictar} refTexto={refTexto} /> : null;
@@ -158,11 +175,12 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
       role="dialog"
       aria-modal="false"
       aria-label="Asistente"
-      className="fixed right-6 bottom-6 z-30 flex h-[min(42rem,calc(100dvh-6rem))] w-[27rem] flex-col overflow-hidden rounded-[1.5rem] border border-borde bg-superficie shadow-elevada motion-safe:animate-[asistente-entra_260ms_cubic-bezier(0.2,0.8,0.2,1)_both] print:hidden"
+      className={`fixed right-6 bottom-6 z-30 flex origin-bottom-right flex-col overflow-hidden rounded-[1.75rem] border border-borde/70 bg-superficie/90 shadow-elevada backdrop-blur-2xl transition-[width,height] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-safe:animate-[asistente-entra_280ms_cubic-bezier(0.2,0.8,0.2,1)_both] print:hidden ${amplio ? 'h-[min(52rem,calc(100dvh-4rem))] w-[min(48rem,calc(100vw-3rem))]' : 'h-[min(42rem,calc(100dvh-6rem))] w-[27rem]'}`}
     >
-      <div className="border-b border-borde bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-asistente-1)_10%,transparent),transparent)] px-4 py-3">{cabecera}</div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{cuerpo}</div>
-      {pie ? <div className="px-3 pt-1 pb-3">{pie}</div> : null}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(60%_80%_at_15%_0%,color-mix(in_oklab,var(--color-asistente-1)_26%,transparent),transparent),radial-gradient(55%_70%_at_90%_5%,color-mix(in_oklab,var(--color-asistente-3)_22%,transparent),transparent)]" />
+      <div className="relative px-4 pt-3 pb-2">{cabecera}</div>
+      <div className="relative min-h-0 flex-1 overflow-y-auto px-4 py-3">{cuerpo}</div>
+      {pie ? <div className="relative px-3 pt-1 pb-3">{pie}</div> : null}
     </section>
   );
 }

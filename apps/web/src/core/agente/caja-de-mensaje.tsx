@@ -38,11 +38,11 @@ export function CajaDeMensaje({ valor, alCambiar, alEnviar, alAlternarVoz, voz, 
   const cercaDelLimite = valor.length >= maximo * AVISAR_DESDE;
   return (
     <div className="flex flex-col gap-1.5">
-      {voz.aviso ? (
+      {voz.aviso && hayMicrofono ? (
         <p role="status" className="rounded-control border border-aviso/40 bg-aviso/10 p-2 text-sm text-texto">{voz.aviso}</p>
       ) : null}
       {escuchando ? <p role="status" className="px-1 text-xs font-medium text-peligro">Escuchando… habla y revisa el texto antes de enviar.</p> : null}
-      <div className={unir('flex items-end gap-1.5 rounded-[1.5rem] border bg-superficie p-1.5 pl-4 shadow-tarjeta transition-[border-color,box-shadow] duration-150', 'focus-within:border-asistente-2/60 focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-asistente-2)_22%,transparent)]', escuchando ? 'border-peligro/50' : 'border-borde-fuerte/60')}>
+      <div className={unir('flex items-end gap-1.5 rounded-[1.75rem] border bg-superficie/90 p-1.5 pl-4 shadow-tarjeta backdrop-blur transition-[border-color,box-shadow] duration-150', 'focus-within:border-asistente-2/60 focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-asistente-2)_22%,transparent)]', escuchando ? 'border-peligro/50' : 'border-borde-fuerte/60')}>
         <textarea
           ref={refTexto}
           value={valor}
@@ -50,7 +50,7 @@ export function CajaDeMensaje({ valor, alCambiar, alEnviar, alAlternarVoz, voz, 
           maxLength={maximo}
           placeholder={marcador}
           aria-label="Mensaje para el asistente"
-          className="field-sizing-content max-h-40 min-h-10 w-full resize-none self-center bg-transparent py-2 text-[0.9375rem] leading-snug text-texto placeholder:text-texto-suave/70 focus:outline-none"
+          className="field-sizing-content max-h-40 min-h-10 w-full resize-none self-center bg-transparent py-2 text-[0.9375rem] leading-snug text-texto placeholder:text-texto-suave/70 focus:outline-none focus-visible:[box-shadow:none]"
           onChange={(e) => alCambiar(e.target.value)}
           onKeyDown={(e) => {
             if (teclaDeEnvio({ key: e.key, shiftKey: e.shiftKey, isComposing: e.nativeEvent.isComposing }) === 'enviar') {
@@ -75,6 +75,7 @@ export function CajaDeMensaje({ valor, alCambiar, alEnviar, alAlternarVoz, voz, 
           </button>
         )}
       </div>
+      {!hayMicrofono && voz.aviso ? <p role="note" className="px-3 text-xs text-texto-suave">{voz.aviso}</p> : null}
       {cercaDelLimite ? <p className="text-right text-xs text-texto-suave">{`${valor.length} de ${maximo}`}</p> : null}
     </div>
   );

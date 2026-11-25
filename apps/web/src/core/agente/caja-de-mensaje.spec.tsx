@@ -48,10 +48,18 @@ describe('CajaDeMensaje', () => {
     expect(html('hola', { voz: voz({ estado: 'sin_contexto_seguro' }) })).not.toContain('micrófono');
   });
 
-  it('muestra el aviso de la voz como estado', () => {
+  it('si el navegador no reconoce voz, lo dice con una nota discreta (no con una alerta amarilla) y sin micrófono', () => {
     const h = html('', { voz: voz({ estado: 'no_disponible', aviso: 'Este navegador no reconoce voz.' }) });
-    expect(h).toContain('role="status"');
+    expect(h).toContain('role="note"');
     expect(h).toContain('Este navegador no reconoce voz.');
+    expect(h).not.toContain('border-aviso');
+    expect(h).not.toContain('Dictar con el micrófono');
+  });
+
+  it('un problema mientras se dicta (con micrófono) sí se muestra como aviso de estado', () => {
+    const h = html('', { voz: voz({ estado: 'listo', aviso: 'No se oyó nada.' }) });
+    expect(h).toContain('role="status"');
+    expect(h).toContain('No se oyó nada.');
   });
 
   it('mientras escucha, el botón queda presionado y en variante de peligro', () => {

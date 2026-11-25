@@ -89,7 +89,7 @@ describe('Hilo · diseño dinámico', () => {
   it('con el asistente activo la pantalla vacía saluda según la hora y ofrece cuatro atajos', () => {
     const h = con([], { conAsistente: true, hora: 9 });
     expect(h).toContain('Buenos días');
-    for (const t of ['Mi día', '¿Quién me debe?', 'Nuevo pedido', 'Buscar cliente']) expect(h).toContain(t);
+    for (const t of ['Mi día', '¿Quién me debe?', 'Nuevo pedido', 'Buscar cliente', 'Entregas, cobros y pendientes']) expect(h).toContain(t);
   });
 
   it('mientras llega la primera palabra se ven los puntos de «pensando»', () => {

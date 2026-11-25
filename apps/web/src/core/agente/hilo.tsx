@@ -96,7 +96,7 @@ type PropsDeElemento = { e: ElementoDeHilo; alResolver: Props['alResolver']; alN
 function Elemento({ e, alResolver, alNavegar, conReintento, alReintentar }: PropsDeElemento): ReactNode {
   switch (e.tipo) {
     case 'persona':
-      return <p className={unir('ml-auto max-w-[85%] rounded-[1.25rem] rounded-br-md bg-accion px-3.5 py-2 text-sm leading-relaxed break-words whitespace-pre-wrap text-accion-texto shadow-sutil', ENTRA)}>{e.texto}</p>;
+      return <p className={unir('ml-auto max-w-[85%] rounded-[1.4rem] rounded-br-md bg-[linear-gradient(135deg,var(--color-accion),color-mix(in_oklab,var(--color-asistente-2)_75%,var(--color-asistente-1)))] px-4 py-2.5 text-sm leading-relaxed break-words whitespace-pre-wrap text-accion-texto shadow-tarjeta', ENTRA)}>{e.texto}</p>;
     case 'agente':
       return (
         <div className={unir('flex items-start gap-2.5', ENTRA)}>
@@ -166,16 +166,16 @@ function Vacio({ saludo, hora, conAsistente, sugerencias, alElegir }: { saludo: 
     <div className={unir('flex flex-col items-center gap-4 pt-4 pb-2 text-center', ENTRA)}>
       <OrbeDelAsistente tamano="size-16" />
       <div className="flex flex-col gap-1">
-        {conAsistente ? <h3 className="text-lg font-semibold text-texto">{saludoPorHora(hora)}</h3> : null}
-        <p className="max-w-[28ch] text-sm text-texto-suave">{saludo}</p>
+        {conAsistente ? <h3 className="bg-[linear-gradient(90deg,var(--color-asistente-1),var(--color-asistente-2),var(--color-asistente-3))] bg-clip-text text-3xl font-semibold tracking-tight text-transparent">{saludoPorHora(hora)}</h3> : null}
+        <p className="max-w-[30ch] text-sm leading-relaxed text-texto-suave">{saludo}</p>
       </div>
       {conAsistente ? (
         <ul className="grid w-full grid-cols-2 gap-2">
           {ACCIONES_RAPIDAS.map((a) => (
             <li key={a.titulo}>
-              <button type="button" onClick={() => alElegir(a.frase)} className="group flex min-h-(--alto-control) w-full cursor-pointer items-center gap-2.5 rounded-tarjeta border border-borde bg-superficie px-3 py-3 text-left text-sm font-medium text-texto shadow-sutil transition-[transform,border-color,box-shadow] duration-150 hover:-translate-y-0.5 hover:border-asistente-2/50 hover:shadow-tarjeta active:translate-y-0 active:scale-[0.98]">
-                <span className="grid size-8 shrink-0 place-items-center rounded-control bg-asistente-2/10 text-asistente-2"><Icono nombre={a.icono} className="size-4" /></span>
-                <span className="leading-tight">{a.titulo}</span>
+              <button type="button" onClick={() => alElegir(a.frase)} className="group flex min-h-24 w-full cursor-pointer flex-col items-start gap-2 rounded-[1.25rem] border border-borde bg-superficie/80 p-3 text-left shadow-sutil backdrop-blur transition-[transform,border-color,box-shadow,background-color] duration-200 hover:-translate-y-0.5 hover:border-asistente-2/50 hover:bg-superficie hover:shadow-tarjeta active:translate-y-0 active:scale-[0.98]">
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,var(--color-asistente-1),var(--color-asistente-2))] text-white shadow-sutil transition-transform duration-200 group-hover:scale-110"><Icono nombre={a.icono} className="size-4" /></span>
+                <span className="flex flex-col"><span className="text-sm leading-tight font-semibold text-texto">{a.titulo}</span><span className="text-xs leading-snug text-texto-suave">{a.detalle}</span></span>
               </button>
             </li>
           ))}

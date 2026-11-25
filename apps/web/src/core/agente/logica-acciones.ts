@@ -52,12 +52,12 @@ export function saludoPorHora(hora: number): string {
   return 'Buenas noches';
 }
 
-export type AccionRapida = { icono: 'inicio' | 'caja' | 'mas' | 'buscar'; titulo: string; frase: string };
+export type AccionRapida = { icono: 'inicio' | 'caja' | 'mas' | 'buscar'; titulo: string; detalle: string; frase: string };
 
 /** Los atajos de la pantalla vacía. Rellenan la caja (no envían): la persona termina la frase o la corrige. */
 export const ACCIONES_RAPIDAS: readonly AccionRapida[] = [
-  { icono: 'inicio', titulo: 'Mi día', frase: '¿Qué tengo pendiente hoy?' },
-  { icono: 'caja', titulo: '¿Quién me debe?', frase: '¿Quién me debe?' },
-  { icono: 'mas', titulo: 'Nuevo pedido', frase: 'Crea un pedido: cliente ' },
-  { icono: 'buscar', titulo: 'Buscar cliente', frase: 'Busca al cliente ' },
+  { icono: 'inicio', titulo: 'Mi día', detalle: 'Entregas, cobros y pendientes', frase: '¿Qué tengo pendiente hoy?' },
+  { icono: 'caja', titulo: '¿Quién me debe?', detalle: 'Deudas por cobrar', frase: '¿Quién me debe?' },
+  { icono: 'mas', titulo: 'Nuevo pedido', detalle: 'Cliente, productos y entrega', frase: 'Crea un pedido: cliente ' },
+  { icono: 'buscar', titulo: 'Buscar cliente', detalle: 'Sus datos, deudas y pedidos', frase: 'Busca al cliente ' },
 ];

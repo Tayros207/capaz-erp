@@ -51,6 +51,9 @@ describe('pantalla vacía', () => {
   });
   it('los atajos son cuatro y tienen frase', () => {
     expect(ACCIONES_RAPIDAS).toHaveLength(4);
-    for (const a of ACCIONES_RAPIDAS) expect(a.frase.length).toBeGreaterThan(3);
+    for (const a of ACCIONES_RAPIDAS) {
+      expect(a.frase.length).toBeGreaterThan(3);
+      expect(a.detalle.length).toBeGreaterThan(8);
+    }
   });
 });
