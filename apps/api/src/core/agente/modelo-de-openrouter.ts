@@ -19,6 +19,14 @@ export type OpcionesDeOpenRouter = {
   fetch?: typeof fetch;
 };
 
+/**
+ * El esfuerzo de razonamiento que de verdad se pide. DeepSeek se usa con el razonamiento apagado (lo seguro con herramientas), pero los
+ * modelos de Anthropic lo exigen («Reasoning is mandatory…», 400): con ellos «ninguno» se vuelve «bajo».
+ */
+export function esfuerzoDeRazonamiento(modelo: string, configurado: 'none' | 'low' | 'high'): 'none' | 'low' | 'high' {
+  return configurado === 'none' && modelo.startsWith('anthropic/') ? 'low' : configurado;
+}
+
 /** Qué le decimos a la persona según el código HTTP del proveedor. Nunca incluye el cuerpo de la respuesta. */
 function falloPorEstado(estado: number): ErrorDeModelo {
   if (estado === 408 || estado === 504) return new ErrorDeModelo('tiempo_agotado', 'El modelo tardó demasiado en responder.');
@@ -45,7 +53,7 @@ export class ModeloDeOpenRouter implements ModeloDeChat {
       ...(conHerramientas ? { tools: p.herramientas, tool_choice: 'auto' } : {}),
       stream: true,
       max_tokens: MAXIMO_DE_SALIDA_POR_RONDA,
-      reasoning: { effort: this.opciones.razonamiento },
+      reasoning: { effort: esfuerzoDeRazonamiento(p.modelo, this.opciones.razonamiento) },
       // Solo proveedores que no guardan los datos. Si ninguno cumple, el proveedor responde con error y el turno lo dice.
       provider: { data_collection: 'deny', zdr: true, require_parameters: true },
     });

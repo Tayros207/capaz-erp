@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ErrorDeModelo, type PeticionDeModelo, type TrozoDeModelo } from './modelo-de-chat.js';
-import { MS_DE_SILENCIO, MS_PARA_CONECTAR, ModeloDeOpenRouter } from './modelo-de-openrouter.js';
+import { esfuerzoDeRazonamiento, MS_DE_SILENCIO, MS_PARA_CONECTAR, ModeloDeOpenRouter } from './modelo-de-openrouter.js';
 
 // Ninguna prueba sale a la red: el `fetch` es de mentira y entrega flujos armados a mano.
 
@@ -226,5 +226,16 @@ describe('ModeloDeOpenRouter · tiempos', () => {
     expect(recibidos.map((x) => (x as { delta: string }).delta)).toEqual(['Hola', ' de nuevo']);
     await vi.advanceTimersByTimeAsync(10_000);
     await asercion;
+  });
+});
+
+describe('esfuerzoDeRazonamiento', () => {
+  it('con «ninguno», los modelos de Anthropic piden «bajo» (lo exigen) y el resto sigue sin razonar', () => {
+    expect(esfuerzoDeRazonamiento('anthropic/claude-sonnet-5.5', 'none')).toBe('low');
+    expect(esfuerzoDeRazonamiento('deepseek/deepseek-v4.1-flash-1017', 'none')).toBe('none');
+  });
+  it('lo que la empresa configuró de forma explícita se respeta', () => {
+    expect(esfuerzoDeRazonamiento('anthropic/claude-opus-5.5', 'high')).toBe('high');
+    expect(esfuerzoDeRazonamiento('deepseek/x', 'low')).toBe('low');
   });
 });
