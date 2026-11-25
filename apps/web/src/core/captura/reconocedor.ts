@@ -18,4 +18,13 @@ export type ReconocedorDeVoz = {
   limpiar: () => void;
   /** Cambia lo que se le dice a la persona («Escuchando…» o «Grabando…»). Sin ella, como Web Speech. */
   via?: ViaDeVoz;
+  /** Solo la vía de audio: la grabación está en pausa (el micrófono sigue abierto, no se graba). */
+  pausado?: boolean;
+  /** Solo la vía de audio: segundos grabados hasta ahora (sin contar las pausas). */
+  segundos?: number;
+  /** Solo la vía de audio: pausar y seguir con la misma grabación. */
+  pausar?: () => void;
+  reanudar?: () => void;
+  /** Solo la vía de audio: tirar lo grabado sin transcribirlo. */
+  cancelar?: () => void;
 };

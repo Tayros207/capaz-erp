@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  AVISO_SIN_RECONOCIMIENTO, AVISO_TOPE_DE_GRABACION, avisoDeErrorDeVoz, codigoDeErrorDeMicrofono, desenlaceDeTranscripcion, elegirViaDeVoz, etiquetaDelBotonDeVoz,
+  AVISO_SIN_RECONOCIMIENTO, formatoDeTiempo, AVISO_TOPE_DE_GRABACION, avisoDeErrorDeVoz, codigoDeErrorDeMicrofono, desenlaceDeTranscripcion, elegirViaDeVoz, etiquetaDelBotonDeVoz,
   lineaDeEstadoDeVoz, recortarTexto, unirConBase, unirResultados, unirSesion, type CapacidadesDeVoz, type ListaDeResultados,
 } from './logica-reconocedor.ts';
 
@@ -116,5 +116,17 @@ describe('avisos de la grabación', () => {
   });
   it('el tope de grabación dice cuántos segundos', () => {
     expect(AVISO_TOPE_DE_GRABACION).toMatch(/45 segundos/);
+  });
+});
+
+describe('formatoDeTiempo', () => {
+  it('muestra minutos y segundos como en un reloj', () => {
+    expect(formatoDeTiempo(0)).toBe('0:00');
+    expect(formatoDeTiempo(7.9)).toBe('0:07');
+    expect(formatoDeTiempo(65)).toBe('1:05');
+    expect(formatoDeTiempo(45)).toBe('0:45');
+  });
+  it('lo raro no rompe el contador', () => {
+    for (const x of [-3, Number.NaN, Number.POSITIVE_INFINITY]) expect(formatoDeTiempo(x), String(x)).toBe('0:00');
   });
 });

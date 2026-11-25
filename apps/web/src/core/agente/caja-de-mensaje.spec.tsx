@@ -69,9 +69,9 @@ describe('CajaDeMensaje', () => {
     expect(h).toContain('bg-peligro');
   });
 
-  it('grabando por audio (Firefox) dice «Grabando… (toca para terminar)» y el botón termina la grabación', () => {
+  it('grabando por audio (Firefox) muestra la barra «Grabando» y el botón del micrófono termina la grabación', () => {
     const h = html('', { voz: voz({ estado: 'escuchando', via: 'audio' }) });
-    expect(h).toContain('Grabando… (toca para terminar)');
+    expect(h).toContain('Grabando');
     expect(h).toContain('aria-label="Terminar la grabación"');
     expect(h).toContain('aria-pressed="true"');
     expect(h).not.toContain('Escuchando…');
@@ -79,7 +79,7 @@ describe('CajaDeMensaje', () => {
 
   it('transcribiendo dice «Transcribiendo…», el micrófono espera y no se puede enviar todavía', () => {
     const h = html('hola', { voz: voz({ estado: 'transcribiendo', via: 'audio' }) });
-    expect(h).toContain('Transcribiendo…');
+    expect(h).toContain('Transcribiendo el audio…');
     expect(/<button\b[^>]*aria-label="Transcribiendo el audio"[^>]*>/.exec(h)?.[0]).toContain(' disabled=""');
     expect(botonEnviar(h)).toContain(' disabled=""');
   });
@@ -109,5 +109,18 @@ describe('CajaDeMensaje', () => {
   it('con la caja vacía, enviar sale deshabilitado; con texto, habilitado', () => {
     expect(botonEnviar(html(''))).toContain(' disabled=""');
     expect(botonEnviar(html('hola'))).not.toContain(' disabled=""');
+  });
+
+  it('al grabar con la vía de audio muestra la barra de grabación (pausar, cancelar y contador) en lugar de la línea simple', () => {
+    const h = html('', { voz: voz({ estado: 'escuchando', via: 'audio', segundos: 5, pausar: () => {}, reanudar: () => {}, cancelar: () => {} }) });
+    expect(h).toContain('Controles de la grabación');
+    expect(h).toContain('0:05 / 0:45');
+    expect(h).not.toContain('toca para terminar');
+  });
+
+  it('con Web Speech (Chrome) sigue la línea simple, sin controles de pausa', () => {
+    const h = html('', { voz: voz({ estado: 'escuchando', via: 'navegador' }) });
+    expect(h).not.toContain('Controles de la grabación');
+    expect(h).toContain('Escuchando');
   });
 });

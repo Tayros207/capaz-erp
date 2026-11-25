@@ -3,6 +3,7 @@ import { Icono } from '../../shared/ui/icono.tsx';
 import { unir } from '../../shared/ui/unir.ts';
 import { lineaDeEstadoDeVoz } from '../captura/logica-reconocedor.ts';
 import type { ReconocedorDeVoz } from '../captura/reconocedor.ts';
+import { BarraDeGrabacion } from './barra-de-grabacion.tsx';
 import { puedeEnviar, teclaDeEnvio } from './logica-caja.ts';
 
 type Props = {
@@ -53,7 +54,9 @@ export function CajaDeMensaje({ valor, alCambiar, alEnviar, alAlternarVoz, voz, 
       {voz.aviso && hayMicrofono ? (
         <p role="status" className="rounded-control border border-aviso/40 bg-aviso/10 p-2 text-sm text-texto">{voz.aviso}</p>
       ) : null}
-      {lineaDeVoz ? <p role="status" className={unir('px-1 text-xs font-medium', escuchando ? 'text-peligro' : 'text-texto-suave')}>{lineaDeVoz}</p> : null}
+      {voz.via === 'audio' && (escuchando || transcribiendo) ? (
+        <BarraDeGrabacion voz={voz} />
+      ) : lineaDeVoz ? <p role="status" className={unir('px-1 text-xs font-medium', escuchando ? 'text-peligro' : 'text-texto-suave')}>{lineaDeVoz}</p> : null}
       <div className={unir('flex items-end gap-1.5 rounded-[1.75rem] border bg-superficie/90 p-1.5 pl-4 shadow-tarjeta backdrop-blur transition-[border-color,box-shadow] duration-150', 'focus-within:border-asistente-2/60 focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-asistente-2)_22%,transparent)]', escuchando ? 'border-peligro/50' : 'border-borde-fuerte/60')}>
         <textarea
           ref={refTexto}

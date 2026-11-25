@@ -11,11 +11,25 @@ export function useReconocedorPorAudio(disponible: boolean): ReconocedorDeVoz {
   const [estado, setEstado] = useState<EstadoDeReconocedor>(disponible ? 'listo' : 'no_disponible');
   const [texto, setTexto] = useState('');
   const [aviso, setAviso] = useState<string | null>(null);
+  const [pausado, setPausado] = useState(false);
+  const [segundos, setSegundos] = useState(0);
   const [grabadora] = useState(
     () =>
       new GrabadoraDeVoz({
-        alGrabar: () => setEstado('escuchando'),
+        alGrabar: () => {
+          setPausado(false);
+          setSegundos(0);
+          setEstado('escuchando');
+        },
+        alPausar: setPausado,
+        alCancelar: () => {
+          setPausado(false);
+          setSegundos(0);
+          setAviso(null);
+          setEstado('listo');
+        },
         alTranscribir: (porTope) => {
+          setPausado(false);
           setEstado('transcribiendo');
           if (porTope) setAviso(AVISO_TOPE_DE_GRABACION);
         },
@@ -51,8 +65,19 @@ export function useReconocedorPorAudio(disponible: boolean): ReconocedorDeVoz {
     setEstado('listo');
   }, [grabadora]);
 
+  // El contador sube mientras se graba (las pausas no cuentan).
+  useEffect(() => {
+    if (estado !== 'escuchando') return;
+    const reloj = setInterval(() => setSegundos(grabadora.segundos), 250);
+    return () => clearInterval(reloj);
+  }, [estado, grabadora]);
+
+  const pausar = useCallback(() => grabadora.pausar(), [grabadora]);
+  const reanudar = useCallback(() => grabadora.reanudar(), [grabadora]);
+  const cancelar = useCallback(() => grabadora.cancelar(), [grabadora]);
+
   // Al salir de la pantalla no queda nada grabando ni nada que llegue tarde.
   useEffect(() => () => grabadora.soltar(), [grabadora]);
 
-  return { estado, texto, aviso, iniciar, detener, limpiar, via: 'audio' };
+  return { estado, texto, aviso, iniciar, detener, limpiar, via: 'audio', pausado, segundos, pausar, reanudar, cancelar };
 }

@@ -6,7 +6,8 @@ import { AVISO_GRABACION_ILEGIBLE, avisoDeErrorDeVoz, codigoDeErrorDeMicrofono, 
 // navegador → el servidor lo transcribe. El audio NO se guarda: el servidor lo manda al modelo y lo olvida. Sin React: el hook
 // `use-reconocedor-por-audio.ts` la envuelve y pone en pantalla lo que ella le avisa.
 
-type Grabacion = { grabadora: MediaRecorder; flujo: MediaStream; tope: ReturnType<typeof setTimeout> };
+/** `acumuladoMs` = lo grabado en tramos ya cerrados (antes de una pausa); `desde` = cuándo empezó el tramo en curso. */
+type Grabacion = { grabadora: MediaRecorder; flujo: MediaStream; tope: ReturnType<typeof setTimeout>; acumuladoMs: number; desde: number; pausada: boolean };
 
 /** Lo que la grabadora le cuenta a la pantalla. */
 export type AvisosDeGrabadora = {
@@ -14,6 +15,10 @@ export type AvisosDeGrabadora = {
   alTranscribir: (porTope: boolean) => void;
   alResultado: (d: DesenlaceDeTranscripcion) => void;
   alFallar: (aviso: string) => void;
+  /** La grabación se pausó (`true`) o siguió (`false`). */
+  alPausar?: (pausada: boolean) => void;
+  /** Se canceló: no se transcribe nada. */
+  alCancelar?: () => void;
 };
 
 const apagarPistas = (flujo: MediaStream) => flujo.getTracks().forEach((pista) => pista.stop());
@@ -40,7 +45,7 @@ function empezarGrabacion(flujo: MediaStream, alTope: () => void, alParar: (grab
     alParar(new Blob(trozos, { type: grabadora.mimeType }));
   };
   grabadora.start();
-  return { grabadora, flujo, tope: setTimeout(alTope, SEGUNDOS_MAXIMOS_DE_GRABACION * 1000) };
+  return { grabadora, flujo, tope: setTimeout(alTope, SEGUNDOS_MAXIMOS_DE_GRABACION * 1000), acumuladoMs: 0, desde: performance.now(), pausada: false };
 }
 
 /** Decodifica lo grabado (en el formato que eligió el navegador), lo deja en WAV mono de 16 kHz y lo manda a transcribir. */
@@ -74,6 +79,42 @@ export class GrabadoraDeVoz {
   /** Se puede grabar: el navegador puede y el servidor no dijo que no transcribe (apagado o tope del mes). */
   get conServicio(): boolean {
     return this.servicio;
+  }
+
+  /** Segundos grabados hasta ahora, sin contar las pausas. */
+  get segundos(): number {
+    const g = this.actual;
+    if (!g) return 0;
+    return (g.acumuladoMs + (g.pausada ? 0 : performance.now() - g.desde)) / 1000;
+  }
+
+  /** Pausa la grabación: el audio ya grabado se conserva y el tope de tiempo deja de correr. */
+  pausar(): void {
+    const g = this.actual;
+    if (!g || g.pausada || g.grabadora.state !== 'recording') return;
+    g.grabadora.pause();
+    clearTimeout(g.tope);
+    g.acumuladoMs += performance.now() - g.desde;
+    g.pausada = true;
+    this.avisos.alPausar?.(true);
+  }
+
+  /** Sigue con la misma grabación; el tope cuenta solo lo que falta de los 45 s. */
+  reanudar(): void {
+    const g = this.actual;
+    if (!g || !g.pausada || g.grabadora.state !== 'paused') return;
+    g.grabadora.resume();
+    g.desde = performance.now();
+    g.pausada = false;
+    const restanteMs = Math.max(0, SEGUNDOS_MAXIMOS_DE_GRABACION * 1000 - g.acumuladoMs);
+    g.tope = setTimeout(() => this.terminar(true), restanteMs);
+    this.avisos.alPausar?.(false);
+  }
+
+  /** Tira lo grabado sin transcribirlo ni mandarlo a ningún lado. */
+  cancelar(): void {
+    this.soltar();
+    this.avisos.alCancelar?.();
   }
 
   /** Ni grabando ni transcribiendo. */

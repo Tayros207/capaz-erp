@@ -147,3 +147,9 @@ export function desenlaceDeTranscripcion(r: Respuesta<{ texto: string }>): Desen
   if (codigo === 'sin_conexion') return { texto: '', estado: 'error', aviso: avisoDeErrorDeVoz('network', false) };
   return { texto: '', estado: 'error', aviso: mensaje };
 }
+
+/** «0:07», «1:05»: el tiempo de una grabación, para el contador. Nunca negativo ni con decimales. */
+export function formatoDeTiempo(segundos: number): string {
+  const total = Math.max(0, Math.floor(Number.isFinite(segundos) ? segundos : 0));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
