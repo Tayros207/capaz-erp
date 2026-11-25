@@ -35,6 +35,6 @@ export function useConversacion(voz: ReconocedorDeVoz, entrada: EntradaDeTexto, 
   }, [turno]);
 
   return conectado
-    ? { enviarTexto, hilo: turno.hilo, ocupado: turno.ocupado, uso: turno.uso, reintentable: turno.reintentable, detener: turno.detener, reintentar: turno.reintentar, abrir: turno.abrir, resolver: turno.resolver, enviar, nueva }
-    : { enviarTexto: undefined, hilo: captura.hilo, ocupado: captura.enviando, uso: null, reintentable: null, detener: undefined, reintentar: undefined, abrir: undefined, resolver: captura.resolver, enviar, nueva };
+    ? { enviarTexto, conversacionId: turno.conversacionId, hilo: turno.hilo, ocupado: turno.ocupado, uso: turno.uso, reintentable: turno.reintentable, detener: turno.detener, reintentar: turno.reintentar, abrir: turno.abrir, resolver: turno.resolver, enviar, nueva }
+    : { enviarTexto: undefined, conversacionId: null, hilo: captura.hilo, ocupado: captura.enviando, uso: null, reintentable: null, detener: undefined, reintentar: undefined, abrir: undefined, resolver: captura.resolver, enviar, nueva };
 }

@@ -3,6 +3,7 @@ import { exito, rechazo, type Ayuda } from '@capaz/shared';
 import { RegistroDeHerramientas } from '../herramientas/registro.js';
 import { definirHerramienta, type HerramientaRegistrada } from '../herramientas/tipos.js';
 import { limpiarNombre } from './prompt.js';
+import { buscarEnConversaciones } from './repositorio-de-recuerdos.js';
 import { cambiarLeccion, comoLeccion, guardarLeccion, leerLeccion, listarAcciones, listarLecciones, TOPE_DE_LECCIONES_POR_PERSONA } from './repositorio-de-memoria.js';
 
 // La huella y la memoria del asistente como herramientas registradas (regla 3): auditadas, con permisos y por el mismo ejecutor.
@@ -13,6 +14,16 @@ import { cambiarLeccion, comoLeccion, guardarLeccion, leerLeccion, listarAccione
 const ayuda = (a: Ayuda): Ayuda => a;
 
 const AYUDAS = {
+  recuerdos: ayuda({
+    titulo: 'Recordar chats anteriores',
+    paraQueSirve: 'Busca en los chats anteriores de ESTA persona con el asistente (nunca en los de otra): qué se habló, qué se pidió, qué quedó pendiente. Sin texto devuelve lo más reciente.',
+    cuandoUsarla: 'Cuando la persona diga «lo que hablamos», «como ayer», «lo del pedido de Juan que te pedí», o cuando te falte contexto de una conversación pasada.',
+    campos: [{ nombre: 'texto', queSeAnota: 'Qué recordar, una palabra o frase corta que se haya dicho.', ejemplo: 'troquel' }],
+    ejemploTecleado: 'qué hablamos de Juan Pérez',
+    ejemploHablado: 'qué te pedí ayer',
+    erroresComunes: ['Solo ve los chats de la persona que pregunta, y se guardan 90 días.'],
+    relacionadas: ['memoria_listar'],
+  }),
   acciones: ayuda({
     titulo: 'Ver lo que hizo el asistente',
     paraQueSirve: 'Lista, de lo más nuevo a lo más viejo, lo que el asistente hizo, propuso o intentó: qué herramienta, con qué datos, qué cambió y con qué resultado.',
@@ -83,6 +94,13 @@ const sinFila = () => rechazo('no_encontrado', 'No encontré esa lección.');
 const claveDe = (texto: string): string => `n:${texto.toLowerCase().replace(/\s+/g, ' ').slice(0, 150)}`;
 
 export function crearHerramientasDeMemoria(): HerramientaRegistrada[] {
+  const recuerdos = definirHerramienta('conversaciones_buscar', {
+    modulo: 'core', permiso: null, criticidad: 'lectura', ayuda: AYUDAS.recuerdos,
+    async ejecutar(args, _ctx, tx) {
+      return exito({ coincidencias: await buscarEnConversaciones(tx, { texto: args.texto && args.texto !== '' ? args.texto : null, limite: args.limite }) });
+    },
+  });
+
   const acciones = definirHerramienta('agente_acciones_listar', {
     modulo: 'core', permiso: 'auditoria:ver', criticidad: 'lectura', ayuda: AYUDAS.acciones,
     async ejecutar(args, _ctx, tx) {
@@ -150,7 +168,7 @@ export function crearHerramientasDeMemoria(): HerramientaRegistrada[] {
       return exito({ leccion: comoLeccion(await cambiarLeccion(tx, f.id, { estado: 'vigente', alcance: aEmpresa ? 'empresa' : 'persona' })) });
     },
   });
-  return [acciones, anotar, listar, editar, archivar, aprobar];
+  return [acciones, recuerdos, anotar, listar, editar, archivar, aprobar];
 }
 
 /** Registra la huella y la memoria al arrancar. El contrato y las herramientas entran en el MISMO paso (si no, el registro no arranca). */

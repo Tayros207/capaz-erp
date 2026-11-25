@@ -13,7 +13,7 @@ export const PRESUPUESTO_DE_TOKENS = 8000;
 
 /** Lo que casi todas las conversaciones necesitan: ver el día, encontrar un cliente o un producto, la bandeja y dictar. */
 export const SIEMPRE: readonly string[] = [
-  'borradores_listar', 'borradores_resumen', 'captura_proponer', 'clientes_buscar', 'clientes_ver', 'mi_dia_ver', 'precio_anterior_consultar', 'productos_buscar',
+  'borradores_listar', 'borradores_resumen', 'captura_proponer', 'clientes_buscar', 'conversaciones_buscar', 'clientes_ver', 'mi_dia_ver', 'precio_anterior_consultar', 'productos_buscar',
 ];
 
 export type EntradaDelCatalogo = {

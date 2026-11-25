@@ -1,5 +1,6 @@
 import { AcumuladorDeRonda } from './acumulador-de-ronda.js';
 import { leerSse } from './leer-sse.js';
+import { conMarcasDeCache } from './marcas-de-cache.js';
 import { ErrorDeModelo, type ModeloDeChat, type PeticionDeModelo, type TrozoDeModelo } from './modelo-de-chat.js';
 
 // Habla con OpenRouter por `fetch`, sin dependencias (regla 15). La llave entra por el constructor, que la recibe de `infra/config`:
@@ -44,12 +45,12 @@ export class ModeloDeOpenRouter implements ModeloDeChat {
     this.llamar = opciones.fetch ?? fetch;
   }
 
-  /** El cuerpo de la petición. Sin marcas de caché (DeepSeek cachea el prefijo solo) y sin `tool_choice: required` (no todos lo admiten). */
+  /** El cuerpo de la petición. Con marcas de caché solo para Anthropic (DeepSeek cachea el prefijo solo) y sin `tool_choice: required` (no todos lo admiten). */
   private cuerpo(p: PeticionDeModelo): string {
     const conHerramientas = p.herramientas.length > 0;
     return JSON.stringify({
       model: p.modelo,
-      messages: p.mensajes,
+      messages: conMarcasDeCache(p.modelo, p.mensajes),
       ...(conHerramientas ? { tools: p.herramientas, tool_choice: 'auto' } : {}),
       stream: true,
       max_tokens: MAXIMO_DE_SALIDA_POR_RONDA,

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRef, useState, type ReactNode, type RefObject } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { MAXIMO_DE_TEXTO_DE_CAPTURA, type EstadoDelAgente } from '@capaz/shared';
 import { datosOError } from '../../shared/api/consultas.ts';
@@ -14,6 +14,7 @@ import { Hilo } from './hilo.tsx';
 import { HistorialConectado } from './historial-conectado.tsx';
 import { InsigniaDeUso } from './insignia-de-uso.tsx';
 import { estadoVivo, type EstadoVivo } from './logica-acciones.ts';
+import { almacenDelNavegador, leerConversacionRecordada, olvidarConversacion, recordarConversacion } from './logica-recordar.ts';
 import { OrbeDelAsistente } from './orbe-del-asistente.tsx';
 import { SUGERENCIAS_CON_ASISTENTE, SUGERENCIAS_INICIALES } from './logica-hilo.ts';
 import { AVISO_SIN_IA, AVISO_SIN_PERMISO, AVISO_TOPE, MARCADOR_DE_LA_CAJA, SALUDO_CON_ASISTENTE, SALUDO_VACIO } from './logica-panel.ts';
@@ -142,6 +143,22 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
   const c = useConversacion(voz, entrada, pantallaDesdeRuta(pathname), estado.data?.activo === true);
   const [vista, setVista] = useState<Vista>('conversacion');
   const [amplio, setAmplio] = useState(false);
+  const restaurada = useRef(false);
+  const conectado = estado.data?.activo === true;
+  const { abrir, conversacionId, hilo, ocupado } = c;
+
+  // Al volver (recargar la página, volver mañana) se reabre la conversación que se estaba usando, si fue hace poco y el panel sigue vacío.
+  useEffect(() => {
+    if (!abierto || !conectado || restaurada.current || !abrir) return;
+    restaurada.current = true;
+    const id = leerConversacionRecordada(almacenDelNavegador(), Date.now());
+    if (id && hilo.length === 0) void abrir(id).then((ok) => (ok ? undefined : olvidarConversacion(almacenDelNavegador())));
+  }, [abierto, conectado, abrir, hilo.length]);
+
+  // Cada vez que una respuesta termina, se anota cuál es la conversación (y cuándo), para poder reabrirla.
+  useEffect(() => {
+    if (conversacionId && !ocupado) recordarConversacion(almacenDelNavegador(), conversacionId, Date.now());
+  }, [conversacionId, ocupado]);
   const refTexto = useRef<HTMLTextAreaElement>(null);
   useEfectosDelPanel({ abierto, ancho, voz, alCerrar, refTexto });
 
@@ -155,7 +172,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
     if (c.abrir && (await c.abrir(id))) setVista('conversacion');
   };
   const cabecera = (
-    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} amplio={amplio} alAmpliar={ancho ? () => setAmplio((a) => !a) : undefined} />
+    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { olvidarConversacion(almacenDelNavegador()); c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} amplio={amplio} alAmpliar={ancho ? () => setAmplio((a) => !a) : undefined} />
   );
   const cuerpo = <Cuerpo c={c} vista={vista} estado={estado.data} alVolver={() => setVista('conversacion')} alNavegar={alNavegar} alAbrir={(id) => void alAbrir(id)} alElegirSugerencia={entrada.alEscribir} />;
   const pie = vista === 'conversacion' ? <Pie c={c} voz={voz} entrada={entrada} puedeDictar={puedeDictar} refTexto={refTexto} /> : null;

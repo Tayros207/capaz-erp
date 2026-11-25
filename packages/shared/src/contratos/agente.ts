@@ -139,6 +139,18 @@ export type Leccion = z.infer<typeof leccionSchema>;
 
 const idDeLeccion = z.strictObject({ id: z.uuid() });
 
+// --- Los chats anteriores: el asistente puede recordar lo que habló con ESTA persona (nunca con otra) ---
+
+export const fragmentoDeConversacionSchema = z.strictObject({ rol: z.enum(['persona', 'agente']), fecha: z.string(), texto: z.string() });
+export const coincidenciaDeConversacionSchema = z.strictObject({
+  conversacionId: z.string(),
+  titulo: z.string(),
+  /** Cuándo se habló por última vez en esa conversación. */
+  fecha: z.string(),
+  fragmentos: z.array(fragmentoDeConversacionSchema),
+});
+export type CoincidenciaDeConversacion = z.infer<typeof coincidenciaDeConversacionSchema>;
+
 // --- El dictado por audio (REST `POST /api/v1/agente/transcribir`, NO es herramienta: no va en `contratosDeAgente`) ---
 
 /** Lo más largo que se transcribe. La web corta antes (45 s); el servidor lo mide en la cabecera WAV. */
@@ -175,6 +187,11 @@ export const contratosDeAgente = {
       citaVerificada: z.boolean().optional(),
     }),
     z.strictObject({ leccion: leccionSchema }),
+  ),
+  /** Busca en los chats anteriores de la persona; sin texto devuelve lo más reciente. */
+  conversaciones_buscar: contrato(
+    z.strictObject({ texto: z.string().trim().max(100).optional(), limite: z.number().int().min(1).max(10).default(5) }),
+    z.strictObject({ coincidencias: z.array(coincidenciaDeConversacionSchema) }),
   ),
   memoria_listar: contrato(z.strictObject({ ...paginaSchema.shape, estado: z.enum(ESTADOS_DE_LECCION).optional() }), listadoSchema(leccionSchema)),
   memoria_editar: contrato(z.strictObject({ id: z.uuid(), texto: z.string().trim().min(1).max(280) }), z.strictObject({ leccion: leccionSchema })),
