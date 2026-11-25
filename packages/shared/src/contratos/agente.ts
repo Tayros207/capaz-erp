@@ -69,10 +69,12 @@ const configurarEntrada = z
     topeMensualMicrousd: z.number().int().min(0).max(MAXIMO_TOPE_MENSUAL_MICROUSD).nullable().optional(),
     escrituraDirecta: z.boolean().optional(),
     dineroDirecto: z.boolean().optional(),
+    /** Buscar en internet y leer páginas. */
+    internet: z.boolean().optional(),
     /** Nulo = volver al tope del despliegue (S/ 1,000). */
     topePorOperacionCentimos: z.number().int().min(0).max(MAXIMO_TOPE_POR_OPERACION_CENTIMOS).nullable().optional(),
   })
-  .refine((v) => v.modelo !== undefined || v.topeMensualMicrousd !== undefined || v.escrituraDirecta !== undefined || v.dineroDirecto !== undefined || v.topePorOperacionCentimos !== undefined, {
+  .refine((v) => v.modelo !== undefined || v.topeMensualMicrousd !== undefined || v.escrituraDirecta !== undefined || v.dineroDirecto !== undefined || v.internet !== undefined || v.topePorOperacionCentimos !== undefined, {
     error: 'Indica qué quieres cambiar.',
   });
 

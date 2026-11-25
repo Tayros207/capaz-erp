@@ -1,7 +1,7 @@
 import type { ModoDeEscritura, PantallaDelAgente } from '@capaz/shared';
 import type { ContextoDeHerramienta, HerramientaRegistrada } from '../herramientas/tipos.js';
 import { esquemaParaElModelo, tokensEstimados } from './esquema-limpio.js';
-import { DEFINICIONES_DE_META } from './meta-herramientas.js';
+import { DEFINICIONES_DE_META, DEFINICIONES_WEB } from './meta-herramientas.js';
 import { politicaDe } from './politica.js';
 
 // Qué herramientas se le ofrecen al modelo en CADA turno. Las 303 juntas pesan ~41.500 tokens aun limpiando el esquema, y un
@@ -21,6 +21,8 @@ export type EntradaDelCatalogo = {
   ctx: ContextoDeHerramienta;
   pantalla: PantallaDelAgente | null;
   modo: ModoDeEscritura;
+  /** Se ofrecen la búsqueda y la lectura de páginas. */
+  internet?: boolean;
 };
 
 type Definicion = { type: 'function'; function: { name: string; description: string; parameters: unknown } };
@@ -64,7 +66,7 @@ export function catalogoDelTurno(p: EntradaDelCatalogo): { tools: unknown[]; nom
   const lista = disponibles(p.herramientas, p.ctx, p.modo);
   const elegidas: HerramientaRegistrada[] = lista.filter((h) => SIEMPRE.includes(h.nombre));
   const yaEstan = new Set(elegidas.map((h) => h.nombre));
-  let tokens = tokensEstimados(DEFINICIONES_DE_META) + tokensEstimados(elegidas.map(definicionDe));
+  let tokens = tokensEstimados(DEFINICIONES_DE_META) + (p.internet ? tokensEstimados(DEFINICIONES_WEB) : 0) + tokensEstimados(elegidas.map(definicionDe));
 
   // Lo de la pantalla entra mientras quepa; una herramienta enorme se salta y se sigue con las siguientes.
   for (const h of delModulo(lista, p.pantalla?.modulo ?? null)) {
@@ -75,6 +77,6 @@ export function catalogoDelTurno(p: EntradaDelCatalogo): { tools: unknown[]; nom
     yaEstan.add(h.nombre);
     tokens += costo;
   }
-  const tools = [...elegidas.map(definicionDe), ...DEFINICIONES_DE_META];
+  const tools = [...elegidas.map(definicionDe), ...DEFINICIONES_DE_META, ...(p.internet ? DEFINICIONES_WEB : [])];
   return { tools, nombres: elegidas.map((h) => h.nombre), tokens };
 }

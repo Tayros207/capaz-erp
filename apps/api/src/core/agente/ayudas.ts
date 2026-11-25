@@ -22,6 +22,7 @@ export const AYUDAS: Record<'ver' | 'configurar', Ayuda> = {
       { nombre: 'topeMensualMicrousd', queSeAnota: 'El tope de gasto del mes por empresa, en millonésimas de dólar enteras (5 dólares = 5000000). Vacío vuelve al del sistema; 0 detiene al asistente.', ejemplo: '5000000' },
       { nombre: 'escrituraDirecta', queSeAnota: 'Si el asistente puede hacer cambios al momento (viene activado). Apagarlo es el freno de emergencia: todo cambio queda como borrador para aprobar.', ejemplo: 'false' },
       { nombre: 'dineroDirecto', queSeAnota: 'Si el asistente puede mover dinero por sí solo, con huella y topes (viene activado). Apagado, todo el dinero queda como borrador.', ejemplo: 'false' },
+      { nombre: 'internet', queSeAnota: 'Si el asistente puede buscar en internet y leer páginas (viene activado). Las consultas salen a un servicio externo y cuestan.', ejemplo: 'false' },
       { nombre: 'topePorOperacionCentimos', queSeAnota: 'El importe máximo por operación que el asistente mueve solo, en céntimos (S/ 1,000 = 100000). Por encima queda como borrador. Vacío vuelve al del sistema.', ejemplo: '100000' },
     ],
     ejemploTecleado: 'cambiar el modelo del asistente',

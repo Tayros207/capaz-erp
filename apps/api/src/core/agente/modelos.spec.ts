@@ -116,7 +116,7 @@ describe('catalogoConPrecios y configuracionDe', () => {
   });
   it('sin fila, rige lo del despliegue; con fila, lo que eligió la empresa', () => {
     const base = { AGENTE_MODELO: 'a/b', AGENTE_TOPE_MENSUAL_USD: 5 };
-    expect(configuracionDe(base, null, 12)).toEqual({ modelo: null, modeloEfectivo: 'a/b', topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: false, gastoDelMesMicrousd: 12 });
+    expect(configuracionDe(base, null, 12)).toEqual({ modelo: null, modeloEfectivo: 'a/b', topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: true, gastoDelMesMicrousd: 12 });
     expect(configuracionDe(base, { modelo: 'c/d', topeMensualMicrousd: 0, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: null, internet: false }, 0)).toMatchObject({ modelo: 'c/d', modeloEfectivo: 'c/d', topeEfectivoMicrousd: 0, escrituraDirecta: true });
   });
   it('un tope de 2,5 dólares se vuelve 2.500.000 enteros, sin decimales de dinero', () => {

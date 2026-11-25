@@ -18,7 +18,7 @@ type Dependencias = { config: Pick<Config, 'AGENTE_MODELO' | 'AGENTE_TOPE_MENSUA
 
 const dolares = (micro: number): string => `US$ ${(micro / 1_000_000).toFixed(2)}`;
 
-type Cambios = { modelo?: string | null; topeMensualMicrousd?: number | null; escrituraDirecta?: boolean; dineroDirecto?: boolean; topePorOperacionCentimos?: number | null };
+type Cambios = { modelo?: string | null; topeMensualMicrousd?: number | null; escrituraDirecta?: boolean; dineroDirecto?: boolean; internet?: boolean; topePorOperacionCentimos?: number | null };
 
 /** El resumen que la persona lee antes de confirmar, en palabras sencillas y sin repetir nada que no deba verse. */
 function describirCambios(args: Cambios, hoy: ConfiguracionDelAgente, config: Dependencias['config']): string {
@@ -30,6 +30,7 @@ function describirCambios(args: Cambios, hoy: ConfiguracionDelAgente, config: De
   }
   if (args.escrituraDirecta !== undefined) cambios.push(args.escrituraDirecta ? 'que el asistente pueda hacer algunos cambios al momento' : 'que el asistente deje todos los cambios como borrador');
   if (args.dineroDirecto !== undefined) cambios.push(args.dineroDirecto ? 'que el asistente pueda mover dinero por sí solo (con huella y topes)' : 'que todo el dinero del asistente quede como borrador');
+  if (args.internet !== undefined) cambios.push(args.internet ? 'que el asistente pueda buscar en internet' : 'que el asistente no busque en internet');
   if (args.topePorOperacionCentimos !== undefined) cambios.push(`el tope por operación de dinero a ${args.topePorOperacionCentimos === null ? 'el del sistema' : `S/ ${(args.topePorOperacionCentimos / 100).toFixed(2)}`}`);
   return `Cambiarás ${cambios.join(', ')}.`;
 }
@@ -40,6 +41,7 @@ const soloLoEnviado = (args: Cambios): Cambios => ({
   ...(args.topeMensualMicrousd !== undefined && { topeMensualMicrousd: args.topeMensualMicrousd }),
   ...(args.escrituraDirecta !== undefined && { escrituraDirecta: args.escrituraDirecta }),
   ...(args.dineroDirecto !== undefined && { dineroDirecto: args.dineroDirecto }),
+  ...(args.internet !== undefined && { internet: args.internet }),
   ...(args.topePorOperacionCentimos !== undefined && { topePorOperacionCentimos: args.topePorOperacionCentimos }),
 });
 
@@ -73,7 +75,7 @@ export function crearHerramientasDeAgente({ config, precios }: Dependencias): He
       const invalido = await modeloValido(args.modelo, precios);
       if (invalido) return { ok: false, error: { codigo: 'argumentos_invalidos', mensaje: invalido } };
       const hoy = configuracionDe(config, fila ?? null, 0);
-      return { ok: true, resumen: { resumen: describirCambios(args, hoy, config), huella: hashCanonico({ modelo: hoy.modelo, tope: hoy.topeMensualMicrousd, escrituraDirecta: hoy.escrituraDirecta, dineroDirecto: hoy.dineroDirecto, topeOperacion: hoy.topePorOperacionCentimos }) } };
+      return { ok: true, resumen: { resumen: describirCambios(args, hoy, config), huella: hashCanonico({ modelo: hoy.modelo, tope: hoy.topeMensualMicrousd, escrituraDirecta: hoy.escrituraDirecta, dineroDirecto: hoy.dineroDirecto, internet: hoy.internet, topeOperacion: hoy.topePorOperacionCentimos }) } };
     },
     auditar: (args) => ({ entidadTipo: 'agente_configuracion', resumen: { campos: Object.keys(args).filter((k) => args[k as keyof typeof args] !== undefined).sort().join(',') } }),
     async ejecutar(args, ctx, tx) {
@@ -83,7 +85,7 @@ export function crearHerramientasDeAgente({ config, precios }: Dependencias): He
       await tx
         .insert(agenteConfiguracion)
         // La columna nace en `false`, pero el asistente actúa por defecto: la primera configuración no debe apagarlo en silencio.
-        .values({ tenantId: ctx.empresaId, actualizadoPor: ctx.usuarioId, escrituraDirecta: true, ...cambios })
+        .values({ tenantId: ctx.empresaId, actualizadoPor: ctx.usuarioId, escrituraDirecta: true, internet: true, ...cambios })
         .onConflictDoUpdate({ target: agenteConfiguracion.tenantId, set: { ...cambios, actualizadoPor: ctx.usuarioId, actualizadoEn: sql`now()` } });
       const [fila, gasto] = await Promise.all([leerConfiguracion(tx), gastoDelMes(tx, new Date(), await zonaDeLaEmpresa(tx))]);
       return exito({ configuracion: configuracionDe(config, fila, gasto) });

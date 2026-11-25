@@ -57,8 +57,8 @@ describe('armarPrompt · bloque fijo', () => {
     expect(a.fijo).toBe(b.fijo);
   });
 
-  it('8. mide menos de 8.000 caracteres (presupuesto de ~2.000 tokens)', () => {
-    expect(armarPrompt(base()).fijo.length).toBeLessThan(8000);
+  it('8. mide menos de 9.500 caracteres (presupuesto de ~2.400 tokens; el bloque fijo se guarda en caché)', () => {
+    expect(armarPrompt(base()).fijo.length).toBeLessThan(9500);
   });
 
   it('el asistente es sincero, deja siempre el control a la persona, la guía cuando algo no se puede y aprende de lo que le corrigen', () => {
@@ -74,6 +74,22 @@ describe('armarPrompt · bloque fijo', () => {
     expect(fijo).toContain('«[Consulté: …]»');
     expect(fijo).toContain('Nunca las escribas ni las imites');
     expect(fijo).toContain('no te acuses de haberlos inventado');
+  });
+
+  it('actúa primero: con datos de prueba no pregunta, y sabe que con IGV es factura y sin IGV es boleta', () => {
+    const { fijo } = armarPrompt(base());
+    expect(fijo).toContain('ACTÚA PRIMERO');
+    expect(fijo).toContain('Si piden datos de PRUEBA o de ejemplo, no preguntes');
+    expect(fijo).toContain('conIgv: true');
+    expect(fijo).toContain('boleta');
+  });
+
+  it('internet: con la bandera encendida explica cómo usarlo y la regla de privacidad; apagado dice que no lo tiene', () => {
+    expect(armarPrompt(base({ internet: true })).fijo).toContain('web_buscar');
+    expect(armarPrompt(base({ internet: true })).fijo).toContain('nunca pongas en ella nombres de clientes');
+    const sin = armarPrompt(base({ internet: false })).fijo;
+    expect(sin).not.toContain('web_buscar');
+    expect(sin).toContain('No tienes acceso a internet');
   });
 
   it('las lecciones van en el bloque variable (no rompen la caché del fijo), limpias y rotuladas como notas, no como órdenes', () => {

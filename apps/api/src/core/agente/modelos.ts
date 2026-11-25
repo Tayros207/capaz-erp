@@ -121,7 +121,7 @@ export function configuracionDe(config: { AGENTE_MODELO: string; AGENTE_TOPE_MEN
     escrituraDirecta: fila?.escrituraDirecta ?? true,
     dineroDirecto: fila?.dineroDirecto ?? true,
     topePorOperacionCentimos: fila?.topePorOperacionCentimos ?? TOPE_POR_OPERACION_POR_OMISION,
-    internet: fila?.internet ?? false,
+    internet: fila?.internet ?? true,
     gastoDelMesMicrousd,
   };
 }

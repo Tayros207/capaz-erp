@@ -3,7 +3,7 @@ import type { ConfiguracionDelAgente } from '@capaz/shared';
 import { Boton } from '../../shared/ui/boton.tsx';
 import { formatoSoles, solesACentimos } from './logica-control.ts';
 
-type Cambios = { escrituraDirecta?: boolean; dineroDirecto?: boolean; topePorOperacionCentimos?: number | null };
+type Cambios = { escrituraDirecta?: boolean; dineroDirecto?: boolean; internet?: boolean; topePorOperacionCentimos?: number | null };
 type Props = { configuracion: ConfiguracionDelAgente; puedeConfigurar: boolean; ocupado: boolean; alCambiar: (cambios: Cambios) => void };
 
 type PropsDeInterruptor = { etiqueta: string; ayuda: string; activo: boolean; deshabilitado: boolean; alCambiar: (valor: boolean) => void };
@@ -34,6 +34,7 @@ export function ControlDelAsistente({ configuracion, puedeConfigurar, ocupado, a
       {puedeConfigurar ? null : <p role="note" className="text-xs text-texto-suave">Solo quien administra la empresa cambia esto.</p>}
       <Interruptor etiqueta="Puede hacer cambios por sí solo" ayuda="Apagado, todo lo que quiera cambiar queda como borrador para que una persona lo apruebe." activo={configuracion.escrituraDirecta} deshabilitado={bloqueado} alCambiar={(v) => alCambiar({ escrituraDirecta: v })} />
       <Interruptor etiqueta="Puede mover dinero por sí solo" ayuda="Con topes, con la fecha de hoy y dejando huella. Apagado, el dinero queda como borrador." activo={configuracion.dineroDirecto} deshabilitado={bloqueado} alCambiar={(v) => alCambiar({ dineroDirecto: v })} />
+      <Interruptor etiqueta="Puede buscar en internet" ayuda="Para normas, precios de mercado o documentación. Cada consulta cuesta y sale a un servicio externo, sin datos de la empresa." activo={configuracion.internet} deshabilitado={bloqueado} alCambiar={(v) => alCambiar({ internet: v })} />
       <div className="flex flex-col gap-2 rounded-control border border-borde p-3 text-sm">
         <label htmlFor="tope-por-operacion" className="font-medium text-texto">Importe máximo por operación (soles)</label>
         <p className="text-xs text-texto-suave">{`Por encima de ${formatoSoles(configuracion.topePorOperacionCentimos)} el dinero queda como borrador.`}</p>

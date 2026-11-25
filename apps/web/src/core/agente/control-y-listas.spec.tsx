@@ -6,7 +6,7 @@ import { ListaDeAcciones } from './lista-de-acciones.tsx';
 import { ListaDeLecciones } from './lista-de-lecciones.tsx';
 
 const configuracion: ConfiguracionDelAgente = {
-  modelo: null, modeloEfectivo: 'a/b', topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: false, gastoDelMesMicrousd: 0,
+  modelo: null, modeloEfectivo: 'a/b', topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: true, gastoDelMesMicrousd: 0,
 };
 const accion = (o: Partial<AccionDelAgente> = {}): AccionDelAgente => ({
   id: 'a1', creadoEn: '2026-11-24T19:05:00.000Z', usuarioId: 'u', modelo: 'x/y', conversacionId: 'c', turnoId: 't', ronda: 1, indice: 0, herramienta: 'movimiento_registrar',
@@ -20,23 +20,24 @@ const leccion = (o: Partial<Leccion> = {}): Leccion => ({
 describe('ControlDelAsistente', () => {
   const html = (o: Partial<Parameters<typeof ControlDelAsistente>[0]> = {}) => renderToStaticMarkup(<ControlDelAsistente configuracion={configuracion} puedeConfigurar ocupado={false} alCambiar={vi.fn()} {...o} />);
 
-  it('muestra los dos frenos activos y el tope actual en soles', () => {
+  it('muestra los tres interruptores activos y el tope actual en soles', () => {
     const h = html();
+    expect(h).toContain('Puede buscar en internet');
     expect(h).toContain('Puede hacer cambios por sí solo');
     expect(h).toContain('Puede mover dinero por sí solo');
-    expect(h.match(/checked=""/g)).toHaveLength(2);
+    expect(h.match(/checked=""/g)).toHaveLength(3);
     expect(h).toContain('Por encima de S/ 1,000.00 el dinero queda como borrador.');
     expect(h).toContain('value="1000"');
   });
 
   it('con un freno apagado el interruptor aparece sin marcar', () => {
-    expect(html({ configuracion: { ...configuracion, dineroDirecto: false } }).match(/checked=""/g)).toHaveLength(1);
+    expect(html({ configuracion: { ...configuracion, dineroDirecto: false } }).match(/checked=""/g)).toHaveLength(2);
   });
 
   it('quien no administra la empresa lo ve todo bloqueado y con una nota', () => {
     const h = html({ puedeConfigurar: false });
     expect(h).toContain('Solo quien administra la empresa cambia esto.');
-    expect(h.match(/disabled=""/g)?.length).toBeGreaterThanOrEqual(4);
+    expect(h.match(/disabled=""/g)?.length).toBeGreaterThanOrEqual(5);
   });
 });
 

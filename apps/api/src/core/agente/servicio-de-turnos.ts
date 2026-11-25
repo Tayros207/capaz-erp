@@ -18,6 +18,8 @@ import { escrituraEfectiva, modeloEfectivo, modoDeEscritura } from './modelos.js
 import { capturarLeccionesDeBorradores, leccionesDeErroresCorregidos } from './captura-de-lecciones.js';
 import { esquemaParaElModelo } from './esquema-limpio.js';
 import { armarPrompt, MAXIMO_DE_LECCIONES } from './prompt.js';
+import { ConsultaWeb } from './consulta-web.js';
+import { META_WEB_BUSCAR, META_WEB_LEER } from './meta-herramientas.js';
 import { guardarLeccion, leccionesVigentes } from './repositorio-de-memoria.js';
 import { claveDeNegocio, mayorImporteEnCentimos, TOPE_POR_OPERACION_POR_OMISION } from './guardas-de-dinero.js';
 import { CRITICAS_DE_DINERO, DINERO } from './politica.js';
@@ -190,8 +192,22 @@ export class ServicioDeTurnos {
     return { historial, moneda, zona, lecciones, empresa: await this.nombreDeLaEmpresa(c, empresa) };
   }
 
+  private consultaWebCreada: ConsultaWeb | null = null;
+
+  /** Internet solo con el proveedor real, la llave, el interruptor global y el de la empresa (que viene encendido). */
+  private hayInternet(fila: ConfiguracionGuardada | null): boolean {
+    return this.config.AGENTE_PROVEEDOR === 'openrouter' && Boolean(this.config.OPENROUTER_API_KEY) && this.config.AGENTE_INTERNET === 'activa' && (fila?.internet ?? true);
+  }
+
+  private consultaWeb(): ConsultaWeb {
+    this.consultaWebCreada ??= new ConsultaWeb({ apiKey: this.config.OPENROUTER_API_KEY ?? '', modelo: this.config.AGENTE_WEB_MODELO });
+    return this.consultaWebCreada;
+  }
+
   /** El título de una herramienta si es una consulta (lectura de negocio): lo que va en «[Consulté: …]» del historial. */
   private tituloDeConsulta = (herramienta: string): string | null => {
+    if (herramienta === META_WEB_BUSCAR) return 'Búsqueda en internet';
+    if (herramienta === META_WEB_LEER) return 'Lectura de una página web';
     const h = this.registro.obtener(herramienta);
     return h?.criticidad === 'lectura' ? h.ayuda.titulo : null;
   };
@@ -234,7 +250,7 @@ export class ServicioDeTurnos {
     const { historial, moneda, zona, empresa, lecciones } = await this.leerContexto(c, marcha, cuerpo.turnoId);
     const modo = modoDeEscritura(modelo, escrituraEfectiva(this.config, limites.fila));
     const prompt = armarPrompt({
-      empresa, moneda, zona, modo, ahora: new Date(), rol: c.rol, lecciones,
+      empresa, moneda, zona, modo, ahora: new Date(), rol: c.rol, lecciones, internet: this.hayInternet(limites.fila),
       modulos: c.modulos.filter((m) => m.puedeEntrar && m.codigo !== 'core').map((m) => ({ nombre: this.catalogo.porCodigo(m.codigo)?.nombre ?? m.codigo, puedeEscribir: m.puedeEscribir })),
       pantalla: cuerpo.pantalla ? { nombreDeModulo: (cuerpo.pantalla.modulo && this.catalogo.porCodigo(cuerpo.pantalla.modulo)?.nombre) || null, entidad: cuerpo.pantalla.entidad } : null,
     });
@@ -268,6 +284,7 @@ export class ServicioDeTurnos {
           // La huella la escribe el ejecutor en la MISMA transacción que la acción: no hay acción sin huella.
           agente: { politica: o.politica, registrarHuella: (tx, d) => escribirHuellaDeAccion(tx, { ...origen, ronda: o.ronda, indice: o.indice, politica: o.politica }, d) },
         }),
+      ...(this.hayInternet(limites.fila) ? { web: this.consultaWeb() } : {}),
       proponer: crearProponerDesdeAgente({ ejecutor: this.ejecutor, db: this.db, conversacionId: marcha.conversacionId, turnoId }),
       huella: {
         aparte: (f) => this.conTx(c, (tx) => escribirHuellaAparte(tx, origen, f)),

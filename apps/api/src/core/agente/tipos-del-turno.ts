@@ -52,12 +52,19 @@ export type HuellaDelBucle = {
 /** Los límites de dinero de ESTA empresa en ESTE turno. */
 export type LimitesDeDinero = { dineroDirecto: boolean; topePorOperacionCentimos: number; hoy: string };
 
+/** Internet para el asistente (ver `consulta-web.ts`). Sin esta dependencia no se ofrece. */
+export type WebDelBucle = {
+  buscar: (consulta: string) => Promise<import('./consulta-web.js').ResultadoWeb>;
+  leer: (url: string, pregunta: string | null) => Promise<import('./consulta-web.js').ResultadoWeb>;
+};
+
 export type DependenciasDelBucle = {
   modelo: ModeloDeChat;
   ejecutar: EjecutorDelBucle;
   registro: RegistroDelBucle;
   proponer?: ProponerDelBucle;
   huella?: HuellaDelBucle;
+  web?: WebDelBucle;
   limitesDeDinero?: LimitesDeDinero;
   emitir: (evento: EventoDelAgente) => void;
   /** Guarda en cuanto ocurre una acción, un borrador o una herramienta (así un turno cortado deja rastro). */
@@ -123,6 +130,8 @@ export type EstadoDelTurno = {
   vistas: Set<string>;
   /** Confirmaciones propias pendientes: llave (herramienta + argumentos) → token y ronda en que se pidió. */
   confirmaciones: Map<string, { token: string; ronda: number }>;
+  /** Direcciones que ya vio la conversación (las escribió la persona o salieron de una búsqueda de este turno): solo esas se pueden leer. */
+  direccionesVistas: Set<string>;
 };
 
 export type ContextoDeLlamada = {

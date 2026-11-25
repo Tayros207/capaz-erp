@@ -88,6 +88,8 @@ describe('leerConfig', () => {
     expect(c.AGENTE_RETENCION_DIAS).toBe(90);
     expect(c.AGENTE_MAX_RONDAS).toBe(12);
     expect(c.AGENTE_ESCRITURA).toBe('activa');
+    expect(c.AGENTE_INTERNET).toBe('activa');
+    expect(c.AGENTE_WEB_MODELO).toBe('anthropic/claude-sonnet-5.5');
   });
 
   it('el proveedor simulado se rechaza en producción y se acepta en pruebas', () => {

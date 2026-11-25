@@ -1,7 +1,8 @@
 import { rechazo, type Respuesta } from '@capaz/shared';
 import { hashCanonico } from '../herramientas/confirmacion.js';
 import { describirHerramienta, mapaDelSoftware } from './atender-meta.js';
-import { META_HERRAMIENTA_DESCRIBIR, META_HERRAMIENTA_LLAMAR, META_SOFTWARE_MAPA, NOMBRES_DE_META } from './meta-herramientas.js';
+import { META_HERRAMIENTA_DESCRIBIR, META_HERRAMIENTA_LLAMAR, META_SOFTWARE_MAPA, META_WEB_BUSCAR, META_WEB_LEER, NOMBRES_DE_META } from './meta-herramientas.js';
+import { atenderWeb } from './atender-web.js';
 import type { LlamadaDeModelo } from './modelo-de-chat.js';
 import { atenderEscritura } from './atender-escritura.js';
 import { politicaDe } from './politica.js';
@@ -13,7 +14,7 @@ import type { ContextoDeLlamada } from './tipos-del-turno.js';
 // `herramienta_llamar` se desenvuelve y sigue ese mismo camino: no hay una vía lateral para saltarse la política.
 
 const MENSAJE_PROHIBIDO = 'El asistente no puede usar esa herramienta. Dile a la persona que lo haga ella desde la pantalla correspondiente.';
-const TITULO_DE_META: Record<string, string> = { [META_SOFTWARE_MAPA]: 'Revisar qué puedo hacer', [META_HERRAMIENTA_DESCRIBIR]: 'Revisar una herramienta' };
+const TITULO_DE_META: Record<string, string> = { [META_SOFTWARE_MAPA]: 'Revisar qué puedo hacer', [META_HERRAMIENTA_DESCRIBIR]: 'Revisar una herramienta', [META_WEB_BUSCAR]: 'Buscar en internet', [META_WEB_LEER]: 'Leer una página web' };
 
 
 type Argumentos = { ok: true; valor: unknown } | { ok: false };
@@ -68,6 +69,7 @@ function resolver(c: ContextoDeLlamada, nombre: string, args: unknown): Promise<
   const { ctx, modo } = c.entrada;
   if (nombre === META_SOFTWARE_MAPA) return mapaDelSoftware(registro.todas(), ctx, modo, args);
   if (nombre === META_HERRAMIENTA_DESCRIBIR) return describirHerramienta(registro.todas(), ctx, modo, args);
+  if (nombre === META_WEB_BUSCAR || nombre === META_WEB_LEER) return atenderWeb(c, nombre, args);
   return ejecutarNegocio(c, nombre, args);
 }
 

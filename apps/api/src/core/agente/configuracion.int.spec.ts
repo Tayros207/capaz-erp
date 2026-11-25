@@ -43,7 +43,7 @@ describe('agente_configuracion_ver', () => {
     expect(r.estado).toBe(200);
     const d = r.cuerpo.datos;
     expect(d.configuracion).toEqual({
-      modelo: null, modeloEfectivo: FLASH, topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: false, gastoDelMesMicrousd: 0,
+      modelo: null, modeloEfectivo: FLASH, topeMensualMicrousd: null, topeEfectivoMicrousd: 5_000_000, escrituraDirecta: true, dineroDirecto: true, topePorOperacionCentimos: 100_000, internet: true, gastoDelMesMicrousd: 0,
     });
     expect(d.preciosDisponibles).toBe(false);
     expect(d.catalogo.map((m: { id: string }) => m.id)).toContain(FLASH);

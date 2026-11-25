@@ -1,6 +1,7 @@
 import type { UsoDelTurno } from '@capaz/shared';
 import { atenderLlamada } from './atender-llamada.js';
 import { catalogoDelTurno } from './catalogo-del-turno.js';
+import { claveDeDireccion, direccionesEnTexto } from './consulta-web.js';
 import { ErrorDeModelo, type LlamadaDeModelo, type MensajeDeModelo, type TrozoDeModelo, type UsoDeRonda } from './modelo-de-chat.js';
 import type { DependenciasDelBucle, EntradaDelBucle, EstadoDelTurno, ResultadoDeTurno } from './tipos-del-turno.js';
 
@@ -20,7 +21,7 @@ type Mensajes = MensajeDeModelo[];
 
 const estadoInicial = (): EstadoDelTurno => ({
   texto: '', corte: null, uso: { entrada: 0, salida: 0, cache: 0, costoMicrousd: 0, rondas: 0 }, herramientas: [], acciones: [], borradores: [], intentos: [],
-  escrituras: 0, escriturasDeDinero: 0, vistas: new Set(), confirmaciones: new Map(),
+  escrituras: 0, escriturasDeDinero: 0, vistas: new Set(), confirmaciones: new Map(), direccionesVistas: new Set(),
 });
 
 /** El prefijo fijo va primero y solo (se cachea entre turnos); lo que cambia con la hora y la pantalla va después. */
@@ -92,7 +93,14 @@ async function atenderLlamadas(dep: DependenciasDelBucle, e: EntradaDelBucle, es
 
 /** Devuelve `true` si el turno terminó normalmente (el modelo contestó sin pedir más herramientas). */
 async function rondas(dep: DependenciasDelBucle, e: EntradaDelBucle, est: EstadoDelTurno): Promise<void> {
-  const { tools } = catalogoDelTurno({ herramientas: dep.registro.todas(), ctx: e.ctx, pantalla: e.pantalla, modo: e.modo });
+  // Solo las direcciones que escribió la PERSONA (en esta conversación) se pueden leer; las de las búsquedas se suman durante el turno.
+  for (const texto of [e.mensaje, ...e.historial.filter((m) => m.role === 'user').map((m) => m.content)]) {
+    for (const d of direccionesEnTexto(texto)) {
+      const clave = claveDeDireccion(d);
+      if (clave) est.direccionesVistas.add(clave);
+    }
+  }
+  const { tools } = catalogoDelTurno({ herramientas: dep.registro.todas(), ctx: e.ctx, pantalla: e.pantalla, modo: e.modo, internet: dep.web !== undefined });
   const mensajes = mensajesIniciales(e);
   for (let ronda = 1; ronda <= e.maxRondas; ronda++) {
     if (ronda > 1 && !(await dep.permitirRonda(est.uso.costoMicrousd))) {
