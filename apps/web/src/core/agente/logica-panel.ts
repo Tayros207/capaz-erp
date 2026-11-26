@@ -10,7 +10,7 @@ export const AVISO_TOPE = 'Se alcanzó el tope de uso de este mes. Por ahora pue
 export const AVISO_SIN_PERMISO = 'Tu usuario no puede registrar por dictado. Pide acceso a Finanzas a tu administrador.';
 export const SALUDO_VACIO = 'Dime qué quieres registrar.';
 export const SALUDO_CON_ASISTENTE = 'Pregúntame lo que necesites del negocio, o dime qué quieres registrar.';
-export const MARCADOR_DE_LA_CAJA = 'Escribe o dicta, por ejemplo: Ingreso 500 soles, cliente Juan Pérez';
+export const MARCADOR_DE_LA_CAJA = 'Pregunta o registra algo…';
 export const TEXTO_DEL_HISTORIAL_VACIO = 'Aquí aparecerán tus conversaciones cuando el asistente esté activo.';
 
 /** Lo que se muestra en lugar de la tarjeta cuando un borrador ya se resolvió. */

@@ -51,6 +51,11 @@
   --color-asistente-1: var(--c-asistente-1);
   --color-asistente-2: var(--c-asistente-2);
   --color-asistente-3: var(--c-asistente-3);
+  /* Fondos hondos del asistente (llevan texto blanco) y tintas del saludo (legibles sobre la superficie) */
+  --color-asistente-hondo-1: var(--c-asistente-hondo-1);
+  --color-asistente-hondo-2: var(--c-asistente-hondo-2);
+  --color-asistente-tinta-1: var(--c-asistente-tinta-1);
+  --color-asistente-tinta-2: var(--c-asistente-tinta-2);
 
   /* Acento por módulo */
   --color-acento-esmeralda: var(--c-acento-esmeralda);
@@ -99,6 +104,10 @@
   --c-asistente-1: oklch(0.7 0.16 305);
   --c-asistente-2: oklch(0.58 0.17 262);
   --c-asistente-3: oklch(0.76 0.12 205);
+  --c-asistente-hondo-1: oklch(0.5 0.2 300);
+  --c-asistente-hondo-2: oklch(0.48 0.18 262);
+  --c-asistente-tinta-1: oklch(0.5 0.2 300);
+  --c-asistente-tinta-2: oklch(0.5 0.17 250);
   --c-acento-esmeralda: oklch(0.58 0.14 163);
   --c-acento-cian: oklch(0.6 0.115 215);
   --c-acento-ambar: oklch(0.7 0.15 75);
@@ -117,6 +126,8 @@
   --c-asistente-1: oklch(0.76 0.14 305);
   --c-asistente-2: oklch(0.7 0.14 262);
   --c-asistente-3: oklch(0.82 0.11 205);
+  --c-asistente-tinta-1: oklch(0.8 0.12 305);
+  --c-asistente-tinta-2: oklch(0.84 0.1 215);
   --c-fondo: oklch(0.19 0.02 258);
   --c-superficie: oklch(0.24 0.025 258);
   --c-superficie-alta: oklch(0.29 0.03 258);
@@ -198,6 +209,11 @@ button:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--color-superficie), 0 0 0 4px color-mix(in oklab, var(--color-foco) 70%, transparent);
+}
+
+/* Campos cuyo foco lo dibuja su contenedor (la caja del asistente): sin el anillo propio, que saldría doble. */
+textarea.foco-en-contenedor:focus-visible {
+  box-shadow: none;
 }
 
 ::selection {

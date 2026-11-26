@@ -19,6 +19,7 @@ import { OrbeDelAsistente } from './orbe-del-asistente.tsx';
 import { SUGERENCIAS_CON_ASISTENTE, SUGERENCIAS_INICIALES } from './logica-hilo.ts';
 import { AVISO_SIN_IA, AVISO_SIN_PERMISO, AVISO_TOPE, MARCADOR_DE_LA_CAJA, SALUDO_CON_ASISTENTE, SALUDO_VACIO } from './logica-panel.ts';
 import { pantallaDesdeRuta } from './logica-pantalla.ts';
+import { EncabezadoDeVista } from './piezas-de-vista.tsx';
 import { AjustesDelAsistente } from './ajustes-conectado.tsx';
 import { useConversacion } from './use-conversacion.ts';
 import { useEfectosDelPanel } from './use-efectos-del-panel.ts';
@@ -37,7 +38,7 @@ type Props = {
 type Vista = 'conversacion' | 'historial' | 'modelo';
 type Conversacion = ReturnType<typeof useConversacion>;
 
-type PropsDeCabecera = { pista: string; conectado: boolean; vivo: EstadoVivo | null; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void; amplio?: boolean; alAmpliar?: () => void };
+type PropsDeCabecera = { pista: string; conectado: boolean; vivo: EstadoVivo | null; alNueva: () => void; alHistorial: () => void; alModelo: () => void; alCerrar?: () => void; amplio?: boolean; alAmpliar?: () => void; conOrbe?: boolean };
 
 const REDONDO = 'rounded-full';
 
@@ -51,11 +52,11 @@ function IconoAmpliar({ amplio }: { amplio: boolean }): ReactNode {
 }
 
 /** El cabezal: el orbe (que piensa cuando trabaja), el nombre y una línea que dice qué está haciendo AHORA o dónde está la persona. */
-function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCerrar, amplio = false, alAmpliar }: PropsDeCabecera): ReactNode {
+function Cabecera({ pista, conectado, vivo, alNueva, alHistorial, alModelo, alCerrar, amplio = false, alAmpliar, conOrbe = true }: PropsDeCabecera): ReactNode {
   return (
     <div className="flex items-center justify-between gap-2">
       <div className="flex min-w-0 items-center gap-3">
-        <OrbeDelAsistente tamano="size-9" nivel={vivo ? 'trabajando' : 'reposo'} />
+        {conOrbe ? <OrbeDelAsistente tamano="size-9" nivel={vivo ? 'trabajando' : 'reposo'} /> : null}
         <div className="min-w-0">
           {alCerrar ? <h2 className="font-titulo text-base leading-tight font-semibold tracking-tight">Asistente</h2> : null}
           <p aria-live="polite" className={vivo ? 'truncate text-xs font-medium text-asistente-2' : 'truncate text-xs text-texto-suave'}>{vivo ? vivo.texto : pista || 'En línea'}</p>
@@ -87,13 +88,13 @@ type PropsDeCuerpo = { c: Conversacion; vista: Vista; estado: EstadoDelAgente | 
 function Cuerpo({ c, vista, estado, alVolver, alNavegar, alAbrir, alElegirSugerencia }: PropsDeCuerpo): ReactNode {
   const conectado = estado?.activo === true;
   if (vista === 'historial') {
-    const contenido = conectado ? <HistorialConectado activaId={null} alAbrir={alAbrir} alBorrada={() => undefined} /> : undefined;
+    const contenido = conectado ? <HistorialConectado activaId={c.conversacionId} alAbrir={alAbrir} alBorrada={() => undefined} /> : undefined;
     return <VistaDeHistorial alVolver={alVolver} contenido={contenido} />;
   }
   if (vista === 'modelo') {
     return (
       <section aria-label="Ajustes del asistente" className="flex flex-col gap-3">
-        <div><Boton variante="fantasma" icono="atras" onClick={alVolver}>Volver a la conversación</Boton></div>
+        <EncabezadoDeVista titulo="Ajustes" alVolver={alVolver} />
         <AjustesDelAsistente puedeConfigurar={estado?.puedeConfigurar === true} />
       </section>
     );
@@ -101,7 +102,7 @@ function Cuerpo({ c, vista, estado, alVolver, alNavegar, alAbrir, alElegirSugere
   const aviso = avisoDeEstado(estado);
   return (
     <div className="flex flex-col gap-3">
-      {aviso ? <p role="note" className="rounded-control border border-borde bg-superficie-alta p-2 text-xs text-texto-suave">{aviso}</p> : null}
+      {aviso ? <p role="note" className="rounded-2xl border border-borde bg-superficie-alta px-3 py-2 text-xs text-texto-suave">{aviso}</p> : null}
       <Hilo elementos={c.hilo} alResolver={c.resolver} alElegirSugerencia={alElegirSugerencia} alRespuestaRapida={c.enviarTexto ? (f) => void c.enviarTexto?.(f) : undefined} ocupado={c.ocupado} conAsistente={conectado} alNavegar={alNavegar} sugerencias={conectado ? SUGERENCIAS_CON_ASISTENTE : SUGERENCIAS_INICIALES} saludo={conectado ? SALUDO_CON_ASISTENTE : SALUDO_VACIO} reintentable={c.reintentable} alReintentar={c.reintentar} />
       {c.uso ? <InsigniaDeUso uso={c.uso} /> : null}
     </div>
@@ -172,7 +173,7 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
     if (c.abrir && (await c.abrir(id))) setVista('conversacion');
   };
   const cabecera = (
-    <Cabecera pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { olvidarConversacion(almacenDelNavegador()); c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} amplio={amplio} alAmpliar={ancho ? () => setAmplio((a) => !a) : undefined} />
+    <Cabecera conOrbe={vista !== 'conversacion' || c.hilo.length > 0} pista={migas.join(' › ')} vivo={estadoVivo(c.hilo, c.ocupado)} conectado={estado.data?.activo === true} alNueva={() => { olvidarConversacion(almacenDelNavegador()); c.nueva(); setVista('conversacion'); }} alHistorial={() => setVista('historial')} alModelo={() => setVista('modelo')} alCerrar={ancho ? alCerrar : undefined} amplio={amplio} alAmpliar={ancho ? () => setAmplio((a) => !a) : undefined} />
   );
   const cuerpo = <Cuerpo c={c} vista={vista} estado={estado.data} alVolver={() => setVista('conversacion')} alNavegar={alNavegar} alAbrir={(id) => void alAbrir(id)} alElegirSugerencia={entrada.alEscribir} />;
   const pie = vista === 'conversacion' ? <Pie c={c} voz={voz} entrada={entrada} puedeDictar={puedeDictar} refTexto={refTexto} /> : null;
@@ -192,12 +193,12 @@ export function PanelDelAgente({ abierto, alCerrar, migas, puedeDictar }: Props)
       role="dialog"
       aria-modal="false"
       aria-label="Asistente"
-      className={`fixed right-6 bottom-6 z-30 flex origin-bottom-right flex-col overflow-hidden rounded-[1.75rem] border border-borde/70 bg-superficie/90 shadow-elevada backdrop-blur-2xl transition-[width,height] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-safe:animate-[asistente-entra_280ms_cubic-bezier(0.2,0.8,0.2,1)_both] print:hidden ${amplio ? 'h-[min(52rem,calc(100dvh-4rem))] w-[min(48rem,calc(100vw-3rem))]' : 'h-[min(42rem,calc(100dvh-6rem))] w-[27rem]'}`}
+      className={`fixed right-6 bottom-6 z-30 flex origin-bottom-right flex-col overflow-hidden rounded-[2rem] border border-borde/70 bg-superficie/95 shadow-[0_32px_70px_-24px_color-mix(in_oklab,var(--color-asistente-hondo-2)_45%,transparent),var(--shadow-elevada)] backdrop-blur-2xl transition-[width,height] duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-safe:animate-[asistente-entra_280ms_cubic-bezier(0.2,0.8,0.2,1)_both] print:hidden ${amplio ? 'h-[min(52rem,calc(100dvh-4rem))] w-[min(48rem,calc(100vw-3rem))]' : 'h-[min(44rem,calc(100dvh-4rem))] w-[27rem]'}`}
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(60%_80%_at_15%_0%,color-mix(in_oklab,var(--color-asistente-1)_26%,transparent),transparent),radial-gradient(55%_70%_at_90%_5%,color-mix(in_oklab,var(--color-asistente-3)_22%,transparent),transparent)]" />
-      <div className="relative px-4 pt-3 pb-2">{cabecera}</div>
-      <div className="relative min-h-0 flex-1 overflow-y-auto px-4 py-3">{cuerpo}</div>
-      {pie ? <div className="relative px-3 pt-1 pb-3">{pie}</div> : null}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(70%_70%_at_10%_0%,color-mix(in_oklab,var(--color-asistente-1)_24%,transparent),transparent),radial-gradient(65%_65%_at_95%_8%,color-mix(in_oklab,var(--color-asistente-3)_24%,transparent),transparent),radial-gradient(45%_45%_at_50%_42%,color-mix(in_oklab,var(--color-asistente-2)_10%,transparent),transparent)]" />
+      <div className="relative px-4 pt-3 pb-1">{cabecera}</div>
+      <div className="relative min-h-0 flex-1 overflow-y-auto px-4 py-3 [scrollbar-color:var(--color-borde)_transparent] [scrollbar-width:thin]">{cuerpo}</div>
+      {pie ? <div className="relative px-3 pt-2 pb-3">{pie}</div> : null}
     </section>
   );
 }

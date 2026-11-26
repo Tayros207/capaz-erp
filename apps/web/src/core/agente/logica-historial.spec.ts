@@ -1,6 +1,6 @@
 import type { ConversacionDelAgente, MensajeDelAgente } from '@capaz/shared';
 import { describe, expect, it } from 'vitest';
-import { agruparConversaciones, filtrarPorTitulo, mensajesAHilo } from './logica-historial.ts';
+import { agruparConversaciones, filtrarPorTitulo, mensajesAHilo, momentoDeConversacion } from './logica-historial.ts';
 
 const ID = '3f2b8c1e-5d4a-4e7b-9c6d-1a2b3c4d5e6f';
 const T = '0192f3a0-7b1c-7c11-8a2d-5e6f7a8b9c0d';
@@ -88,5 +88,20 @@ describe('mensajesAHilo', () => {
   it('lee con tolerancia: metadatos raros no rompen', () => {
     expect(() => mensajesAHilo([msg({ contenido: 'x', metadatos: { acciones: 'no', borradores: [null, 5, { resumen: 7 }] } })])).not.toThrow();
     expect(mensajesAHilo([msg({ contenido: 'x', metadatos: { acciones: 'no', borradores: [null, 5, { resumen: 7 }] } })])).toHaveLength(1);
+  });
+});
+
+describe('momentoDeConversacion', () => {
+  const iso = '2026-11-24T19:05:00.000Z';
+  it('hoy y ayer muestran la hora de Lima', () => {
+    expect(momentoDeConversacion(iso, 'hoy')).toBe('14:05');
+    expect(momentoDeConversacion(iso, 'ayer')).toBe('14:05');
+  });
+  it('lo más viejo y las favoritas muestran la fecha', () => {
+    expect(momentoDeConversacion(iso, 'anteriores')).toContain('24');
+    expect(momentoDeConversacion(iso, 'favoritas')).toContain('nov');
+  });
+  it('una fecha ilegible no rompe la fila', () => {
+    expect(momentoDeConversacion('x', 'hoy')).toBe('');
   });
 });
