@@ -26,7 +26,7 @@ export const CATALOGO_DE_MODELOS: readonly ModeloBase[] = [
     id: 'deepseek/deepseek-v4-pro-0813',
     nombre: 'DeepSeek V4 Pro',
     nivel: 'experimental',
-    descripcion: 'Más capaz que Flash y también barato. Sin verificar con herramientas: revisa la bitácora de lo que hace.',
+    descripcion: 'Barato, pero en las pruebas del 2026-11-26 falló al crear pedidos: el proveedor le corta la lista de líneas. Para registrar usa otro modelo.',
     privacidad: 'revisar',
     evaluado: false,
   },

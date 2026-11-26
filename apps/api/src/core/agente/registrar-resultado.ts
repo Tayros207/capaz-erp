@@ -17,7 +17,20 @@ export function completarArgumentos(nombre: string, args: unknown, origen: 'text
     return { ...a, citaVerificada: citaEsDeLaPersona(a.cita, mensaje, a.texto) };
   }
   if (nombre === 'captura_proponer') return { modulo: 'registro', ...objeto(args), origen, transcurridoMs: 0 };
-  return args;
+  return sinOrigenInventado(args);
+}
+
+const ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * El origen de un documento es el id de OTRO documento y sirve para no duplicar. Un modelo que inventa uno («chat», «asistente»)
+ * haría que el segundo pedido devolviera el primero sin crear nada: si no es un id de verdad, no viaja.
+ */
+function sinOrigenInventado(args: unknown): unknown {
+  const a = objeto(args);
+  if (a.origenTipo === undefined || a.origenId === undefined || (typeof a.origenId === 'string' && ID.test(a.origenId))) return args;
+  const { origenTipo: _tipo, origenId: _id, ...resto } = a;
+  return resto;
 }
 
 const normalizar = (t: string): string => t.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/\s+/g, ' ').trim();

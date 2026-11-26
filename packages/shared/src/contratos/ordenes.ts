@@ -291,10 +291,9 @@ export const editarPedidoSchema = z
     notas: texto(4000).nullish(),
     sucursalId: z.uuid().nullish(),
     lineas: lineasDeEntrada.optional(),
-    /** Activa o quita el IGV del borrador; exige enviar también `lineas` para recalcular los importes. */
+    /** Activa o quita el IGV del borrador. Sin `lineas`, se recalcula con las que ya tiene (los precios no cambian). */
     conIgv: z.boolean().optional(),
   })
-  .refine((v) => v.conIgv === undefined || v.lineas !== undefined, { error: 'Para cambiar el IGV envía también las líneas del pedido.' })
   .refine((v) => Object.entries(v).some(([k, x]) => k !== 'id' && x !== undefined), { error: 'Indica al menos un dato que cambiar.' });
 
 /**

@@ -21,7 +21,7 @@ type Mensajes = MensajeDeModelo[];
 
 const estadoInicial = (): EstadoDelTurno => ({
   texto: '', corte: null, uso: { entrada: 0, salida: 0, cache: 0, costoMicrousd: 0, rondas: 0 }, herramientas: [], acciones: [], borradores: [], intentos: [],
-  escrituras: 0, escriturasDeDinero: 0, vistas: new Set(), confirmaciones: new Map(), direccionesVistas: new Set(),
+  escrituras: 0, escriturasDeDinero: 0, vistas: new Set(), confirmaciones: new Map(), direccionesVistas: new Set(), fallosDeArgumentos: new Map(),
 });
 
 /** El prefijo fijo va primero y solo (se cachea entre turnos); lo que cambia con la hora y la pantalla va después. */

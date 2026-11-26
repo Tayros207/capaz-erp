@@ -11,9 +11,13 @@ import { politicaDe } from './politica.js';
 /** El tope de tokens de la lista completa (herramientas + meta-herramientas). Una prueba lo vigila. */
 export const PRESUPUESTO_DE_TOKENS = 8000;
 
-/** Lo que casi todas las conversaciones necesitan: ver el día, encontrar un cliente o un producto, la bandeja y dictar. */
+/**
+ * Lo que casi todas las conversaciones necesitan: ver el día, encontrar un cliente o un producto, la bandeja y dictar; y crear
+ * clientes y pedidos. Sin estas a mano, el modelo escribía a ciegas por `herramienta_llamar` y gastaba rondas en descubrirlas.
+ */
 export const SIEMPRE: readonly string[] = [
-  'borradores_listar', 'borradores_resumen', 'captura_proponer', 'clientes_buscar', 'conversaciones_buscar', 'clientes_ver', 'mi_dia_ver', 'precio_anterior_consultar', 'productos_buscar',
+  'borradores_listar', 'borradores_resumen', 'captura_proponer', 'clientes_buscar', 'clientes_crear', 'conversaciones_buscar', 'clientes_ver', 'mi_dia_ver', 'precio_anterior_consultar', 'productos_buscar',
+  'pedido_crear', 'pedido_editar', 'pedido_ver', 'pedidos_listar',
 ];
 
 export type EntradaDelCatalogo = {

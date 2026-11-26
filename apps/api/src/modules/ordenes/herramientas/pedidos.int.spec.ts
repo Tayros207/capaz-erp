@@ -290,11 +290,13 @@ describe('IGV opcional por pedido (conIgv)', () => {
     expect(apagado).toMatchObject({ igvPorcentaje: 0, igvCentimos: 0, totalCentimos: 10_000 });
   });
 
-  it('sin decirlo se conserva el IGV de siempre (18 %) y cambiar el IGV exige enviar las líneas', async () => {
+  it('sin decirlo se conserva el IGV de siempre (18 %); se quita y se pone sin reenviar las líneas, que quedan iguales', async () => {
     const p = datos(await dueno.herramienta('pedido_crear', { clienteId: cliente, lineas: [linea('Volantes', 100)] }));
     expect(p.igvPorcentaje).toBe(18);
-    const r = await dueno.herramienta('pedido_editar', { id: p.id, conIgv: false });
-    expect(r.estado).toBe(400);
-    expect(mensaje(r)).toMatch(/líneas/);
+    const sin = datos(await dueno.herramienta('pedido_editar', { id: p.id, conIgv: false }));
+    expect(sin).toMatchObject({ igvPorcentaje: 0, subtotalCentimos: 10_000, igvCentimos: 0, totalCentimos: 10_000 });
+    expect(sin.detalle).toEqual(p.detalle);
+    const con = datos(await dueno.herramienta('pedido_editar', { id: p.id, conIgv: true }));
+    expect(con).toMatchObject({ igvPorcentaje: 18, subtotalCentimos: 8_475, igvCentimos: 1_525, totalCentimos: 10_000 });
   });
 });

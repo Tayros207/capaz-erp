@@ -64,7 +64,7 @@ export const DEFINICIONES_DE_META: readonly unknown[] = [
       description: 'Ejecuta una herramienta por su nombre, con sus argumentos. Funciona igual que llamarla directamente.',
       parameters: {
         type: 'object',
-        properties: { nombre: { type: 'string' }, args: { type: 'object', description: 'Los argumentos que indicó herramienta_describir.' } },
+        properties: { nombre: { type: 'string' }, args: { type: 'object', description: 'Un objeto JSON (no un texto) con TODOS los argumentos de la herramienta. Nada va fuera de «args».' } },
         required: ['nombre'],
         additionalProperties: false,
       },

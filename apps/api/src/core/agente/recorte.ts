@@ -18,6 +18,9 @@ function envolver(r: Respuesta<unknown>): Cuerpo {
   return { ok: false, error: { codigo: 'confirmacion_solo_ui', mensaje: 'Esa acción la debe confirmar la persona desde la pantalla.' } };
 }
 
+/** Los campos vacíos no le dicen nada al modelo y se pagan en cada ronda siguiente: no viajan. */
+const sinVacios = (cuerpo: Cuerpo): Cuerpo => JSON.parse(JSON.stringify(cuerpo, (_clave, valor: unknown) => (valor === null ? undefined : valor))) as Cuerpo;
+
 const largo = (x: unknown): number => JSON.stringify(x)?.length ?? 0;
 
 /** El arreglo de primer nivel que más pesa, dentro de `datos` (o `datos` mismo si es un arreglo). */
@@ -77,7 +80,7 @@ function parcial(cuerpo: Cuerpo, completo: string, maximo: number): string {
  */
 export function recortar(respuesta: Respuesta<unknown>, maximo: number = MAXIMO_DE_RESULTADO): string {
   const tope = Math.max(maximo, MINIMO_POSIBLE);
-  const cuerpo = envolver(respuesta);
+  const cuerpo = sinVacios(envolver(respuesta));
   const completo = JSON.stringify(cuerpo);
   if (completo.length <= tope) return completo;
 

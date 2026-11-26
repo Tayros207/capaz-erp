@@ -10,6 +10,10 @@ describe('recortar', () => {
     expect(JSON.parse(recortar(exito({ total: 3 })))).toEqual({ ok: true, datos: { total: 3 } });
   });
 
+  it('los campos vacíos no viajan; el cero, el falso y el texto vacío sí', () => {
+    expect(JSON.parse(recortar(exito({ items: [{ medida: null, total: 0, activo: false, notas: '' }] })))).toEqual({ ok: true, datos: { items: [{ total: 0, activo: false, notas: '' }] } });
+  });
+
   it('los avisos comerciales viajan como texto; el recibo no', () => {
     const r = exito({ id: 'x' }, { avisos: [{ codigo: 'a', mensaje: 'Ojo con el mínimo', nivel: 'comercial' }], recibo: { comercial: { z: 1 } } });
     expect(JSON.parse(recortar(r))).toEqual({ ok: true, datos: { id: 'x' }, avisos: ['Ojo con el mínimo'] });

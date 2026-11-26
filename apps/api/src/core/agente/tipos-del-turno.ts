@@ -124,6 +124,8 @@ export type EstadoDelTurno = {
   acciones: ResultadoDeTurno['acciones'];
   borradores: ResultadoDeTurno['borradores'];
   intentos: IntentoDeHerramienta[];
+  /** Fallos de argumentos seguidos por herramienta (ver `ayuda-para-corregir.ts`). */
+  fallosDeArgumentos: Map<string, number>;
   /** Frenos del turno: cuántas escrituras y cuántas de dinero se hicieron, y cuáles ya se vieron (nombre + argumentos). */
   escrituras: number;
   escriturasDeDinero: number;
