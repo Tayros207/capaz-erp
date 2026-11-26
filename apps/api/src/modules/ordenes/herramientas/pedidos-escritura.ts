@@ -1,9 +1,9 @@
-import { IGV_POR_DEFECTO, ORIGEN_DE_HISTORIAL, rechazo } from '@capaz/shared';
+import { calcularTotalesDePedido, IGV_POR_DEFECTO, ORIGEN_DE_HISTORIAL, rechazo } from '@capaz/shared';
 import { hoyDeLaEmpresa } from '../../../core/empresas/hoy.js';
 import { definirHerramienta } from '../../../core/herramientas/tipos.js';
 import { esEditable } from '../domain/estados.js';
 import { codigoDePedido, comprobarFechas } from '../domain/pedido.js';
-import { actualizarPedido, crearPedido, pedidoPorOrigen, reemplazarLineas, registrarEvento, verPedido } from '../repositories/pedidos.repository.js';
+import { actualizarPedido, crearPedido, lineasDe, pedidoPorOrigen, reemplazarLineas, registrarEvento, verPedido } from '../repositories/pedidos.repository.js';
 import { ID, MODULO, NO_EXISTE, alcanceDePedidos, auditarPedido, comprobarReferencias, estadoDe, prepararLineasDe, responderPedido } from './comunes.js';
 
 const CAMPOS_DE_LINEA = {
@@ -11,6 +11,13 @@ const CAMPOS_DE_LINEA = {
   queSeAnota: 'Lo pedido: por línea, un producto o una descripción con precio (el precio ya incluye IGV) y la cantidad en milésimas. Opcional por línea: la ficha de máquina (material, medida, colores, acabado), solo si la persona la escribió: nunca se supone.',
   ejemplo: '[{ "descripcion": "Volantes A5", "cantidadMilesimas": 2000, "precioUnitarioMilesimas": 59000 }]',
 };
+
+/** Los totales de las líneas que el borrador ya tiene, con o sin IGV. Los precios no cambian: solo si el IGV se detalla. */
+function totalesConIgv(lineas: Parameters<typeof calcularTotalesDePedido>[0], conIgv: boolean) {
+  const igvPorcentaje = conIgv ? IGV_POR_DEFECTO : 0;
+  const { subtotalCentimos, igvCentimos, totalCentimos } = calcularTotalesDePedido(lineas, igvPorcentaje);
+  return { igvPorcentaje, subtotalCentimos, igvCentimos, totalCentimos };
+}
 
 export const pedidoCrear = definirHerramienta('pedido_crear', {
   modulo: MODULO,
@@ -75,7 +82,7 @@ export const pedidoEditar = definirHerramienta('pedido_editar', {
   criticidad: 'normal',
   ayuda: {
     titulo: 'Editar un pedido en borrador',
-    paraQueSirve: 'Cambia el cliente, la entrega, el responsable, las notas o las líneas de un borrador. Si envías líneas, reemplazan a todas las anteriores.',
+    paraQueSirve: 'Cambia el cliente, la entrega, el responsable, las notas, el IGV o las líneas de un borrador. Para ponerle o quitarle el IGV (factura o sin IGV) manda solo el id y conIgv, SIN líneas. Si envías líneas, reemplazan a todas las anteriores.',
     cuandoUsarla: 'Mientras el pedido no está confirmado y hay que corregirlo o completarlo.',
     campos: [ID, { nombre: 'entregaEl', queSeAnota: 'Nuevo día de entrega, o vacío para quitarlo.', ejemplo: '2026-03-20' }, CAMPOS_DE_LINEA],
     ejemploTecleado: 'cambiar la entrega del borrador de Imprenta Sol al 20 de marzo',
@@ -109,6 +116,8 @@ export const pedidoEditar = definirHerramienta('pedido_editar', {
         igvCentimos: p.igvCentimos,
         totalCentimos: p.totalCentimos,
       };
+    } else if (conIgv !== undefined) {
+      totales = totalesConIgv(await lineasDe(tx, ctx, id), conIgv);
     }
     await actualizarPedido(tx, ctx, id, {
       ...campos,

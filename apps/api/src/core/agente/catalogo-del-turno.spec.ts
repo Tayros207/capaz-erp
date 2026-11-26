@@ -78,7 +78,7 @@ describe('catalogoDelTurno', () => {
   });
 
   it('un módulo que no es el de la pantalla no entra', () => {
-    expect(nombresDe(catalogo([herr('pedidos_listar'), herr('movimientos_listar', { modulo: 'registro' })], { modulo: 'registro' }))).toEqual(['movimientos_listar']);
+    expect(nombresDe(catalogo([herr('guias_listar'), herr('movimientos_listar', { modulo: 'registro' })], { modulo: 'registro' }))).toEqual(['movimientos_listar']);
   });
 
   it('el orden es estable entre dos llamadas, aunque el registro llegue en otro orden', () => {

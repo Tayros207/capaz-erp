@@ -33,7 +33,7 @@ export function leccionesDeErroresCorregidos(
     const clave = `err:${fallo.nombre}:${faltaban.join('+')}:${sobraban.join('+')}`.slice(0, 160);
     salida.set(clave, {
       tipo: 'error_de_herramienta', clave, herramienta: fallo.nombre, origen: 'sistema', estado: 'vigente',
-      texto: limpiarNombre(`Al usar «${titulo(fallo.nombre)}» la primera llamada falló y se corrigió: ${como}. Antes de llamarla, mira «herramienta_describir».`, 280),
+      texto: limpiarNombre(`Al usar «${titulo(fallo.nombre)}» la primera llamada falló y se corrigió: ${como}. Mándalo completo desde la primera llamada.`, 280),
     });
   });
   return [...salida.values()];

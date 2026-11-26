@@ -3,11 +3,15 @@ import { hashCanonico } from '../herramientas/confirmacion.js';
 import { describirHerramienta, mapaDelSoftware } from './atender-meta.js';
 import { META_HERRAMIENTA_DESCRIBIR, META_HERRAMIENTA_LLAMAR, META_SOFTWARE_MAPA, META_WEB_BUSCAR, META_WEB_LEER, NOMBRES_DE_META } from './meta-herramientas.js';
 import { atenderWeb } from './atender-web.js';
+import { conAyuda, frenoPorFallos } from './ayuda-para-corregir.js';
+import { esquemaParaElModelo } from './esquema-limpio.js';
 import type { LlamadaDeModelo } from './modelo-de-chat.js';
 import { atenderEscritura } from './atender-escritura.js';
 import { politicaDe } from './politica.js';
 import { objeto } from './registrar-resultado.js';
 import { recortar } from './recorte.js';
+import { argumentosDeLaPuertaGeneral, repararSegunEsquema } from './reparar-argumentos.js';
+import type { HerramientaRegistrada } from '../herramientas/tipos.js';
 import type { ContextoDeLlamada } from './tipos-del-turno.js';
 
 // Atiende UNA llamada a herramienta del modelo, siempre por el mismo camino: argumentos → política → ejecutor. Una llamada por
@@ -37,7 +41,7 @@ function destinoDe(nombre: string, args: unknown): Destino {
   const interno = typeof a.nombre === 'string' ? a.nombre.trim() : '';
   if (interno === '') return { error: 'Indica el nombre de la herramienta.' };
   if (NOMBRES_DE_META.has(interno)) return { error: 'Una herramienta interna no se llama con herramienta_llamar.' };
-  return { nombre: interno, args: a.args ?? {} };
+  return { nombre: interno, args: argumentosDeLaPuertaGeneral(a) };
 }
 
 const tituloDe = (c: ContextoDeLlamada, nombre: string): string => TITULO_DE_META[nombre] ?? c.dep.registro.obtener(nombre)?.ayuda.titulo ?? nombre;
@@ -52,9 +56,20 @@ function notaDe(r: Respuesta<unknown>): string {
   return 'no se pudo';
 }
 
+/** Los argumentos con la forma que pide la herramienta. Una que no existe se deja como llegó. */
+function reparados(c: ContextoDeLlamada, nombre: string, args: unknown): unknown {
+  const h = c.dep.registro.obtener(nombre);
+  return h ? repararSegunEsquema(args, esquemaParaElModelo(h.nombre, h.entrada)) : args;
+}
+
 async function ejecutarNegocio(c: ContextoDeLlamada, nombre: string, args: unknown): Promise<Respuesta<unknown>> {
   const h = c.dep.registro.obtener(nombre);
   if (!h) return rechazo('herramienta_desconocida', `No existe la herramienta «${nombre}».`);
+  return frenoPorFallos(c.estado, nombre) ?? conAyuda(c.estado, h, args, await aplicarPolitica(c, h, args));
+}
+
+async function aplicarPolitica(c: ContextoDeLlamada, h: HerramientaRegistrada, args: unknown): Promise<Respuesta<unknown>> {
+  const { nombre } = h;
   const politica = politicaDe(h, args, c.entrada.modo);
   if (politica === 'prohibido') {
     // Un intento de hacer lo prohibido es lo que una persona más quiere ver: queda en la huella.
@@ -79,13 +94,14 @@ export async function atenderLlamada(c: ContextoDeLlamada, llamada: LlamadaDeMod
   const leidos = leerArgumentos(llamada.function.arguments);
   const destino = leidos.ok ? destinoDe(llamada.function.name, leidos.valor) : null;
   const nombre = destino && 'nombre' in destino ? destino.nombre : llamada.function.name;
+  const args = destino && 'args' in destino ? reparados(c, nombre, destino.args) : {};
   c.dep.emitir({ type: 'herramienta_inicio', id, nombre, titulo: tituloDe(c, nombre) });
   let respuesta: Respuesta<unknown>;
   if (!leidos.ok) respuesta = rechazo('argumentos_invalidos', 'Los argumentos no son JSON válido. Vuelve a enviarlos completos.');
   else if (destino && 'error' in destino) respuesta = rechazo('argumentos_invalidos', destino.error);
-  else respuesta = await resolver(c, nombre, (destino as { args: unknown }).args);
+  else respuesta = await resolver(c, nombre, args);
   c.estado.herramientas.push({ nombre, ok: respuesta.ok });
-  if (!NOMBRES_DE_META.has(nombre) && destino && 'args' in destino) c.estado.intentos.push({ nombre, ok: respuesta.ok, codigo: respuesta.ok || !('error' in respuesta) ? null : respuesta.error.codigo, claves: Object.keys(objeto(destino.args)).sort() });
+  if (!NOMBRES_DE_META.has(nombre) && destino && 'args' in destino) c.estado.intentos.push({ nombre, ok: respuesta.ok, codigo: respuesta.ok || !('error' in respuesta) ? null : respuesta.error.codigo, claves: Object.keys(objeto(args)).sort() });
   c.dep.emitir({ type: 'herramienta_fin', id, ok: respuesta.ok, nota: notaDe(respuesta) });
   return recortar(respuesta);
 }

@@ -11,6 +11,8 @@
     "test",
     "dist",
     "**/*spec.ts",
+    "**/*.eval.ts",
+    "src/core/agente/evaluacion/**",
     "src/pruebas/**",
     "**/pruebas-del-ejecutor.ts",
     "**/http-de-pruebas.ts",
