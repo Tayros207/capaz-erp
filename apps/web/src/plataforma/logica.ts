@@ -162,6 +162,14 @@ export function nombreDeModulo(codigo: string): string {
   return NOMBRES_DE_MODULO[codigo] ?? (codigo ? codigo[0]!.toUpperCase() + codigo.slice(1) : codigo);
 }
 
+/**
+ * Lo que ofrece «Activar un módulo»: todo el catálogo ya construido más lo que la empresa tenga. No sale de los planes: un módulo
+ * que no está en ningún plan se puede contratar suelto. El que está en construcción no se ofrece (el servidor lo rechaza).
+ */
+export function modulosOfrecibles(catalogo: ReadonlyArray<{ codigo: string; enConstruccion: boolean }>, deLaEmpresa: readonly string[]): string[] {
+  return [...new Set([...catalogo.filter((m) => !m.enConstruccion).map((m) => m.codigo), ...deLaEmpresa])].sort();
+}
+
 // ───────────────────────── Resumen de la cartera de empresas ─────────────────────────
 
 type ModuloResumido = { modulo: string; estado: Estado; pruebaHasta: string | null; vigenteHasta: string | null };

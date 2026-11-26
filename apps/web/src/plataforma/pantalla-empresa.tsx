@@ -10,16 +10,16 @@ import { EstadoVacio } from '../shared/ui/estado-vacio.tsx';
 import { Insignia } from '../shared/ui/insignia.tsx';
 import { notificar } from '../shared/ui/notificar.ts';
 import { unir } from '../shared/ui/unir.ts';
-import { darDeBajaModulo, datosOError, listarPlanes, reactivarModulo, suspenderModulo, verEmpresa } from './api.ts';
+import { darDeBajaModulo, datosOError, listarModulos, reactivarModulo, suspenderModulo, verEmpresa } from './api.ts';
 import { HojaActivar } from './hoja-activar.tsx';
 import { HojaContrato } from './hoja-contrato.tsx';
-import { diasHasta, ESTADO_DE_EMPRESA, estadoDeEmpresa, estadoDeModulo, mensajeDeRechazo, nombreDeModulo, proximoVencimiento, textoDeVencimiento, type AccionDeModulo } from './logica.ts';
+import { diasHasta, ESTADO_DE_EMPRESA, estadoDeEmpresa, estadoDeModulo, mensajeDeRechazo, modulosOfrecibles, nombreDeModulo, proximoVencimiento, textoDeVencimiento, type AccionDeModulo } from './logica.ts';
 import { AvatarDeEmpresa } from './avatar-de-empresa.tsx';
 import { CodigoDeModulo } from './chip-modulo.tsx';
 import { iconoDeModulo } from './iconos-de-modulo.ts';
 import { LineaDeTiempo } from './linea-de-tiempo.tsx';
 import { TarjetaDeModulo } from './tarjeta-de-modulo.tsx';
-import { CLAVE_EMPRESAS, CLAVE_PLANES } from './claves.ts';
+import { CLAVE_EMPRESAS, CLAVE_MODULOS } from './claves.ts';
 import { Cargando, ErrorDeConsulta } from './marco.tsx';
 
 const PESTANAS = ['resumen', 'modulos', 'historial'] as const;
@@ -70,7 +70,7 @@ export function PantallaEmpresa() {
   const [filtroHistorial, setFiltroHistorial] = useState('todos');
   const [ahora] = useState(() => new Date());
   const consulta = useQuery({ queryKey: [...CLAVE_EMPRESAS, 'ficha', id], queryFn: async () => datosOError(await verEmpresa(id)) });
-  const planes = useQuery({ queryKey: CLAVE_PLANES, queryFn: async () => datosOError(await listarPlanes()).items });
+  const catalogo = useQuery({ queryKey: CLAVE_MODULOS, queryFn: async () => datosOError(await listarModulos()).items });
   const recargar = () => void cliente.invalidateQueries({ queryKey: CLAVE_EMPRESAS });
   const pedida = params.get('pestana');
   const pestana: Pestana = PESTANAS.find((p) => p === pedida) ?? 'resumen';
@@ -93,7 +93,7 @@ export function PantallaEmpresa() {
     );
   }
   const e = consulta.data;
-  const conocidos = [...new Set([...e.modulos.map((m) => m.modulo), ...(planes.data?.flatMap((p) => p.modulos) ?? [])])].sort();
+  const conocidos = modulosOfrecibles(catalogo.data ?? [], e.modulos.map((m) => m.modulo));
   const estadoGeneral = ESTADO_DE_EMPRESA[estadoDeEmpresa(e)];
   const vence = proximoVencimiento(e, ahora);
   const historial = filtroHistorial === 'todos' ? e.historial : e.historial.filter((v) => v.modulo === filtroHistorial);

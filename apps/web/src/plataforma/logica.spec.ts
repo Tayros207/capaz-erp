@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Centimos, ModuloDeEmpresaDto } from '@capaz/shared';
-import { etiquetaDeActor, accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO, estadoDeDesarrollo } from './logica.ts';
+import { etiquetaDeActor, accionesPosibles, argumentosDeContrato, diaAIso, formularioDeContrato, isoADia, listaDeCodigos, mensajeDeRechazo, parsearDiasDePrueba, resumenDeModulos, validarEmpresa, validarPlan, PLAN_VACIO, estadoDeDesarrollo, modulosOfrecibles } from './logica.ts';
 
 const MODULO: ModuloDeEmpresaDto = {
   modulo: 'ventas', nombre: 'Ventas', estado: 'activo', altaEn: '2026-11-01T10:00:00.000Z', pruebaHasta: null, bajaEn: null, motivo: null,
@@ -73,5 +73,12 @@ describe('estado de desarrollo de un módulo', () => {
     expect(estadoDeDesarrollo({ enConstruccion: false, secciones: [{ construida: true }] })).toBe('disponible');
     expect(estadoDeDesarrollo({ enConstruccion: false, secciones: [{ construida: true }, { construida: false }] })).toBe('en_proceso');
     expect(estadoDeDesarrollo({ enConstruccion: true, secciones: [{ construida: true }] })).toBe('en_construccion');
+  });
+});
+
+describe('modulosOfrecibles', () => {
+  it('ofrece todo el catálogo construido, esté o no en un plan, y conserva lo que la empresa ya tiene', () => {
+    const catalogo = [{ codigo: 'registro', enConstruccion: false }, { codigo: 'produccion', enConstruccion: false }, { codigo: 'futuro', enConstruccion: true }];
+    expect(modulosOfrecibles(catalogo, ['registro', 'antiguo'])).toEqual(['antiguo', 'produccion', 'registro']);
   });
 });
