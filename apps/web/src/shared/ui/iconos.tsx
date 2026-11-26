@@ -1,5 +1,5 @@
 import {
-  ArrowLeft, ArrowUp, Box, Check, ChevronDown, ChevronRight, CircleAlert, CircleCheck, Cpu, Folder, History, House, Info, Menu, Mic, Moon, Pencil, Plus,
+  ArrowLeft, ArrowUp, Box, Check, ChevronDown, ChevronRight, CircleAlert, CircleCheck, Cpu, Folder, Globe, HandCoins, History, House, Info, Menu, MessageCircle, Mic, Moon, Pencil, Plus,
   Search, Sparkles, Square, SquarePen, Star, Sun, Trash2, TriangleAlert, User, X,
   type LucideIcon,
 } from 'lucide-react';
@@ -24,6 +24,9 @@ export const ICONOS = {
   sol: Sun,
   luna: Moon,
   caja: Box,
+  cobro: HandCoins,
+  internet: Globe,
+  conversacion: MessageCircle,
   // Asistente
   asistente: Sparkles,
   microfono: Mic,

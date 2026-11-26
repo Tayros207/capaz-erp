@@ -1,8 +1,10 @@
 import { useState, type ReactNode } from 'react';
 import type { ConversacionDelAgente } from '@capaz/shared';
 import { Boton } from '../../shared/ui/boton.tsx';
-import { Esqueleto } from '../../shared/ui/esqueleto.tsx';
-import type { GrupoDeConversaciones } from './logica-historial.ts';
+import { Icono } from '../../shared/ui/icono.tsx';
+import { unir } from '../../shared/ui/unir.ts';
+import { momentoDeConversacion, type GrupoDeConversaciones } from './logica-historial.ts';
+import { CargandoLista, ErrorConReintento, SinNada, TARJETA } from './piezas-de-vista.tsx';
 
 type Props = {
   estado: 'cargando' | 'error' | 'listo';
@@ -21,91 +23,102 @@ type Props = {
   alBorrar: (id: string) => void;
 };
 
-type PropsDeFila = { c: ConversacionDelAgente; activa: boolean } & Pick<Props, 'alAbrir' | 'alFavorita' | 'alRenombrar' | 'alBorrar'>;
+type PropsDeFila = { c: ConversacionDelAgente; activa: boolean; momento: string } & Pick<Props, 'alAbrir' | 'alFavorita' | 'alRenombrar' | 'alBorrar'>;
 
-function FilaDeConversacion({ c, activa, alAbrir, alFavorita, alRenombrar, alBorrar }: PropsDeFila): ReactNode {
-  const [editando, setEditando] = useState(false);
+const FILA = 'border-t border-borde/70 first:border-t-0';
+// Con cursor, renombrar y borrar se guardan hasta pasar por la fila o llegar con el teclado. En pantallas táctiles siempre se ven.
+const ACCIONES_OCULTAS = '[@media(hover:hover)]:[li:not(:hover):not(:focus-within)_&]:w-0 [@media(hover:hover)]:[li:not(:hover):not(:focus-within)_&]:overflow-hidden [@media(hover:hover)]:[li:not(:hover):not(:focus-within)_&]:opacity-0';
+
+function FilaEnEdicion({ c, alRenombrar, alTerminar }: Pick<PropsDeFila, 'c' | 'alRenombrar'> & { alTerminar: () => void }): ReactNode {
   const [titulo, setTitulo] = useState(c.titulo);
   const guardar = () => {
     const limpio = titulo.trim();
     if (limpio !== '' && limpio !== c.titulo) alRenombrar(c.id, limpio);
-    setEditando(false);
+    alTerminar();
   };
-  if (editando) {
-    return (
-      <li className="flex items-center gap-1 rounded-control border border-borde-fuerte p-1">
-        <input
-          autoFocus
-          value={titulo}
-          maxLength={120}
-          aria-label="Nuevo título de la conversación"
-          className="min-h-(--alto-control) min-w-0 flex-1 rounded-control border border-borde-fuerte bg-superficie px-2 text-sm text-texto"
-          onChange={(e) => setTitulo(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') guardar();
-            if (e.key === 'Escape') setEditando(false);
-          }}
-        />
-        <Boton variante="primario" icono="check" aria-label="Guardar el título" onClick={guardar} />
-        <Boton variante="fantasma" icono="cerrar" aria-label="Cancelar" onClick={() => setEditando(false)} />
-      </li>
-    );
-  }
   return (
-    <li className={`flex items-center gap-1 rounded-control border p-1 ${activa ? 'border-accion bg-accion/5' : 'border-borde'}`}>
-      <button type="button" aria-current={activa ? 'true' : undefined} className="min-h-(--alto-control) min-w-0 flex-1 cursor-pointer px-2 text-left text-sm text-texto" onClick={() => alAbrir(c.id)}>
-        <span className="block truncate">{c.titulo}</span>
-      </button>
-      <Boton variante={c.favorita ? 'secundario' : 'fantasma'} icono="favorita" aria-pressed={c.favorita} aria-label={c.favorita ? 'Quitar de favoritas' : 'Marcar como favorita'} onClick={() => alFavorita(c.id, !c.favorita)} />
-      <Boton variante="fantasma" icono="editar" aria-label="Renombrar la conversación" onClick={() => { setTitulo(c.titulo); setEditando(true); }} />
-      <Boton variante="fantasma" icono="borrar" aria-label="Borrar la conversación" onClick={() => alBorrar(c.id)} />
+    <li className={unir(FILA, 'flex items-center gap-1 p-2')}>
+      <input
+        autoFocus
+        value={titulo}
+        maxLength={120}
+        aria-label="Nuevo título de la conversación"
+        className="min-h-(--alto-control) min-w-0 flex-1 rounded-full border border-borde-fuerte bg-superficie px-3 text-sm text-texto"
+        onChange={(e) => setTitulo(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') guardar();
+          if (e.key === 'Escape') alTerminar();
+        }}
+      />
+      <Boton variante="primario" icono="check" aria-label="Guardar el título" className="rounded-full" onClick={guardar} />
+      <Boton variante="fantasma" icono="cerrar" aria-label="Cancelar" className="rounded-full" onClick={alTerminar} />
     </li>
+  );
+}
+
+function FilaDeConversacion({ c, activa, momento, alAbrir, alFavorita, alRenombrar, alBorrar }: PropsDeFila): ReactNode {
+  const [editando, setEditando] = useState(false);
+  if (editando) return <FilaEnEdicion c={c} alRenombrar={alRenombrar} alTerminar={() => setEditando(false)} />;
+  return (
+    <li className={unir(FILA, 'flex items-center pr-1.5 transition-colors duration-150', activa ? 'bg-asistente-2/12' : 'hover:bg-asistente-2/8')}>
+      <button type="button" aria-current={activa ? 'true' : undefined} className="flex min-h-14 min-w-0 flex-1 cursor-pointer items-center gap-3 py-2 pr-1 pl-3 text-left" onClick={() => alAbrir(c.id)}>
+        <span className={unir('grid size-9 shrink-0 place-items-center rounded-xl', activa ? 'bg-linear-135 from-asistente-hondo-1 to-asistente-hondo-2 text-white' : 'bg-asistente-2/12 text-asistente-tinta-2')}><Icono nombre="conversacion" /></span>
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-sm leading-snug font-medium text-texto">{c.titulo}</span>
+          <span className="text-xs text-texto-suave tabular-nums">{momento}</span>
+        </span>
+      </button>
+      <span className={unir('flex shrink-0', ACCIONES_OCULTAS)}>
+        <Boton variante="fantasma" icono="editar" aria-label="Renombrar la conversación" className="rounded-full" onClick={() => setEditando(true)} />
+        <Boton variante="fantasma" icono="borrar" aria-label="Borrar la conversación" className="rounded-full hover:text-peligro!" onClick={() => alBorrar(c.id)} />
+      </span>
+      <Boton variante="fantasma" icono="favorita" aria-pressed={c.favorita} aria-label={c.favorita ? 'Quitar de favoritas' : 'Marcar como favorita'} className={unir('rounded-full', c.favorita && 'text-aviso! [&_svg]:fill-current')} onClick={() => alFavorita(c.id, !c.favorita)} />
+    </li>
+  );
+}
+
+function Buscador({ busqueda, alBuscar }: Pick<Props, 'busqueda' | 'alBuscar'>): ReactNode {
+  return (
+    <div className="relative">
+      <Icono nombre="buscar" className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-texto-suave" />
+      <input
+        type="search"
+        value={busqueda}
+        placeholder="Buscar una conversación"
+        aria-label="Buscar una conversación"
+        className="min-h-(--alto-control) w-full rounded-full border border-borde bg-superficie pr-4 pl-11 text-sm text-texto shadow-sutil placeholder:text-texto-suave/80"
+        onChange={(e) => alBuscar(e.target.value)}
+      />
+    </div>
+  );
+}
+
+function Grupo({ g, p }: { g: GrupoDeConversaciones; p: Props }): ReactNode {
+  return (
+    <section aria-label={g.titulo} className="flex flex-col gap-1.5">
+      <h3 className="px-3 text-xs font-semibold text-texto-suave">{g.titulo}</h3>
+      <ul className={unir(TARJETA, 'overflow-hidden')}>
+        {g.items.map((c) => (
+          <FilaDeConversacion key={c.id} c={c} activa={c.id === p.activaId} momento={momentoDeConversacion(c.actualizadoEn, g.clave)} alAbrir={p.alAbrir} alFavorita={p.alFavorita} alRenombrar={p.alRenombrar} alBorrar={p.alBorrar} />
+        ))}
+      </ul>
+    </section>
   );
 }
 
 /** La lista de conversaciones de la persona: buscador, grupos por fecha y acciones de cada una. Solo presenta; los datos los trae su contenedor. */
 export function ListaDeConversaciones(p: Props): ReactNode {
-  if (p.estado === 'cargando') {
-    return (
-      <div aria-busy="true" aria-label="Cargando conversaciones" className="flex flex-col gap-2">
-        {[0, 1, 2].map((i) => <Esqueleto key={i} className="h-11 w-full" />)}
-      </div>
-    );
-  }
-  if (p.estado === 'error') {
-    return (
-      <div role="alert" className="flex flex-col items-start gap-2 rounded-control border border-peligro/40 bg-peligro/10 p-3 text-sm text-texto">
-        <p>{p.mensajeDeError ?? 'No se pudieron cargar las conversaciones.'}</p>
-        <Boton variante="secundario" onClick={p.alReintentar}>Reintentar</Boton>
-      </div>
-    );
-  }
-  const vacia = p.grupos.length === 0;
+  if (p.estado === 'cargando') return <CargandoLista etiqueta="Cargando conversaciones" alto="h-14" />;
+  if (p.estado === 'error') return <ErrorConReintento mensaje={p.mensajeDeError ?? 'No se pudieron cargar las conversaciones.'} alReintentar={p.alReintentar} />;
   return (
     <div className="flex flex-col gap-3">
-      <input
-        type="search"
-        value={p.busqueda}
-        placeholder="Buscar una conversación"
-        aria-label="Buscar una conversación"
-        className="min-h-(--alto-control) w-full rounded-control border border-borde-fuerte bg-superficie px-3 text-sm text-texto placeholder:text-texto-suave/80"
-        onChange={(e) => p.alBuscar(e.target.value)}
-      />
-      {vacia ? (
-        <p className="py-4 text-center text-sm text-texto-suave">{p.busqueda.trim() === '' ? 'Aún no tienes conversaciones.' : 'Ninguna conversación coincide con la búsqueda.'}</p>
+      <Buscador busqueda={p.busqueda} alBuscar={p.alBuscar} />
+      {p.grupos.length === 0 ? (
+        <SinNada icono="conversacion" texto={p.busqueda.trim() === '' ? 'Aún no tienes conversaciones.' : 'Ninguna conversación coincide con la búsqueda.'} />
       ) : (
-        p.grupos.map((g) => (
-          <section key={g.clave} aria-label={g.titulo} className="flex flex-col gap-1">
-            <h3 className="text-xs font-semibold tracking-wide text-texto-suave uppercase">{g.titulo}</h3>
-            <ul className="flex flex-col gap-1">
-              {g.items.map((c) => (
-                <FilaDeConversacion key={c.id} c={c} activa={c.id === p.activaId} alAbrir={p.alAbrir} alFavorita={p.alFavorita} alRenombrar={p.alRenombrar} alBorrar={p.alBorrar} />
-              ))}
-            </ul>
-          </section>
-        ))
+        p.grupos.map((g) => <Grupo key={g.clave} g={g} p={p} />)
       )}
-      {p.hayMas ? <Boton variante="secundario" cargando={p.cargandoMas} onClick={p.alVerMas}>Ver más</Boton> : null}
+      {p.hayMas ? <Boton variante="secundario" className="rounded-full" cargando={p.cargandoMas} onClick={p.alVerMas}>Ver más</Boton> : null}
     </div>
   );
 }

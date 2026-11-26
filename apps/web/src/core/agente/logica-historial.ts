@@ -31,6 +31,14 @@ export function agruparConversaciones(items: readonly ConversacionDelAgente[], a
   return ORDEN.flatMap((clave) => (grupos.has(clave) ? [{ clave, titulo: TITULOS[clave], items: grupos.get(clave) ?? [] }] : []));
 }
 
+/** Cuándo se usó, corto: la hora si fue hoy o ayer (el grupo ya dice el día) y la fecha si es más vieja o es una favorita. */
+export function momentoDeConversacion(actualizadoEn: string, clave: GrupoDeConversaciones['clave'], zona = 'America/Lima'): string {
+  const f = new Date(actualizadoEn);
+  if (Number.isNaN(f.getTime())) return '';
+  const formato: Intl.DateTimeFormatOptions = clave === 'hoy' || clave === 'ayer' ? { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' } : { day: 'numeric', month: 'short' };
+  return new Intl.DateTimeFormat('es-PE', { ...formato, timeZone: zona }).format(f);
+}
+
 /** Busca por título sin distinguir mayúsculas ni tildes. Una búsqueda vacía no filtra. */
 export function filtrarPorTitulo(items: readonly ConversacionDelAgente[], texto: string): ConversacionDelAgente[] {
   const buscado = plegarParaBuscar(texto).trim();
