@@ -9,7 +9,7 @@ export function DesgloseDePliegos({ vista }: ContextoDelCuadro) {
   if (!c) return null;
   return (
     <Seccion titulo="Desglose de pliegos">
-      <GrupoDeCifras etiqueta="Pliegos del trabajo">
+      <GrupoDeCifras etiqueta="Pliegos del trabajo" angosto>
         <Cifra etiqueta="Piezas por pliego" valor={c.poses} ayuda={`${c.columnas} × ${c.filas}${c.girada ? ', girada' : ''}`} />
         <Cifra etiqueta="Pliegos netos" valor={c.pliegosNetos} />
         <Cifra etiqueta="Pliegos de máquina" valor={c.pliegosDeMaquina} ayuda="Con las mermas" />

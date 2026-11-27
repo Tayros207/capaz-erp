@@ -28,10 +28,10 @@ export function Cifra({ etiqueta, valor, tono = 'neutro', ayuda }: { etiqueta: s
   );
 }
 
-/** Rejilla de cifras: 2 columnas en móvil, 4 desde escritorio. */
-export function GrupoDeCifras({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
+/** Rejilla de cifras: 2 columnas en móvil, 4 desde escritorio. Con `angosto` (dentro de una columna) caben las que permita su ancho. */
+export function GrupoDeCifras({ etiqueta, angosto = false, children }: { etiqueta: string; angosto?: boolean; children: ReactNode }) {
   return (
-    <div role="group" aria-label={etiqueta} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div role="group" aria-label={etiqueta} className={unir('grid gap-3', angosto ? 'grid-cols-[repeat(auto-fit,minmax(8rem,1fr))]' : 'grid-cols-2 lg:grid-cols-4')}>
       {children}
     </div>
   );
