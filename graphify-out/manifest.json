@@ -294,8 +294,8 @@
     "semantic_hash": ""
   },
   "apps/api/tsconfig.build.json": {
-    "mtime": 1795708443.1111732,
-    "seen": 1795711332.3883622,
+    "mtime": 1795711363.293371,
+    "seen": 1795711413.2744696,
     "ast_hash": "4c5a43c0a30856fc0b47c35e01beeb53",
     "semantic_hash": ""
   },
@@ -1848,8 +1848,8 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/ordenes.ts": {
-    "mtime": 1795709270.30117,
-    "seen": 1795711332.39059,
+    "mtime": 1795711363.4894755,
+    "seen": 1795711413.2767737,
     "ast_hash": "16da49e82df82aa9d2af5dc0aad1f25b",
     "semantic_hash": ""
   },
@@ -3126,15 +3126,15 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/logica.spec.ts": {
-    "mtime": 1795540755.772228,
-    "seen": 1795540873.656821,
-    "ast_hash": "44dff126e57726f88ffb562e0d2032f2",
+    "mtime": 1795715377.2743485,
+    "seen": 1795715765.4508383,
+    "ast_hash": "b8597b129216bab8dd57ec2350c9512f",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/logica.ts": {
-    "mtime": 1795540661.0585067,
-    "seen": 1795540873.6568232,
-    "ast_hash": "de5d93d65cf60ba81b51fee0ab1746d9",
+    "mtime": 1795715377.2734144,
+    "seen": 1795715765.450845,
+    "ast_hash": "28ea5d93104abc4696489f2b7843e5d7",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/marco.tsx": {
@@ -3144,9 +3144,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/pantalla-empresa.tsx": {
-    "mtime": 1794852092.4772322,
-    "seen": 1794852235.7932367,
-    "ast_hash": "e4536aad94e7abf1eb90d4757ed863a0",
+    "mtime": 1795715377.2727432,
+    "seen": 1795715765.4508579,
+    "ast_hash": "08aa7b416482eb182c27bee027e931b8",
     "semantic_hash": ""
   },
   "apps/web/src/plataforma/pantalla-empresas.tsx": {
@@ -3636,8 +3636,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pedidos-escritura.ts": {
-    "mtime": 1795709270.3022735,
-    "seen": 1795711332.3877282,
+    "mtime": 1795711363.2930584,
+    "seen": 1795711413.273783,
     "ast_hash": "a8fb641f8dd1b783e7f73c51d4d66422",
     "semantic_hash": ""
   },
@@ -3660,8 +3660,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pedidos.int.spec.ts": {
-    "mtime": 1795709270.303885,
-    "seen": 1795711332.387754,
+    "mtime": 1795711363.2932415,
+    "seen": 1795711413.2738123,
     "ast_hash": "5c8a98d2b8687f2ca2a879c89c029962",
     "semantic_hash": ""
   },
@@ -4134,9 +4134,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/cifra.tsx": {
-    "mtime": 1794847077.9380207,
-    "seen": 1794847177.3258994,
-    "ast_hash": "ec6c25206889b6f8753f989fc3edeb14",
+    "mtime": 1795794962.025411,
+    "seen": 1795795403.0150201,
+    "ast_hash": "796c7986c1975eceadca7e4020c12834",
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/logica-selector.spec.ts": {
@@ -8748,9 +8748,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/barra-inferior.tsx": {
-    "mtime": 1794940401.8442802,
-    "seen": 1794940484.361041,
-    "ast_hash": "58c951935b53c24110bc536dc0b9e591",
+    "mtime": 1795794962.3619,
+    "seen": 1795795403.013303,
+    "ast_hash": "f688d3612f52bdb19f18f4b3e15d118d",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/cabecera-de-columnas.tsx": {
@@ -8784,9 +8784,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/desglose-de-pliegos.tsx": {
-    "mtime": 1794940401.8442802,
-    "seen": 1794940484.3610597,
-    "ast_hash": "5276ea1849119cdda1121349961aecdc",
+    "mtime": 1795794962.1348996,
+    "seen": 1795795403.013325,
+    "ast_hash": "29523adb64cf4a760006f3916d574464",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/elegir-tarifa.tsx": {
@@ -8922,9 +8922,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/recibo.tsx": {
-    "mtime": 1794940401.846525,
-    "seen": 1794940484.3611305,
-    "ast_hash": "c3c2da9a9c7a49ceb1dee07e41517b58",
+    "mtime": 1795794961.907899,
+    "seen": 1795795403.013405,
+    "ast_hash": "5fc9d402ae157cdcc264635f299864fb",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/resumen-del-cuadro.tsx": {
@@ -11340,8 +11340,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/atender-llamada.ts": {
-    "mtime": 1795709340.6727297,
-    "seen": 1795711332.3856478,
+    "mtime": 1795711363.2904634,
+    "seen": 1795711413.2140086,
     "ast_hash": "4f8569621915aad641f0b341c6ea2f9b",
     "semantic_hash": ""
   },
@@ -11364,20 +11364,20 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/bucle.ts": {
-    "mtime": 1795709270.3056247,
-    "seen": 1795711332.3856807,
+    "mtime": 1795711363.29082,
+    "seen": 1795711413.2140565,
     "ast_hash": "e7ad3e88e79b8801393891d8c8df4e4c",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/catalogo-del-turno.spec.ts": {
-    "mtime": 1795709340.6650393,
-    "seen": 1795711332.3856857,
+    "mtime": 1795711363.291126,
+    "seen": 1795711413.2140615,
     "ast_hash": "eb3e57ca87518bd1f1a67b2d45f95b65",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/catalogo-del-turno.ts": {
-    "mtime": 1795709270.306974,
-    "seen": 1795711332.385688,
+    "mtime": 1795711363.2912567,
+    "seen": 1795711413.2140641,
     "ast_hash": "f52539052c1cf7ed94639b0babc4bca2",
     "semantic_hash": ""
   },
@@ -11418,8 +11418,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/meta-herramientas.ts": {
-    "mtime": 1795709270.307157,
-    "seen": 1795711332.3857458,
+    "mtime": 1795711363.291698,
+    "seen": 1795711413.2141204,
     "ast_hash": "53c5d8f14352d224dee6f590e5399c9a",
     "semantic_hash": ""
   },
@@ -11460,8 +11460,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/modelos.ts": {
-    "mtime": 1795710094.9768639,
-    "seen": 1795711332.385764,
+    "mtime": 1795711363.2918398,
+    "seen": 1795711413.2141376,
     "ast_hash": "97509ebc7fb7295b739af100a59c2d6a",
     "semantic_hash": ""
   },
@@ -11496,20 +11496,20 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/prompt.ts": {
-    "mtime": 1795710094.9766526,
-    "seen": 1795711332.3857794,
+    "mtime": 1795711363.2920554,
+    "seen": 1795711413.2141535,
     "ast_hash": "640f03e5d18a82bb88dd1df2042c6116",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/recorte.spec.ts": {
-    "mtime": 1795709425.628181,
-    "seen": 1795711332.3857846,
+    "mtime": 1795711363.292197,
+    "seen": 1795711413.2141588,
     "ast_hash": "d5d5cc38a0c9097ccbd893d8f218f730",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/recorte.ts": {
-    "mtime": 1795709270.3081222,
-    "seen": 1795711332.3857872,
+    "mtime": 1795711363.2923281,
+    "seen": 1795711413.2141612,
     "ast_hash": "7d6ba6e6cd26221d918e9cee5cf33337",
     "semantic_hash": ""
   },
@@ -11562,8 +11562,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/tipos-del-turno.ts": {
-    "mtime": 1795709270.3053942,
-    "seen": 1795711332.3858352,
+    "mtime": 1795711363.2928567,
+    "seen": 1795711413.2142096,
     "ast_hash": "78a22eb267e90704a822977b620b02ce",
     "semantic_hash": ""
   },
@@ -11742,8 +11742,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/captura-de-lecciones.ts": {
-    "mtime": 1795709270.3082728,
-    "seen": 1795711332.3856833,
+    "mtime": 1795711363.290963,
+    "seen": 1795711413.214059,
     "ast_hash": "3fafc59b7832a8d05ff67c88bcdfa2be",
     "semantic_hash": ""
   },
@@ -11790,8 +11790,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/registrar-resultado.ts": {
-    "mtime": 1795709809.1059027,
-    "seen": 1795711332.3857949,
+    "mtime": 1795711363.2925317,
+    "seen": 1795711413.214169,
     "ast_hash": "62f22e3dbc89b49af414a5fe4d0ac6ed",
     "semantic_hash": ""
   },
@@ -12132,50 +12132,50 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/ayuda-para-corregir.spec.ts": {
-    "mtime": 1795709809.1057165,
-    "seen": 1795711332.3856647,
+    "mtime": 1795711363.2905781,
+    "seen": 1795711413.2140384,
     "ast_hash": "0839b485413f7d8e0b1a53d6e24fdcb6",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/ayuda-para-corregir.ts": {
-    "mtime": 1795709809.1055593,
-    "seen": 1795711332.3856676,
+    "mtime": 1795711363.2906694,
+    "seen": 1795711413.214042,
     "ast_hash": "eec929a4d460d440c5773d7314b5e40b",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/evaluacion/escenarios.ts": {
-    "mtime": 1795709977.1526294,
-    "seen": 1795711332.3857133,
+    "mtime": 1795711363.291368,
+    "seen": 1795711413.2140882,
     "ast_hash": "c8fdad9b149c7e94783318d107956616",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/evaluacion/evaluacion.eval.ts": {
-    "mtime": 1795710094.9763353,
-    "seen": 1795711332.3857157,
+    "mtime": 1795711363.2914846,
+    "seen": 1795711413.214091,
     "ast_hash": "9629301be295df695cce27d1173d6b14",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/registrar-resultado.spec.ts": {
-    "mtime": 1795709809.1060693,
-    "seen": 1795711332.385792,
+    "mtime": 1795711363.2923281,
+    "seen": 1795711413.2141669,
     "ast_hash": "1d627a6a6783ec8691c6e378bc23efd9",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/reparar-argumentos.spec.ts": {
-    "mtime": 1795709214.0499222,
-    "seen": 1795711332.3858023,
+    "mtime": 1795711363.292625,
+    "seen": 1795711413.2141764,
     "ast_hash": "39c896c801060146aa7c727958403a02",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/reparar-argumentos.ts": {
-    "mtime": 1795709348.606196,
-    "seen": 1795711332.3858051,
+    "mtime": 1795711363.2927191,
+    "seen": 1795711413.2141795,
     "ast_hash": "eb968006d3a17e0ebb278596c581b50f",
     "semantic_hash": ""
   },
   "apps/api/vitest.eval.config.ts": {
-    "mtime": 1795708443.0661774,
-    "seen": 1795711332.3883696,
+    "mtime": 1795711363.293371,
+    "seen": 1795711413.2744777,
     "ast_hash": "23357efaa6df0c290a07b6e7d109ad91",
     "semantic_hash": ""
   },
@@ -12192,8 +12192,8 @@
     "semantic_hash": ""
   },
   "docs/evaluaciones/2026-11-26-modelos.md": {
-    "mtime": 1795710094.998452,
-    "seen": 1795711332.3908548,
+    "mtime": 1795711363.293565,
+    "seen": 1795711413.2770493,
     "ast_hash": "e1e1911c7e2e98a5783a59010e6d8f0d",
     "semantic_hash": ""
   }

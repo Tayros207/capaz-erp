@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "apps/api/tsconfig.build.json": {
-    "mtime": 1794787715.2796438,
-    "seen": 1794787882.5246198,
-    "ast_hash": "eff5a2a63879aa7fa3518e0c731abd06",
+    "mtime": 1795711363.293371,
+    "seen": 1795711413.2744696,
+    "ast_hash": "4c5a43c0a30856fc0b47c35e01beeb53",
     "semantic_hash": ""
   },
   "apps/api/tsconfig.json": {
@@ -1848,9 +1848,9 @@
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/ordenes.ts": {
-    "mtime": 1795454959.5219722,
-    "seen": 1795455165.492841,
-    "ast_hash": "57c7acd7a7bcd840bb7ed60d06e7b6b9",
+    "mtime": 1795711363.4894755,
+    "seen": 1795711413.2767737,
+    "ast_hash": "16da49e82df82aa9d2af5dc0aad1f25b",
     "semantic_hash": ""
   },
   "packages/shared/src/contratos/personal.ts": {
@@ -3636,9 +3636,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pedidos-escritura.ts": {
-    "mtime": 1795454963.3748314,
-    "seen": 1795455165.4884992,
-    "ast_hash": "ecc09d9e8aabc8ac6feea5b99daf28ed",
+    "mtime": 1795711363.2930584,
+    "seen": 1795711413.273783,
+    "ast_hash": "a8fb641f8dd1b783e7f73c51d4d66422",
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pedidos-estado.int.spec.ts": {
@@ -3660,9 +3660,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pedidos.int.spec.ts": {
-    "mtime": 1795455112.5825558,
-    "seen": 1795455165.4885356,
-    "ast_hash": "c10c307825711e01306adf3c6e76a3f2",
+    "mtime": 1795711363.2932415,
+    "seen": 1795711413.2738123,
+    "ast_hash": "5c8a98d2b8687f2ca2a879c89c029962",
     "semantic_hash": ""
   },
   "apps/api/src/modules/ordenes/herramientas/pruebas-de-pedidos.ts": {
@@ -11340,9 +11340,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/atender-llamada.ts": {
-    "mtime": 1795622108.9078481,
-    "seen": 1795622520.1499476,
-    "ast_hash": "7a26e8abfb856914fc1a7e000e542673",
+    "mtime": 1795711363.2904634,
+    "seen": 1795711413.2140086,
+    "ast_hash": "4f8569621915aad641f0b341c6ea2f9b",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/atender-meta.ts": {
@@ -11364,21 +11364,21 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/bucle.ts": {
-    "mtime": 1795622071.8577695,
-    "seen": 1795622520.1499681,
-    "ast_hash": "e163e8b7165827e692a14eb926946734",
+    "mtime": 1795711363.29082,
+    "seen": 1795711413.2140565,
+    "ast_hash": "e7ad3e88e79b8801393891d8c8df4e4c",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/catalogo-del-turno.spec.ts": {
-    "mtime": 1795616189.9511497,
-    "seen": 1795616267.1655524,
-    "ast_hash": "2a5e814a637108048181c308527b77bd",
+    "mtime": 1795711363.291126,
+    "seen": 1795711413.2140615,
+    "ast_hash": "eb3e57ca87518bd1f1a67b2d45f95b65",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/catalogo-del-turno.ts": {
-    "mtime": 1795629311.2131457,
-    "seen": 1795632933.6899943,
-    "ast_hash": "52898b4d30814dbe6540c2aa0a182a51",
+    "mtime": 1795711363.2912567,
+    "seen": 1795711413.2140641,
+    "ast_hash": "f52539052c1cf7ed94639b0babc4bca2",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/catalogo.int.spec.ts": {
@@ -11418,9 +11418,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/meta-herramientas.ts": {
-    "mtime": 1795622071.856337,
-    "seen": 1795622520.1500196,
-    "ast_hash": "4584dc87d4190c52a611a711b7388250",
+    "mtime": 1795711363.291698,
+    "seen": 1795711413.2141204,
+    "ast_hash": "53c5d8f14352d224dee6f590e5399c9a",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/modelo-de-chat.ts": {
@@ -11460,9 +11460,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/modelos.ts": {
-    "mtime": 1795622140.6143808,
-    "seen": 1795622520.150038,
-    "ast_hash": "9d6566a2852a479bd683faa3e02e947c",
+    "mtime": 1795711363.2918398,
+    "seen": 1795711413.2141376,
+    "ast_hash": "97509ebc7fb7295b739af100a59c2d6a",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/politica.spec.ts": {
@@ -11496,21 +11496,21 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/prompt.ts": {
-    "mtime": 1795629311.2144494,
-    "seen": 1795632933.6900833,
-    "ast_hash": "28661f8fd37e64b15063bb23a5467423",
+    "mtime": 1795711363.2920554,
+    "seen": 1795711413.2141535,
+    "ast_hash": "640f03e5d18a82bb88dd1df2042c6116",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/recorte.spec.ts": {
-    "mtime": 1795616190.179139,
-    "seen": 1795616267.1656258,
-    "ast_hash": "3db4589c5bff14d0d3d64e443d7b6373",
+    "mtime": 1795711363.292197,
+    "seen": 1795711413.2141588,
+    "ast_hash": "d5d5cc38a0c9097ccbd893d8f218f730",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/recorte.ts": {
-    "mtime": 1795616190.1800628,
-    "seen": 1795616267.1656284,
-    "ast_hash": "9b293e8b411e0abf0868de14b689762a",
+    "mtime": 1795711363.2923281,
+    "seen": 1795711413.2141612,
+    "ast_hash": "7d6ba6e6cd26221d918e9cee5cf33337",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/reglas-de-entrada.spec.ts": {
@@ -11562,9 +11562,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/tipos-del-turno.ts": {
-    "mtime": 1795622071.8568628,
-    "seen": 1795622520.1500957,
-    "ast_hash": "610ccfec973075134f4ead68fe9b15ee",
+    "mtime": 1795711363.2928567,
+    "seen": 1795711413.2142096,
+    "ast_hash": "78a22eb267e90704a822977b620b02ce",
     "semantic_hash": ""
   },
   "apps/api/src/db/esquema/core-agente.ts": {
@@ -11742,9 +11742,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/captura-de-lecciones.ts": {
-    "mtime": 1795616189.9441502,
-    "seen": 1795616267.1655502,
-    "ast_hash": "44d5922f15b13f60ec9bd000ca0f8c19",
+    "mtime": 1795711363.290963,
+    "seen": 1795711413.214059,
+    "ast_hash": "3fafc59b7832a8d05ff67c88bcdfa2be",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/escritura.int.spec.ts": {
@@ -11790,9 +11790,9 @@
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/registrar-resultado.ts": {
-    "mtime": 1795616190.1871386,
-    "seen": 1795616267.1656308,
-    "ast_hash": "b501012531b05857d0cf6e964bbc1ca7",
+    "mtime": 1795711363.2925317,
+    "seen": 1795711413.214169,
+    "ast_hash": "62f22e3dbc89b49af414a5fe4d0ac6ed",
     "semantic_hash": ""
   },
   "apps/api/src/core/agente/repositorio-de-huella.ts": {
@@ -12129,6 +12129,72 @@
     "mtime": 1795629239.275705,
     "seen": 1795632933.6928215,
     "ast_hash": "a8f3239b012ea030a2ac321ca52b4e35",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/ayuda-para-corregir.spec.ts": {
+    "mtime": 1795711363.2905781,
+    "seen": 1795711413.2140384,
+    "ast_hash": "0839b485413f7d8e0b1a53d6e24fdcb6",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/ayuda-para-corregir.ts": {
+    "mtime": 1795711363.2906694,
+    "seen": 1795711413.214042,
+    "ast_hash": "eec929a4d460d440c5773d7314b5e40b",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/evaluacion/escenarios.ts": {
+    "mtime": 1795711363.291368,
+    "seen": 1795711413.2140882,
+    "ast_hash": "c8fdad9b149c7e94783318d107956616",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/evaluacion/evaluacion.eval.ts": {
+    "mtime": 1795711363.2914846,
+    "seen": 1795711413.214091,
+    "ast_hash": "9629301be295df695cce27d1173d6b14",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/registrar-resultado.spec.ts": {
+    "mtime": 1795711363.2923281,
+    "seen": 1795711413.2141669,
+    "ast_hash": "1d627a6a6783ec8691c6e378bc23efd9",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/reparar-argumentos.spec.ts": {
+    "mtime": 1795711363.292625,
+    "seen": 1795711413.2141764,
+    "ast_hash": "39c896c801060146aa7c727958403a02",
+    "semantic_hash": ""
+  },
+  "apps/api/src/core/agente/reparar-argumentos.ts": {
+    "mtime": 1795711363.2927191,
+    "seen": 1795711413.2141795,
+    "ast_hash": "eb968006d3a17e0ebb278596c581b50f",
+    "semantic_hash": ""
+  },
+  "apps/api/vitest.eval.config.ts": {
+    "mtime": 1795711363.293371,
+    "seen": 1795711413.2744777,
+    "ast_hash": "23357efaa6df0c290a07b6e7d109ad91",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/agente/pantalla-vacia.tsx": {
+    "mtime": 1795707346.4401293,
+    "seen": 1795711332.388597,
+    "ast_hash": "90b0723ffa0f923fd2494b88bd2cd8e2",
+    "semantic_hash": ""
+  },
+  "apps/web/src/core/agente/piezas-de-vista.tsx": {
+    "mtime": 1795707346.4401293,
+    "seen": 1795711332.3885987,
+    "ast_hash": "bec7c0971d70edfa7ca81476223ce681",
+    "semantic_hash": ""
+  },
+  "docs/evaluaciones/2026-11-26-modelos.md": {
+    "mtime": 1795711363.293565,
+    "seen": 1795711413.2770493,
+    "ast_hash": "e1e1911c7e2e98a5783a59010e6d8f0d",
     "semantic_hash": ""
   }
 }
