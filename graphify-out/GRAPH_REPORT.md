@@ -6,12 +6,12 @@
 - Unclassified: 9 file(s) not represented in the graph (top: (none) 5, .map 2, .example 1)
 
 ## Summary
-- 14833 nodes · 50046 edges · 322 communities (287 shown, 35 thin omitted)
+- 14832 nodes · 50045 edges · 340 communities (308 shown, 32 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 1530 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `21bed4ea`
+- Built from commit: `7632cbc8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,9 +20,9 @@
 - ajuste-y-recepcion.int.spec.ts
 - src/index.ts
 - web/package.json
-- packages_shared_dist_index
-- comoEmpresa
-- entorno.ts
+- invitacion-crear.ts
+- datosDe
+- preparar-base.ts
 - compilerOptions
 - scripts
 - contratos/insumos-operaciones.ts
@@ -31,17 +31,17 @@
 - contratos/index.ts
 - FORCE ROW LEVEL SECURITY con politica unica
 - Registro de herramientas con ejecutar() unico
-- costeo/cuadro-directo.ts
+- base/dinero.ts
 - compilerOptions
 - herramientas/cuadro-referencias.ts
 - pasos-de-cierre.tsx
 - compilerOptions
-- productos/pantalla-ficha.tsx
-- ejecutor.ts
+- llamar
+- ContextoDeHerramienta
 - db
 - pantalla-guia-nueva.tsx
-- llamar
-- @nestjs/common
+- notificar
+- relevo.ts
 - RegistroDeHerramientas
 - ordenes/correccion.ts
 - api/.oxlintrc.json
@@ -49,208 +49,208 @@
 - nest-cli.json
 - web/.oxlintrc.json
 - pnpm-workspace.yaml
-- seguimiento.int.spec.ts
+- confirmar
 - config.d.ts
 - web/tsconfig.json
-- http-de-pruebas.ts
+- agregarMiembro
 - cotizador-cuadro.ts
-- confirmar
-- ejecutor-de-plataforma.ts
-- cuadro-vista.ts
-- pantalla-documento-cotizacion.tsx
+- pantalla-importar-historial.tsx
+- herramientas-de-plataforma.ts
+- cuadro.ts
+- ordenes/pantalla-documento.tsx
 - ordenes/pantalla-ficha.tsx
 - favicon.svg (purple lightning-bolt logo, 48x46 favicon)
-- registro/hoja-movimiento.tsx
-- campos-de-pago.tsx
+- src/herramientas.ts
+- pago.ts
 - panel-del-agente.tsx
 - atender-escritura.ts
-- pantalla-empresas.tsx
+- plataforma/api.ts
 - pantalla-vacaciones.tsx
 - 0026_inventario_compras_operaciones.sql
-- cotizaciones-emision.ts
+- herramientas-de-cotizador.ts
 - borrador.ts
 - contratos/ordenes.ts
-- CampoMonto
-- contratos-herramientas.ts
+- tarjeta-de-borrador.tsx
+- personal/herramientas/comunes.ts
 - main
 - automatizaciones/logica.ts
 - base/empresa.ts
 - registro/logica.ts
 - carcasa.tsx
-- ordenes/pantalla-documento.tsx
-- plataforma/logica.ts
+- documentos.ts
+- hoja-plan.tsx
 - contratos/compras-operaciones.ts
-- packages_shared_dist_index_formatearsoles
-- plataforma/pantalla-empresa.tsx
-- datosOError
+- packages_shared_dist_index
+- unir
+- api/consultas.ts
 - dueno
 - ref_vitest
 - cotizador-taller.ts
-- fecha.ts
-- contratos/compras.ts
-- ordenes-correccion.ts
+- tipos-del-turno.ts
+- contratos/produccion.ts
+- contratos/plataforma.ts
 - composicion/mi-dia-logica.ts
 - servicio-de-turnos.ts
-- Sesion
+- sembrar-demo.ts
 - contratos/insumos.ts
 - 0025_maestros_ampliados.sql
 - contratos/personal.ts
+- EstadoVacio
 - Boton
-- react
-- empresa/pantalla-empresa.tsx
-- cuadro-comun.ts
-- SelectorDeRegistro
+- logica-datos.ts
+- logica-cuadro.ts
+- use-alta-de-cliente.ts
 - hilo.tsx
-- herramientas-de-agente.ts
+- agente.int.spec.ts
 - use-turno.ts
-- prompt.ts
-- conexiones.ts
+- herramientas-de-memoria.ts
+- domain/cuadro-emision.ts
 - productos-ampliados.ts
 - cierre-cerrar.ts
-- pantalla-usuarios.tsx
+- hoja-miembro.tsx
 - catalogo-del-turno.ts
 - ordenes-guias.ts
-- pantalla-guia.tsx
+- guias.repository.ts
 - app/rutas.tsx
 - config.js
 - editor-de-productos.tsx
 - pedidos-correccion.ts
-- plataforma/api.ts
+- modelo-de-lenguaje-openrouter.ts
 - pantalla-mi-dia.tsx
 - contratos/personal-contratos.ts
 - borradores.ts
 - Plan: el agente flotante de Capaz (estilo daemon de Tairos)
 - logica-cobertura.ts
 - fusion-con-modelo.ts
-- sucursales-herramientas.ts
-- herramientas-de-memoria.ts
+- compra-mapeo.ts
+- logica-cuadro-precio.ts
 - registro/consumidores.ts
-- compras.repository.ts
+- Transaccion
 - 0024_cotizador.sql
 - precios.ts
 - api/package.json
 - contratos/agente.ts
-- tipos/cuadro-directo.ts
+- costeo/cuadro-directo.ts
 - contratos/mi-dia.ts
 - contratos/cotizador.ts
-- use-hoja-de-pedido.ts
+- alta-de-pedido.spec.ts
 - hoja-sucursal.tsx
 - hoja-orden.tsx
 - webhooks/repositorio.ts
 - contratos/registro.ts
-- pantalla-indicadores.tsx
-- adelantos.repository.ts
+- grafico-de-barras.tsx
+- herramientas-de-ordenes.ts
 - compras/logica.ts
-- fusion.ts
-- barra-superior.tsx
-- servicio-de-transcripcion.ts
+- composicion.ts
+- use-tema.ts
+- @nestjs/common
 - .registro
-- agente.module.ts
-- .cotizador
-- modulos/catalogo.ts
+- servicio-de-transcripcion.ts
+- nombre
+- herramientas/registro.ts
 - cuadro-comandos-directo.ts
 - tarjeta-unidades.tsx
 - monto-en-letras.ts
 - huella-de-correccion.ts
-- domain/cliente.ts
-- asistencias-herramientas.ts
-- personal/herramientas/comunes.ts
-- columnas.ts
+- evaluacion.eval.ts
+- maestros-ampliados.ts
+- pedidos.repository.ts
+- pedidos-historial.ts
 - Investigación de frontend de Capaz ERP
-- destinos.ts
-- 4. Frente C · Módulo por módulo y piezas transversales
-- interpretar-dictado.ts
+- fusion-de-pedido.ts
+- compras
+- enriquecer.ts
 - miembros.ts
-- pantalla-importar-historial.tsx
+- ordenes/logica-historial.ts
 - ordenes-escritura.ts
-- tipos-del-turno.ts
-- agente/catalogo.int.spec.ts
-- paleta-de-comandos.tsx
+- modelo-de-openrouter.ts
+- panel-imposicion.tsx
+- precios/logica.ts
 - pantalla-registro.tsx
 - costos.ts
 - descripcion.ts
-- cuadro.ts
+- tipos/cotizacion.ts
 - interprete.ts
-- herramientas/clientes-fusion.ts
+- maestros.repository.int.spec.ts
 - 0014_registro.sql
-- personal.repository.int.spec.ts
+- insumos/herramientas/comunes.ts
 - almacen.ts
-- documento-cotizacion.ts
+- atender-web.ts
 - 0027_cotizador_taller_y_enlaces.sql
-- agente/logica-historial.ts
+- existencias-recibir.ts
 - logica-taller.ts
-- lista-de-empresas.tsx
+- cuadro-directo.tsx
 - 0029_produccion.sql
 - automatizaciones.ts
-- enriquecer.ts
+- interpretar-dictado.ts
 - 5. Carriles
 - reportes.int.spec.ts
 - historial.ts
 - 0015_crm.sql
 - 0020_compras.sql
-- composicion/precios-anteriores.ts
-- pantalla-invitacion.tsx
-- demo/cotizador.ts
+- reportes/logica.ts
+- invitaciones/api.ts
+- 3. Tabla por módulo (186 herramientas de escritura)
 - 0016_ordenes.sql
 - logica-reconocedor.ts
 - pedido-lineas.ts
 - similitud-nombres.ts
-- api/cliente.ts
+- agente/api.ts
 - antiguedad.ts
-- herramientas-de-webhooks.ts
-- GrabadoraDeVoz
-- enlaces-herramientas.ts
-- adelantos-herramientas.ts
+- entrega.ts
+- compras-recepcion.int.spec.ts
+- enlaces.ts
+- costeo/imposicion.ts
 - 0010_conexiones.sql
 - 0028_personal_contratos_vacaciones.sql
 - 005_proformas_y_categorias.sql
 - recompra.ts
-- audio-wav.ts
+- logica-precio-anterior.ts
 - automatizaciones/repositorio.ts
 - 0005_auth_better_auth.sql
-- ajustes-conectado.tsx
+- logica-control.ts
 - 0018_insumos.sql
 - 0019_personal.sql
 - bandeja/logica.ts
-- tarjeta-mi-dia.tsx
-- compras
+- react-dom
+- produccion.int.spec.ts
 - oportunidades-escritura.ts
 - 0008_datos_maestros.sql
 - contratos/empresa.ts
 - filas-de-pedido.tsx
-- sembrar-demo.ts
+- demo/contexto.ts
 - 0002_modulos_y_contratacion.sql
 - 0022_estado_de_cuenta.sql
 - web
-- reparar-argumentos.ts
+- directa-filas.tsx
 - idx_cotizador_listas_origen
 - Contratos Zod en packages/shared (fuente unica de verdad)
-- maestros.repository.int.spec.ts
+- registrar-movimiento.ts
 - 0035_pedido_versiones_y_ajustes_de_deuda.sql
 - venta-corregir.int.spec.ts
-- productos-buscar.ts
+- insumos.repository.int.spec.ts
 - ayuda-para-corregir.spec.ts
-- cotizador/herramientas/comun.ts
+- domain/unidades.ts
 - plantilla-publica.ts
 - 0003_modulos_funciones.sql
 - 0011_automatizaciones_y_borradores.sql
-- ContextoDePeticion
+- ordenes/domain/estados.ts
 - reportes.ts
 - pantalla-dictado.tsx
 - 0030_produccion_lineas.sql
 - esquema/auth.ts
-- guardas-de-dinero.ts
-- react-dom
-- 1. Prompt del sistema
-- atender-meta.ts
+- herramientas-de-automatizaciones.ts
+- selector-de-modelo.spec.tsx
+- ordenes.repository.ts
+- insumos/consumidores.ts
 - 0006_herramientas.sql
 - 0034_guias_de_remision.sql
 - 0009_plataforma.sql
-- cabecera-de-consola.tsx
+- domain/pedido.ts
 - 0007_eventos_y_contadores.sql
 - logica-directa.ts
-- drizzle-orm
-- AgenteController
+- insumos/repositories/operaciones.repository.ts
+- Res
 - 0001_empresa_config.sql
 - idx_solicitudes_pendientes
 - 0023_ficha_de_cuenta.sql
@@ -258,27 +258,27 @@
 - recorte.ts
 - guarda.ts
 - scripts
-- unir
-- use-accion-de-mi-dia.ts
-- Res
-- historial/logica.ts
+- logica-lista.ts
+- articulos.repository.ts
+- EnlacesPublicosController
+- operaciones-conteos.ts
 - .llamar
-- asistencias.repository.ts
-- vacaciones.ts
+- enlaces-publicos.servicio.ts
+- guia.ts
 - presupuesto-de-carga.ts
 - cotizador/rutas.tsx
 - devDependencies
-- devDependencies
+- propuesta-de-pedido.ts
 - app.module.ts
-- .llamar
-- ServicioDeTranscripcion
-- Decisión
+- cobro-del-pedido.ts
+- condiciones.ts
+- logica-pantalla.ts
 - insumos/domain/pendientes.ts
-- modelo-de-lenguaje-openrouter.ts
+- extraccion.int.spec.ts
 - atender-llamada.ts
 - Ficha · Estado de cuenta de la empresa (pausar, dar de baja, quitar módulo)
 - ADR-003: PostgreSQL y Drizzle; alojamiento en Neon
-- plataforma
+- 6. Fases
 - mensaje-de-cobro.ts
 - AGENTS.md (reglas del constructor)
 - Capaz ERP
@@ -287,35 +287,53 @@
 - Fase 4: modulos, contratacion y permisos
 - dependencies
 - formulario.ts
-- 4. Fases
+- .cotizador
 - 0037_cierres_y_monto_minimo.sql
 - 3. Comparativa por categoría
 - Flujo entre módulos · que el trabajo sea fluido, rápido y sin volver a teclear
-- conecta/consultas.tsx
-- GrabadoraFalsa
+- venta-corregir-auditoria.int.spec.ts
+- MotorDeReglas
 - ordenes/adelanto.ts
-- Fichas · Cotizador B2 (cuadro por partes) y B3 (enlace público)
+- cobro-del-pedido.spec.ts
 - Fichas congeladas de la ola 4 · Captura por voz y texto, y Cotizador (corte B1)
 - Decisión
 - drizzle-kit
-- recarga-tras-despliegue.ts
+- main.tsx
+- plataforma-cuenta.int.spec.ts
 - pregunta-de-precio.ts
 - ordenes/logica.ts
+- borradores/repositorio.ts
 - cobros-pendientes.ts
+- pedido-mapeo.ts
+- flujo-adelanto.ts
 - editor-de-lineas.tsx
-- cotizaciones.repository.ts
+- enlaces.repository.ts
+- ficha-de-maquina.tsx
+- demo/cotizador.ts
 - Propuesta · Mejorar el diseño de Capaz ERP
+- csv.ts
+- ordenes/domain/pendientes.ts
 - 0040_agente_huella_y_memoria.sql
+- produccion/domain/pendientes.ts
+- kit-ola-3.tsx
 - 0039_agente.sql
+- logica-ficha.ts
+- Relevo: dónde quedó Capaz ERP y cómo seguir
 - Pila: React+Vite, NestJS 12, PostgreSQL+Drizzle, Better Auth, Zod
+- kardex.ts
 - Plan de construccion de los cimientos v1 (sustituido por v2)
-- herramientas-de-cotizador.ts
+- Plan para dejar funcionando el Cotizador (Cotizín) y la voz (SF / Tairos.RC) dentro de Capaz
+- leerSse
+- taller.repository.ts
 - rutas-de-areas.spec.ts
 - "registro"."movimiento_lineas"
-- Cómo crear un módulo (o una entidad) en Capaz ERP
+- dictado/deuda.ts
+- sectores.ts
+- lista-del-selector.tsx
+- conflicto
 - Evaluación del asistente por modelo · 2026-11-26
-- ref_zod
-- hoja-linea-cotizacion.tsx
+- comoEmpresa
+- Campo
 
 ## God Nodes (most connected - your core abstractions)
 1. `Boton()` - 499 edges
@@ -323,23 +341,23 @@
 3. `react` - 314 edges
 4. `notificar()` - 275 edges
 5. `datosOError()` - 273 edges
-6. `Campo()` - 221 edges
-7. `EstadoVacio()` - 221 edges
+6. `EstadoVacio()` - 221 edges
+7. `Campo()` - 221 edges
 8. `CampoSelect()` - 202 edges
 9. `Transaccion` - 200 edges
 10. `Insignia()` - 193 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `7. Orden, rondas e integración` --references--> `main()`  [INFERRED]
-  docs/FICHAS-COTIZADOR-B2-B3.md → apps/api/scripts/sembrar-demo.ts
-- `0.1 Mapa de carriles y qué arranca primero` --references--> `main()`  [INFERRED]
-  docs/FICHAS-OLA-4.md → apps/api/scripts/sembrar-demo.ts
-- `6.4 «Hecho cuando», medible` --references--> `main()`  [INFERRED]
-  docs/PLAN-INTEGRACION-COTIZIN-Y-SF.md → apps/api/scripts/sembrar-demo.ts
-- `13.1 Reglas de esta máquina (obligatorias)` --references--> `ModeloSimulado`  [INFERRED]
-  docs/PLAN-AGENTE-FLOTANTE.md → apps/api/src/core/agente/modelo-simulado.ts
-- `6. Bandeja de borradores en el núcleo` --references--> `borradores()`  [INFERRED]
-  docs/adr/ADR-015-estructura-primero-y-modulos-clasicos.md → apps/api/src/core/automatizaciones/automatizaciones.int.spec.ts
+- `6.2 Adendas a los carriles en curso (no son trabajo nuevo: hay que pedirlas)` --references--> `Emision`  [INFERRED]
+  docs/PARIDAD-COTIZIN.md → apps/api/src/modules/cotizador/domain/motor/costeo/tipos/borrador.ts
+- `S6 · Plataforma (servidor)` --references--> `GuardiaDePlataforma`  [INFERRED]
+  docs/PLAN-PARALELO.md → apps/api/src/core/plataforma/guardia-de-plataforma.ts
+- `4.7 Pantallas (`apps/web/src/modules/registro/`)` --references--> `Parcial`  [INFERRED]
+  docs/FICHAS-OLA-2.md → apps/api/src/modules/registro/dictado/interprete.ts
+- `S8 · Automatizaciones` --references--> `FuenteDeTiempo`  [INFERRED]
+  docs/PLAN-PARALELO.md → apps/api/src/core/automatizaciones/tipos.ts
+- `5. Cosas que no son obvias (trampas ya pisadas)` --references--> `ServicioDeAcceso`  [INFERRED]
+  docs/RELEVO.md → apps/api/src/core/modulos/acceso.service.ts
 
 ## Import Cycles
 - None detected.
@@ -352,15 +370,15 @@
 - **Contratacion y control de acceso por modulo** — consola_de_plataforma, planes_y_precios, empresa_modulos_contratacion, tres_niveles_de_control [INFERRED 0.85]
 - **Flujo voz a borrador a aprobacion** — registro_por_voz, agente_propone_usuario_aprueba, ejecutar_herramientas, modulo_registro [INFERRED 0.85]
 
-## Communities (322 total, 35 thin omitted)
+## Communities (340 total, 32 thin omitted)
 
 ### Community 0 - "hoja-imprimible.tsx"
-Cohesion: 0.09
-Nodes (29): formatoDeLaOrden(), ALINEA, ColumnaImprimible, COLUMNAS, PropsBarra, PropsBloque, PropsHoja, PropsTabla (+21 more)
+Cohesion: 0.10
+Nodes (29): formatoDelDocumento(), ALINEA, ColumnaImprimible, COLUMNAS, PropsBarra, PropsBloque, PropsHoja, PropsTabla (+21 more)
 
 ### Community 1 - "ajuste-y-recepcion.int.spec.ts"
-Cohesion: 0.35
-Nodes (11): verArticulo(), existencia(), codigo(), confirmarCritica(), crearArticulo(), crearProducto(), datos(), eventosDe() (+3 more)
+Cohesion: 0.32
+Nodes (12): verArticulo(), existencia(), codigo(), confirmarCritica(), crearArticulo(), crearProducto(), datos(), eventosDe() (+4 more)
 
 ### Community 2 - "src/index.ts"
 Cohesion: 0.04
@@ -368,19 +386,19 @@ Nodes (79): 1. Reglas del constructor (no negociables), Fase 1 · Infraestructur
 
 ### Community 3 - "web/package.json"
 Cohesion: 0.04
-Nodes (43): dependencies, @capaz/shared, cmdk, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono, lucide-react, motion, @radix-ui/react-dropdown-menu (+35 more)
+Nodes (54): dependencies, @capaz/shared, cmdk, @fontsource-variable/inter, @fontsource-variable/jetbrains-mono, lucide-react, motion, @radix-ui/react-dropdown-menu (+46 more)
 
-### Community 4 - "packages_shared_dist_index"
-Cohesion: 0.02
-Nodes (198): Dependencias, NOTA_DE_BORRADOR, cerrarTurno(), AYUDAS, campoId, cargar(), crearHerramientasDeBorradores(), Fila (+190 more)
+### Community 4 - "invitacion-crear.ts"
+Cohesion: 0.06
+Nodes (57): cabecerasDeLaPeticion(), middlewareDeCabeceras(), actorDe(), aIso(), bloquearMiembros(), contratosDeLaEmpresa(), FilaDeVista, miembrosDeLaVista() (+49 more)
 
-### Community 5 - "comoEmpresa"
-Cohesion: 0.02
-Nodes (118): eventos(), filasDe(), hoyEnZona(), Relevo, comoSistema(), darDeBajaModulo(), escribe(), haceDias() (+110 more)
+### Community 5 - "datosDe"
+Cohesion: 0.03
+Nodes (83): haceDias(), caso, cli, contar(), deudas, dictar(), Propuesta, Respuesta (+75 more)
 
-### Community 6 - "entorno.ts"
-Cohesion: 0.11
-Nodes (32): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+24 more)
+### Community 6 - "preparar-base.ts"
+Cohesion: 0.14
+Nodes (25): Credencial, Rol, baseDe(), cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES (+17 more)
 
 ### Community 7 - "compilerOptions"
 Cohesion: 0.09
@@ -391,8 +409,8 @@ Cohesion: 0.08
 Nodes (24): description, engines, node, name, packageManager, private, scripts, build (+16 more)
 
 ### Community 9 - "contratos/insumos-operaciones.ts"
-Cohesion: 0.02
-Nodes (87): camposDeCliente, CLASES_DE_CLIENTE, clienteConParecidoSchema, ClienteDto, clienteSchema, contratosDeClientes, crearClienteSchema, editarClienteSchema (+79 more)
+Cohesion: 0.03
+Nodes (67): contratosDeAuditoria, EventoDeAuditoria, eventoDeAuditoriaSchema, eventosDeAuditoria, ListarAuditoria, listarAuditoriaSchema, RESULTADOS_DE_AUDITORIA, camposDeCliente (+59 more)
 
 ### Community 10 - "shared/package.json"
 Cohesion: 0.10
@@ -404,7 +422,7 @@ Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtension
 
 ### Community 12 - "contratos/index.ts"
 Cohesion: 0.02
-Nodes (122): contratosDeAuditoria, EventoDeAuditoria, eventoDeAuditoriaSchema, eventosDeAuditoria, ListarAuditoria, listarAuditoriaSchema, RESULTADOS_DE_AUDITORIA, contratosDeClientesFusion (+114 more)
+Nodes (94): contratosDeClientesFusion, eventosDeClientesFusion, fusionarPedidoSchema, FusionDto, fusionSchema, id, parecidoDeClienteSchema, ParSimilarDto (+86 more)
 
 ### Community 13 - "FORCE ROW LEVEL SECURITY con politica unica"
 Cohesion: 0.16
@@ -414,57 +432,57 @@ Nodes (14): Migraciones drizzle-kit generate mas SQL propio, Better Auth (id de 
 Cohesion: 0.11
 Nodes (21): ADR-005: Registro unico de herramientas; el agente sin permisos especiales, Rechazo de argumentos reservados (empresaId, usuarioId, permisos, canal), core.auditoria (solo insercion), Canales ui, agente, mcp, sistema, Confirmacion con token firmado de un solo uso, solo desde la pantalla, Registro de herramientas con ejecutar() unico, ADR-009: La puerta HTTP son las herramientas, POST /api/v1/herramientas/:nombre (+13 more)
 
-### Community 15 - "costeo/cuadro-directo.ts"
-Cohesion: 0.05
-Nodes (104): conDescuento(), aTexto(), CIEN, decimal, DECIMALES_IMPORTE, DECIMALES_PORCENTAJE, DECIMALES_UNITARIO, dividir() (+96 more)
+### Community 15 - "base/dinero.ts"
+Cohesion: 0.08
+Nodes (70): conDescuento(), margenBajoElMinimo(), margenDe(), aTexto(), decimal, DECIMALES_IMPORTE, DECIMALES_PORCENTAJE, DECIMALES_UNITARIO (+62 more)
 
 ### Community 16 - "compilerOptions"
 Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, noEmit, noFallthroughCasesInSwitch (+8 more)
 
 ### Community 17 - "herramientas/cuadro-referencias.ts"
-Cohesion: 0.06
-Nodes (73): CambioDeLista, ListaParaAjustar, nombres(), palabrasDeBusqueda(), PlanDeBloque, planearAjusteEnBloque(), resumenDeBloque(), sinSentido() (+65 more)
+Cohesion: 0.05
+Nodes (80): hoyEnZona(), cotizadorCotizaciones, cotizadorListasDePrecio, cotizadorVersionLineas, precioDeCatalogoSinIgv(), codificarCursorDeLista(), CursorDeLista, decodificarCursorDeLista() (+72 more)
 
 ### Community 18 - "pasos-de-cierre.tsx"
 Cohesion: 0.09
-Nodes (53): cerrarSemana(), revisarSemana(), argumentosDeCierre(), avisoDeMovimientosPosteriores(), Conteos, Cuenta, diferenciaDeConteo(), ErroresDeConteo (+45 more)
+Nodes (49): cerrarSemana(), argumentosDeCierre(), avisoDeMovimientosPosteriores(), Conteos, Cuenta, diferenciaDeConteo(), ErroresDeConteo, esLaSemanaDeHoy() (+41 more)
 
 ### Community 19 - "compilerOptions"
 Cohesion: 0.14
 Nodes (13): compilerOptions, declaration, isolatedModules, module, moduleResolution, outDir, rootDir, skipLibCheck (+5 more)
 
-### Community 20 - "productos/pantalla-ficha.tsx"
-Cohesion: 0.09
-Nodes (46): archivarProducto(), buscarProductos(), crearProducto(), datosOError(), editarProducto(), ErrorDeApi, EstadoDeListado, POR_PAGINA (+38 more)
+### Community 20 - "llamar"
+Cohesion: 0.02
+Nodes (152): solicitarModulo(), cargarHistorial(), PaginaDeHistorial, ACCIONES, argumentosDeListado(), detalleDeEvento(), FiltrosDeHistorial, RESULTADOS (+144 more)
 
-### Community 21 - "ejecutor.ts"
-Cohesion: 0.03
-Nodes (72): EventoParaAuditar, ResultadoDeAuditoria, diaLocal(), HerramientasDeBorradores, puedeEntrar(), ComposicionModule, listarCorrecciones(), crearHerramientasDeComposicion() (+64 more)
+### Community 21 - "ContextoDeHerramienta"
+Cohesion: 0.02
+Nodes (127): Dependencias, NOTA_DE_BORRADOR, EscritorDeAuditoria, EventoParaAuditar, ResultadoDeAuditoria, diaLocal(), AccionResuelta, Entrada (+119 more)
 
 ### Community 22 - "db"
 Cohesion: 0.17
 Nodes (11): environment, image, ports, volumes, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, services (+3 more)
 
 ### Community 23 - "pantalla-guia-nueva.tsx"
-Cohesion: 0.09
-Nodes (38): prepararGuia(), argumentosDeEmision(), Armado, ElegidaDePedido, elegidasDePedido(), ErroresDeGuia, erroresDeLibres(), erroresDeLineas() (+30 more)
+Cohesion: 0.06
+Nodes (53): anular(), emitir(), anularGuia(), emitirGuia(), prepararGuia(), argumentosDeEmision(), Armado, ElegidaDePedido (+45 more)
 
-### Community 24 - "llamar"
+### Community 24 - "notificar"
 Cohesion: 0.02
-Nodes (303): alGuardar(), eliminarContacto(), eliminarDireccion(), guardarComercial(), guardarContacto(), guardarDireccion(), listarContactos(), listarDirecciones() (+295 more)
+Nodes (319): KitDiseno(), copiarEnlace(), alGuardar(), buscarContactos(), verCliente(), HojaNuevoCliente(), copiarTexto(), enviarPorWhatsApp() (+311 more)
 
-### Community 25 - "@nestjs/common"
-Cohesion: 0.03
-Nodes (57): Auth, crearAuth(), ADR-0011, GuardiaDeIdentidad, pruebaDeModuloVence, FuenteDeTiempo, RegistroDeFuentesDeTiempo, EmpresasController (+49 more)
+### Community 25 - "relevo.ts"
+Cohesion: 0.04
+Nodes (47): DisparadoresDeReglas, pruebaDeModuloVence, Opciones, FuenteDeTiempo, RaizDeDatos, RegistroDeFuentesDeTiempo, CANAL_DE_EVENTOS, acceso (+39 more)
 
 ### Community 26 - "RegistroDeHerramientas"
 Cohesion: 0.03
-Nodes (24): HerramientasDeAgente, AuditoriaModule, auditoriaListar, HerramientasDeAuditoria, HerramientasDeClientes, HerramientasModule, nuevo(), Fuentes (+16 more)
+Nodes (22): HerramientasDeAgente, HerramientasDeMemoria, AuditoriaModule, HerramientasDeAuditoria, HerramientasDeBorradores, HerramientasDeCaptura, HerramientasDeClientes, HerramientasDeComposicion (+14 more)
 
 ### Community 27 - "ordenes/correccion.ts"
-Cohesion: 0.11
-Nodes (35): corregirVenta(), alternarDesglose(), argumentosDeCorreccion(), avisoDeEstado(), conIgvEncima(), diferenciaDelAtajo(), ErroresDeCorreccion, FilaDeVistaPrevia (+27 more)
+Cohesion: 0.10
+Nodes (37): corregirVenta(), alternarDesglose(), argumentosDeCorreccion(), AVISO_DE_APROBACION, avisoDeEstado(), conIgvEncima(), diferenciaDelAtajo(), ErroresDeCorreccion (+29 more)
 
 ### Community 28 - "api/.oxlintrc.json"
 Cohesion: 0.29
@@ -486,165 +504,165 @@ Nodes (5): plugins, rules, react/only-export-components, react/rules-of-hooks, $
 Cohesion: 0.50
 Nodes (3): overrides, typescript, packages
 
-### Community 33 - "seguimiento.int.spec.ts"
-Cohesion: 0.19
-Nodes (11): crear(), datos(), etapaLlamada(), etapas(), eventos(), actividad(), crear(), datos() (+3 more)
+### Community 33 - "confirmar"
+Cohesion: 0.07
+Nodes (61): archivarFormato(), archivarItem(), archivarMaquina(), archivarTarifa(), crearFormato(), crearItem(), crearTarifa(), editarFormato() (+53 more)
 
-### Community 36 - "http-de-pruebas.ts"
-Cohesion: 0.05
-Nodes (84): personaNueva(), personaNueva(), personaNueva(), confirmando(), datos(), fuera, llamar(), tarjetas() (+76 more)
+### Community 36 - "agregarMiembro"
+Cohesion: 0.08
+Nodes (52): agregarMiembro(), crearCon(), aceptada(), borradores(), emitir(), cliente(), anular(), confirmado() (+44 more)
 
 ### Community 37 - "cotizador-cuadro.ts"
 Cohesion: 0.04
 Nodes (61): agregarLineaSchema, CAMPOS_EDITABLES_DE_FILA, centimosPositivos, claveDeFila, columnasSchema, contratosDeCotizadorCuadro, costoDirectoSchema, editarLineaSchema (+53 more)
 
-### Community 38 - "confirmar"
+### Community 38 - "pantalla-importar-historial.tsx"
 Cohesion: 0.05
-Nodes (76): ejecutarRegla(), probarRegla(), ETIQUETA_DE_MODO, FilaDeArgumento, PanelProbar(), correr(), Prueba, aplicarCsv() (+68 more)
+Nodes (77): aplicarCsv(), archivarWebhook(), configurarConexion(), crearClaveApi(), crearWebhook(), desactivarConexion(), editarWebhook(), ErrorDeApi (+69 more)
 
-### Community 39 - "ejecutor-de-plataforma.ts"
+### Community 39 - "herramientas-de-plataforma.ts"
 Cohesion: 0.05
-Nodes (81): CargaDeToken, crearToken(), esCarga(), firmar(), verificarToken(), Catalogo, ModuloPlanificado, modulosDelPlan() (+73 more)
+Nodes (71): Catalogo, ModuloPlanificado, modulosDelPlan(), PedidoDeAlta, PlanDeAlta, planificarAlta(), Rechazo, revisar() (+63 more)
 
-### Community 40 - "cuadro-vista.ts"
-Cohesion: 0.10
-Nodes (39): CuadroEvaluado, evaluarBorrador(), evaluarEmitida(), evaluarVersion(), papelPendiente(), SIN_CODIGOS, validarCuadro(), config (+31 more)
+### Community 40 - "cuadro.ts"
+Cohesion: 0.08
+Nodes (51): evaluarBorrador(), evaluarEmitida(), evaluarVersion(), papelPendiente(), SIN_CODIGOS, validarCuadro(), nuevo(), config (+43 more)
 
-### Community 41 - "pantalla-documento-cotizacion.tsx"
-Cohesion: 0.09
-Nodes (53): COLUMNAS, EMPRESA, FILAS, KitImpresion(), textoDeIgv(), AvisoDeEmpresa(), COLUMNA_CON_IGV, COLUMNAS (+45 more)
+### Community 41 - "ordenes/pantalla-documento.tsx"
+Cohesion: 0.06
+Nodes (74): COLUMNAS, EMPRESA, FILAS, KitImpresion(), verGuia(), COLUMNAS_GUIA, CuerpoDeGuia(), correccionVigente() (+66 more)
 
 ### Community 42 - "ordenes/pantalla-ficha.tsx"
-Cohesion: 0.08
-Nodes (48): anotar(), aplicarPaso(), cancelar(), corregirDatos(), refrescarPedidos(), refrescarTrasCorregir(), anotarPedido(), cambiarEstado() (+40 more)
+Cohesion: 0.05
+Nodes (79): SelectorDeCliente(), anotar(), aplicarPaso(), cancelar(), corregirDatos(), accionesDeImpresion(), enviarPorWhatsApp(), refrescarPedidos() (+71 more)
 
-### Community 45 - "registro/hoja-movimiento.tsx"
-Cohesion: 0.08
-Nodes (54): crearDeudaConAdelanto(), registrarMovimiento(), BarraDeTotal(), Props, Contenido(), alTocarPista(), enviar(), HojaDeCorreccion() (+46 more)
+### Community 45 - "src/herramientas.ts"
+Cohesion: 0.04
+Nodes (51): ActividadDto, actividadSchema, contratosDeCrm, crearActividadSchema, crearOportunidadSchema, dia, editarOportunidadSchema, ESTADOS_DE_OPORTUNIDAD (+43 more)
 
-### Community 46 - "campos-de-pago.tsx"
-Cohesion: 0.11
-Nodes (37): listarCuentasParaCobrar(), BloqueDePago(), Props, cuentas, html(), CampoDeCuenta(), CampoDeMonto(), CamposDePago() (+29 more)
+### Community 46 - "pago.ts"
+Cohesion: 0.12
+Nodes (31): listarCuentasParaCobrar(), BloqueDePago(), Props, cuentas, html(), OpcionesDePago(), Props, cuentaDeCobro() (+23 more)
 
 ### Community 47 - "panel-del-agente.tsx"
-Cohesion: 0.07
-Nodes (39): AVISO_SIN_IA, AVISO_SIN_PERMISO, AVISO_TOPE, ETIQUETA_DE_RESOLUCION, MARCADOR_DE_LA_CAJA, SALUDO_CON_ASISTENTE, SALUDO_VACIO, modulo() (+31 more)
+Cohesion: 0.08
+Nodes (34): AVISO_SIN_IA, AVISO_SIN_PERMISO, AVISO_TOPE, ETIQUETA_DE_RESOLUCION, MARCADOR_DE_LA_CAJA, SALUDO_CON_ASISTENTE, SALUDO_VACIO, TEXTO_DEL_HISTORIAL_VACIO (+26 more)
 
 ### Community 48 - "atender-escritura.ts"
-Cohesion: 0.25
-Nodes (19): atenderEscritura(), codigoDe(), comoBorrador(), conConfirmacionPropia(), contarEscritura(), dejarHuella(), ejecutar(), ejecutarLectura() (+11 more)
+Cohesion: 0.12
+Nodes (36): atenderEscritura(), codigoDe(), comoBorrador(), conConfirmacionPropia(), contarEscritura(), dejarHuella(), ejecutar(), ejecutarLectura() (+28 more)
 
-### Community 49 - "pantalla-empresas.tsx"
-Cohesion: 0.09
-Nodes (43): datosOError(), ErrorDeApi, CLAVE_EMPRESAS, CLAVE_MODULOS, CLAVE_PLANES, CLAVE_SOLICITUDES, EmpresaDeLista, useEmpresas() (+35 more)
+### Community 49 - "plataforma/api.ts"
+Cohesion: 0.07
+Nodes (53): atenderSolicitud(), datosOError(), EntradaDePlataforma, ErrorDeApi, listarEmpresas(), listarModulos(), listarPlanes(), listarSolicitudes() (+45 more)
 
 ### Community 50 - "pantalla-vacaciones.tsx"
 Cohesion: 0.04
-Nodes (128): refrescarPersonal(), resolverAccion(), Resultado, usePermisosDePersonal(), anularAdelanto(), archivarColaborador(), cargarActivos(), cargarAsistenciasDelDia() (+120 more)
+Nodes (122): refrescarPersonal(), resolverAccion(), Resultado, usePermisosDePersonal(), anularAdelanto(), archivarColaborador(), cargarActivos(), cargarAsistenciasDelDia() (+114 more)
 
 ### Community 51 - "0026_inventario_compras_operaciones.sql"
 Cohesion: 0.10
 Nodes (32): "compras"."facturas", "compras"."solicitud_lineas", "compras"."solicitudes", conteo_lineas_modulo, conteos_actualizado, conteos_modulo, conteos_sin_borrado, facturas_actualizado (+24 more)
 
-### Community 52 - "cotizaciones-emision.ts"
-Cohesion: 0.05
-Nodes (79): leerCuadro(), EmisionDeCuadro, ajusteDeDetalle(), armarDeLista(), armarLineas(), armarManual(), avisosDeCambioDePrecio(), CodigoDeRechazoDeLinea (+71 more)
+### Community 52 - "herramientas-de-cotizador.ts"
+Cohesion: 0.02
+Nodes (223): cotizadorVersiones, CONFIGURACION_POR_DEFECTO, validarAjusteDeCliente(), validarConfiguracion(), cantidadLegible(), CLAVE_DE_CORRELATIVO, codigoDeCotizacion(), descripcionDeLineaAceptada() (+215 more)
 
 ### Community 53 - "borrador.ts"
 Cohesion: 0.05
-Nodes (52): cantidadSchema, costoUnitarioSchema, decimalTexto(), hojasSchema, importeSchema, medidaPositivaSchema, medidaSchema, porcentajeSchema (+44 more)
+Nodes (54): cantidadPositivaSchema, cantidadSchema, costoUnitarioSchema, decimalTexto(), hojasSchema, importePositivoSchema, importeSchema, medidaPositivaSchema (+46 more)
 
 ### Community 54 - "contratos/ordenes.ts"
 Cohesion: 0.02
-Nodes (115): 4.3 Pedidos (`ordenes`), calcularTotalesDeCompra(), campoDeEntrada, CampoDeFicha, campoDeSalida, CAMPOS_DE_FICHA, EJEMPLO_DE_CAMPO_DE_FICHA, ETIQUETA_DE_CAMPO_DE_FICHA (+107 more)
+Nodes (142): 4.3 Pedidos (`ordenes`), calcularTotalesDeCompra(), cantidad, CompraCompletaDto, compraCompletaSchema, CompraDto, compraSchema, contratosDeCompras (+134 more)
 
-### Community 55 - "CampoMonto"
-Cohesion: 0.13
-Nodes (34): NombreDeCliente(), buscarContactos(), CLAVE_CAPTURA, crearCliente(), listarCategorias(), listarCuentas(), verCliente(), verDeuda() (+26 more)
+### Community 55 - "tarjeta-de-borrador.tsx"
+Cohesion: 0.18
+Nodes (27): CLAVE_CAPTURA, crearCliente(), listarCategorias(), listarCuentas(), verDeuda(), aplicarOpcion(), ArgsEditables, centimosDe() (+19 more)
 
-### Community 56 - "contratos-herramientas.ts"
-Cohesion: 0.11
-Nodes (26): COLABORADOR_ID, ID_DE_EJEMPLO, aContratoDto(), contratoCrear, contratosListar, contratoTerminar, ID, responder() (+18 more)
+### Community 56 - "personal/herramientas/comunes.ts"
+Cohesion: 0.03
+Nodes (137): personalContratos, personalVacaciones, personal, personalAdelantos, personalAsistencias, personalColaboradores, CLAVE_DE_ADELANTO, codigoDeAdelanto() (+129 more)
 
 ### Community 57 - "main"
-Cohesion: 0.04
-Nodes (57): main(), Brechas frente a lo que piden las empresas en Perú (insumo del usuario, 2026-11-16), Comparación con lo construido (verificado contra el código de `main`), Lectura para la estrategia (propuesta, no decisión), Siguiente paso sugerido, 1. Dónde estamos (en `main`, verificado con pruebas), 2. Lo que falta, en orden (cada paso lo integro y compruebo con `pnpm check` antes del siguiente), 3. Qué no depende de nosotros (y sin lo cual no «queda funcionando») (+49 more)
+Cohesion: 0.05
+Nodes (50): main(), 1. Resumen en diez líneas, 4.2 Lista de cotizaciones, 4.4 Precios (lista de precios), 4.5 Clientes, 4.8 Inicio, onboarding, cuenta, registro, agente y voz, 4. Pantallas, 6.1 Reglas de reparto (+42 more)
 
 ### Community 58 - "automatizaciones/logica.ts"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (42): guardarRegla(), FormularioRegla(), guardar(), Props, argumentosDeGuardado(), AYUDA_DE_MODO, condicionDeFila(), detalleLegible() (+34 more)
 
 ### Community 59 - "base/empresa.ts"
-Cohesion: 0.06
-Nodes (51): configuracionDeMotor(), FilaDeConfiguracion, REDONDEOS, CambioDeConfiguracion, cambioDeConfiguracionSchema, camposDeConfiguracion, CONDICIONES_VACIAS, CondicionesComerciales (+43 more)
+Cohesion: 0.07
+Nodes (33): config, CambioDeConfiguracion, cambioDeConfiguracionSchema, camposDeConfiguracion, CONDICIONES_VACIAS, CondicionesComerciales, condicionesSchema, configuracionEmpresaSchema (+25 more)
 
 ### Community 60 - "registro/logica.ts"
-Cohesion: 0.04
-Nodes (105): refrescarRegistro(), resolverAccion(), Resultado, abonarDeuda(), copiarPagosFijos(), crearCuenta(), crearDeuda(), editarCuenta() (+97 more)
+Cohesion: 0.03
+Nodes (194): refrescarRegistro(), resolverAccion(), Resultado, abonarDeuda(), anularDeuda(), anularMovimiento(), archivarCuenta(), buscarContactos() (+186 more)
 
 ### Community 61 - "carcasa.tsx"
-Cohesion: 0.06
-Nodes (41): Carcasa(), PanelDelAgente, salir(), InsigniaDePendientes(), ListaDeMenu(), ModoDeMenu, OCULTO, Props (+33 more)
+Cohesion: 0.04
+Nodes (67): BarraInferior(), BarraSuperior(), iniciales(), Props, Carcasa(), PanelDelAgente, salir(), GLIFOS (+59 more)
 
-### Community 62 - "ordenes/pantalla-documento.tsx"
-Cohesion: 0.10
-Nodes (45): accionesDeImpresion(), enviarPorWhatsApp(), SelloDeReemplazada(), AdelantoDelPedido, correccionVigente(), descripcionConFicha(), DESDE_CONFIRMADO, DIAS_DE_VIGENCIA (+37 more)
+### Community 62 - "documentos.ts"
+Cohesion: 0.13
+Nodes (26): AdelantoDelPedido, descripcionConFicha(), DESDE_CONFIRMADO, DIAS_DE_VIGENCIA, documentoLlevaIgv(), documentosDisponibles(), enlaceDeWhatsApp(), ESTADOS_PERMITIDOS (+18 more)
 
-### Community 63 - "plataforma/logica.ts"
+### Community 63 - "hoja-plan.tsx"
 Cohesion: 0.10
-Nodes (40): crearEmpresa(), fijarContrato(), guardarPlan(), restablecerContrasena(), SalidaDePlataforma, Contenido(), enviar(), HojaContrato() (+32 more)
+Nodes (38): crearEmpresa(), darDeBajaModulo(), fijarContrato(), guardarPlan(), llamarConfirmandoPlataforma(), reactivarModulo(), restablecerContrasena(), SalidaDePlataforma (+30 more)
 
 ### Community 64 - "contratos/compras-operaciones.ts"
 Cohesion: 0.06
 Nodes (33): anularFacturaSchema, anularSolicitudSchema, centimosNoNegativos, ConciliacionDto, conciliacionSchema, conciliarFactura(), contratosDeComprasOperaciones, convertirSolicitudSchema (+25 more)
 
-### Community 65 - "packages_shared_dist_index_formatearsoles"
+### Community 65 - "packages_shared_dist_index"
 Cohesion: 0.02
-Nodes (269): CargaDeEventoInvalida, crearEmisor(), emitir, EmitirSinTransaccion, MapaDeEventos, categoriaHabitual(), CuentaResuelta, deudasAbiertasDe() (+261 more)
+Nodes (296): auditoriaListar, crearHerramientasDeBorradores(), siguienteNumero(), ClaveDeDato, CLAVES_DATOS, DATOS, empresaActualizarConfiguracion, ETIQUETAS (+288 more)
 
-### Community 66 - "plataforma/pantalla-empresa.tsx"
-Cohesion: 0.10
-Nodes (37): activarModulo(), ChipDeModulo(), CodigoDeModulo(), copiar(), Estado, PUNTO, TEXTO_DE_ESTADO, Contenido() (+29 more)
+### Community 66 - "unir"
+Cohesion: 0.05
+Nodes (91): ControlSegmentado(), Props, AvisoDeConfirmacion(), Props, activarModulo(), useAtajosDeLista(), AvatarDeEmpresa(), colorDe() (+83 more)
 
-### Community 67 - "datosOError"
+### Community 67 - "api/consultas.ts"
 Cohesion: 0.04
-Nodes (152): activarArticulo(), ajustarExistencia(), archivarArticulo(), buscarArticulos(), buscarProductos(), CLAVE_INSUMOS, editarArticulo(), listarExistencias() (+144 more)
+Nodes (147): ResumenDelCuadro(), activarArticulo(), ajustarExistencia(), archivarArticulo(), buscarArticulos(), buscarProductos(), CLAVE_INSUMOS, editarArticulo() (+139 more)
 
 ### Community 68 - "dueno"
-Cohesion: 0.05
-Nodes (89): activarModulo(), dueno(), sumarDias(), borrador(), delCotizador(), emitida(), enEstado(), ESTADOS (+81 more)
+Cohesion: 0.04
+Nodes (100): AppModule, personaNueva(), personaNueva(), Persona, personaNueva(), UN_SEGUNDO, abrirSesion(), activarModulo() (+92 more)
 
 ### Community 69 - "ref_vitest"
 Cohesion: 0.03
-Nodes (93): migrar(), cambiarModulo(), crearEmpresa(), existeEmpresa(), hacerAdmin(), leerArgumentos(), listar(), Opciones (+85 more)
+Nodes (116): CONVERSACION, EMPRESA, OTRA_EMPRESA, TURNO, correo(), registrar(), AHORA, candidatos (+108 more)
 
 ### Community 70 - "cotizador-taller.ts"
 Cohesion: 0.05
 Nodes (42): buscar, camposDeFormato, camposDeItem, camposDeMaquina, camposDeTarifa, contratosDeCotizadorTaller, costo, crearFormatoDePliegoSchema (+34 more)
 
-### Community 71 - "fecha.ts"
-Cohesion: 0.36
-Nodes (5): ANTEAYER, AYER, fechaDictada(), normalizar(), restarDias()
+### Community 71 - "tipos-del-turno.ts"
+Cohesion: 0.06
+Nodes (42): argumentosSeguros(), atenderLlamadas(), avisar(), AVISO_DE_LARGO, AVISO_DE_RONDAS, AVISO_DE_TOPE, comoFalla(), correrTurno() (+34 more)
 
-### Community 72 - "contratos/compras.ts"
-Cohesion: 0.05
-Nodes (40): cantidad, CompraCompletaDto, compraCompletaSchema, CompraDto, compraSchema, contratosDeCompras, CostoPorArticuloDto, costoPorArticuloSchema (+32 more)
-
-### Community 73 - "ordenes-correccion.ts"
+### Community 72 - "contratos/produccion.ts"
 Cohesion: 0.04
-Nodes (59): quitarIgv(), texto(), baseDeCorreccion, contratosDeOrdenesCorreccion, CorreccionConAjusteDto, correccionConAjusteSchema, CorreccionListadaDto, correccionListadaSchema (+51 more)
+Nodes (47): BASES_DE_PRECIO, COINCIDENCIAS_DE_PRECIO, contratosDePreciosAnteriores, dia, entradaDePrecioAnteriorSchema, entradaDePreciosAnterioresSchema, FilaConCoincidencia, filaConCoincidenciaSchema (+39 more)
+
+### Community 73 - "contratos/plataforma.ts"
+Cohesion: 0.08
+Nodes (25): aplicadoEnAltaSchema, codigoDeModulo, contratoDeModuloSchema, contratosDePlataforma, cuentaDeEmpresaSchema, empresaFichaSchema, empresaResumidaSchema, entradaDeModulo (+17 more)
 
 ### Community 74 - "composicion/mi-dia-logica.ts"
 Cohesion: 0.12
 Nodes (23): anotacionesDe(), AnotacionLeida, aplicarAnotaciones(), centimosDe(), componerMiDia(), conModulo(), ENTIDAD_DE_ORIGEN, entidadDeBorrador() (+15 more)
 
 ### Community 75 - "servicio-de-turnos.ts"
-Cohesion: 0.02
-Nodes (112): como(), ctxDe(), empresaNueva(), filas(), Persona, poner(), como(), filas() (+104 more)
+Cohesion: 0.03
+Nodes (113): AYUDAS, TOPE_POR_OPERACION_POR_OMISION, Cambios, crearHerramientasDeAgente(), Dependencias, describirCambios(), dolares(), modeloValido() (+105 more)
 
-### Community 76 - "Sesion"
-Cohesion: 0.07
-Nodes (23): Cuerpo, dormir(), ErrorDeHerramienta, Sesion, 0. Reparto de trabajo (para no pisarse), 1. Reglas que no se rompen, 2. Preparación, 3. Ensayo en una rama (+15 more)
+### Community 76 - "sembrar-demo.ts"
+Cohesion: 0.09
+Nodes (35): crearAzar(), ANFITRIONES_LOCALES, CLAVE_DEMO, conAdmin(), CORREO_DEMO, Entorno, soltarLimiteDeAcceso(), Cuerpo (+27 more)
 
 ### Community 77 - "contratos/insumos.ts"
 Cohesion: 0.06
@@ -658,73 +676,73 @@ Nodes (7): categorias_producto_actualizado, cliente_comercial_actualizado, clien
 Cohesion: 0.06
 Nodes (34): AdelantoDto, adelantoSchema, anularAdelantoSchema, AsistenciaDto, asistenciaSchema, camposDeColaborador, centimos, ColaboradorCompletoDto (+26 more)
 
-### Community 80 - "Boton"
+### Community 80 - "EstadoVacio"
 Cohesion: 0.02
-Nodes (294): ErrorDeRuta(), CLIENTES, COLUMNAS, ESTADOS, Fila, FILAS, KitDatos(), ListaDeEjemplo() (+286 more)
+Nodes (269): ErrorDeRuta(), CLIENTES, COLUMNAS, ESTADOS, FichaDeEjemplo(), Fila, FILAS, KitDatos() (+261 more)
 
-### Community 81 - "react"
-Cohesion: 0.02
-Nodes (152): BarraInferior(), GLIFOS, IconoMenu(), solicitarModulo(), AVISOS, Botones(), Campos(), Capas() (+144 more)
+### Community 81 - "Boton"
+Cohesion: 0.03
+Nodes (165): AVISOS, Botones(), Campos(), Capas(), Colores(), Estados(), Etiquetas(), Iconos() (+157 more)
 
-### Community 82 - "empresa/pantalla-empresa.tsx"
-Cohesion: 0.06
-Nodes (64): Dato(), EdicionDeIdentidad(), EdicionDePie(), LecturaDeIdentidad(), LecturaDePie(), PropsEdicion, cargarImagen(), prepararLogo() (+56 more)
+### Community 82 - "logica-datos.ts"
+Cohesion: 0.07
+Nodes (54): Dato(), EdicionDeIdentidad(), LecturaDeIdentidad(), LecturaDePie(), PropsEdicion, cargarImagen(), prepararLogo(), cambiosDeZona() (+46 more)
 
-### Community 83 - "cuadro-comun.ts"
-Cohesion: 0.13
-Nodes (25): TarifaCopiada, avisosDelCuadro(), veCostos(), auditarCuadro(), avisosVisibles(), Cargada, editarCuadro(), Entorno (+17 more)
+### Community 83 - "logica-cuadro.ts"
+Cohesion: 0.12
+Nodes (32): BarraInferior(), Props, DesgloseDePliegos(), FilaEnHoja, HojaDeFila(), HojaDeReferencias(), agruparPorFactor(), estaEnBorrador() (+24 more)
 
-### Community 84 - "SelectorDeRegistro"
-Cohesion: 0.05
-Nodes (73): buscarClientes(), crearCliente(), primerosClientes(), verCliente(), ListaDeCandidatas(), Props, FormularioCliente(), Props (+65 more)
+### Community 84 - "use-alta-de-cliente.ts"
+Cohesion: 0.07
+Nodes (41): crearCliente(), ListaDeCandidatas(), Props, FormularioCliente(), Props, props, ContenidoNuevo(), Props (+33 more)
 
 ### Community 85 - "hilo.tsx"
-Cohesion: 0.06
-Nodes (45): agrupar(), Elemento(), Escribiendo(), Ficha(), Grupo, Hilo(), IndicadorDePaso(), Paso (+37 more)
+Cohesion: 0.07
+Nodes (43): agrupar(), Elemento(), Escribiendo(), Ficha(), Grupo, Hilo(), IndicadorDePaso(), Paso (+35 more)
 
-### Community 86 - "herramientas-de-agente.ts"
-Cohesion: 0.15
-Nodes (18): AYUDAS, Cambios, crearHerramientasDeAgente(), Dependencias, describirCambios(), dolares(), catalogoConPrecios(), rechazoPrevio() (+10 more)
+### Community 86 - "agente.int.spec.ts"
+Cohesion: 0.08
+Nodes (22): como(), ctxDe(), empresaNueva(), filas(), Persona, poner(), como(), filas() (+14 more)
 
 ### Community 87 - "use-turno.ts"
-Cohesion: 0.12
-Nodes (29): alTerminarConError(), antesDeLaRespuesta(), aplicarDetencion(), aplicarEvento(), aplicarRecuperacion(), cerrarHerramientas(), conAgente(), decidirRecuperacion() (+21 more)
+Cohesion: 0.07
+Nodes (44): conv(), grupos(), html(), agruparConversaciones(), claveDeFecha(), diaEnZona(), diasEntre(), GrupoDeConversaciones (+36 more)
 
-### Community 88 - "prompt.ts"
-Cohesion: 0.13
-Nodes (23): campos(), camposCambiados(), capturarLeccionesDeBorradores(), CODIGOS_QUE_ENSEÑAN, leccionesDeErroresCorregidos(), armarPrompt(), bloqueDeLecciones(), DatosDelPrompt (+15 more)
+### Community 88 - "herramientas-de-memoria.ts"
+Cohesion: 0.07
+Nodes (42): campos(), camposCambiados(), capturarLeccionesDeBorradores(), CODIGOS_QUE_ENSEÑAN, leccionesDeErroresCorregidos(), AYUDAS, crearHerramientasDeMemoria(), armarPrompt() (+34 more)
 
-### Community 89 - "conexiones.ts"
-Cohesion: 0.06
-Nodes (35): ALCANCES_DE_CLAVE, ClaveApi, claveApiCreadaSchema, claveApiCrearSchema, claveApiRevocarSchema, claveApiSchema, clavesApiListarSchema, codigoDeConector (+27 more)
+### Community 89 - "domain/cuadro-emision.ts"
+Cohesion: 0.07
+Nodes (38): CantidadEnviada, cantidadesEnviadas(), descripcionDeLinea(), EmisionDeCuadro, lineasDeCuadro(), prepararEmisionDeCuadro(), problemaDeColumna(), problemaDeCompletitud() (+30 more)
 
 ### Community 90 - "productos-ampliados.ts"
 Cohesion: 0.10
 Nodes (27): aFichaDto(), categoriasProductoArchivar, categoriasProductoGuardar, categoriasProductoListar, productosFichaGuardar, productosFichaVer, productosUnidadEliminar, productosUnidadesListar (+19 more)
 
 ### Community 91 - "cierre-cerrar.ts"
-Cohesion: 0.03
-Nodes (84): registro, registroCategorias, registroCierres, registroCuentas, registroDeudaAjustes, registroDeudas, registroMovimientoLineas, registroMovimientos (+76 more)
+Cohesion: 0.05
+Nodes (60): CATEGORIAS_POR_DEFECTO, CUENTA_POR_DEFECTO, normalizarNombre(), ajustesPosterioresACierre(), descripcionDeDiferencia(), diaCompleto(), diaYMes(), diferenciaDe() (+52 more)
 
-### Community 92 - "pantalla-usuarios.tsx"
-Cohesion: 0.11
-Nodes (38): anularInvitacion(), asignarModulo(), cambiarRol(), DatosDeUsuarios, invitar(), quitarMiembro(), copiarEnlace(), Contenido() (+30 more)
+### Community 92 - "hoja-miembro.tsx"
+Cohesion: 0.14
+Nodes (23): asignarModulo(), cambiarRol(), DatosDeUsuarios, quitarMiembro(), Contenido(), HojaMiembro(), Props, Resultado (+15 more)
 
 ### Community 93 - "catalogo-del-turno.ts"
-Cohesion: 0.11
-Nodes (27): reparados(), catalogoDelTurno(), Definicion, definicionDe(), definiciones, delModulo(), disponibles(), EntradaDelCatalogo (+19 more)
+Cohesion: 0.07
+Nodes (49): reparados(), resolver(), comoTexto(), describirHerramienta(), mapaDelSoftware(), objeto(), queHaceElAsistente(), catalogoDelTurno() (+41 more)
 
 ### Community 94 - "ordenes-guias.ts"
 Cohesion: 0.05
 Nodes (41): contratosDeOrdenes, EstadoDePedido, CandidatoParaGuiaDto, candidatoParaGuiaSchema, cantidad, contratosDeGuias, DIAS_DE_CANDIDATOS_ENTREGADOS, emitirGuiaSchema (+33 more)
 
-### Community 95 - "pantalla-guia.tsx"
-Cohesion: 0.11
-Nodes (28): anular(), emitir(), anularGuia(), emitirGuia(), verGuia(), mensajeDeRechazoDeGuia(), COLUMNAS_GUIA, CuerpoDeGuia() (+20 more)
+### Community 95 - "guias.repository.ts"
+Cohesion: 0.08
+Nodes (38): comprobarPedidoParaGuia(), DatosDeTraslado, LineaDeGuiaPreparada, codigoDePedido(), aCandidato(), aGuiaCompleta(), aGuiaDto(), aLineaDeGuiaDto() (+30 more)
 
 ### Community 96 - "app/rutas.tsx"
 Cohesion: 0.06
-Nodes (38): cargadorRaiz(), DE_AREAS, router, rutas, cargarConfiguracion(), rutas, cargarSucursales(), rutas (+30 more)
+Nodes (38): DE_AREAS, rutas, cargarConfiguracion(), rutas, rutas, cargarSucursales(), rutas, cargarUsuarios() (+30 more)
 
 ### Community 97 - "config.js"
 Cohesion: 0.22
@@ -732,19 +750,19 @@ Nodes (11): cargarEnv(), conBase(), credencialDe(), credencialesDeRoles(), ROLES
 
 ### Community 98 - "editor-de-productos.tsx"
 Cohesion: 0.12
-Nodes (34): buscarProductosParaLinea(), EditorDeProductos(), ElegirProducto(), FilaEditable(), Props, PropsFila, argumentosDeCorreccion(), ErroresDeCorreccion (+26 more)
+Nodes (35): buscarProductosParaLinea(), EditorDeProductos(), ElegirProducto(), FilaEditable(), Props, PropsFila, argumentosDeCorreccion(), ErroresDeCorreccion (+27 more)
 
 ### Community 99 - "pedidos-correccion.ts"
-Cohesion: 0.02
-Nodes (208): abonados, abonadoVerificado(), ordenes, ordenesGuiaLineas, ordenesGuias, ordenesPedidoEventos, ordenesPedidoLineas, ordenesPedidos (+200 more)
+Cohesion: 0.08
+Nodes (32): aFavorDelCliente(), avisosDeCorreccion(), comprobarGuias(), comprobarSoloPrecioEIgv(), comprobarUmbralDeTrabajador(), diferenciasDeLineas(), distinta(), fijarTotal() (+24 more)
 
-### Community 100 - "plataforma/api.ts"
-Cohesion: 0.14
-Nodes (25): atenderSolicitud(), darDeBajaModulo(), EntradaDePlataforma, listarEmpresas(), listarModulos(), listarPlanes(), listarSolicitudes(), llamarConfirmandoPlataforma() (+17 more)
+### Community 100 - "modelo-de-lenguaje-openrouter.ts"
+Cohesion: 0.08
+Nodes (28): ajustar(), esObjeto(), esquemaDeSalida(), Nodo, SIN_SOPORTE, ModeloNulo, ConfigDeCaptura, crearModeloDeLenguaje() (+20 more)
 
 ### Community 101 - "pantalla-mi-dia.tsx"
-Cohesion: 0.17
-Nodes (24): avisosDeFuentes(), DIAS, enLista(), esSinAcceso(), estaAlDia(), fechaLarga(), fuentesConFalla(), fuentesRecortadas() (+16 more)
+Cohesion: 0.09
+Nodes (45): avisoDeAccion(), avisosDeFuentes(), DIAS, enlaceDeWhatsapp(), enLista(), esSinAcceso(), estaAlDia(), ETIQUETA_DE_URGENCIA (+37 more)
 
 ### Community 102 - "contratos/personal-contratos.ts"
 Cohesion: 0.07
@@ -756,39 +774,39 @@ Nodes (22): aprobarBorradorSchema, Borrador, borradorAprobadoSchema, borradorSch
 
 ### Community 104 - "Plan: el agente flotante de Capaz (estilo daemon de Tairos)"
 Cohesion: 0.05
-Nodes (42): accion(), 10. Variables de configuración nuevas (`infra/config/config.ts`), 2.1 Drizzle, 2.2 Seguridad a mano, al final de la migración, 2.3 Ejemplos para `aislamiento-ejemplos.ts` (obligatorio en el mismo paso), 2.4 Prueba de privacidad (`core/agente/privacidad.int.spec.ts`), 2. Modelo de datos, 3.1 Eventos SSE (`POST /api/v1/agente/turno`) (+34 more)
+Nodes (42): filtrarPorPermisos(), accion(), 10. Variables de configuración nuevas (`infra/config/config.ts`), 2.1 Drizzle, 2.2 Seguridad a mano, al final de la migración, 2.3 Ejemplos para `aislamiento-ejemplos.ts` (obligatorio en el mismo paso), 2.4 Prueba de privacidad (`core/agente/privacidad.int.spec.ts`), 2. Modelo de datos (+34 more)
 
 ### Community 105 - "logica-cobertura.ts"
 Cohesion: 0.46
 Nodes (5): diasQueQuedan(), MESES, nombreDelMes(), base, textoDeCobertura()
 
 ### Community 106 - "fusion-con-modelo.ts"
-Cohesion: 0.09
-Nodes (43): elegirCentimos(), elegirDia(), milesimasEnElTexto(), nombreDelModelo(), vacioANulo(), esquemaDelModelo, ExtraccionDelModelo, leerExtraccionDelModelo() (+35 more)
+Cohesion: 0.08
+Nodes (37): esquemaDelModelo, ExtraccionDelModelo, INSTRUCCIONES_DEL_MODELO, leerExtraccionDelModelo(), LineaDelModelo, MedioDictado, MEDIOS_DICTABLES, ANTEAYER (+29 more)
 
-### Community 107 - "sucursales-herramientas.ts"
+### Community 107 - "compra-mapeo.ts"
+Cohesion: 0.08
+Nodes (31): comprobarCancelacion(), comprobarEnvio(), comprobarRecepcion(), esEditable(), estaAtrasada(), mensajeDePasoInvalido(), NOMBRE_DE_ESTADO, Paso (+23 more)
+
+### Community 108 - "logica-cuadro-precio.ts"
 Cohesion: 0.12
-Nodes (25): CODIGO_SUCURSAL_PRINCIPAL, DatosDeSucursal, EntradaDeSucursal, NOMBRE_SUCURSAL_PRINCIPAL, normalizarCodigoDeSucursal(), prepararSucursal(), puedeArchivarse(), ResultadoSucursal (+17 more)
-
-### Community 108 - "herramientas-de-memoria.ts"
-Cohesion: 0.11
-Nodes (19): AYUDAS, crearHerramientasDeMemoria(), HerramientasDeMemoria, cambiarLeccion(), comoLeccion(), Fila, leccionesVigentes(), leerLeccion() (+11 more)
+Nodes (32): agregarItem(), editarItem(), fijarPrecioFinal(), fijarUtilidad(), quitarItem(), verCuadro(), Contenido(), guardar() (+24 more)
 
 ### Community 109 - "registro/consumidores.ts"
-Cohesion: 0.04
-Nodes (46): HERRAMIENTAS_CON_SECRETOS, reproponerBorradores(), codificar(), comoBorrador(), Fila, iso(), listar(), PaginaDeBorradores (+38 more)
+Cohesion: 0.06
+Nodes (37): reproponerBorradores(), a(), cotizadorAjustesDeCliente, AjusteConCliente, AjusteDeCliente, deEmpresa(), existeCliente(), fijarAjuste() (+29 more)
 
-### Community 110 - "compras.repository.ts"
-Cohesion: 0.03
-Nodes (102): codificarCursor(), decodificarCursor(), comprobarCancelacion(), comprobarEnvio(), comprobarRecepcion(), esEditable(), estaAtrasada(), mensajeDePasoInvalido() (+94 more)
+### Community 110 - "Transaccion"
+Cohesion: 0.01
+Nodes (225): coincideConRaices(), reservarNumeros(), CorrelativoSinTransaccion, instanteDeDia(), AHORA, Existentes, compras, comprasOrdenes (+217 more)
 
 ### Community 111 - "0024_cotizador.sql"
 Cohesion: 0.12
 Nodes (18): ajustes_de_cliente_actualizado, ajustes_de_cliente_modulo, configuracion_actualizado, configuracion_modulo, cotizaciones_actualizado, cotizaciones_modulo, cotizaciones_sin_borrado, "cotizador"."ajustes_de_cliente" (+10 more)
 
 ### Community 112 - "precios.ts"
-Cohesion: 0.05
-Nodes (71): cantidad(), aEnteroSeguro(), cantidadAMilesimas(), centimosAImporte(), exigir(), importeACentimos(), milesimasACantidad(), porcentajeDeBase() (+63 more)
+Cohesion: 0.06
+Nodes (56): aEnteroSeguro(), cantidadAMilesimas(), centimosAImporte(), exigir(), importeACentimos(), milesimasACantidad(), porcentajeDeBase(), ADR-0017 (+48 more)
 
 ### Community 113 - "api/package.json"
 Cohesion: 0.08
@@ -798,9 +816,9 @@ Nodes (25): @capaz/shared, oxlint, @types/node, typescript, vite, vitest, zod, l
 Cohesion: 0.03
 Nodes (83): consultaDeConversacionesSchema, ConversacionBorrada, conversacionBorradaSchema, ConversacionConMensajes, conversacionConMensajesSchema, ConversacionDelAgente, conversacionDelAgenteSchema, ENTIDADES_DE_PANTALLA (+75 more)
 
-### Community 115 - "tipos/cuadro-directo.ts"
-Cohesion: 0.04
-Nodes (62): nuevo(), comoItem(), cuadroNuevo(), DatosDeInicio, ItemDelTaller, CANTIDADES_DE_REFERENCIA, CLASES_DE_PROCESO, COLOR_DE_CANTIDAD (+54 more)
+### Community 115 - "costeo/cuadro-directo.ts"
+Cohesion: 0.07
+Nodes (35): CANTIDADES_DE_REFERENCIA, CLASES_DE_PROCESO, COLOR_DE_CANTIDAD, colorDeCantidad(), ColorDeProceso, ColumnaDeCuadro, LineaDeImpuesto, DESCUENTO_DE_MATERIAL_POR_VOLUMEN (+27 more)
 
 ### Community 116 - "contratos/mi-dia.ts"
 Cohesion: 0.03
@@ -808,19 +826,19 @@ Nodes (66): AccionDeTarjeta, accionDeTarjetaSchema, Anotacion, anotacionSchema, 
 
 ### Community 117 - "contratos/cotizador.ts"
 Cohesion: 0.03
-Nodes (79): ajustarListasEnBloqueSchema, AjusteDeClienteDto, ajusteDeClienteSchema, AjusteDePrecio, ajusteDePrecioSchema, BASES_DE_UTILIDAD, CANALES_DE_EVENTO_DE_COTIZACION, CANTIDAD_MAXIMA_DE_LISTA_MILESIMAS (+71 more)
+Nodes (78): ajustarListasEnBloqueSchema, AjusteDeClienteDto, ajusteDeClienteSchema, AjusteDePrecio, ajusteDePrecioSchema, BASES_DE_UTILIDAD, CANALES_DE_EVENTO_DE_COTIZACION, CANTIDAD_MAXIMA_DE_LISTA_MILESIMAS (+70 more)
 
-### Community 118 - "use-hoja-de-pedido.ts"
-Cohesion: 0.09
-Nodes (37): crearYConfirmar(), DependenciasDeAlta, inesperado(), mensajeDeBorrador(), ResultadoDeAlta, adelanto, ARGS, completo (+29 more)
+### Community 118 - "alta-de-pedido.spec.ts"
+Cohesion: 0.16
+Nodes (15): crearYConfirmar(), DependenciasDeAlta, inesperado(), mensajeDeBorrador(), ResultadoDeAlta, adelanto, ARGS, completo (+7 more)
 
 ### Community 119 - "hoja-sucursal.tsx"
-Cohesion: 0.15
-Nodes (28): archivarSucursal(), crearSucursal(), editarSucursal(), marcarPrincipal(), Contenido(), archivar(), ejecutar(), guardar() (+20 more)
+Cohesion: 0.16
+Nodes (27): archivarSucursal(), crearSucursal(), editarSucursal(), marcarPrincipal(), Contenido(), archivar(), ejecutar(), guardar() (+19 more)
 
 ### Community 120 - "hoja-orden.tsx"
 Cohesion: 0.13
-Nodes (36): refrescarProduccion(), crearOrden(), editarOrden(), FichaDeTrabajo(), Formulario(), guardar(), Props, accionesDeOrden() (+28 more)
+Nodes (37): refrescarProduccion(), crearOrden(), editarOrden(), FichaDeTrabajo(), Formulario(), guardar(), Props, accionesDeOrden() (+29 more)
 
 ### Community 121 - "webhooks/repositorio.ts"
 Cohesion: 0.05
@@ -828,51 +846,51 @@ Nodes (26): arregloDeTexto(), COLUMNAS_DE_CLAVE, COLUMNAS_DE_CONEXION, comoClave
 
 ### Community 122 - "contratos/registro.ts"
 Cohesion: 0.03
-Nodes (66): importeDeRecepcion(), abonarDeudaSchema, ajustarDeudaSchema, AjusteDeDeudaDto, CajaDelDiaDto, cajaDelDiaSchema, CategoriaDto, categoriaSchema (+58 more)
+Nodes (67): importeDeRecepcion(), abonarDeudaSchema, ajustarDeudaSchema, AjusteDeDeudaDto, CajaDelDiaDto, cajaDelDiaSchema, CategoriaDto, categoriaSchema (+59 more)
 
-### Community 123 - "pantalla-indicadores.tsx"
-Cohesion: 0.05
-Nodes (80): bloqueDe(), centimosATexto(), CLAVES_RESERVADAS, deNumeros(), ENCABEZADO_CSV, esObjeto(), filasPlanas(), indicadoresDe() (+72 more)
+### Community 123 - "grafico-de-barras.tsx"
+Cohesion: 0.21
+Nodes (30): describir(), estiloDe(), EstiloDeSerie, ESTILOS_DE_SERIE, FORMATO_POR_DEFECTO(), GraficoVacio(), Leyenda(), Marca() (+22 more)
 
-### Community 124 - "adelantos.repository.ts"
-Cohesion: 0.14
-Nodes (22): personalContratos, personalVacaciones, personal, personalAdelantos, personalAsistencias, personalColaboradores, CursorPorFecha, propietarioDe() (+14 more)
+### Community 124 - "herramientas-de-ordenes.ts"
+Cohesion: 0.08
+Nodes (30): CONSUMIDORES_DE_ORDENES, IGV_ADMITIDOS, ordenesCotizacionAceptada, ordenesCotizacionAnulada, auditarPedido(), ID, NO_EXISTE, responderPedido() (+22 more)
 
 ### Community 125 - "compras/logica.ts"
 Cohesion: 0.03
-Nodes (165): cancelar(), enviar(), refrescarCompras(), usePermisosDeCompras(), buscarProveedores(), cancelarCompra(), costosPorArticulo(), crearCompra() (+157 more)
+Nodes (167): cancelar(), enviar(), refrescarCompras(), usePermisosDeCompras(), buscarProveedores(), cancelarCompra(), costosPorArticulo(), crearCompra() (+159 more)
 
-### Community 126 - "fusion.ts"
-Cohesion: 0.36
-Nodes (6): TipoDeCliente, combinarTipos(), completarDatos(), DatosDeContacto, vacio, totalDeFilas()
+### Community 126 - "composicion.ts"
+Cohesion: 0.11
+Nodes (24): escribirCsv(), bloqueDe(), centimosATexto(), CLAVES_RESERVADAS, deNumeros(), ENCABEZADO_CSV, esObjeto(), filasPlanas() (+16 more)
 
-### Community 127 - "barra-superior.tsx"
-Cohesion: 0.09
-Nodes (28): BarraSuperior(), iniciales(), Props, fijarEmpresaActiva(), Props, SelectorDeEmpresa(), cambiar(), AlmacenDeTema (+20 more)
+### Community 127 - "use-tema.ts"
+Cohesion: 0.13
+Nodes (21): Proveedores(), AlmacenDeTema, aplicarTema(), CLAVE_DE_TEMA, guardarPreferencia(), leerPreferencia(), PreferenciaDeTema, PREFERENCIAS_DE_TEMA (+13 more)
 
-### Community 128 - "servicio-de-transcripcion.ts"
-Cohesion: 0.03
-Nodes (56): AppModule, configurarApp(), esCuerpoDeAudio(), LIMITE_DEL_CUERPO_DE_AUDIO, RUTA_DE_TRANSCRIPCION, FalloDeTranscripcion, LIMITE_DE_CAPTURAS_POR_MINUTO, Rechazo (+48 more)
+### Community 128 - "@nestjs/common"
+Cohesion: 0.02
+Nodes (72): configurarApp(), esCuerpoDeAudio(), Auth, crearAuth(), ADR-0011, GuardiaDeIdentidad, Metodo, PERMITIDAS (+64 more)
 
 ### Community 129 - ".registro"
 Cohesion: 0.04
-Nodes (49): RutasDePrueba, RequierePermiso(), 1. Orden de construcción, 3. Un esquema de base por módulo contratable, 4. Finanzas ligeras es el módulo `registro`, en dos pasos, 5. Ventas clásica, 6. Bandeja de borradores en el núcleo, ADR-015: Estructura del ERP primero; familias, esquemas y módulos clásicos (+41 more)
+Nodes (56): borradorDe, REGISTRO, tarjeta, tx, ver(), planes(), modulos(), 1. Orden de construcción (+48 more)
 
-### Community 130 - "agente.module.ts"
-Cohesion: 0.10
-Nodes (24): crearTranscriptorDeVoz(), Persona, UN_SEGUNDO, entero(), esObjeto(), esTiempoAgotado(), INSTRUCCION_DE_TRANSCRIPCION, limpiarTranscripcion() (+16 more)
+### Community 130 - "servicio-de-transcripcion.ts"
+Cohesion: 0.05
+Nodes (41): AgenteModule, crearTranscriptorDeVoz(), Bloques, CabeceraWav, Formato, formatoAdmitido(), LecturaDeWav, leerFormato() (+33 more)
 
-### Community 131 - ".cotizador"
-Cohesion: 0.04
-Nodes (50): planes(), modulos(), precios(), 6. Fases, Después de los cimientos (cada uno con su propio plan), Fase 0 · Preparar el repositorio (S), Fase 10a · Despliegue del piloto (M) · antes de datos reales · necesita decisiones del usuario, Fase 10b · Endurecer (M) · antes del primer cliente externo (+42 more)
+### Community 131 - "nombre"
+Cohesion: 0.06
+Nodes (36): cantidad(), opcion(), 1. Qué hay hoy (verificado), 2. Decisiones de producto propuestas, 3. Servidor (modules-5a), 4. Pantallas (modules-ed, tras integrar el servidor), 5. Fuera de alcance, 6. Decisiones que necesita el usuario (+28 more)
 
-### Community 132 - "modulos/catalogo.ts"
-Cohesion: 0.10
-Nodes (17): accesoAModulo(), Asignacion, Contratacion, esAdministrador(), permisosEfectivos(), acceso(), AHORA, M (+9 more)
+### Community 132 - "herramientas/registro.ts"
+Cohesion: 0.07
+Nodes (24): Fuentes, problemasDe(), RegistroInvalido, ayuda, contratos, entrada, manifiestos, validar() (+16 more)
 
 ### Community 133 - "cuadro-comandos-directo.ts"
-Cohesion: 0.07
-Nodes (66): aplicarColumnasAEnviar(), aplicarCostoDirecto(), aplicarPrecioFinal(), aplicarUtilidad(), avisosDeMargen(), DatosDeCostoDirecto, DatosDePrecioFinal, DatosDeUtilidad (+58 more)
+Cohesion: 0.05
+Nodes (77): aplicarColumnasAEnviar(), aplicarCostoDirecto(), aplicarPrecioFinal(), aplicarUtilidad(), avisosDeMargen(), DatosDeCostoDirecto, DatosDePrecioFinal, DatosDeUtilidad (+69 more)
 
 ### Community 134 - "tarjeta-unidades.tsx"
 Cohesion: 0.33
@@ -884,63 +902,63 @@ Nodes (7): apocopado(), CENTENAS, DECENAS, enteroEnLetras(), montoEnLetras(), UN
 
 ### Community 136 - "huella-de-correccion.ts"
 Cohesion: 0.09
-Nodes (36): RecuadroQueCambio(), AVISO_DE_APROBACION, ArgumentosDeDatos, Base, cambiosDeFormulario(), ErroresDeDatos, FormularioDeDatos, lineasDeHuella() (+28 more)
+Nodes (32): RecuadroQueCambio(), SelloDeReemplazada(), ArgumentosDeDatos, Base, cambiosDeFormulario(), ErroresDeDatos, FormularioDeDatos, formularioDeDatosDesde() (+24 more)
 
-### Community 137 - "domain/cliente.ts"
-Cohesion: 0.15
-Nodes (19): ClaseDeCliente, DatosDeCliente, fallo(), prepararCliente(), ResultadoCliente, ResultadoDocumento, TipoDeDocumento, TIPOS_DE_DOCUMENTO (+11 more)
+### Community 137 - "evaluacion.eval.ts"
+Cohesion: 0.09
+Nodes (26): cabecera, CLIENTES, DETALLE, Escenario, ESCENARIOS, hecha(), JUAN, linea() (+18 more)
 
-### Community 138 - "asistencias-herramientas.ts"
-Cohesion: 0.12
-Nodes (18): aplicarCorreccion(), aplicarMarca(), AsistenciaDeDia, comprobarCorreccion(), MarcaDeAsistencia, ResultadoDeMarca, t(), tieneHora() (+10 more)
+### Community 138 - "maestros-ampliados.ts"
+Cohesion: 0.06
+Nodes (31): camposComerciales, camposDeContacto, camposDeDireccion, camposDeFicha, CategoriaDeProductoDto, categoriaDeProductoSchema, ClienteComercialDto, clienteComercialSchema (+23 more)
 
-### Community 139 - "personal/herramientas/comunes.ts"
-Cohesion: 0.15
-Nodes (19): colaboradoresListar, colaboradorVer, auditarAsistencia(), comprobarReferencias(), EN_FICHA, ID, MODULO, NO_EXISTE_ADELANTO (+11 more)
+### Community 139 - "pedidos.repository.ts"
+Cohesion: 0.09
+Nodes (30): ordenesGuiaLineas, ordenesGuias, ordenesPedidoEventos, ordenesPedidoVersiones, LineaResultante, fotoConFicha(), comprobarReferencias(), CorreccionLeida (+22 more)
 
-### Community 140 - "columnas.ts"
-Cohesion: 0.10
-Nodes (29): EntradaDeCliente, celda(), ClaveDeFila, Columnas, ENCABEZADOS_DE_EXPORTACION, filaDeCliente(), filaDeProducto(), FilaValida (+21 more)
+### Community 140 - "pedidos-historial.ts"
+Cohesion: 0.04
+Nodes (65): AYUDAS, celda(), ClaveDeFila, Columnas, filaDeCliente(), filaDeProducto(), FilaValida, Mapa (+57 more)
 
 ### Community 141 - "Investigación de frontend de Capaz ERP"
 Cohesion: 0.07
 Nodes (26): 11. Fuentes consultadas (2026-11-14), 1. Resumen ejecutivo, 2. Estado actual del frontend (verificado), 4.2 Otros sistemas (solo patrones; **no copiar**), 4. Patrones de Odoo y de otros sistemas que conviene reescribir propios, 5.1 Bandeja de revisión de borradores, 5.3 Estados vacíos que enseñan, y «ejemplo», 5.4 Indicador de guardado y cola de escrituras (+18 more)
 
-### Community 142 - "destinos.ts"
-Cohesion: 0.16
-Nodes (15): DestinoNoPermitido, DestinoValido, direccionPublica(), enteros(), ipv4Publica(), ipv6ComoBytes(), ipv6Publica(), OpcionesDeDestino (+7 more)
+### Community 142 - "fusion-de-pedido.ts"
+Cohesion: 0.13
+Nodes (28): centimosEnElTexto(), cifrasEnMilesimas(), elegirCentimos(), elegirDia(), milesimasEnElTexto(), nombreDelModelo(), nombreEnElTexto(), palabras() (+20 more)
 
-### Community 143 - "4. Frente C · Módulo por módulo y piezas transversales"
-Cohesion: 0.08
-Nodes (25): 1. Resumen para el dueño, 2.1 Qué hay hoy (verificado), 2.2 Tres diseños posibles, 2.3 Modelo de datos mínimo (diseño 3), 2.4 Permisos de los operadores, 2.5 Soporte: entrar a la empresa del cliente, 2.6 Hallazgos del frente A, 2. Frente A · Administración de las otras empresas (Datayros gestiona a sus clientes) (+17 more)
+### Community 143 - "compras"
+Cohesion: 0.05
+Nodes (44): compras(), serie(), 0. Lo que ya está decidido (no se reabre en la puerta), 1.2 `compras`, 1.3 `personal`, 1. Datos (DB3a y DB3b), 2. Fase 17 · `insumos` (Inventario), 3. Fase 18 · `compras` (+36 more)
 
-### Community 144 - "interpretar-dictado.ts"
-Cohesion: 0.07
-Nodes (40): categoriaDeCapaz(), DESTINO, normalizar(), POR_COBRAR, POR_PAGAR, tipoDeDeudaDictada(), dictadoDePedido(), IntencionDeDictado (+32 more)
+### Community 144 - "enriquecer.ts"
+Cohesion: 0.09
+Nodes (32): DESTINO, ACABADOS, DOMINANCIA_MINIMA, fragmentos(), inferirCategoria(), mejorCoincidencia(), MINIMO_REGISTROS, normalizar() (+24 more)
 
 ### Community 145 - "miembros.ts"
 Cohesion: 0.06
 Nodes (31): alcanceSchema, anularInvitacionSchema, AsignacionDeModulo, asignacionDeModuloSchema, AsignarModulo, asignarModuloSchema, cambiarRolSchema, codigoDeModulo (+23 more)
 
-### Community 146 - "pantalla-importar-historial.tsx"
-Cohesion: 0.15
-Nodes (27): importarHistorial(), previsualizarHistorial(), avisoDeErrores(), avisoDeRecorte(), diaLegible(), LecturaDeHistorial, mensajeDeImportacion(), textoDeBotonImportar() (+19 more)
+### Community 146 - "ordenes/logica-historial.ts"
+Cohesion: 0.29
+Nodes (11): avisoDeErrores(), avisoDeRecorte(), diaLegible(), LecturaDeHistorial, mensajeDeImportacion(), textoDeBotonImportar(), textoDeMonto(), textoDeRango() (+3 more)
 
 ### Community 147 - "ordenes-escritura.ts"
+Cohesion: 0.08
+Nodes (35): CLAVE_DE_CORRELATIVO, codigoDeOrden(), Comprobacion, comprobarAnulacion(), comprobarCambioDeEstado(), comprobarFechas(), comprobarMontos(), estaAtrasada() (+27 more)
+
+### Community 148 - "modelo-de-openrouter.ts"
 Cohesion: 0.06
-Nodes (59): CLAVE_DE_CORRELATIVO, codigoDeOrden(), Comprobacion, comprobarAnulacion(), comprobarCambioDeEstado(), comprobarFechas(), comprobarMontos(), estaAtrasada() (+51 more)
+Nodes (38): AcumuladorDeRonda, esObjeto(), Motivo, motivoDe(), numero(), Objeto, usoDe(), crearModeloDeChat() (+30 more)
 
-### Community 148 - "tipos-del-turno.ts"
-Cohesion: 0.02
-Nodes (116): AcumuladorDeRonda, esObjeto(), Motivo, motivoDe(), numero(), Objeto, usoDe(), crearModeloDeChat() (+108 more)
+### Community 149 - "panel-imposicion.tsx"
+Cohesion: 0.12
+Nodes (25): editarCotizacion(), listarMaquinas(), fijarImposicion(), fijarTrabajo(), CampoAlSalir(), Props, avisosDeImposicion(), columnasQueSeEnvian() (+17 more)
 
-### Community 149 - "agente/catalogo.int.spec.ts"
-Cohesion: 0.25
-Nodes (11): argumentosComoObjeto(), CRITICAS_DE_DINERO, DatosDeHerramienta, DINERO, DIRECTAS, DIRECTAS_AMPLIADAS, DIRECTAS_DE_LA_AUDITORIA, exceptuadaPorArgumento() (+3 more)
-
-### Community 150 - "paleta-de-comandos.tsx"
-Cohesion: 0.13
-Nodes (17): buscarClientes(), Cliente, PaletaDeComandos(), accionesRapidas(), AccionRapida, normalizar(), POR_MODULO, Busqueda (+9 more)
+### Community 150 - "precios/logica.ts"
+Cohesion: 0.19
+Nodes (12): argumentosDe(), Busqueda, busquedaDe(), DesdeLaDireccion, destinoDePreguntaDePrecio(), esSoloCliente(), LIMITE_DEL_CLIENTE, LIMITE_POR_PRODUCTO (+4 more)
 
 ### Community 151 - "pantalla-registro.tsx"
 Cohesion: 0.11
@@ -954,49 +972,49 @@ Nodes (15): agruparCostos(), claveDeArticulo(), DIAS_POR_DEFECTO_DE_COSTOS, Line
 Cohesion: 0.16
 Nodes (20): capitalizar(), descripcionExplicita(), esDescripcionUtil(), EXPLICITOS, formatearNombreDeContacto(), inferirDescripcion(), limpiar(), limpiarNombreDeContacto() (+12 more)
 
-### Community 154 - "cuadro.ts"
+### Community 154 - "tipos/cotizacion.ts"
 Cohesion: 0.05
-Nodes (81): CERO, DECIMALES_CANTIDAD, Dimensiones, Resultado, calcularCotizacion(), calcular(), RECARGO_35, SOBRE_VENTA_35 (+73 more)
+Nodes (65): DECIMALES_CANTIDAD, BaseDeUtilidad, BASES_DE_UTILIDAD, CanalDeEvento, CANALES_DE_EVENTO, Escala, ESCALAS, EstadoDeCotizacion (+57 more)
 
 ### Community 155 - "interprete.ts"
-Cohesion: 0.08
-Nodes (38): DictadoInterpretado, EntradaDeInterprete, mayuscula(), milesimasComoSoles(), textoDeAviso(), valorComoTexto(), AvisoDelModelo, ValorDictado (+30 more)
+Cohesion: 0.07
+Nodes (40): DictadoInterpretado, EntradaDeInterprete, CotizacionSinRespuesta, dias(), DIAS_PARA_VENCER, tarjetasDeCotizaciones(), CLASE, Ctx (+32 more)
 
-### Community 156 - "herramientas/clientes-fusion.ts"
-Cohesion: 0.04
-Nodes (71): aCandidata(), aClienteDto(), clientesComercialGuardar, clientesComercialVer, clientesContactoEliminar, clientesContactoGuardar, clientesContactosListar, clientesDireccionEliminar (+63 more)
+### Community 156 - "maestros.repository.int.spec.ts"
+Cohesion: 0.02
+Nodes (171): ClaseDeCliente, DatosDeCliente, EntradaDeCliente, fallo(), prepararCliente(), ResultadoCliente, TipoDeCliente, codificarCursor() (+163 more)
 
 ### Community 157 - "0014_registro.sql"
 Cohesion: 0.15
 Nodes (24): categorias_actualizado, categorias_modulo, cuentas_actualizado, cuentas_modulo, deudas_actualizado, deudas_modulo, deudas_sin_borrado, idx_registro_deudas_contacto (+16 more)
 
-### Community 158 - "personal.repository.int.spec.ts"
-Cohesion: 0.11
-Nodes (27): DatosDeColaborador, codificar(), codificarCursorPorNombre(), colaboradorArchivar, colaboradorCrear, colaboradorEditar, colaboradorRestaurar, auditarColaborador() (+19 more)
+### Community 158 - "insumos/herramientas/comunes.ts"
+Cohesion: 0.12
+Nodes (27): estaBajoMinimo(), articulosListar, articuloVer, alcanceDeInsumos(), ARCHIVADO, CAMPO_ARTICULO, CAMPO_ID, CAMPO_SUCURSAL (+19 more)
 
 ### Community 159 - "almacen.ts"
-Cohesion: 0.14
-Nodes (19): almacenDelLlamador, anotarLlamada(), oyentes, useEstadoDelLlamador(), crearColaEnSerie(), ESTADO_INICIAL_DEL_LLAMADOR, EstadoDelLlamador, EventoDelLlamador (+11 more)
+Cohesion: 0.13
+Nodes (20): estado(), almacenDelLlamador, anotarLlamada(), oyentes, useEstadoDelLlamador(), crearColaEnSerie(), ESTADO_INICIAL_DEL_LLAMADOR, EstadoDelLlamador (+12 more)
 
-### Community 160 - "documento-cotizacion.ts"
-Cohesion: 0.19
-Nodes (15): AVISO_DE_COTIZACION, condicionesParaDocumento(), enlaceDeWhatsApp(), FilaDeDocumento, filasDelDocumento(), formatearDia(), MENSAJE_POR_DEFECTO_ETIQUETA, mensajeDeWhatsApp() (+7 more)
+### Community 160 - "atender-web.ts"
+Cohesion: 0.12
+Nodes (21): atenderWeb(), comoRespuesta(), MAXIMO_DE_CONSULTAS_WEB_POR_TURNO, objeto(), sumarCosto(), texto(), claveDeDireccion(), ConsultaWeb (+13 more)
 
 ### Community 161 - "0027_cotizador_taller_y_enlaces.sql"
 Cohesion: 0.14
 Nodes (22): "cotizador"."enlaces", "cotizador"."formatos_pliego", "cotizador"."items_del_cuadro", "cotizador"."maquinas", "cotizador"."tarifas", enlaces_actualizado, enlaces_modulo, formatos_pliego_actualizado (+14 more)
 
-### Community 162 - "agente/logica-historial.ts"
-Cohesion: 0.15
-Nodes (16): conv(), grupos(), html(), agruparConversaciones(), claveDeFecha(), diaEnZona(), diasEntre(), GrupoDeConversaciones (+8 more)
+### Community 162 - "existencias-recibir.ts"
+Cohesion: 0.14
+Nodes (24): movimientoManual(), Rechazo, Entrada, existenciasRecibir, registrarEntradas(), aExistenciaDto(), aMovimientoDto(), rechazoDeMovimiento() (+16 more)
 
 ### Community 163 - "logica-taller.ts"
-Cohesion: 0.02
-Nodes (230): item(), archivarFormato(), archivarItem(), archivarMaquina(), archivarTarifa(), crearFormato(), crearItem(), crearMaquina() (+222 more)
+Cohesion: 0.05
+Nodes (77): item(), crearMaquina(), editarMaquina(), agregarFila(), editarFila(), quitarFila(), CamposDeFila(), Props (+69 more)
 
-### Community 164 - "lista-de-empresas.tsx"
-Cohesion: 0.14
-Nodes (19): useAtajosDeLista(), AvatarDeEmpresa(), colorDe(), COLORES, DensidadDeLista, leer(), useDensidad(), BotonDeOrden() (+11 more)
+### Community 164 - "cuadro-directo.tsx"
+Cohesion: 0.15
+Nodes (25): fijarColumnas(), fijarCostoDirecto(), CabeceraDeColumnas(), CuadroDirecto(), FilaDelDirecto(), Props, CeldaEnHoja, Contenido() (+17 more)
 
 ### Community 165 - "0029_produccion.sql"
 Cohesion: 0.25
@@ -1006,21 +1024,21 @@ Nodes (11): idx_produccion_orden_eventos_orden, idx_produccion_ordenes_cliente, 
 Cohesion: 0.07
 Nodes (28): Accion, accionSchema, Condicion, condicionSchema, contratosDeAutomatizaciones, Disparador, disparadorSchema, EjecucionDeRegla (+20 more)
 
-### Community 167 - "enriquecer.ts"
-Cohesion: 0.11
-Nodes (35): R, contactoDeAbono(), esAbonoDeuda(), enriquecerExtraccion(), OpcionesEnriquecido, resolverCategoria(), conChip(), conLLM() (+27 more)
+### Community 167 - "interpretar-dictado.ts"
+Cohesion: 0.09
+Nodes (41): R, categoriaDeCapaz(), dictadoDePedido(), IntencionDeDictado, interpretarDictado(), Opciones, PISTA_DE_PEDIDO, resultado() (+33 more)
 
 ### Community 168 - "5. Carriles"
-Cohesion: 0.04
-Nodes (38): drenar(), HerramientasDeCompras, HerramientasDeCrm, HerramientasDeOrdenes, HerramientasDeRegistro, Fase 8 · Eventos entre módulos y correlativos (M) · después del corte de voz, 4.6 Carriles de servidor, 10.1 Eventos del Cotizador (congelados ya; los copia s1 al contrato) (+30 more)
+Cohesion: 0.05
+Nodes (29): ConectoresInvalidos, RegistroDeConectores, WebhooksModule, 5. Carriles, C1 · Paso previo de servidor, Carriles de la ola 2 (módulos clásicos I), Carriles de la ola 3 (módulos clásicos II), DB1 · Datos de la ola 1 (+21 more)
 
 ### Community 169 - "reportes.int.spec.ts"
 Cohesion: 0.13
 Nodes (16): parcial(), activo(), pendiente(), movimiento(), asignar(), dia(), MODULOS, PERIODO() (+8 more)
 
 ### Community 170 - "historial.ts"
-Cohesion: 0.09
-Nodes (31): claveDeEncabezado(), detectarSeparador(), escribirCelda(), FilaCsv, LecturaCsv, leerCsv(), OpcionesDeLectura, protegerCelda() (+23 more)
+Cohesion: 0.13
+Nodes (21): claveDeEncabezado(), centimosDeTexto(), CampoDeHistorial, ColumnasDeHistorial, MAPA, mapearColumnasDeHistorial(), OBLIGATORIAS, esDiaValido() (+13 more)
 
 ### Community 171 - "0015_crm.sql"
 Cohesion: 0.18
@@ -1030,17 +1048,17 @@ Nodes (18): actividades_actualizado, actividades_modulo, "crm"."actividades", "c
 Cohesion: 0.18
 Nodes (17): "compras"."orden_lineas", "compras"."ordenes", "compras"."recepcion_lineas", "compras"."recepciones", idx_compras_ordenes_creador, idx_compras_ordenes_estado, idx_compras_ordenes_proveedor, idx_compras_recepcion_lineas_orden_linea (+9 more)
 
-### Community 173 - "composicion/precios-anteriores.ts"
-Cohesion: 0.11
-Nodes (20): CandidatoDeCliente, clasificarFilas(), claveDeProducto(), Consulta, consultarPrecioAnterior(), consultarSubherramienta(), elegirCliente(), Entrada (+12 more)
+### Community 173 - "reportes/logica.ts"
+Cohesion: 0.16
+Nodes (21): BloqueDeModulo(), descargarCsv(), aMs(), deMs(), diasEntre(), errorDeRango(), esDiaValido(), ETIQUETA_DE_PRESET (+13 more)
 
-### Community 174 - "pantalla-invitacion.tsx"
-Cohesion: 0.21
-Nodes (17): aceptarInvitacion(), enviar(), mensajeDe(), verInvitacion(), DetalleDeInvitacion, interpretarInvitacion(), mensajeDeRechazo(), AHORA (+9 more)
+### Community 174 - "invitaciones/api.ts"
+Cohesion: 0.22
+Nodes (13): aceptarInvitacion(), enviar(), mensajeDe(), verInvitacion(), DetalleDeInvitacion, interpretarInvitacion(), mensajeDeRechazo(), AHORA (+5 more)
 
-### Community 175 - "demo/cotizador.ts"
-Cohesion: 0.06
-Nodes (39): crearSiFalta(), HEREDADAS, marcarParaRevisar(), normal(), preciosDeLista(), sembrarAjustes(), sembrarCotizador(), sembrarListas() (+31 more)
+### Community 175 - "3. Tabla por módulo (186 herramientas de escritura)"
+Cohesion: 0.05
+Nodes (40): agente(), 1. Cómo se hizo y qué tan fiable es, 2. Reglas con las que se asignó la política, 3. Tabla por módulo (186 herramientas de escritura), 4. Herramientas de lectura (117), 5. Herramientas de plataforma (18): fuera del alcance, 6. Lista por verbo (lo que pidió Moisés), 7. Lo que queda sin verificar (+32 more)
 
 ### Community 176 - "0016_ordenes.sql"
 Cohesion: 0.18
@@ -1048,39 +1066,39 @@ Nodes (16): idx_ordenes_pedido_eventos_pedido, idx_ordenes_pedidos_cliente, idx_
 
 ### Community 177 - "logica-reconocedor.ts"
 Cohesion: 0.05
-Nodes (69): BarraDeGrabacion(), IconoDePausa(), html(), voz(), BotonDeMicrofono(), CajaDeMensaje(), etiquetaDelMicrofono(), Props (+61 more)
+Nodes (57): transcribirAudio(), abrirMicrofono(), apagarPistas(), AvisosDeGrabadora, empezarGrabacion(), Grabacion, GrabadoraDeVoz, GrabadoraFalsa (+49 more)
 
 ### Community 178 - "pedido-lineas.ts"
-Cohesion: 0.06
-Nodes (60): centimosEnElTexto(), cifrasEnMilesimas(), nombreEnElTexto(), palabras(), buscarMontoEnPalabras(), CENTENAS, ESCALAS, Ficha (+52 more)
+Cohesion: 0.07
+Nodes (46): fechaDeEntregaDicha(), esPedidoDictado(), extraerClienteDePedido(), MULETILLA_PEDIDO, quitarMenciones(), extraerAdelanto(), aUtc(), DIAS (+38 more)
 
 ### Community 179 - "similitud-nombres.ts"
 Cohesion: 0.21
 Nodes (18): claveFonetica(), clavesComunes(), clavesDe(), cortarApodo(), esProbableMismaPersona(), levenshtein(), normalizarParaComparar(), parecidoDeTexto() (+10 more)
 
-### Community 180 - "api/cliente.ts"
-Cohesion: 0.13
-Nodes (10): salida(), enviarAPlataforma(), EsquemaDeDatos, interpretarRespuesta(), mensajeDeEstado(), yo, Enviar, enviarHerramienta() (+2 more)
+### Community 180 - "agente/api.ts"
+Cohesion: 0.09
+Nodes (24): salida(), borrarConversacion(), CLAVE_ACCIONES_DEL_AGENTE, CLAVE_AGENTE, CLAVE_CONVERSACIONES, CLAVE_LECCIONES_DEL_AGENTE, estadoDelAgente(), listarConversaciones() (+16 more)
 
 ### Community 181 - "antiguedad.ts"
 Cohesion: 0.31
 Nodes (6): agruparAntiguedad(), CAMPO, DeudaAbierta, diasEntre(), tramoDe(), vacia()
 
-### Community 182 - "herramientas-de-webhooks.ts"
+### Community 182 - "entrega.ts"
 Cohesion: 0.03
-Nodes (34): AYUDAS, conector, CifradoInvalido, Cifrador, Claves, con(), ADR-0014, ConectoresModule (+26 more)
+Nodes (52): LIMITE_DEL_CUERPO_DE_AUDIO, RUTA_DE_TRANSCRIPCION, AYUDAS, conector, CifradoInvalido, Cifrador, Claves, con() (+44 more)
 
-### Community 183 - "GrabadoraDeVoz"
-Cohesion: 0.18
-Nodes (5): apagarPistas(), empezarGrabacion(), GrabadoraDeVoz, grabando(), 5.2 Captura por voz (decisión de ingeniería importante)
+### Community 183 - "compras-recepcion.int.spec.ts"
+Cohesion: 0.28
+Nodes (21): contador(), enviar(), eventosDeLaOrden(), ordenConDosLineas(), recibidas(), costos(), papel(), activarCompras() (+13 more)
 
-### Community 184 - "enlaces-herramientas.ts"
-Cohesion: 0.04
-Nodes (88): admiteDecision(), armarDetallePublico(), BYTES_DE_TOKEN, cantidadLegible(), condicionesVisibles(), contarVista(), DetallePublico, enlaceAplica() (+80 more)
+### Community 184 - "enlaces.ts"
+Cohesion: 0.15
+Nodes (17): admiteDecision(), armarDetallePublico(), BYTES_DE_TOKEN, cantidadLegible(), condicionesVisibles(), contarVista(), EntradaDeDetalle, estadoDeEnlace (+9 more)
 
-### Community 185 - "adelantos-herramientas.ts"
-Cohesion: 0.22
-Nodes (13): CLAVE_DE_ADELANTO, codigoDeAdelanto(), Comprobacion, comprobarFechaDeAdelanto(), puedeAnularseElAdelanto(), CursorPorNombre, decodificarCursorPorFecha(), decodificarCursorPorNombre() (+5 more)
+### Community 185 - "costeo/imposicion.ts"
+Cohesion: 0.14
+Nodes (24): Area, cabeEnFormato(), calcularImposicion(), comoArea(), esPositiva(), filaDePapel(), PapelElegido, pliegosPorMadre() (+16 more)
 
 ### Community 186 - "0010_conexiones.sql"
 Cohesion: 0.20
@@ -1095,24 +1113,24 @@ Cohesion: 0.19
 Nodes (12): idx_proforma_items_proforma, idx_proformas_user_estado, idx_proformas_user_fecha, idx_tx_contacto_categoria, idx_tx_user_categoria, proformas_updated_at, public.convertir_proforma_en_orden(), public.crear_proforma() (+4 more)
 
 ### Community 189 - "recompra.ts"
-Cohesion: 0.13
-Nodes (21): CLAVE_DE_CLIENTE_VARIOS, Candidato, candidatosDeRecompra(), ClienteConHistorial, ETIQUETA_DE_NIVEL, EvaluacionDeRecompra, evaluarRecompra(), MAXIMO_DE_DIAS_SIN_COMPRAR (+13 more)
+Cohesion: 0.16
+Nodes (16): Candidato, candidatosDeRecompra(), ClienteConHistorial, ETIQUETA_DE_NIVEL, EvaluacionDeRecompra, evaluarRecompra(), MAXIMO_DE_DIAS_SIN_COMPRAR, MAXIMO_DE_RITMO_EN_DIAS (+8 more)
 
-### Community 190 - "audio-wav.ts"
-Cohesion: 0.19
-Nodes (12): Bloques, CabeceraWav, Formato, formatoAdmitido(), LecturaDeWav, leerFormato(), leerWav(), recorrerBloques() (+4 more)
+### Community 190 - "logica-precio-anterior.ts"
+Cohesion: 0.17
+Nodes (23): Dato(), Etiqueta(), HistorialDePrecios(), PrecioConBase(), TarjetaDelUltimo(), avisoDePrecioAntiguo(), baseMostrada(), diaATexto() (+15 more)
 
 ### Community 191 - "automatizaciones/repositorio.ts"
-Cohesion: 0.03
-Nodes (46): AYUDAS, campoDatos, campoId, comoNumero(), comoTexto(), contiene(), esPrimitivo(), evaluarCondicion() (+38 more)
+Cohesion: 0.09
+Nodes (11): codificar(), DefinicionDeRegla, FilaDeEjecucion, FilaDeRegla, listar(), listarEjecuciones(), Resultado, borradores (+3 more)
 
 ### Community 192 - "0005_auth_better_auth.sql"
 Cohesion: 0.23
 Nodes (16): account_user_idx, "auth"."account", "auth"."invitation", "auth"."member", "auth"."organization", "auth"."rate_limit", "auth"."session", "auth"."user" (+8 more)
 
-### Community 193 - "ajustes-conectado.tsx"
-Cohesion: 0.06
-Nodes (60): AccionesConectado(), AjustesDelAsistente(), Contenido(), ControlConectado(), cambiar(), LeccionesConectado(), resolver(), mensajeDe() (+52 more)
+### Community 193 - "logica-control.ts"
+Cohesion: 0.13
+Nodes (18): TopePorOperacion(), configuracion, Detalles(), Fila(), Fila(), ESTADOS, etiquetaDeEstadoDeLeccion(), etiquetaDeOrigenDeLeccion() (+10 more)
 
 ### Community 194 - "0018_insumos.sql"
 Cohesion: 0.23
@@ -1123,20 +1141,20 @@ Cohesion: 0.23
 Nodes (14): adelantos_modulo, asistencias_actualizado, asistencias_modulo, colaboradores_actualizado, colaboradores_modulo, idx_personal_adelantos_colaborador, idx_personal_adelantos_fecha, idx_personal_asistencias_fecha (+6 more)
 
 ### Community 196 - "bandeja/logica.ts"
-Cohesion: 0.08
-Nodes (58): aprobarBorrador(), corregirBorrador(), datosOError(), descartarBorrador(), ErrorDeApi, FiltrosDeBandeja, POR_PAGINA, verBorrador() (+50 more)
-
-### Community 197 - "tarjeta-mi-dia.tsx"
-Cohesion: 0.20
-Nodes (14): enlaceDeWhatsapp(), ETIQUETA_DE_URGENCIA, FRANJA_DE_URGENCIA, textoSinWhatsapp(), destinoDeFoco(), MensajeDeCobro(), TarjetaDeMiDiaVista(), Tramos() (+6 more)
-
-### Community 198 - "compras"
 Cohesion: 0.09
-Nodes (28): pedidos(), compras(), orden(), volantes(), serie(), 2. Familias en el manifiesto, 3.2 Tanda DB2b, 5.2 Reglas (dominio) (+20 more)
+Nodes (50): aprobarBorrador(), corregirBorrador(), descartarBorrador(), AYUDA, CampoDeArgumento(), FormularioCorreccion(), Props, enviar() (+42 more)
+
+### Community 197 - "react-dom"
+Cohesion: 0.14
+Nodes (18): BarraDeGrabacion(), IconoDePausa(), html(), voz(), BotonDeMicrofono(), CajaDeMensaje(), etiquetaDelMicrofono(), Props (+10 more)
+
+### Community 198 - "produccion.int.spec.ts"
+Cohesion: 0.14
+Nodes (10): precios(), auditoriaDe(), eventosDe(), orden(), propuestas(), volantes(), 9.1 Manifiesto (`cotizador.manifest.ts`), 4.2 Fase B · Cotizador (+2 more)
 
 ### Community 199 - "oportunidades-escritura.ts"
-Cohesion: 0.03
-Nodes (130): normalizarNombre(), a(), crmEtapas, crmOportunidades, ETAPAS, codificarCursor(), decodificarCursor(), PosicionPorInstante (+122 more)
+Cohesion: 0.04
+Nodes (120): normalizarNombre(), crmActividades, crmEtapas, crmOportunidades, dia(), ETAPAS, codificarCursor(), PosicionPorInstante (+112 more)
 
 ### Community 200 - "0008_datos_maestros.sql"
 Cohesion: 0.25
@@ -1147,12 +1165,12 @@ Cohesion: 0.13
 Nodes (13): ActualizarConfiguracion, actualizarConfiguracionSchema, ConfiguracionDeEmpresa, configuracionDeEmpresaSchema, contratosDeEmpresa, eventosDeEmpresa, LIMITES_DATOS_EMPRESA, locale (+5 more)
 
 ### Community 202 - "filas-de-pedido.tsx"
-Cohesion: 0.13
-Nodes (32): aCentimosTexto(), Celda(), CeldaNumerica(), CONTROL, deCentimos(), deMilesimas(), FilasDePedido(), NumericaProps (+24 more)
+Cohesion: 0.12
+Nodes (33): Celda(), CeldaNumerica(), CONTROL, deCentimos(), FilasDePedido(), NumericaProps, Props, soles() (+25 more)
 
-### Community 203 - "sembrar-demo.ts"
-Cohesion: 0.08
-Nodes (63): APELLIDOS, Azar, crearAzar(), diasAtras(), digitoRuc(), digitos(), dniFicticio(), nombreDePersona() (+55 more)
+### Community 203 - "demo/contexto.ts"
+Cohesion: 0.11
+Nodes (46): APELLIDOS, Azar, diasAtras(), digitoRuc(), digitos(), dniFicticio(), nombreDePersona(), NOMBRES (+38 more)
 
 ### Community 204 - "0002_modulos_y_contratacion.sql"
 Cohesion: 0.29
@@ -1166,41 +1184,41 @@ Nodes (7): "core"."empresa_cuenta", "core"."empresa_cuenta_eventos", core.empres
 Cohesion: 0.12
 Nodes (15): buildCommand, entrypoint, framework, root, regions, rewrites, $schema, services (+7 more)
 
-### Community 207 - "reparar-argumentos.ts"
-Cohesion: 0.33
-Nodes (12): admite(), argumentosDeLaPuertaGeneral(), comoJson(), desdeTexto(), esDeTipo(), esObjeto(), Esquema, ramaDe() (+4 more)
+### Community 207 - "directa-filas.tsx"
+Cohesion: 0.15
+Nodes (21): Celda(), CONTROL, DirectaFilas(), PrecioLeido(), Props, alEnterEnImporte(), condicionesIniciales(), FilaDirecta (+13 more)
 
 ### Community 209 - "Contratos Zod en packages/shared (fuente unica de verdad)"
 Cohesion: 0.33
 Nodes (7): ADR-002: Web y API separadas (React+Vite y NestJS), sin Next.js, Contratos Zod en packages/shared (fuente unica de verdad), Mismo origen en produccion: la API sirve la web compilada, Servidor NestJS 12 (ESM), API REST /api/v1, Pagina publica de cotizaciones en HTML simple por WhatsApp, Interfaz React 19 + Vite + Tailwind 4 + React Router, Pruebas de contrato con esquemas compartidos
 
-### Community 210 - "maestros.repository.int.spec.ts"
-Cohesion: 0.08
-Nodes (43): codificarCursor(), decodificarCursor(), PosicionDeCursor, listarClientes(), A, B, ctxA, ctxB (+35 more)
+### Community 210 - "registrar-movimiento.ts"
+Cohesion: 0.15
+Nodes (20): Aplicado, aplicarMovimiento(), Faltante, mensajeDeFaltante(), Movimiento, movimientoDeAjuste(), textoDeCantidad(), TipoDeMovimiento (+12 more)
 
 ### Community 211 - "0035_pedido_versiones_y_ajustes_de_deuda.sql"
 Cohesion: 0.23
 Nodes (9): deuda_ajustes_inmutable, deuda_ajustes_modulo, idx_ordenes_pedido_eventos_tipo, idx_registro_deuda_ajustes_deuda, "ordenes"."pedido_versiones", pedido_versiones_inmutable, pedido_versiones_modulo, "registro"."deuda_ajustes" (+1 more)
 
 ### Community 212 - "venta-corregir.int.spec.ts"
-Cohesion: 0.29
-Nodes (8): borradoresDe(), contarVersiones(), corregir(), datos(), linea(), llamar(), venta(), versionDe()
+Cohesion: 0.11
+Nodes (17): confirmando(), datos(), fuera, llamar(), tarjetas(), confirmando(), datos(), llamar() (+9 more)
 
-### Community 213 - "productos-buscar.ts"
-Cohesion: 0.25
-Nodes (10): precioDeCatalogoSinIgv(), cotizadorProductosBuscar, deProducto(), RANGO, buscarProductosParaCotizar(), listasActivasDeProductos(), listasSinProductoPorNombre(), primerosProductosParaCotizar() (+2 more)
+### Community 213 - "insumos.repository.int.spec.ts"
+Cohesion: 0.13
+Nodes (22): filtroDeBusqueda(), patronQueContiene(), asegurarExistencia(), cantidadActual(), columnas, consultaDeExistencias(), deEmpresa(), existenciaTotal() (+14 more)
 
 ### Community 214 - "ayuda-para-corregir.spec.ts"
 Cohesion: 0.21
 Nodes (11): aplicarPolitica(), ejecutarNegocio(), CODIGOS, conAyuda(), frenoPorFallos(), MAXIMO_DE_FALLOS_SEGUIDOS, estado(), h (+3 more)
 
-### Community 215 - "cotizador/herramientas/comun.ts"
-Cohesion: 0.09
-Nodes (34): CONFIGURACION_POR_DEFECTO, validarAjusteDeCliente(), validarConfiguracion(), Rechazo, claveDeUnidad(), MAXIMO_DE_CARACTERES_DE_UNIDAD, MAXIMO_DE_UNIDADES, normalizarUnidad() (+26 more)
+### Community 215 - "domain/unidades.ts"
+Cohesion: 0.57
+Nodes (5): claveDeUnidad(), MAXIMO_DE_CARACTERES_DE_UNIDAD, MAXIMO_DE_UNIDADES, normalizarUnidad(), validarUnidades()
 
 ### Community 216 - "plantilla-publica.ts"
 Cohesion: 0.17
-Nodes (20): AVISOS, Cabecera, condiciones(), dia(), documento(), encabezado(), ENTIDADES, esAviso() (+12 more)
+Nodes (20): DetallePublico, AVISOS, Cabecera, condiciones(), documento(), encabezado(), ENTIDADES, esAviso() (+12 more)
 
 ### Community 217 - "0003_modulos_funciones.sql"
 Cohesion: 0.31
@@ -1210,17 +1228,17 @@ Nodes (6): core.activar_modulo(), core.dar_baja_modulo(), core.empresa_modulos_r
 Cohesion: 0.31
 Nodes (10): "core"."borradores", "core"."reglas_automaticas", "core"."reglas_disparos", "core"."reglas_ejecuciones", idx_borradores_estado, idx_borradores_modulo, idx_reglas_activa, idx_reglas_ejecuciones_fecha (+2 more)
 
-### Community 219 - "ContextoDePeticion"
-Cohesion: 0.29
-Nodes (4): borrarConversacion(), ServicioDeConversaciones, comoMensaje(), ContextoDePeticion
+### Community 219 - "ordenes/domain/estados.ts"
+Cohesion: 0.12
+Nodes (14): comprobarAvance(), comprobarCancelacion(), comprobarConfirmacion(), comprobarEdicionDeDatos(), esEditable(), estaAtrasado(), mensajeDePasoInvalido(), Paso (+6 more)
 
 ### Community 220 - "reportes.ts"
 Cohesion: 0.12
 Nodes (17): BloqueDelPanelDto, bloqueDelPanelSchema, contratosDeReportes, diasEntre(), eventosDeReportes, ExportacionDelPanelDto, exportacionDelPanelSchema, IndicadorDto (+9 more)
 
 ### Community 221 - "pantalla-dictado.tsx"
-Cohesion: 0.12
-Nodes (36): AccionDeHilo, reducirHilo(), Resolucion, EntradaDeTexto, RespuestaDeCaptura, useCapturaEnHilo(), useConversacion(), useEntradaDeTexto() (+28 more)
+Cohesion: 0.14
+Nodes (35): AccionDeHilo, Resolucion, EntradaDeTexto, RespuestaDeCaptura, useCapturaEnHilo(), useConversacion(), useEntradaDeTexto(), useResolverBorrador() (+27 more)
 
 ### Community 222 - "0030_produccion_lineas.sql"
 Cohesion: 0.53
@@ -1230,21 +1248,21 @@ Nodes (4): idx_produccion_ordenes_cliente, idx_produccion_ordenes_entrega, orden
 Cohesion: 0.15
 Nodes (12): account, conFechas, esquemaAuth, invitation, member, organization, rateLimit, session (+4 more)
 
-### Community 224 - "guardas-de-dinero.ts"
-Cohesion: 0.17
-Nodes (18): claveDeNegocio(), CLAVES_DE_NEGOCIO, guardasDeDinero(), mayorImporteEnCentimos(), objeto(), SIN_IMPORTE_PERMITIDO, SituacionDeDinero, calma (+10 more)
+### Community 224 - "herramientas-de-automatizaciones.ts"
+Cohesion: 0.12
+Nodes (13): AYUDAS, campoDatos, campoId, comoSistema(), crearHerramientasDeAutomatizaciones(), crearHerramientasDeEjecucion(), Dependencias, HerramientasDeAutomatizaciones (+5 more)
 
-### Community 226 - "react-dom"
-Cohesion: 0.10
-Nodes (19): InsigniaDeUso(), etiquetasDeModelo(), NIVEL, formatoDeDuracion(), formatoDeTokens(), formatoUsd(), precioPorMillon(), textoDeUso() (+11 more)
+### Community 226 - "selector-de-modelo.spec.tsx"
+Cohesion: 0.18
+Nodes (12): InsigniaDeUso(), etiquetasDeModelo(), NIVEL, formatoDeDuracion(), formatoDeTokens(), formatoUsd(), precioPorMillon(), textoDeUso() (+4 more)
 
-### Community 230 - "1. Prompt del sistema"
-Cohesion: 0.14
-Nodes (13): 1.1 De dónde sale cada hueco (nada se escribe a mano), 1.2 Bloque fijo, 1.3 El párrafo `{{modo}}`, 1.4 Bloque variable (segundo mensaje `system`), 1.5 Pruebas de `prompt.ts` (Vitest, sin modelo), 1. Prompt del sistema, 2.1 Cómo se corre, 2.2 Criterio para aprobar un modelo (+5 more)
+### Community 230 - "ordenes.repository.ts"
+Cohesion: 0.12
+Nodes (21): produccion, produccionOrdenes, produccionOrdenEventos, produccionOrdenItems, ADR-0012, actualizarOrden(), agregarEvento(), CambiosDeOrden (+13 more)
 
-### Community 231 - "atender-meta.ts"
-Cohesion: 0.28
-Nodes (11): resolver(), comoTexto(), describirHerramienta(), mapaDelSoftware(), objeto(), queHaceElAsistente(), FlujoDelErp, FLUJOS_DEL_ERP (+3 more)
+### Community 231 - "insumos/consumidores.ts"
+Cohesion: 0.16
+Nodes (18): CONSUMIDORES_DE_INSUMOS, insumosCompraRecibida, codificar(), codificarCursorPorInstante(), codificarCursorPorNombre(), CursorPorInstante, CursorPorNombre, decodificarCursorPorInstante() (+10 more)
 
 ### Community 232 - "0006_herramientas.sql"
 Cohesion: 0.43
@@ -1258,65 +1276,61 @@ Nodes (12): guia_lineas_inmutable, guia_lineas_modulo, guias_modulo, guias_sin_b
 Cohesion: 0.40
 Nodes (3): auditoria_plataforma_solo_insercion, "core"."auditoria_plataforma", core.v_empresas_plataforma
 
-### Community 235 - "cabecera-de-consola.tsx"
-Cohesion: 0.27
-Nodes (11): BarraDeDistribucion(), CabeceraDeConsola(), Indicadores(), SECCIONES, Tarjeta, TarjetaDeKpi(), tarjetasDe(), CifraAnimada() (+3 more)
+### Community 235 - "domain/pedido.ts"
+Cohesion: 0.12
+Nodes (15): CambioDeDato, cambiosDeDatos(), Comprobacion, comprobarFechas(), comprobarLineasParaConfirmar(), LineaPreparada, LineasPreparadas, prepararLineas() (+7 more)
 
 ### Community 237 - "0007_eventos_y_contadores.sql"
 Cohesion: 0.50
 Nodes (4): "core"."contadores", "core"."eventos_procesados", "core"."eventos_salida", idx_eventos_salida_pendientes
 
 ### Community 238 - "logica-directa.ts"
-Cohesion: 0.06
-Nodes (66): Dato(), Etiqueta(), HistorialDePrecios(), PrecioConBase(), TarjetaDelUltimo(), Celda(), CONTROL, DirectaFilas() (+58 more)
+Cohesion: 0.11
+Nodes (28): argumentosDeHojaDirecta(), calcularFila(), ClienteDeHoja, CondicionesDeHoja, ErroresDeFila, ErroresDeHoja, estaVacia(), FilaCalculada (+20 more)
 
-### Community 239 - "drizzle-orm"
-Cohesion: 0.02
-Nodes (255): coincideConRaices(), Existentes, compras, comprasOrdenes, comprasOrdenLineas, comprasRecepciones, comprasRecepcionLineas, comprasFacturas (+247 more)
+### Community 239 - "insumos/repositories/operaciones.repository.ts"
+Cohesion: 0.08
+Nodes (41): insumos, insumosArticulos, insumosExistencias, insumosMovimientos, insumosConteoLineas, insumosConteos, insumosTransferenciaLineas, insumosTransferencias (+33 more)
 
-### Community 240 - "AgenteController"
-Cohesion: 0.26
-Nodes (3): AgenteController, contextoDeSesion(), RequiereEmpresa()
+### Community 240 - "Res"
+Cohesion: 0.10
+Nodes (8): AgenteController, contextoDeSesion(), ServicioDeConversaciones, comoMensaje(), HerramientasController, ContextoDePeticion, RequiereEmpresa(), Res
 
 ### Community 251 - "crm/pantalla-ficha.tsx"
-Cohesion: 0.05
-Nodes (79): FichaDeEjemplo(), useEscribir(), archivarEtapa(), buscarClientes(), CLAVE_CRM, completarActividad(), crearOportunidad(), editarOportunidad() (+71 more)
+Cohesion: 0.06
+Nodes (70): useEscribir(), archivarEtapa(), CLAVE_CRM, completarActividad(), crearActividad(), crearOportunidad(), editarOportunidad(), ganarOportunidad() (+62 more)
 
 ### Community 253 - "recorte.ts"
 Cohesion: 0.27
 Nodes (11): arregloMasPesado(), conLista(), Cuerpo, envolver(), largo(), MAXIMO_DE_RESULTADO, mayorQueCabe(), recortar() (+3 more)
 
 ### Community 254 - "guarda.ts"
-Cohesion: 0.19
-Nodes (11): destinoSegunSesion(), esRuta(), normalizar(), RUTA_CONSOLA, RUTA_INICIAR_SESION, RUTA_INICIO, RUTA_NUEVA_EMPRESA, RUTAS_PUBLICAS (+3 more)
+Cohesion: 0.16
+Nodes (13): cargadorRaiz(), destinoSegunSesion(), esRuta(), normalizar(), RUTA_CONSOLA, RUTA_INICIAR_SESION, RUTA_INICIO, RUTA_NUEVA_EMPRESA (+5 more)
 
 ### Community 255 - "scripts"
 Cohesion: 0.11
 Nodes (19): scripts, build, db:generar, db:migrar, db:migrar:test, db:preparar, db:sembrar-demo, format (+11 more)
 
-### Community 256 - "unir"
+### Community 256 - "logica-lista.ts"
+Cohesion: 0.17
+Nodes (19): IconoDeDatos(), NombreDeIconoDeDatos, TRAZOS, Cabecera(), Fila(), ListaTabla(), ListaTarjetas(), alternarOrden() (+11 more)
+
+### Community 257 - "articulos.repository.ts"
+Cohesion: 0.16
+Nodes (18): articuloActivar, articuloArchivar, articuloEditar, CAMPO_MINIMO, CAMPO_UNIDAD, auditarArticulo(), actualizarArticulo(), articuloDeProducto() (+10 more)
+
+### Community 259 - "operaciones-conteos.ts"
 Cohesion: 0.15
-Nodes (25): Fila(), Grupo(), FilaDeConversacion(), FilaEnEdicion(), Grupo(), CasillaDeSeleccion(), Props, IconoDeDatos() (+17 more)
+Nodes (17): HERRAMIENTAS_DE_INSUMOS, insumosPendientes, CLAVE_DE_CONTEO, conteoAbrir, conteoAnular, conteoCerrar, conteoRegistrar, conteosListar (+9 more)
 
-### Community 257 - "use-accion-de-mi-dia.ts"
-Cohesion: 0.29
-Nodes (7): avisoDeAccion(), sinTarjeta(), Accion, Cancelada, CLAVE_MI_DIA, ejecutar(), useAccionDeMiDia()
+### Community 261 - "enlaces-publicos.servicio.ts"
+Cohesion: 0.15
+Nodes (9): enlaceAplica(), ORIGEN_ENLACE, EnlacesPublicos, Fila, Resuelto, Valido, Formulario, CodigoDeAviso (+1 more)
 
-### Community 258 - "Res"
-Cohesion: 0.23
-Nodes (3): Publica(), EnlacesPublicosController, Res
-
-### Community 259 - "historial/logica.ts"
-Cohesion: 0.19
-Nodes (9): cargarHistorial(), PaginaDeHistorial, ACCIONES, detalleDeEvento(), FiltrosDeHistorial, RESULTADOS, textoDeAccion(), TonoDeResultado (+1 more)
-
-### Community 261 - "asistencias.repository.ts"
-Cohesion: 0.38
-Nodes (10): codificarCursorPorFecha(), aplanar(), asistenciaDelDia(), conColaborador, consulta(), deEmpresa(), FiltrosDeAsistencias, listarAsistencias() (+2 more)
-
-### Community 262 - "vacaciones.ts"
-Cohesion: 0.31
-Nodes (9): Comprobacion, comprobarContrato(), DIAS_DE_VACACIONES_POR_MES, diasInclusive(), mesesCompletos(), partes(), saldoDeVacaciones, seSolapan() (+1 more)
+### Community 262 - "guia.ts"
+Cohesion: 0.18
+Nodes (13): ANIO_DEL_CORRELATIVO_DE_GUIA, CLAVE_DE_CORRELATIVO_DE_GUIA, comprobarAnulacion(), documentoDeCliente(), limpio(), lineaDePedido(), LineaDePedidoParaGuia, motivoDeGuiasEmitidas() (+5 more)
 
 ### Community 263 - "presupuesto-de-carga.ts"
 Cohesion: 0.05
@@ -1330,29 +1344,37 @@ Nodes (11): p(), rutas, SeccionCotizaciones, SeccionCotizacionesDiferida(), Exte
 Cohesion: 0.12
 Nodes (17): devDependencies, drizzle-kit, @nestjs/cli, @nestjs/schematics, @nestjs/testing, oxlint, oxlint-tsgolint, prettier (+9 more)
 
-### Community 266 - "devDependencies"
-Cohesion: 0.18
-Nodes (11): devDependencies, oxlint, tailwindcss, @tailwindcss/vite, @types/node, @types/react, @types/react-dom, typescript (+3 more)
+### Community 266 - "propuesta-de-pedido.ts"
+Cohesion: 0.19
+Nodes (16): mayuscula(), milesimasComoSoles(), textoDeAviso(), valorComoTexto(), AvisoDelModelo, ValorDictado, argumentosDeLinea(), faltaElCliente() (+8 more)
 
 ### Community 267 - "app.module.ts"
 Cohesion: 0.03
-Nodes (44): AgenteModule, AuthModule, AutomatizacionesModule, BorradoresModule, CapturaModule, ClientesModule, CorrelativosModule, empresaActualizarConfiguracion (+36 more)
+Nodes (39): AuthModule, AutomatizacionesModule, BorradoresModule, CapturaModule, ClientesModule, ComposicionModule, CorrelativosModule, EventosModule (+31 more)
 
-### Community 271 - "Decisión"
-Cohesion: 0.17
-Nodes (11): 1. Un conector es un módulo especial con manifiesto, 2. Modelo de datos (esquema `core`, todas con `tenant_id` y RLS), 3. Secretos, 4. Ejecución, 5. Automatizaciones: reglas como datos, 6. Primeros conectores (orden propuesto), 7. Lo que no se hace, ADR-014: Conectores y automatizaciones («conecta tu empresa») (+3 more)
+### Community 269 - "cobro-del-pedido.ts"
+Cohesion: 0.21
+Nodes (18): ArgsDeDeuda, ResultadoDelAdelanto, abonar(), Abono, argsDeDeuda(), ArgsDeDeudaConAdelanto, CODIGOS_AMBIGUOS, completo() (+10 more)
+
+### Community 270 - "condiciones.ts"
+Cohesion: 0.23
+Nodes (13): comoNumero(), comoTexto(), contiene(), esPrimitivo(), evaluarCondicion(), evaluarCondiciones(), iguales(), ordenar() (+5 more)
+
+### Community 271 - "logica-pantalla.ts"
+Cohesion: 0.11
+Nodes (18): modulo(), entidad(), entidadDelModulo(), entidadDelNucleo(), esUuid(), pantallaDesdeRuta(), SIN_PANTALLA, 1. Un conector es un módulo especial con manifiesto (+10 more)
 
 ### Community 272 - "insumos/domain/pendientes.ts"
 Cohesion: 0.46
 Nodes (5): agruparPorArticulo(), detalleDe(), ExistenciaBajoMinimo, tarjetasDeInsumos(), textoDeCantidad()
 
-### Community 273 - "modelo-de-lenguaje-openrouter.ts"
-Cohesion: 0.03
-Nodes (86): esfuerzoDeRazonamiento(), crearProponerDesdeAgente(), borradores(), BuscarHerramienta, conectarCatalogo(), datosDeHerramienta, datos(), proponer() (+78 more)
+### Community 273 - "extraccion.int.spec.ts"
+Cohesion: 0.04
+Nodes (44): borradores(), ejecuciones(), filas(), datos(), proponer(), porcentajeSinCorregir(), cuenta(), filas() (+36 more)
 
 ### Community 274 - "atender-llamada.ts"
 Cohesion: 0.14
-Nodes (23): Argumentos, atenderLlamada(), Destino, destinoDe(), leerArgumentos(), notaDe(), TITULO_DE_META, tituloDe() (+15 more)
+Nodes (26): Argumentos, atenderLlamada(), Destino, destinoDe(), leerArgumentos(), notaDe(), TITULO_DE_META, tituloDe() (+18 more)
 
 ### Community 275 - "Ficha · Estado de cuenta de la empresa (pausar, dar de baja, quitar módulo)"
 Cohesion: 0.25
@@ -1362,9 +1384,9 @@ Nodes (7): 2. Reglas de producto, 4. Herramientas (plataforma, `definirHerramien
 Cohesion: 0.11
 Nodes (19): ADR-003: PostgreSQL y Drizzle; alojamiento en Neon, Cloudflare R2 (archivos), Condiciones de verificacion de Neon (fase 10a), Drizzle ORM con controlador pg, Esquemas core, registro y cotizador, Neon (alojamiento de la base, proyecto en aws-sa-east-1 Sao Paulo), PostgreSQL 18 (Docker local puerto 5450), ADR-004: Multiempresa con tenant_id y RLS forzada (+11 more)
 
-### Community 277 - "plataforma"
-Cohesion: 0.14
-Nodes (15): plataforma(), avisos(), 0. Cómo usar este plan, 2.1 Errores de la versión 1 que habrían roto la construcción, 2.2 Huecos de seguridad cerrados, 2.3 Mejoras de diseño y de orden, 2.4 Sigue vigente de la versión 1 (verificado el 2026-11-11), 2.5 Decisiones que el usuario debe aprobar (la fase 0 las convierte en ADR 009 a 012) (+7 more)
+### Community 277 - "6. Fases"
+Cohesion: 0.05
+Nodes (38): auditoria(), avisos(), 0. Cómo usar este plan, 2.1 Errores de la versión 1 que habrían roto la construcción, 2.2 Huecos de seguridad cerrados, 2.3 Mejoras de diseño y de orden, 2.4 Sigue vigente de la versión 1 (verificado el 2026-11-11), 2.5 Decisiones que el usuario debe aprobar (la fase 0 las convierte en ADR 009 a 012) (+30 more)
 
 ### Community 278 - "mensaje-de-cobro.ts"
 Cohesion: 0.36
@@ -1398,9 +1420,9 @@ Nodes (14): dependencies, better-auth, big.js, @capaz/shared, drizzle-orm, @nest
 Cohesion: 0.43
 Nodes (6): esControl(), LARGO_MAXIMO_DE_NOTA, leerCuerpo(), leerFormulario(), limpiarNota(), TOPE_DE_FORMULARIO_BYTES
 
-### Community 286 - "4. Fases"
-Cohesion: 0.25
-Nodes (8): 4. Fases, Fase 0 · Cerrar lo suelto (una hora), Fase 2 · Datos de demostración coherentes (B3), Fase 4 · Voz y captura (B5), Fase 5 · Revisión visual (B7), Fase 6 · Cotizador «por partes» (B2) · condicionada al piloto, Fase 7 · Producción (B8) · con Keny, Fase 8 · Coexistencia y apagado
+### Community 286 - ".cotizador"
+Cohesion: 0.05
+Nodes (36): RutasDePrueba, RequierePermiso(), 2. La voz arranca sin modelo de pago (fase A1), 3. Excepción a la regla 9: el interior del motor del Cotizador, 4. El Cotizador es un módulo de Capaz y se construye por cortes, 5. Reglas del porte, ADR-017: Captura como capa del núcleo y Cotizador por cortes, Alternativas descartadas (+28 more)
 
 ### Community 287 - "0037_cierres_y_monto_minimo.sql"
 Cohesion: 0.70
@@ -1414,25 +1436,37 @@ Nodes (6): 3.1 CSS / sistema de interfaz, 3.2 Tablas, listas y rejillas, 3.3 For
 Cohesion: 0.29
 Nodes (6): 1. Principio, 2. Qué ya se comunica (verificado en el código), 3. Qué falta, por valor para el trabajo diario, 5. Orden recomendado, 6. Reglas para construirlo, Flujo entre módulos · que el trabajo sea fluido, rápido y sin volver a teclear
 
-### Community 297 - "ordenes/adelanto.ts"
-Cohesion: 0.06
-Nodes (55): pago(), abonoLlego(), ArgsDeDeuda, cobrar(), CODIGOS_AMBIGUOS, confirmarYCobrar(), DependenciasDelAdelanto, DeudaDelAdelanto (+47 more)
+### Community 295 - "venta-corregir-auditoria.int.spec.ts"
+Cohesion: 0.23
+Nodes (12): borradoresDe(), corregir(), cuadra(), datos(), deuda(), filasDe(), linea(), llamar() (+4 more)
 
-### Community 298 - "Fichas · Cotizador B2 (cuadro por partes) y B3 (enlace público)"
-Cohesion: 0.33
-Nodes (5): 0. Idea en una frase, 1. Reglas que aplican a todos los carriles, 7. Orden, rondas e integración, 8. Hecho cuando, Fichas · Cotizador B2 (cuadro por partes) y B3 (enlace público)
+### Community 296 - "MotorDeReglas"
+Cohesion: 0.19
+Nodes (3): AccionRechazada, MotorDeReglas, problemasDeAcciones()
+
+### Community 297 - "ordenes/adelanto.ts"
+Cohesion: 0.16
+Nodes (16): abonoLlego(), cobrar(), CODIGOS_AMBIGUOS, confirmarYCobrar(), DependenciasDelAdelanto, deudaExistente(), obtenerDeuda(), ParametrosDelAdelanto (+8 more)
+
+### Community 298 - "cobro-del-pedido.spec.ts"
+Cohesion: 0.18
+Nodes (13): pago(), DeudaDelAdelanto, DependenciasDelCobro, adelanto, conAdelanto(), correr(), deps(), deuda() (+5 more)
 
 ### Community 300 - "Fichas congeladas de la ola 4 · Captura por voz y texto, y Cotizador (corte B1)"
-Cohesion: 0.15
-Nodes (12): 0.1 Mapa de carriles y qué arranca primero, 0. Cómo leerlo, 11. Contradicciones halladas y cómo se resolvieron, 13. Riesgos, 14. Lo no verificado, 5.1 Qué se copia (archivos enteros, sin recortar), 5.2 Casos de referencia (ya están en las pruebas copiadas; valores exactos de Cotizín), 5.3 Adaptador único · `domain/adaptador-de-dinero.ts` (nuevo) (+4 more)
+Cohesion: 0.12
+Nodes (16): 0.1 Mapa de carriles y qué arranca primero, 0. Cómo leerlo, 11. Contradicciones halladas y cómo se resolvieron, 13. Riesgos, 14. Lo no verificado, 3.1 Contrato `captura.ts` (copiar tal cual), 3.2 Agregar a `contratos/borradores.ts`, 3.3 Tipos del servidor (`core/captura/tipos.ts`) (+8 more)
 
 ### Community 301 - "Decisión"
 Cohesion: 0.22
 Nodes (8): ADR-013: Extensibilidad y escalabilidad como requisito de diseño, Consecuencias, Contexto, Decisión, Escalabilidad: reglas que se cumplen desde la primera migración, Extensibilidad: puntos de extensión que ya existen y se mantienen estables, Lo que NO se hace ahora, Preparado desde ya, barato y caro de cambiar después
 
-### Community 303 - "recarga-tras-despliegue.ts"
-Cohesion: 0.70
-Nodes (3): debeRecargar(), leerUltima(), recargarTrasDespliegue()
+### Community 303 - "main.tsx"
+Cohesion: 0.39
+Nodes (4): debeRecargar(), leerUltima(), recargarTrasDespliegue(), router
+
+### Community 304 - "plataforma-cuenta.int.spec.ts"
+Cohesion: 0.16
+Nodes (8): normal(), CLAVE_DE_PRUEBA, critica(), escribe(), plat(), critica(), plat(), 1. Reglas comunes de todo módulo clásico
 
 ### Community 305 - "pregunta-de-precio.ts"
 Cohesion: 0.33
@@ -1440,43 +1474,99 @@ Nodes (7): cortar(), detectarPreguntaDePrecio(), limpiar(), plegar(), PreguntaDe
 
 ### Community 306 - "ordenes/logica.ts"
 Cohesion: 0.09
-Nodes (29): agruparEntregas(), aLineaDeEntrada(), argumentosDeCreacion(), argumentosDeEdicion(), ColumnaDePedidos, columnasDeTablero(), ErroresDeLinea, esAvance() (+21 more)
+Nodes (39): editarPedido(), dto(), pedido(), agruparEntregas(), aLineaDeEntrada(), argumentosDeCreacion(), argumentosDeEdicion(), ColumnaDePedidos (+31 more)
+
+### Community 307 - "borradores/repositorio.ts"
+Cohesion: 0.16
+Nodes (6): codificar(), comoBorrador(), Fila, iso(), listar(), PaginaDeBorradores
 
 ### Community 308 - "cobros-pendientes.ts"
 Cohesion: 0.23
 Nodes (9): agruparCobros(), anotacionesDeDeudas(), CobroDeCliente, DeudaConOrigen, DeudaPorCobrar, diasVencida(), ENTIDAD_DE_ORIGEN, PLAZO_SIN_VENCIMIENTO (+1 more)
 
-### Community 311 - "editor-de-lineas.tsx"
-Cohesion: 0.10
-Nodes (31): EditorDeLineas(), poner(), FilaEditable(), Props, calculada(), CLAVES_EDITADAS, cuadraFila(), erroresDeFila (+23 more)
+### Community 309 - "pedido-mapeo.ts"
+Cohesion: 0.22
+Nodes (10): codigoDeGuia(), aEventoDto(), aLineaDto(), aPedidoCompleto(), aPedidoDto(), iso(), pedidosListar, EventoDePedido (+2 more)
 
-### Community 312 - "cotizaciones.repository.ts"
-Cohesion: 0.05
-Nodes (53): cotizador, cotizadorAjustesDeCliente, cotizadorConfiguracion, cotizadorCotizaciones, cotizadorEnlaces, cotizadorEventos, cotizadorListasDePrecio, cotizadorTarifas (+45 more)
+### Community 310 - "flujo-adelanto.ts"
+Cohesion: 0.44
+Nodes (10): confirmarPedido(), buscarDeudaDelPedido(), deConfirmado(), deMinima(), dependenciasDelAdelanto(), ejecutarAdelanto(), normalizar(), deConfirmado() (+2 more)
+
+### Community 311 - "editor-de-lineas.tsx"
+Cohesion: 0.17
+Nodes (26): EditorDeLineas(), poner(), FilaEditable(), Props, calculada(), CLAVES_EDITADAS, cuadraFila(), erroresDeFila (+18 more)
+
+### Community 312 - "enlaces.repository.ts"
+Cohesion: 0.33
+Nodes (9): cotizadorEnlaces, VENTANA_DE_VISTA_MS, contarVistaDelEnlace(), deEmpresa(), enlacePorHash(), listarEnlaces(), revocarEnlace(), revocarEnlacesVivos() (+1 more)
+
+### Community 313 - "ficha-de-maquina.tsx"
+Cohesion: 0.21
+Nodes (5): FichaDeMaquina(), Props, html(), vacia, ValoresDeFicha
+
+### Community 314 - "demo/cotizador.ts"
+Cohesion: 0.33
+Nodes (10): crearSiFalta(), HEREDADAS, marcarParaRevisar(), preciosDeLista(), sembrarAjustes(), sembrarCotizador(), sembrarListas(), sembrarProductoSinPrecio() (+2 more)
 
 ### Community 315 - "Propuesta · Mejorar el diseño de Capaz ERP"
 Cohesion: 0.20
 Nodes (9): 1. Qué se ve hoy (capturas del kit y del acceso, 1280 px, claro), 2. Dirección propuesta, 3. Cómo se hace (orden, de más barato a más caro), 4. Decisiones que necesita el usuario, 5. Riesgos, 6. Registro de ejecución (2026-11-16), 8. Decisiones del usuario (2026-11-16, directas en la conversación), 9. Segunda pasada de la consola del operador (2026-11-16) (+1 more)
 
+### Community 316 - "csv.ts"
+Cohesion: 0.29
+Nodes (9): detectarSeparador(), escribirCelda(), FilaCsv, LecturaCsv, leerCsv(), OpcionesDeLectura, protegerCelda(), leer() (+1 more)
+
+### Community 317 - "ordenes/domain/pendientes.ts"
+Cohesion: 0.39
+Nodes (6): accionesDe(), cuandoEntrega(), dias(), PedidoEnCurso, PREGUNTA, tarjetasDePedidos()
+
 ### Community 318 - "0040_agente_huella_y_memoria.sql"
 Cohesion: 0.43
 Nodes (7): agente_acciones_inmutable, agente_lecciones_actualizado, "core"."agente_acciones", "core"."agente_lecciones", idx_agente_acciones_herramienta, idx_agente_acciones_turno, idx_agente_lecciones_uso
+
+### Community 319 - "produccion/domain/pendientes.ts"
+Cohesion: 0.39
+Nodes (7): anotacionesDeOrdenes(), ConEntrega, cuando(), OrdenEnCurso, porEntregar(), PREGUNTA, tarjetasDeOrdenes()
+
+### Community 320 - "kit-ola-3.tsx"
+Cohesion: 0.31
+Nodes (6): FLUJO, KitOla3(), MESES, Seccion(), VENTAS, PaginaKit()
 
 ### Community 321 - "0039_agente.sql"
 Cohesion: 0.31
 Nodes (10): agente_configuracion_actualizado, "core"."agente_configuracion", "core"."agente_conversaciones", "core"."agente_mensajes", "core"."uso", idx_agente_conversaciones_persona, idx_agente_mensajes_conversacion, idx_uso_empresa (+2 more)
 
+### Community 322 - "logica-ficha.ts"
+Cohesion: 0.36
+Nodes (7): AccionDeFicha, descartarPideConfirmar(), EstadoDeFicha, FICHA_INICIAL, ModoDeFicha, reducirFicha(), correr()
+
+### Community 323 - "Relevo: dónde quedó Capaz ERP y cómo seguir"
+Cohesion: 0.22
+Nodes (9): 1. En una frase, 2. Estado exacto, 3. Cómo arrancar el entorno, 4. Mapa del código, 5. Cosas que no son obvias (trampas ya pisadas), 6. Qué hacer ahora, en orden, 7. Documentación, 8. Decisiones del usuario que siguen abiertas (+1 more)
+
 ### Community 324 - "Pila: React+Vite, NestJS 12, PostgreSQL+Drizzle, Better Auth, Zod"
 Cohesion: 0.50
 Nodes (4): apps/api README (plantilla NestJS), apps/web index.html (entrada de la SPA), apps/web README (plantilla React Vite), Pila: React+Vite, NestJS 12, PostgreSQL+Drizzle, Better Auth, Zod
+
+### Community 325 - "kardex.ts"
+Cohesion: 0.39
+Nodes (5): calcularKardex(), FilaDeKardex, Kardex, MovimientoParaKardex, valorEnCentimos()
 
 ### Community 326 - "Plan de construccion de los cimientos v1 (sustituido por v2)"
 Cohesion: 0.09
 Nodes (21): ADR-001: Monolito modular, no microservicios, Manifiesto de modulo con dependencias, Prueba de arquitectura de fronteras entre modulos, ADR-006: Odoo como referencia de diseno; Python fuera del nucleo, Odoo como sistema aparte via modulo conector, Patrones tomados de Odoo: manifiesto, anatomia de modulo, permisos declarados, paquete regional, Python fuera del nucleo; puerta abierta como servicio aparte, ADR-007: Pruebas sin e2e (+13 more)
 
-### Community 329 - "herramientas-de-cotizador.ts"
+### Community 327 - "Plan para dejar funcionando el Cotizador (Cotizín) y la voz (SF / Tairos.RC) dentro de Capaz"
+Cohesion: 0.25
+Nodes (7): 1. Dónde estamos (en `main`, verificado con pruebas), 2. Lo que falta, en orden (cada paso lo integro y compruebo con `pnpm check` antes del siguiente), 3. Qué no depende de nosotros (y sin lo cual no «queda funcionando»), 4. Lo que NO se hace (para que nada quede a medias), 5. Documentación que deja cada paso (se actualiza al integrar), 6. Criterio de «funcionando», Plan para dejar funcionando el Cotizador (Cotizín) y la voz (SF / Tairos.RC) dentro de Capaz
+
+### Community 328 - "leerSse"
+Cohesion: 0.43
+Nodes (3): datosDeLinea(), leerSse(), todo()
+
+### Community 329 - "taller.repository.ts"
 Cohesion: 0.03
-Nodes (127): cotizadorFormatosPliego, cotizadorItemsDelCuadro, cotizadorMaquinas, DatosDeImposicion, RechazoDeCuadro, semillaDelTaller, Valido, ajusteClienteFijar (+119 more)
+Nodes (126): cotizador, cotizadorConfiguracion, cotizadorEventos, cotizadorFormatosPliego, cotizadorItemsDelCuadro, cotizadorMaquinas, cotizadorTarifas, itemDeEmpresaSchema (+118 more)
 
 ### Community 330 - "rutas-de-areas.spec.ts"
 Cohesion: 0.33
@@ -1486,41 +1576,53 @@ Nodes (5): aplanar(), diferidas, ESTATICAS, modulos, todas
 Cohesion: 0.47
 Nodes (3): movimiento_lineas_inmutable, movimiento_lineas_modulo, "registro"."movimiento_lineas"
 
-### Community 338 - "Cómo crear un módulo (o una entidad) en Capaz ERP"
-Cohesion: 0.20
-Nodes (9): 1. Orden de trabajo, 2. Capas, 3. Contrato, 4. Herramienta, 5. Proveedor y registro, 6. Eventos, 8. Pantalla, 9. Lista de comprobación (+1 more)
+### Community 332 - "dictado/deuda.ts"
+Cohesion: 0.38
+Nodes (4): normalizar(), POR_COBRAR, POR_PAGAR, tipoDeDeudaDictada()
+
+### Community 333 - "sectores.ts"
+Cohesion: 0.33
+Nodes (4): Grupo, ModuloDemo, SECTORES, UsuarioDemo
+
+### Community 334 - "lista-del-selector.tsx"
+Cohesion: 0.40
+Nodes (4): ListaDelSelector(), Props, base, opciones
+
+### Community 338 - "conflicto"
+Cohesion: 0.10
+Nodes (21): conflicto(), Fase 7 · Corte de referencia: Clientes (M), 1. Orden de trabajo, 2. Capas, 3. Contrato, 4. Herramienta, 5. Proveedor y registro, 6. Eventos (+13 more)
 
 ### Community 341 - "Evaluación del asistente por modelo · 2026-11-26"
 Cohesion: 0.40
 Nodes (4): Antes y después de los cambios, Evaluación del asistente por modelo · 2026-11-26, Pendiente, Qué se cambió
 
-### Community 358 - "ref_zod"
+### Community 358 - "comoEmpresa"
 Cohesion: 0.05
-Nodes (56): EscritorDeAuditoria, AHORA, candidatos, datos(), def(), DIA_DE_LIMA, disparar(), ejecuciones() (+48 more)
+Nodes (37): estadoDe(), eventos(), filas(), crearClave(), filas(), Opciones, auditoriaDe(), estadoDe() (+29 more)
 
-### Community 359 - "hoja-linea-cotizacion.tsx"
-Cohesion: 0.04
-Nodes (102): KitDiseno(), buscarEn(), Cantidades(), Cifras(), COLUMNAS, KitOla2(), Navegacion(), PERSONAS (+94 more)
+### Community 359 - "Campo"
+Cohesion: 0.05
+Nodes (77): buscarEn(), Cantidades(), Cifras(), COLUMNAS, KitOla2(), Navegacion(), PERSONAS, Retardo() (+69 more)
 
 ## Knowledge Gaps
-- **3334 isolated node(s):** `$schema`, `typescript/no-explicit-any`, `typescript/no-floating-promises`, `node`, `"core"."plataforma_admins"` (+3329 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 4361 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3334 isolated node(s):** `Props`, `TONOS_DE_RENGLON`, `TONOS`, `ColumnaImprimible`, `PropsBarra` (+3329 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 4360 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `react` to `hoja-imprimible.tsx`, `unir`, `web/package.json`, `tarjeta-unidades.tsx`, `cotizador/rutas.tsx`, `pantalla-importar-historial.tsx`, `pasos-de-cierre.tsx`, `productos/pantalla-ficha.tsx`, `paleta-de-comandos.tsx`, `pantalla-registro.tsx`, `llamar`, `pantalla-guia-nueva.tsx`, `ordenes/correccion.ts`, `almacen.ts`, `logica-taller.ts`, `lista-de-empresas.tsx`, `confirmar`, `conecta/consultas.tsx`, `ordenes/adelanto.ts`, `ordenes/pantalla-ficha.tsx`, `pantalla-documento-cotizacion.tsx`, `registro/hoja-movimiento.tsx`, `pantalla-invitacion.tsx`, `panel-del-agente.tsx`, `campos-de-pago.tsx`, `logica-reconocedor.ts`, `pantalla-vacaciones.tsx`, `pantalla-empresas.tsx`, `editor-de-lineas.tsx`, `CampoMonto`, `automatizaciones/logica.ts`, `registro/logica.ts`, `carcasa.tsx`, `plataforma/logica.ts`, `ajustes-conectado.tsx`, `plataforma/pantalla-empresa.tsx`, `datosOError`, `bandeja/logica.ts`, `tarjeta-mi-dia.tsx`, `rutas-de-areas.spec.ts`, `filas-de-pedido.tsx`, `Boton`, `empresa/pantalla-empresa.tsx`, `SelectorDeRegistro`, `hilo.tsx`, `use-turno.ts`, `pantalla-usuarios.tsx`, `pantalla-dictado.tsx`, `pantalla-guia.tsx`, `app/rutas.tsx`, `react-dom`, `editor-de-productos.tsx`, `plataforma/api.ts`, `hoja-linea-cotizacion.tsx`, `cabecera-de-consola.tsx`, `logica-directa.ts`, `crm/pantalla-ficha.tsx`, `use-hoja-de-pedido.ts`, `hoja-sucursal.tsx`, `hoja-orden.tsx`, `pantalla-indicadores.tsx`, `compras/logica.ts`, `barra-superior.tsx`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+- **Why does `pg` connect `ref_vitest` to `@nestjs/common`, `ajuste-y-recepcion.int.spec.ts`, `datosDe`, `preparar-base.ts`, `extraccion.int.spec.ts`, `ContextoDeHerramienta`, `relevo.ts`, `maestros.repository.int.spec.ts`, `agregarMiembro`, `venta-corregir-auditoria.int.spec.ts`, `reportes.int.spec.ts`, `plataforma-cuenta.int.spec.ts`, `compras-recepcion.int.spec.ts`, `packages_shared_dist_index`, `dueno`, `produccion.int.spec.ts`, `demo/contexto.ts`, `sembrar-demo.ts`, `servicio-de-turnos.ts`, `venta-corregir.int.spec.ts`, `insumos.repository.int.spec.ts`, `agente.int.spec.ts`, `config.js`, `comoEmpresa`, `api/package.json`?**
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `Boton()` (e.g. with `1.3 Web [V]` and `10. Plan de prueba de 1 día (descrito, no ejecutado)`) actually correct?**
   _`Boton()` has 2 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `$schema`, `typescript/no-explicit-any`, `typescript/no-floating-promises` to the rest of the system?**
+- **What connects `Props`, `TONOS_DE_RENGLON`, `TONOS` to the rest of the system?**
   _3334 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `hoja-imprimible.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.09411764705882353 - nodes in this community are weakly interconnected._
-- **Why does `notificar()` connect `llamar` to `use-accion-de-mi-dia.ts`, `Investigación de frontend de Capaz ERP`, `pantalla-importar-historial.tsx`, `productos/pantalla-ficha.tsx`, `logica-taller.ts`, `confirmar`, `ordenes/adelanto.ts`, `ordenes/pantalla-ficha.tsx`, `pantalla-documento-cotizacion.tsx`, `pantalla-empresas.tsx`, `pantalla-vacaciones.tsx`, `registro/logica.ts`, `carcasa.tsx`, `ordenes/pantalla-documento.tsx`, `ajustes-conectado.tsx`, `plataforma/pantalla-empresa.tsx`, `datosOError`, `bandeja/logica.ts`, `Boton`, `react`, `empresa/pantalla-empresa.tsx`, `SelectorDeRegistro`, `pantalla-usuarios.tsx`, `pantalla-dictado.tsx`, `pantalla-guia.tsx`, `plataforma/api.ts`, `hoja-linea-cotizacion.tsx`, `pantalla-indicadores.tsx`, `use-hoja-de-pedido.ts`, `hoja-sucursal.tsx`, `hoja-orden.tsx`, `crm/pantalla-ficha.tsx`, `compras/logica.ts`, `barra-superior.tsx`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+  _Cohesion score 0.09803921568627451 - nodes in this community are weakly interconnected._
+- **Why does `react` connect `Boton` to `hoja-imprimible.tsx`, `logica-lista.ts`, `web/package.json`, `tarjeta-unidades.tsx`, `cotizador/rutas.tsx`, `pasos-de-cierre.tsx`, `llamar`, `panel-imposicion.tsx`, `pantalla-registro.tsx`, `notificar`, `pantalla-guia-nueva.tsx`, `ordenes/correccion.ts`, `almacen.ts`, `confirmar`, `logica-taller.ts`, `cuadro-directo.tsx`, `pantalla-importar-historial.tsx`, `ordenes/pantalla-documento.tsx`, `ordenes/pantalla-ficha.tsx`, `pago.ts`, `panel-del-agente.tsx`, `main.tsx`, `logica-reconocedor.ts`, `ordenes/logica.ts`, `pantalla-vacaciones.tsx`, `agente/api.ts`, `plataforma/api.ts`, `editor-de-lineas.tsx`, `tarjeta-de-borrador.tsx`, `ficha-de-maquina.tsx`, `automatizaciones/logica.ts`, `registro/logica.ts`, `carcasa.tsx`, `logica-precio-anterior.ts`, `hoja-plan.tsx`, `kit-ola-3.tsx`, `unir`, `api/consultas.ts`, `bandeja/logica.ts`, `react-dom`, `rutas-de-areas.spec.ts`, `filas-de-pedido.tsx`, `directa-filas.tsx`, `EstadoVacio`, `logica-datos.ts`, `logica-cuadro.ts`, `use-alta-de-cliente.ts`, `hilo.tsx`, `use-turno.ts`, `hoja-miembro.tsx`, `pantalla-dictado.tsx`, `app/rutas.tsx`, `selector-de-modelo.spec.tsx`, `editor-de-productos.tsx`, `pantalla-mi-dia.tsx`, `Campo`, `grafico-de-barras.tsx`, `logica-cuadro-precio.ts`, `hoja-sucursal.tsx`, `hoja-orden.tsx`, `crm/pantalla-ficha.tsx`, `compras/logica.ts`, `use-tema.ts`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Should `src/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.04407894736842105 - nodes in this community are weakly interconnected._
-- **Why does `drizzle-orm` connect `drizzle-orm` to `servicio-de-transcripcion.ts`, `agente.module.ts`, `packages_shared_dist_index`, `asistencias.repository.ts`, `entorno.ts`, `herramientas/cuadro-referencias.ts`, `ordenes-escritura.ts`, `ejecutor.ts`, `@nestjs/common`, `herramientas/clientes-fusion.ts`, `personal.repository.int.spec.ts`, `cotizaciones-emision.ts`, `cotizaciones.repository.ts`, `enlaces-herramientas.ts`, `contratos-herramientas.ts`, `recompra.ts`, `automatizaciones/repositorio.ts`, `packages_shared_dist_index_formatearsoles`, `ref_vitest`, `oportunidades-escritura.ts`, `herramientas-de-cotizador.ts`, `servicio-de-turnos.ts`, `maestros.repository.int.spec.ts`, `productos-buscar.ts`, `herramientas-de-agente.ts`, `cotizador/herramientas/comun.ts`, `prompt.ts`, `productos-ampliados.ts`, `cierre-cerrar.ts`, `esquema/auth.ts`, `config.js`, `pedidos-correccion.ts`, `ref_zod`, `sucursales-herramientas.ts`, `herramientas-de-memoria.ts`, `registro/consumidores.ts`, `compras.repository.ts`, `api/package.json`, `webhooks/repositorio.ts`, `adelantos.repository.ts`?**
+- **Why does `drizzle-orm` connect `Transaccion` to `@nestjs/common`, `articulos.repository.ts`, `servicio-de-transcripcion.ts`, `invitacion-crear.ts`, `preparar-base.ts`, `pedidos.repository.ts`, `herramientas/cuadro-referencias.ts`, `ContextoDeHerramienta`, `relevo.ts`, `maestros.repository.int.spec.ts`, `existencias-recibir.ts`, `borradores/repositorio.ts`, `herramientas-de-cotizador.ts`, `entrega.ts`, `personal/herramientas/comunes.ts`, `enlaces.repository.ts`, `automatizaciones/repositorio.ts`, `packages_shared_dist_index`, `dueno`, `ref_vitest`, `oportunidades-escritura.ts`, `taller.repository.ts`, `servicio-de-turnos.ts`, `insumos.repository.int.spec.ts`, `agente.int.spec.ts`, `herramientas-de-memoria.ts`, `productos-ampliados.ts`, `ordenes/domain/estados.ts`, `cierre-cerrar.ts`, `esquema/auth.ts`, `guias.repository.ts`, `config.js`, `ordenes.repository.ts`, `compra-mapeo.ts`, `registro/consumidores.ts`, `insumos/repositories/operaciones.repository.ts`, `api/package.json`, `webhooks/repositorio.ts`, `herramientas-de-ordenes.ts`?**
   _High betweenness centrality (0.021) - this node is a cross-community bridge._

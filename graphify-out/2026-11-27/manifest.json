@@ -4134,9 +4134,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/cifra.tsx": {
-    "mtime": 1794847077.9380207,
-    "seen": 1794847177.3258994,
-    "ast_hash": "ec6c25206889b6f8753f989fc3edeb14",
+    "mtime": 1795794962.025411,
+    "seen": 1795795403.0150201,
+    "ast_hash": "796c7986c1975eceadca7e4020c12834",
     "semantic_hash": ""
   },
   "apps/web/src/shared/ui/logica-selector.spec.ts": {
@@ -8748,9 +8748,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/barra-inferior.tsx": {
-    "mtime": 1794940401.8442802,
-    "seen": 1794940484.361041,
-    "ast_hash": "58c951935b53c24110bc536dc0b9e591",
+    "mtime": 1795794962.3619,
+    "seen": 1795795403.013303,
+    "ast_hash": "f688d3612f52bdb19f18f4b3e15d118d",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/cabecera-de-columnas.tsx": {
@@ -8784,9 +8784,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/desglose-de-pliegos.tsx": {
-    "mtime": 1794940401.8442802,
-    "seen": 1794940484.3610597,
-    "ast_hash": "5276ea1849119cdda1121349961aecdc",
+    "mtime": 1795794962.1348996,
+    "seen": 1795795403.013325,
+    "ast_hash": "29523adb64cf4a760006f3916d574464",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/elegir-tarifa.tsx": {
@@ -8922,9 +8922,9 @@
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/recibo.tsx": {
-    "mtime": 1794940401.846525,
-    "seen": 1794940484.3611305,
-    "ast_hash": "c3c2da9a9c7a49ceb1dee07e41517b58",
+    "mtime": 1795794961.907899,
+    "seen": 1795795403.013405,
+    "ast_hash": "5fc9d402ae157cdcc264635f299864fb",
     "semantic_hash": ""
   },
   "apps/web/src/modules/cotizador/cuadro/resumen-del-cuadro.tsx": {
